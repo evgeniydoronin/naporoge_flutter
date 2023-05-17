@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:naporoge/core/routes/app_router.dart';
 import 'package:naporoge/features/planning/presentation/widgets/day_schedule.dart';
 import '../../../../core/constants/app_theme.dart';
+import '../widgets/stepper_wigget.dart';
 
 @RoutePage()
-class PlanningScreen extends StatelessWidget {
-  const PlanningScreen({Key? key}) : super(key: key);
+class SelectDayPeriod extends StatelessWidget {
+  const SelectDayPeriod({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.lightBG,
       appBar: AppBar(
+        foregroundColor: Colors.black,
         backgroundColor: AppColor.lightBG,
         elevation: 0,
         centerTitle: true,
@@ -23,6 +26,40 @@ class PlanningScreen extends StatelessWidget {
       body: ListView(
         shrinkWrap: true,
         children: [
+          const StepperIcons(step: 2),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColor.accentBOW,
+                borderRadius: AppLayout.primaryRadius,
+              ),
+              child: ClipRRect(
+                borderRadius: AppLayout.primaryRadius,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: -20,
+                      right: -60,
+                      child: Image.asset(
+                        'assets/images/19.png',
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 15, bottom: 15, left: 15, right: 80),
+                      child: Text(
+                        'Старт курса – с понедельника. Выберите, с какого начнете',
+                        style: TextStyle(
+                            color: Colors.white, fontSize: AppFont.regular),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -82,7 +119,7 @@ class PlanningScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-                padding: EdgeInsets.only(bottom: 5),
+                padding: const EdgeInsets.only(bottom: 15),
                 decoration: AppLayout.boxDecorationShadowBG,
                 child: const DayScheduleWidget()),
           ),
@@ -93,7 +130,9 @@ class PlanningScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.router.replace(const DashboardScreenRoute());
+                    },
                     style: AppLayout.accentBTNStyle,
                     child: Text(
                       'План мне подходит',

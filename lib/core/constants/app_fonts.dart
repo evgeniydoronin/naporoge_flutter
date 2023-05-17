@@ -11,6 +11,8 @@ class AppFont {
       fontSize: large, fontWeight: FontWeight.w600, color: AppColor.blk);
   static TextStyle largeExtraBold =
       TextStyle(fontSize: large, fontWeight: FontWeight.w800);
+  static TextStyle largeSemibold =
+      TextStyle(fontSize: large, fontWeight: FontWeight.w500);
   static TextStyle regularSemibold =
       TextStyle(fontSize: regular, fontWeight: FontWeight.w500);
   static TextStyle smallNormal =

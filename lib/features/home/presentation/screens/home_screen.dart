@@ -427,7 +427,9 @@ class HomeScreen extends StatelessWidget {
                 Flexible(
                   flex: 3,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.router.push(SplashScreenRoute());
+                    },
                     style: AppLayout.primaryBTNStyle,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
