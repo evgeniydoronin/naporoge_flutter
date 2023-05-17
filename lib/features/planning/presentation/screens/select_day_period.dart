@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:naporoge/core/routes/app_router.dart';
-import 'package:naporoge/features/planning/presentation/widgets/day_schedule.dart';
+import 'package:naporoge/features/planning/presentation/widgets/day_schedule_widget.dart';
 import '../../../../core/constants/app_theme.dart';
-import '../widgets/stepper_wigget.dart';
+import '../widgets/stepper_widget.dart';
 
 @RoutePage()
 class SelectDayPeriod extends StatelessWidget {

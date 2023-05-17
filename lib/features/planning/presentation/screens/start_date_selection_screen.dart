@@ -2,13 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:naporoge/core/routes/app_router.dart';
-import 'package:naporoge/features/planning/presentation/screens/choice_of_case.dart';
+import '../../../../core/routes/app_router.dart';
 
 import '../../../../core/constants/app_theme.dart';
 import '../bloc/planner_bloc.dart';
 import '../widgets/select_week_widget.dart';
-import '../widgets/stepper_wigget.dart';
+import '../widgets/stepper_widget.dart';
 
 @RoutePage()
 class StartDateSelectionScreen extends StatefulWidget {
@@ -24,31 +23,6 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // return BlocProvider(
-    //   create: (context) => PlannerBloc(),
-    //   child: Scaffold(
-    //     appBar: AppBar(
-    //         automaticallyImplyLeading: false,
-    //         centerTitle: true,
-    //         elevation: 0,
-    //         foregroundColor: Colors.black,
-    //         backgroundColor: Colors.white,
-    //         title: const Text('Выбор даты старта')),
-    //     body: Theme(
-    //       data: Theme.of(context).copyWith(
-    //         // colorScheme: const ColorScheme.light(primary: AppTheme.primaryColor),
-    //         canvasColor: Colors.white,
-    //         shadowColor: Colors.transparent,
-    //       ),
-    //       child: Container(
-    //         height: MediaQuery.of(context).size.height,
-    //         color: Colors.white,
-    //         child: StartDateSelectionScreen(),
-    //       ),
-    //     ),
-    //   ),
-    // );
-
     return BlocBuilder<PlannerBloc, PlaningState>(
       builder: (context, state) {
         String buttonDate = 'Выбрать';
@@ -95,7 +69,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 top: 15, bottom: 15, left: 15, right: 80),
                             child: Text(
                               'Старт курса – с понедельника. Выберите, с какого начнете',

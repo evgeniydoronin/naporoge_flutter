@@ -6,7 +6,7 @@ import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 
 import '../../../../core/data/models/case_model.dart';
-import '../widgets/stepper_wigget.dart';
+import '../widgets/stepper_widget.dart';
 
 @RoutePage()
 class ChoiceOfCaseScreen extends StatefulWidget {

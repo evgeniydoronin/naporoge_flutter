@@ -167,29 +167,35 @@ class _NPCalendarState extends State<NPCalendar> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              child: Text(
-                _month.replaceFirst(_month[0], _month[0].toUpperCase()),
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.left,
-              ),
+            Text(
+              _month.replaceFirst(_month[0], _month[0].toUpperCase()),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.left,
             ),
             Row(
               children: [
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      print('prev month');
+                    },
                     icon: RotatedBox(
                         quarterTurns: 2,
                         child: SvgPicture.asset('assets/icons/arrow.svg'))),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _currentDay =
+                            DateTime(_currentDay.year, _currentDay.month + 1);
+                      });
+                      print('next month $_currentDay');
+                      setState(() {});
+                    },
                     icon: SvgPicture.asset('assets/icons/arrow.svg')),
               ],
             )
           ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Container(
           decoration: const BoxDecoration(
             border: Border(

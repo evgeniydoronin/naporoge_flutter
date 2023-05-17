@@ -37,8 +37,7 @@ class AppRouter extends _$AppRouter {
   // CustomRoute, AutoRoute
   @override
   List<AutoRoute> get routes => [
-        CustomRoute(
-            page: SplashScreenRoute.page, path: '/splash', initial: true),
+        CustomRoute(page: SplashScreenRoute.page, path: '/splash'),
         // Authentication
         CustomRoute(
           page: LoginEmptyRouter.page,
@@ -71,7 +70,8 @@ class AppRouter extends _$AppRouter {
         CustomRoute(page: WelcomeScreenRoute.page, path: '/welcome'),
         CustomRoute(
             page: StartDateSelectionScreenRoute.page,
-            path: '/planner-start-date-selection'),
+            path: '/planner-start-date-selection',
+            initial: true),
         CustomRoute(
             page: ChoiceOfCaseScreenRoute.page,
             path: '/planner-choice-of-case'),
