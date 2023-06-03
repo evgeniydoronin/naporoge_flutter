@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../../../../core/routes/app_router.dart';
 import '../../../../../core/constants/app_theme.dart';
+import '../../di/service_locator.dart';
+import '../controller.dart';
 
 @RoutePage(name: 'LoginEmptyRouter')
 class LoginEmptyRouterPage extends AutoRouter {}
@@ -23,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isActiveBtn = false;
   bool isChecked = false;
 
-  TextEditingController phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   Timer? _timer;
@@ -32,24 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<int> errorScreen = [];
 
-  void startTimer() {
-    const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(
-      oneSec,
-      (Timer timer) => setState(
-        () {
-          if (_start < 1) {
-            timer.cancel();
-            _isTimerStart = false;
-          } else {
-            _isTimerStart = true;
-            _start = _start - 1;
-            // print(_start);
-          }
-        },
-      ),
-    );
-  }
+  final _phone = getIt<AuthController>();
 
   @override
   void initState() {
@@ -96,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       children: [
                         TextFormField(
-                          controller: phoneController,
+                          controller: _phone.phoneController,
                           style: TextStyle(
                               color: Colors.black, fontSize: AppFont.small),
                           decoration: InputDecoration(
@@ -137,12 +122,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           inputFormatters: [maskFormatter],
                           onChanged: (val) {
                             // print(val.length);
-                            print(phoneController.text.length);
+                            // print(phoneController.text.length);
                             // print(phoneController.text);
                           },
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              print('vav: $value');
+                            // print(maskFormatter.getUnmaskedText().length);
+                            if (maskFormatter.getUnmaskedText().length < 10 ||
+                                value == null ||
+                                value.isEmpty) {
                               return 'Введите номер телефона!';
                             }
                             return null;
@@ -223,24 +210,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: errorScreen.isEmpty
                               ? _isTimerStart
                                   ? null
-                                  : () {
+                                  : () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // print('object');
-                                        startTimer();
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //         LoginPhoneConfirmScreen(
-                                        //       phone: maskFormatter
-                                        //           .getUnmaskedText(),
-                                        //     ),
-                                        //   ),
-                                        // );
-                                        context.router.push(
+                                        var code = await _phone.getSmsCode(
+                                            maskFormatter.getUnmaskedText());
+                                        print(code);
+
+                                        if (context.mounted) {
+                                          context.router.push(
                                             LoginPhoneConfirmScreenRoute(
-                                                phone: maskFormatter
-                                                    .getUnmaskedText()));
+                                              phone: maskFormatter
+                                                  .getUnmaskedText(),
+                                              code: code['code'],
+                                            ),
+                                          );
+                                        }
+
+                                        // TODO: uncomment
+                                        // startTimer();
                                       }
                                     }
                               : null,
@@ -265,4 +252,37 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          if (_start < 1) {
+            timer.cancel();
+            _isTimerStart = false;
+          } else {
+            _isTimerStart = true;
+            _start = _start - 1;
+            // print(_start);
+          }
+        },
+      ),
+    );
+  }
 }
+
+// _registrationStudent(phone) async {
+//   try {
+//     var formData = FormData.fromMap({
+//       'phone': phone,
+//     });
+//     var response = await Dio()
+//         .post('https://np-app.evgeniydoronin.com/api/code', data: formData);
+//
+//     return response.data;
+//   } catch (e) {
+//     debugPrint('_registrationStudent error: $e');
+//   }
+// }

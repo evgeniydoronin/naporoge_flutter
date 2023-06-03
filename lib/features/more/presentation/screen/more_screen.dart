@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_theme.dart';
+import '../../../../core/routes/app_router.dart';
 
 @RoutePage()
 class MoreScreen extends StatelessWidget {
@@ -373,7 +374,9 @@ class MoreScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.router.push(SplashScreenRoute());
+                            },
                             style: AppLayout.accentBTNStyle,
                             child: Text(
                               'Выйти',

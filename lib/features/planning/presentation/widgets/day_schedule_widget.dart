@@ -238,6 +238,14 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                     ),
                     itemCount: 7,
                     itemBuilder: (BuildContext context, gridIndex) {
+                      DialogBuilder dialogBuilder = DialogBuilder(
+                          context: context,
+                          period: period[periodIndex],
+                          periodIndex: periodIndex,
+                          rowIndex: rowIndex,
+                          tempSelectedCells: tempSelectedCells,
+                          gridIndex: gridIndex);
+
                       return gridIndex == 6
                           ? DayPeriodCell(
                               periodIndex: periodIndex,
@@ -246,21 +254,23 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                               constraints: constraints,
                             )
                           : GestureDetector(
+                              onTapDown: null,
+                              onTapUp: null,
                               onTap: () {
                                 setState(() {
                                   tempSelectedCells[
                                       '$periodIndex.$rowIndex.$gridIndex'] = '';
                                 });
-                                print(
-                                    "globalSelectedCells: $globalSelectedCells");
-                                print("tempSelectedCells: $tempSelectedCells");
-                                _dialogBuilder(context, period[periodIndex],
-                                    tempSelectedCells);
+                                dialogBuilder.open();
                               },
                               onDoubleTap: () {
-                                // setState(() {
-                                //   tempSelectedCells.remove(['$periodIndex.$rowIndex.$gridIndex']);
-                                // });
+                                print(
+                                    'globalSelectedCells: $globalSelectedCells');
+                                planner.removeCell(
+                                    '$periodIndex.$rowIndex.$gridIndex');
+                                // print('globalSelectedCells: $globalSelectedCells');
+                                // context.read<CellProvider>().removeGlobalSelectedCell(
+                                //     '${item.panelIndex}.$rowIndex.$gridIndex');
                               },
                               onLongPressMoveUpdate:
                                   (LongPressMoveUpdateDetails details) {
@@ -282,12 +292,11 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                                       tempSelectedCells[
                                           '$periodIndex.$rowIndex.$i'] = '';
                                     });
-                                    print(
-                                        'GridIndex: $i; Min: ${min.floorToDouble()}; Max: ${max.floorToDouble()}');
-                                    print(
-                                        "tempSelectedCells: $tempSelectedCells");
                                   }
                                 }
+                              },
+                              onLongPressEnd: (details) {
+                                dialogBuilder.open();
                               },
                               child: DayPeriodCell(
                                 periodIndex: periodIndex,
@@ -338,9 +347,10 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
     int periodIndex = widget.periodIndex;
     int rowIndex = widget.rowIndex;
 
+    // TODO: добавить стейты
     return Container(
       color: getColorCell(periodIndex, rowIndex, gridIndex, context),
-      child: Center(child: Text('$periodIndex.$rowIndex.$gridIndex')),
+      child: getCellData(periodIndex, rowIndex, gridIndex, context),
     );
   }
 }
@@ -444,107 +454,133 @@ class Planner {
   }
 }
 
-void _dialogBuilder(
-    BuildContext context, DayPeriod period, tempSelectedCells) async {
-  print(period.rows);
-  print(period.start);
+class DialogBuilder {
+  BuildContext context;
+  DayPeriod period;
+  int periodIndex;
+  int rowIndex;
+  int gridIndex;
+  Map<String, dynamic> tempSelectedCells;
 
-  DateTime initialDate = DateTime.now();
-  int min = (2).toInt();
+  DialogBuilder(
+      {required this.period,
+      required this.periodIndex,
+      required this.rowIndex,
+      required this.gridIndex,
+      required this.tempSelectedCells,
+      required this.context});
 
-  DateTime minHour =
-      DateTime(initialDate.year, initialDate.month, initialDate.day, min, 00);
-  DateTime maxHour =
-      DateTime(initialDate.year, initialDate.month, initialDate.day, min, 55);
-  DateTime newDate = minHour;
-
-  Planner planner = Planner(
-      tempSelectedCells: tempSelectedCells,
-      globalSelectedCells: globalSelectedCells);
-
-  List<Widget> defaultMinutes =
+  List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
+  List<Widget> defaultMinutesText =
       List.generate(12, (index) => Text('${index * 5}'));
 
-  return showDialog<void>(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext ctx) {
-      return AlertDialog(
-        title: Text('Row index 333 $min'),
-        content: SizedBox(
-          height: 200,
-          child: CupertinoTheme(
-            data: const CupertinoThemeData(
-              textTheme: CupertinoTextThemeData(
-                dateTimePickerTextStyle: TextStyle(fontSize: 26),
+  Future<void> open() async {
+    int hour = (period.start + rowIndex).toInt();
+
+    switch (hour) {
+      case 24:
+        hour = 0;
+        break;
+      case 25:
+        hour = 1;
+        break;
+      case 26:
+        hour = 2;
+        break;
+    }
+
+    String newCellTimeString = '$hour:00';
+    DateTime initialDate = DateTime.now();
+    DateTime initialHour = DateTime(
+        initialDate.year, initialDate.month, initialDate.day, hour, 00);
+
+    DateTime newDate = initialHour;
+
+    Planner planner = Planner(
+        tempSelectedCells: tempSelectedCells,
+        globalSelectedCells: globalSelectedCells);
+
+    return showDialog<void>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text('Выбрать время'),
+          content: SizedBox(
+            height: 150,
+            child: CupertinoTheme(
+              data: const CupertinoThemeData(
+                textTheme: CupertinoTextThemeData(
+                  dateTimePickerTextStyle: TextStyle(fontSize: 26),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$hour',
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(
+                    width: 100,
+                    child: CupertinoPicker(
+                        itemExtent: 26,
+                        onSelectedItemChanged: (index) {
+                          newCellTimeString = DateFormat('Hm').format(DateTime(
+                              initialDate.year,
+                              initialDate.month,
+                              initialDate.day,
+                              hour,
+                              defaultMinutes[index]));
+                        },
+                        children: defaultMinutesText),
+                  ),
+                ],
               ),
             ),
-            //Text('Cell indexes ${selectedIds.toString()}')
-            // child: CupertinoDatePicker(
-            //   // initialDateTime: DateTime.now().add(
-            //   //   Duration(hours: min, minutes: 5 - DateTime.now().minute % 5),
-            //   // ),
-            //   initialDateTime: minHour,
-            //   mode: CupertinoDatePickerMode.time,
-            //   use24hFormat: true,
-            //   minuteInterval: 5,
-            //   minimumDate: minHour,
-            //   maximumDate: maxHour,
-            //   onDateTimeChanged: (DateTime _newDate) {
-            //     newDate = _newDate;
-            //     // print('newDate: $newDate');
-            //   },
-            // ),
-            child: Row(
-              children: [
-                Text(period.start.toString()),
-                SizedBox(
-                  width: 200,
-                  child: CupertinoPicker(
-                      itemExtent: 20,
-                      onSelectedItemChanged: (index) {},
-                      children: defaultMinutes),
-                ),
-              ],
-            ),
           ),
-        ),
-        contentPadding: EdgeInsets.zero,
-        insetPadding: EdgeInsets.zero,
-        actions: <Widget>[
-          TextButton(
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.labelLarge,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: EdgeInsets.zero,
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Отменить'),
+              onPressed: () async {
+                tempSelectedCells.clear();
+                // await planner.clearTempSelectedIndexes();
+                // context.read<CellProvider>().changeCellEnabled(true);
+                Navigator.of(context).pop();
+              },
             ),
-            child: const Text('Отменить'),
-            onPressed: () {
-              planner.clearTempSelectedIndexes();
-              // context.read<CellProvider>().changeCellEnabled(true);
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.labelLarge,
-            ),
-            child: const Text('Выбрать'),
-            onPressed: () {
-              // context.read<CellProvider>().changeCellData(newDate);
-              // context.read<CellProvider>().changeCellEnabled(true);
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Выбрать'),
+              onPressed: () {
+                // context.read<CellProvider>().changeCellData(newDate);
+                // context.read<CellProvider>().changeCellEnabled(true);
 
-              // если глобальных данных нет
-              if (globalSelectedCells.isEmpty) {
-                globalSelectedCells = planner.setCellData(true, newDate);
-              } else {
-                globalSelectedCells = planner.setCellData(false, newDate);
-              }
-              planner.clearTempSelectedIndexes();
+                print(globalSelectedCells);
+                print(newCellTimeString);
 
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
+                // если глобальных данных нет
+                if (globalSelectedCells.isEmpty) {
+                  globalSelectedCells = planner.setCellData(true, newDate);
+                } else {
+                  globalSelectedCells = planner.setCellData(false, newDate);
+                }
+                planner.clearTempSelectedIndexes();
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

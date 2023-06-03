@@ -1,14 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:naporoge/core/constants/app_theme.dart';
-import 'package:naporoge/core/routes/app_router.dart';
+import '../../../../../core/constants/app_theme.dart';
+import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
+
+import '../../di/service_locator.dart';
+import '../controller.dart';
 
 @RoutePage()
 class LoginPhoneConfirmScreen extends StatefulWidget {
   final String phone;
+  final int code;
 
-  const LoginPhoneConfirmScreen({Key? key, required this.phone})
+  const LoginPhoneConfirmScreen(
+      {Key? key, required this.phone, required this.code})
       : super(key: key);
 
   @override
@@ -17,21 +22,11 @@ class LoginPhoneConfirmScreen extends StatefulWidget {
 }
 
 class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
-  // AuthService authService = AuthService();
-  final TextEditingController _otpController = TextEditingController();
-  String smsCode = '';
-  String verificationIdFinal = '';
+  final _authController = getIt<AuthController>();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // print(widget.phone);
-    // authService.verifyPhoneNumber(
-    //   '+7${widget.phone}',
-    //   context,
-    //   setData,
-    // );
   }
 
   @override
@@ -41,7 +36,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
         elevation: 0,
         foregroundColor: Colors.black,
         backgroundColor: Colors.white,
-        title: Text('Вход'),
+        title: const Text('Вход'),
       ),
       body: LayoutBuilder(
         builder: (context, constraint) {
@@ -72,6 +67,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                       const SizedBox(
                         height: 10,
                       ),
+                      Text(widget.code.toString()),
                       Text(
                         '+7${widget.phone}',
                         style: TextStyle(
@@ -86,7 +82,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                         child: PinCodeTextField(
                           keyboardType: TextInputType.number,
                           autofocus: true,
-                          controller: _otpController,
+                          controller: _authController.smsCodeController,
                           maxLength: 4,
                           // hasUnderline: true,
                           hideCharacter: false,
@@ -94,23 +90,20 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                           // highlightPinBoxColor: Colors.redAccent,
                           // highlightColor: Colors.greenAccent,
                           onDone: (text) async {
-                            print('_otpController');
-                            // await authService.signinWithPhoneNumber(
-                            //     verificationIdFinal,
-                            //     _otpController.text,
-                            //     context);
+                            print('_smsCode.smsCodeController');
+                            print(_authController.smsCodeController.text);
 
-                            // Navigator.pushAndRemoveUntil(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             ActivateAccountScreen()),
-                            //     (route) => false);
-
-                            context.router.replace(
-                                const ActivateAccountScreenRoute());
+                            if (int.parse(
+                                    _authController.smsCodeController.text) ==
+                                widget.code) {
+                              // confirmAuthCode
+                              print('code success');
+                              context.router.replace(ActivateAccountScreenRoute(
+                                  phone: widget.phone));
+                            } else {
+                              print('code error');
+                            }
                           },
-
                           defaultBorderColor: AppColor.grey2,
                           hasTextBorderColor: AppColor.accent,
                           pinBoxRadius: 5.0,
@@ -135,10 +128,10 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
     );
   }
 
-  void setData(String verificationId) {
-    setState(() {
-      verificationIdFinal = verificationId;
-      // print(verificationIdFinal);
-    });
-  }
+// void setData(String verificationId) {
+//   setState(() {
+//     verificationIdFinal = verificationId;
+//     // print(verificationIdFinal);
+//   });
+// }
 }

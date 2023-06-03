@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 
 import '../../../../core/data/models/case_model.dart';
+import '../bloc/planner_bloc.dart';
 import '../widgets/stepper_widget.dart';
 
 @RoutePage()
@@ -24,52 +26,43 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  late final Map<String, TextEditingController> _shortTitleController = {};
-  late final Map<String, TextEditingController> _startTimeFirstDayController =
-      {};
+  final Map<String, TextEditingController> _shortTitleController = {};
 
-  // late TextEditingController _shortTitleController;
-
-  DateTime initialDate = DateTime.now();
-  DateTime _timeStartFirstDay = DateTime.now();
+  DateTime startDate = DateTime.now();
+  String caseId = '';
+  String caseTitle = '';
 
   @override
   void initState() {
     super.initState();
-    DateTime initial = DateTime.now();
-    initialDate =
-        DateTime(initial.year, initial.month, initial.day, initial.hour, 0);
-    _timeStartFirstDay =
-        DateTime(initial.year, initial.month, initial.day, 10, 0);
 
     _customTileExpanded = false;
     _isActivated = false;
 
-    // !!! text editing controller listview.builder
-    _cases.asMap().forEach((key, value) {
-      setState(() {
-        _shortTitleController[value.caseId] = TextEditingController();
-        _startTimeFirstDayController[value.caseId] = TextEditingController();
-      });
-    });
+    for (var cases in _cases) {
+      _shortTitleController[cases.title] = TextEditingController();
+    }
   }
 
   @override
   void dispose() {
-    _cases.asMap().forEach((key, value) {
-      _shortTitleController[value.caseId]?.dispose();
-      _startTimeFirstDayController[value.caseId]?.dispose();
-    });
-
+    for (var cases in _cases) {
+      _shortTitleController[cases.title]?.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // String _caseIdWatch =
-    //     context.watch<FirstPlanning>().getCourseId.toString() == 'null'
-    //         ? context.watch<FirstPlanning>().getCourseId.toString()
-    //         : '';
+    var state = context.watch<PlannerBloc>().state;
+
+    if (state is PlanningDateRangeState) {
+      startDate = state.date;
+    }
+    if (state is PlanningCaseTitleState) {
+      caseId = state.caseId;
+      caseTitle = state.caseTitle;
+    }
 
     List formatters = [
       FilteringTextInputFormatter.digitsOnly,
@@ -77,28 +70,6 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
       FilteringTextInputFormatter.deny(RegExp(r'[/\\]'))
     ];
 
-///////// TODO: REMOVE START
-    // FirstPlanning firstPlanning = Provider.of<FirstPlanning>(context);
-    // TextEditingController _nameController = TextEditingController(
-    //   text: firstPlanning.name,
-    // );
-///////// TODO: REMOVE END
-    // Map<int, String> selectedCourse = {
-    //   0: 'case_runing_id',
-    //   1: 'case_workout_id',
-    //   2: 'case_day_results_id',
-    //   3: 'case_other_id',
-    // };
-    for (int i = 0; i < _cases.length; i++) {
-      setState(() {
-        // if (_cases[i].caseId ==
-        //     context.watch<FirstPlanning>().getCourseId.toString()) {
-        //   selected = i;
-        //   // print(selected);
-        //   // _isActivated = true;
-        // }
-      });
-    }
     return Scaffold(
       backgroundColor: AppColor.lightBG,
       appBar: AppBar(
@@ -129,16 +100,14 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                     return Container(
                       decoration: AppLayout.boxDecorationShadowBG,
                       margin: const EdgeInsets.only(bottom: 15),
-                      child: Column(children: <Widget>[
-                        Theme(
-                          data: ThemeData()
-                              .copyWith(dividerColor: Colors.transparent),
-                          child: ExpansionTile(
+                      child: Column(
+                        children: <Widget>[
+                          Theme(
+                            data: ThemeData()
+                                .copyWith(dividerColor: Colors.transparent),
+                            child: ExpansionTile(
                               key: Key(index.toString()),
-                              //attention
                               initiallyExpanded: index == selected,
-                              //attention
-
                               title: Text(
                                 _cases[index].title,
                                 style: const TextStyle(
@@ -161,96 +130,53 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                   'assets/icons/arrow_deal_down.svg',
                                 ),
                               ),
-                              children: <Widget>[
+                              onExpansionChanged: ((newState) {
+                                if (newState) {
+                                  setState(() {
+                                    // деактивируем все курсы
+                                    for (int i = 0; i < _cases.length; i++) {
+                                      _cases[i].isExpanded = false;
+                                    }
+                                    // активируем выбранный
+                                    selected = index;
+                                    _cases[index].isExpanded = newState;
+                                    _isActivated = false;
+                                    // _shortTitleController = {};
+                                  });
+                                } else {
+                                  setState(() {
+                                    selected = -1;
+                                    _isActivated = false;
+                                  });
+                                }
+                              }),
+                              children: [
                                 Column(
                                   children: [
                                     Text(
                                       _cases[index].description,
-                                      style: TextStyle(height: 1.5),
+                                      style: const TextStyle(height: 1.5),
                                     ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    // Consumer<FirstPlanning>(
-                                    //   builder: (context, appState, child) {
-                                    //     // print('appState');
-                                    //     // print(appState);
-                                    //     // print(appState.getFormData);
-                                    //     // получаю данные формы
-                                    //     Map<String, dynamic> _formData =
-                                    //         appState.getFormData;
-                                    //     // если они есть - вешаю на контроллер
-                                    //     // поля по id
-                                    //     if (_formData[_cases[index].caseId]
-                                    //                 ?['shortTitle'] !=
-                                    //             null &&
-                                    //         _formData[_cases[index].caseId]
-                                    //                 ?['shortTitle'] !=
-                                    //             '' &&
-                                    //         _formData[_cases[index].caseId]
-                                    //                 ?['shortTitle'] !=
-                                    //             'null') {
-                                    //       _shortTitleController[
-                                    //                   _cases[index].caseId]!
-                                    //               .text =
-                                    //           _formData[_cases[index].caseId]![
-                                    //               'shortTitle'];
-                                    //     }
-                                    //
-                                    //     return TextFormField(
-                                    //       // controller: _shortTitleController[
-                                    //       //     _cases[index].caseId],
-                                    //       controller: _shortTitleController[
-                                    //           _cases[index].caseId],
-                                    //       maxLength: 20,
-                                    //       onChanged: (value) {
-                                    //         // print(_shortTitleController[
-                                    //         //     _cases[index].caseId]);
-                                    //         // print(value);
-                                    //         context
-                                    //             .read<FirstPlanning>()
-                                    //             .changeCourseShortTitle(
-                                    //                 _shortTitleController[
-                                    //                         _cases[index].caseId]!
-                                    //                     .text);
-                                    //       },
-                                    //       validator: (value) {
-                                    //         if (value == null ||
-                                    //             value.trim().isEmpty) {
-                                    //           return 'Заполните обязательное поле!';
-                                    //         }
-                                    //         return null;
-                                    //       },
-                                    //       decoration: InputDecoration(
-                                    //         hintText: 'Краткое название дела',
-                                    //         hintStyle: TextStyle(
-                                    //             color: Colors.grey, fontSize: 12),
-                                    //         labelStyle: TextStyle(
-                                    //             color: Colors.grey, fontSize: 12),
-                                    //         fillColor: Colors.white,
-                                    //         filled: true,
-                                    //         errorBorder: OutlineInputBorder(
-                                    //             borderSide: const BorderSide(
-                                    //                 color: Colors.redAccent),
-                                    //             borderRadius: primaryRadius),
-                                    //         enabledBorder: OutlineInputBorder(
-                                    //             borderSide: const BorderSide(
-                                    //                 color: Colors.transparent),
-                                    //             borderRadius: primaryRadius),
-                                    //         focusedBorder: OutlineInputBorder(
-                                    //             borderSide: const BorderSide(
-                                    //                 color: Colors.transparent),
-                                    //             borderRadius: primaryRadius),
-                                    //       ),
-                                    //     );
-                                    //   },
-                                    // ),
+                                    const SizedBox(height: 30),
                                     TextFormField(
+                                      controller: _shortTitleController[
+                                          _cases[index].caseId],
+                                      onChanged: (title) {
+                                        if (title.isNotEmpty) {
+                                          _isActivated = true;
+                                        } else {
+                                          _isActivated = false;
+                                        }
+                                        context.read<PlannerBloc>().add(
+                                            PlanningCaseEvent(
+                                                caseId: _cases[index].caseId,
+                                                caseTitle: title));
+                                      },
                                       decoration: InputDecoration(
                                         hintText: 'Краткое название дела',
-                                        hintStyle: TextStyle(
+                                        hintStyle: const TextStyle(
                                             color: Colors.grey, fontSize: 12),
-                                        labelStyle: TextStyle(
+                                        labelStyle: const TextStyle(
                                             color: Colors.grey, fontSize: 12),
                                         fillColor: AppColor.grey1,
                                         filled: true,
@@ -272,93 +198,23 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                       ),
                                     ),
                                   ],
-                                ),
+                                )
                               ],
-                              onExpansionChanged: ((newState) {
-                                if (newState) {
-                                  setState(() {
-                                    // деактивируем все курсы
-                                    for (int i = 0; i < _cases.length; i++) {
-                                      _cases[i].isExpanded = false;
-                                    }
-                                    // активируем выбранный
-                                    selected = index;
-                                    _cases[index].isExpanded = newState;
-                                    _isActivated = true;
-
-                                    // context
-                                    //     .read<FirstPlanning>()
-                                    //     .changeCourseId(_cases[index].caseId);
-                                  });
-                                } else {
-                                  setState(() {
-                                    selected = -1;
-                                    _isActivated = false;
-                                  });
-                                }
-
-                                // _cases[index].isExpanded = newState;
-                                // setState(() {
-                                //   _customTileExpanded = newState;
-                                // });
-                              })),
-                        ),
-                      ]),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            // Container(
-            //   padding: EdgeInsets.symmetric(horizontal: 20),
-            //   width: MediaQuery.of(context).size.width,
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     mainAxisSize: MainAxisSize.max,
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     children: [
-            //       // context.read<FirstPlanning>().caseDateStart
-            //       Text('Дата старта: ' +
-            //           DateFormat('EEEE d MMMM', 'ru_RU')
-            //               .format(DateTime.parse(context
-            //                   .read<FirstPlanning>()
-            //                   .caseDateStart
-            //                   .toString()))
-            //               .toString()),
-            //       Text(context
-            //                   .read<FirstPlanning>()
-            //                   .getCourseShortTitle
-            //                   .toString() !=
-            //               'null'
-            //           ? 'Краткое название: ' +
-            //               context
-            //                   .watch<FirstPlanning>()
-            //                   .getCourseShortTitle
-            //                   .toString()
-            //           : 'Краткое название:'),
-            //       Text(context
-            //                   .watch<FirstPlanning>()
-            //                   .getCourseTimeFirstDayStart
-            //                   .toString() !=
-            //               'null'
-            //           ? 'Время начала: ' +
-            //               DateFormat('Hm', 'ru_RU').format(DateTime.parse(context
-            //                   .watch<FirstPlanning>()
-            //                   .getCourseTimeFirstDayStart
-            //                   .toString()))
-            //           : 'Время начала:'),
-            //       Text('caseId: ' +
-            //           context.watch<FirstPlanning>().getCourseId.toString()),
-            //     ],
-            //   ),
-            // ),
-            // SizedBox(height: 10),
+            const SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    // primary: Pallete.primary,
                     shape: RoundedRectangleBorder(
                         borderRadius: AppLayout.primaryRadius)),
                 onPressed: _isActivated
@@ -405,7 +261,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
           ],
         ),
       ),

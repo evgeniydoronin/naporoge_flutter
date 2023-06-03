@@ -19,14 +19,15 @@ class StartDateSelectionScreen extends StatefulWidget {
 }
 
 class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
-  final bool _isActivated = false;
+  bool _isActivated = false;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlannerBloc, PlaningState>(
+    return BlocBuilder<PlannerBloc, PlanningState>(
       builder: (context, state) {
         String buttonDate = 'Выбрать';
-        if (state is PlaningGetDateRange) {
+        if (state is PlanningDateRangeState) {
+          _isActivated = true;
           DateTime startDate = state.date;
           DateTime endDate = startDate.add(const Duration(days: 20));
           buttonDate =
@@ -110,9 +111,12 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: AppLayout.primaryRadius)),
-                    onPressed: () {
-                      context.router.push(const ChoiceOfCaseScreenRoute());
-                    },
+                    onPressed: _isActivated
+                        ? () {
+                            context.router
+                                .push(const ChoiceOfCaseScreenRoute());
+                          }
+                        : null,
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text(

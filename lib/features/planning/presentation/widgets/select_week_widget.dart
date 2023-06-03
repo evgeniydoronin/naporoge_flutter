@@ -96,8 +96,6 @@ class _NPCalendarState extends State<NPCalendar> {
   late int offsetStartMonth;
 
   Color colorCell = Colors.white;
-  List rangeDaysList = []; //??
-  List rangeCellListIds = [];
 
   @override
   void initState() {
@@ -128,13 +126,9 @@ class _NPCalendarState extends State<NPCalendar> {
     DateTime mondayNextWeek = mondayCurrentWeek.add(const Duration(days: 7));
 
     int lastWeekNumberOfCurrentMonth = weekNumber(lastDayOfMonth);
-    // print(lastWeekNumberOfCurrentMonth);
-    // print(
-    //     'lastDayOfMonth - ${lastDayOfMonth.add(const Duration(hours: 23, minutes: 59, seconds: 59))}');
-    // print(lastDayOfMonth.weekday);
+
     DateTime lastMondayOfMonth =
         lastDayOfMonth.subtract(Duration(days: lastDayOfMonth.weekday - 1));
-    // print('lastWeekMonday - $lastMondayOfMonth');
 
     // если дата в рамках последней недели месяца
     // выводим следующий месяц
@@ -152,13 +146,7 @@ class _NPCalendarState extends State<NPCalendar> {
       });
     }
 
-    // print(firstDayOfMonth);
-    // print(firstDayOfNextMonth);
-    // print(dayInMonth);
-    // print(offsetStartMonth);
-    // print(_currentDay);
-    // return Text('12');
-    String _month = DateFormat.MMMM('ru')
+    String month = DateFormat.MMMM('ru')
         .format(DateTime.parse(firstDayOfMonth.toString()));
 
     return Column(
@@ -168,7 +156,7 @@ class _NPCalendarState extends State<NPCalendar> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _month.replaceFirst(_month[0], _month[0].toUpperCase()),
+              month.replaceFirst(month[0], month[0].toUpperCase()),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               textAlign: TextAlign.left,
             ),
@@ -176,21 +164,20 @@ class _NPCalendarState extends State<NPCalendar> {
               children: [
                 IconButton(
                     onPressed: () {
-                      print('prev month');
+                      if (DateTime.now().compareTo(_currentDay) < 0) {
+                        changeMonth(false);
+                      }
                     },
                     icon: RotatedBox(
                         quarterTurns: 2,
                         child: SvgPicture.asset('assets/icons/arrow.svg'))),
                 IconButton(
                     onPressed: () {
-                      setState(() {
-                        _currentDay =
-                            DateTime(_currentDay.year, _currentDay.month + 1);
-                      });
-                      print('next month $_currentDay');
-                      setState(() {});
+                      changeMonth(true);
                     },
-                    icon: SvgPicture.asset('assets/icons/arrow.svg')),
+                    icon: SvgPicture.asset(
+                      'assets/icons/arrow.svg',
+                    )),
               ],
             )
           ],
@@ -220,93 +207,133 @@ class _NPCalendarState extends State<NPCalendar> {
         ),
         const SizedBox(height: 10),
         GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7, mainAxisSpacing: 14, childAspectRatio: 1.3),
-            itemCount: dayInMonth + offsetStartMonth,
-            itemBuilder: (BuildContext context, cellIndex) {
-              // Дата в ячейке
-              DateTime cellDayDate = firstDayOfMonth
-                  .add(Duration(days: cellIndex - offsetStartMonth));
-              // Если следующая неделя и не последняя неделя месяца
-              // делаем ячейки активные для выбора
-              // Если последняя неделя месяца - выводим следующий месяц для выбора
-              if (cellDayDate
-                  .isAfter(mondayNextWeek.subtract(const Duration(days: 1)))) {
-                isActiveCellDay = true;
-              }
-              return cellIndex < offsetStartMonth
-                  ? const SizedBox()
-                  : isActiveCellDay
-                      ? cellBuilder(cellIndex, offsetStartMonth)
-                      : Center(
-                          child: Text(
-                            firstDayOfMonth
-                                .add(Duration(
-                                    days: cellIndex - offsetStartMonth))
-                                .day
-                                .toString(),
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 20),
-                          ),
-                        );
-            })
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7, mainAxisSpacing: 1, childAspectRatio: 1),
+          itemCount: dayInMonth + offsetStartMonth,
+          itemBuilder: (BuildContext context, cellIndex) {
+            // Дата в ячейке
+            DateTime cellDate = firstDayOfMonth
+                .add(Duration(days: cellIndex - offsetStartMonth));
+            // Если следующая неделя и не последняя неделя месяца
+            // делаем ячейки активные для выбора
+            // Если последняя неделя месяца - выводим следующий месяц для выбора
+            if (cellDate
+                .isAfter(mondayNextWeek.subtract(const Duration(days: 1)))) {
+              isActiveCellDay = true;
+            }
+            return cellIndex < offsetStartMonth
+                ? const SizedBox()
+                : isActiveCellDay
+                    ? cellBuilder(cellIndex, offsetStartMonth)
+                    : Center(
+                        child: Text(
+                          firstDayOfMonth
+                              .add(Duration(days: cellIndex - offsetStartMonth))
+                              .day
+                              .toString(),
+                          style: TextStyle(color: AppColor.grey2, fontSize: 20),
+                        ),
+                      );
+          },
+        ),
       ],
     );
   }
 
+  void changeMonth(direction) {
+    setState(() {
+      _currentDay = direction
+          ? DateTime(_currentDay.year, _currentDay.month + 1)
+          : DateTime(_currentDay.year, _currentDay.month - 1);
+      firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
+      firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
+      offsetStartMonth = firstDayOfMonth.weekday - 1;
+      dayInMonth =
+          (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+    });
+  }
+
   Widget cellBuilder(cellIndex, offsetStartMonth) {
+    DateTime cellDate =
+        firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth));
+
     return GestureDetector(
       onTap: () {
         DateTime selectCell = firstDayOfMonth.add(Duration(
             days: cellIndex - offsetStartMonth)); // 2022-10-14 00:00:00.000
-        // print(selectCell.weekday);
         DateTime mondayStartRange =
             selectCell.subtract(Duration(days: selectCell.weekday - 1));
-        print(mondayStartRange);
-        // print(DateFormat('y-M-d').format(mondayStartRange));
-        DateTime sundayEndRange =
-            mondayStartRange.add(const Duration(days: 21));
-        print(sundayEndRange);
 
         context
             .read<PlannerBloc>()
-            .add(PlaningSelectRangeEvent(startDate: mondayStartRange));
-        // String dayCellValue =
-        //     DateFormat('yyyy-MM-dd').format(selectCell); // 2022-10-20
-
-        final daysToGenerate =
-            sundayEndRange.difference(mondayStartRange).inDays;
-
-        rangeCellListIds = List.generate(
-            daysToGenerate, (i) => (cellIndex - selectCell.weekday + 1) + i);
-
-        setState(() {});
+            .add(PlanningSelectRangeEvent(startDate: mondayStartRange));
       },
+      child: cellContainer(cellDate),
+    );
+  }
+
+  Container cellContainer(cellDate) {
+    var state = context.watch<PlannerBloc>().state;
+    BoxDecoration decorationFirstLast = const BoxDecoration();
+    BoxDecoration decoration = const BoxDecoration();
+    TextStyle style = const TextStyle(fontSize: 20);
+
+    if (state is PlanningDateRangeState) {
+      DateTime startDate = state.date;
+
+      for (int i = 0; i < 21; i++) {
+        if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
+          colorCell = AppColor.accent;
+          if (i == 0) {
+            decoration = BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColor.accent.withOpacity(0.3),
+            );
+            decorationFirstLast = BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(50),
+                bottomLeft: Radius.circular(50),
+              ),
+              // borderRadius: const BorderRadius.all(Radius.circular(50)),
+              color: AppColor.accent.withOpacity(0.1),
+            );
+            style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+          } else if (i == 20) {
+            decoration = BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColor.accent.withOpacity(0.3),
+            );
+            decorationFirstLast = BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(50),
+                bottomRight: Radius.circular(50),
+              ),
+              // borderRadius: const BorderRadius.all(Radius.circular(50)),
+              color: AppColor.accent.withOpacity(0.1),
+            );
+            style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+          } else {
+            decoration = BoxDecoration(
+              color: AppColor.accent.withOpacity(0.1),
+            );
+          }
+        }
+      }
+    }
+
+    return Container(
+      decoration: decorationFirstLast,
       child: Container(
-        color: rangeCellListIds.contains(cellIndex)
-            ? changeColorCell(rangeCellListIds, cellIndex)
-            : colorCell,
+        decoration: decoration,
         child: Center(
           child: Text(
-            firstDayOfMonth
-                .add(Duration(days: cellIndex - offsetStartMonth))
-                .day
-                .toString(),
-            style: TextStyle(fontSize: 20),
+            cellDate.day.toString(),
+            style: style,
           ),
         ),
       ),
     );
-  }
-
-  Color changeColorCell(rangeCellListIds, cellIndex) {
-    Color colorCell = AppColor.accent.withOpacity(0.1);
-    if (rangeCellListIds.first == cellIndex ||
-        rangeCellListIds.last == cellIndex) {
-      colorCell = AppColor.accent.withOpacity(0.5);
-    }
-    return colorCell;
   }
 }

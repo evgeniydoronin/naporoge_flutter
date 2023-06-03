@@ -50,6 +50,11 @@ dependencies:
   flutter_slidable: ^3.0.0
   mask_text_input_formatter: ^2.4.0
   pin_code_text_field: ^1.8.0
+  json_annotation: ^4.8.1
+  dio: ^5.1.2
+  get_it: ^7.6.0
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +68,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   auto_route_generator: ^7.0.0
   build_runner: ^2.3.3
+  json_serializable: ^6.7.0
+  isar_generator: ^3.1.0+1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

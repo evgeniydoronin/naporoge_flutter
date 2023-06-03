@@ -1,21 +1,25 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:naporoge/core/constants/app_theme.dart';
-import 'package:naporoge/core/routes/app_router.dart';
+import '../../../../../core/constants/app_theme.dart';
+import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
+
+import '../../di/service_locator.dart';
+import '../controller.dart';
 
 @RoutePage()
 class ActivateAccountScreen extends StatefulWidget {
-  const ActivateAccountScreen({Key? key}) : super(key: key);
+  final String phone;
+
+  const ActivateAccountScreen({Key? key, required this.phone})
+      : super(key: key);
 
   @override
   State<ActivateAccountScreen> createState() => _ActivateAccountScreenState();
 }
 
 class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
-  final TextEditingController _textEditingController = TextEditingController();
-
-  // final String uid = FirebaseAuth.instance.currentUser!.uid;
+  final _authController = getIt<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +59,21 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
             const SizedBox(
               height: 30,
             ),
+            Text(
+              widget.phone,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColor.grey2,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
             Row(
               children: [
                 PinCodeTextField(
                   autofocus: true,
-                  controller: _textEditingController,
+                  controller: _authController.authCodeController,
                   maxLength: 6,
                   // hasUnderline: true,
                   hideCharacter: false,
@@ -68,6 +82,28 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
                   // highlightPinBoxColor: Colors.redAccent,
                   // highlightColor: Colors.greenAccent,
                   onDone: (text) async {
+                    var isAuthCode = await _authController.confirmAuthCode(
+                        _authController.authCodeController.text);
+
+                    // 65f322
+
+                    if (isAuthCode['authCode'].isNotEmpty) {
+                      // create user
+                      var student = await _authController.createStudent(
+                          widget.phone,
+                          _authController.authCodeController.text);
+                      // save local storage - Active user
+
+                      print('student');
+                      print(student);
+                      print('student');
+                    } else {
+                      // print warning message
+                      print('NULL isAuthCode');
+                    }
+
+                    // var code = await _phone.getSmsCode(
+                    //     maskFormatter.getUnmaskedText());
                     // var authResultsJSON = await _registrationStudent();
                     // var setUserData = await _updateUser(authUserResults);
 

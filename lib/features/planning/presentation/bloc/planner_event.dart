@@ -1,9 +1,25 @@
 part of 'planner_bloc.dart';
 
-abstract class PlaningEvent {}
+abstract class PlanningEvent {}
 
-class PlaningSelectRangeEvent extends PlaningEvent {
+class PlanningSelectRangeEvent extends PlanningEvent {
   final DateTime startDate;
 
-  PlaningSelectRangeEvent({required this.startDate});
+  PlanningSelectRangeEvent({required this.startDate});
+}
+
+class PlanningCaseEvent extends PlanningEvent {
+  final String caseId;
+  final String caseTitle;
+
+  PlanningCaseEvent({
+    required this.caseId,
+    required this.caseTitle,
+  });
+}
+
+class PlanningCaseDescriptionEvent extends PlanningEvent {
+  final String caseDescription;
+
+  PlanningCaseDescriptionEvent({required this.caseDescription});
 }

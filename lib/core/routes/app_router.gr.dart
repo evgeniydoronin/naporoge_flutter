@@ -58,9 +58,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     ActivateAccountScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ActivateAccountScreenRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const ActivateAccountScreen(),
+        child: ActivateAccountScreen(
+          key: args.key,
+          phone: args.phone,
+        ),
       );
     },
     LoginPhoneConfirmScreenRoute.name: (routeData) {
@@ -70,6 +74,7 @@ abstract class _$AppRouter extends RootStackRouter {
         child: LoginPhoneConfirmScreen(
           key: args.key,
           phone: args.phone,
+          code: args.code,
         ),
       );
     },
@@ -83,6 +88,24 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const LoginScreen(),
+      );
+    },
+    SelectDayPeriodRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SelectDayPeriod(),
+      );
+    },
+    StartDateSelectionScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const StartDateSelectionScreen(),
+      );
+    },
+    ChoiceOfCaseScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ChoiceOfCaseScreen(),
       );
     },
     PlanningScreenRoute.name: (routeData) {
@@ -185,24 +208,6 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const TestScreen(),
-      );
-    },
-    StartDateSelectionScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const StartDateSelectionScreen(),
-      );
-    },
-    ChoiceOfCaseScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ChoiceOfCaseScreen(),
-      );
-    },
-    SelectDayPeriodRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SelectDayPeriod(),
       );
     },
   };
@@ -308,16 +313,41 @@ class SplashScreenRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ActivateAccountScreen]
-class ActivateAccountScreenRoute extends PageRouteInfo<void> {
-  const ActivateAccountScreenRoute({List<PageRouteInfo>? children})
-      : super(
+class ActivateAccountScreenRoute
+    extends PageRouteInfo<ActivateAccountScreenRouteArgs> {
+  ActivateAccountScreenRoute({
+    Key? key,
+    required String phone,
+    List<PageRouteInfo>? children,
+  }) : super(
           ActivateAccountScreenRoute.name,
+          args: ActivateAccountScreenRouteArgs(
+            key: key,
+            phone: phone,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'ActivateAccountScreenRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<ActivateAccountScreenRouteArgs> page =
+      PageInfo<ActivateAccountScreenRouteArgs>(name);
+}
+
+class ActivateAccountScreenRouteArgs {
+  const ActivateAccountScreenRouteArgs({
+    this.key,
+    required this.phone,
+  });
+
+  final Key? key;
+
+  final String phone;
+
+  @override
+  String toString() {
+    return 'ActivateAccountScreenRouteArgs{key: $key, phone: $phone}';
+  }
 }
 
 /// generated route for
@@ -327,12 +357,14 @@ class LoginPhoneConfirmScreenRoute
   LoginPhoneConfirmScreenRoute({
     Key? key,
     required String phone,
+    required int code,
     List<PageRouteInfo>? children,
   }) : super(
           LoginPhoneConfirmScreenRoute.name,
           args: LoginPhoneConfirmScreenRouteArgs(
             key: key,
             phone: phone,
+            code: code,
           ),
           initialChildren: children,
         );
@@ -347,15 +379,18 @@ class LoginPhoneConfirmScreenRouteArgs {
   const LoginPhoneConfirmScreenRouteArgs({
     this.key,
     required this.phone,
+    required this.code,
   });
 
   final Key? key;
 
   final String phone;
 
+  final int code;
+
   @override
   String toString() {
-    return 'LoginPhoneConfirmScreenRouteArgs{key: $key, phone: $phone}';
+    return 'LoginPhoneConfirmScreenRouteArgs{key: $key, phone: $phone, code: $code}';
   }
 }
 
@@ -383,6 +418,48 @@ class LoginScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'LoginScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SelectDayPeriod]
+class SelectDayPeriodRoute extends PageRouteInfo<void> {
+  const SelectDayPeriodRoute({List<PageRouteInfo>? children})
+      : super(
+          SelectDayPeriodRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SelectDayPeriodRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [StartDateSelectionScreen]
+class StartDateSelectionScreenRoute extends PageRouteInfo<void> {
+  const StartDateSelectionScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          StartDateSelectionScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'StartDateSelectionScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ChoiceOfCaseScreen]
+class ChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
+  const ChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          ChoiceOfCaseScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ChoiceOfCaseScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -632,48 +709,6 @@ class TestScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'TestScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [StartDateSelectionScreen]
-class StartDateSelectionScreenRoute extends PageRouteInfo<void> {
-  const StartDateSelectionScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          StartDateSelectionScreenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'StartDateSelectionScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [ChoiceOfCaseScreen]
-class ChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
-  const ChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          ChoiceOfCaseScreenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'ChoiceOfCaseScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [SelectDayPeriod]
-class SelectDayPeriodRoute extends PageRouteInfo<void> {
-  const SelectDayPeriodRoute({List<PageRouteInfo>? children})
-      : super(
-          SelectDayPeriodRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'SelectDayPeriodRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -1,11 +1,24 @@
 part of 'planner_bloc.dart';
 
-abstract class PlaningState {}
+abstract class PlanningState {}
 
-class PlaningInitial extends PlaningState {}
+class PlanningInitial extends PlanningState {}
 
-class PlaningGetDateRange extends PlaningState {
+class PlanningDateRangeState extends PlanningState {
   final DateTime date;
 
-  PlaningGetDateRange(this.date);
+  PlanningDateRangeState(this.date);
+}
+
+class PlanningCaseTitleState extends PlanningState {
+  final String caseId;
+  final String caseTitle;
+
+  PlanningCaseTitleState(this.caseId, this.caseTitle);
+}
+
+class PlanningCaseDescriptionState extends PlanningState {
+  final String caseDescription;
+
+  PlanningCaseDescriptionState(this.caseDescription);
 }
