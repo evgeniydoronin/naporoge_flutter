@@ -4,7 +4,7 @@ import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 
-import '../../di/service_locator.dart';
+import '../../services/service_locator.dart';
 import '../controller.dart';
 
 @RoutePage()
@@ -102,6 +102,10 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                                   phone: widget.phone));
                             } else {
                               print('code error');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Неверный код'),
+                                      duration: Duration(seconds: 2)));
                             }
                           },
                           defaultBorderColor: AppColor.grey2,

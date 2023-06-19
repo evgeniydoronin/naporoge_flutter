@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/routes/app_router.dart';
-import 'features/auth/login/di/service_locator.dart';
-import 'features/planning/presentation/bloc/planner_bloc.dart';
+import 'features/auth/login/services/service_locator.dart';
+import 'features/planning/presentation/bloc/planner_builder_bloc.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (BuildContext context) => PlannerBloc())
+        BlocProvider<PlannerBuilderBloc>(create: (_) => PlannerBuilderBloc()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',

@@ -1,5 +1,10 @@
 PODS:
   - Flutter (1.0.0)
+  - isar_flutter_libs (1.0.0):
+    - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - video_player_avfoundation (0.0.1):
     - Flutter
   - wakelock (0.0.1):
@@ -7,12 +12,18 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - isar_flutter_libs (from `.symlinks/plugins/isar_flutter_libs/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  isar_flutter_libs:
+    :path: ".symlinks/plugins/isar_flutter_libs/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/ios"
   wakelock:
@@ -20,6 +31,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  isar_flutter_libs: b69f437aeab9c521821c3f376198c4371fa21073
+  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 

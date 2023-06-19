@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:naporoge/core/routes/app_router.dart';
-import 'package:naporoge/features/planning/presentation/widgets/day_schedule_widget.dart';
+import '../../../../core/routes/app_router.dart';
+import '../widgets/day_schedule_widget.dart';
 import '../../../../core/constants/app_theme.dart';
-import '../bloc/planner_bloc.dart';
 import '../widgets/stepper_widget.dart';
 
 @RoutePage()
@@ -13,7 +11,33 @@ class SelectDayPeriod extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    DateTime startDate = DateTime.now();
+    String caseId = '';
+    String caseTitle = '';
+
+    // final _formKey = GlobalKey<FormState>();
+    // var state = context.watch<PlannerBloc>().state;
+    //
+    // print('context.read<PlannerBloc>()');
+    // print(BlocProvider.of<PlannerBloc>(context));
+    // print(BlocProvider.of<PlannerBloc>(context).state);
+    // print('context.read<PlannerBloc>()');
+    //
+    // if (state is PlannerSelectDateRangeState) {
+    //   startDate = state.date;
+    //   print('select day period');
+    //   print(startDate);
+    //   print('select day period');
+    // }
+    // if (state is PlannerSelectCaseTitleState) {
+    //   caseId = state.caseId;
+    //   caseTitle = state.caseTitle;
+    //
+    //   // print('select day period');
+    //   // print(caseId);
+    //   // print(caseTitle);
+    //   // print('select day period');
+    // }
 
     return Scaffold(
       backgroundColor: AppColor.lightBG,
@@ -72,7 +96,7 @@ class SelectDayPeriod extends StatelessWidget {
                   top: 15, bottom: 15, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
               child: Text(
-                'Дело',
+                caseTitle,
                 style: TextStyle(
                     color: AppColor.accentBOW,
                     fontSize: AppFont.large,

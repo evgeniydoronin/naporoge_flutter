@@ -7,7 +7,6 @@ import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 
 import '../../../../core/data/models/case_model.dart';
-import '../bloc/planner_bloc.dart';
 import '../widgets/stepper_widget.dart';
 
 @RoutePage()
@@ -54,16 +53,6 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var state = context.watch<PlannerBloc>().state;
-
-    if (state is PlanningDateRangeState) {
-      startDate = state.date;
-    }
-    if (state is PlanningCaseTitleState) {
-      caseId = state.caseId;
-      caseTitle = state.caseTitle;
-    }
-
     List formatters = [
       FilteringTextInputFormatter.digitsOnly,
       FilteringTextInputFormatter.allow(RegExp('[a-zA-Z]')),
@@ -83,6 +72,8 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
         child: Column(
           children: [
             const StepperIcons(step: 1),
+            const SizedBox(height: 20),
+            Text(startDate.toString()),
             const SizedBox(height: 20),
             Form(
               key: _formKey,
@@ -167,10 +158,6 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                         } else {
                                           _isActivated = false;
                                         }
-                                        context.read<PlannerBloc>().add(
-                                            PlanningCaseEvent(
-                                                caseId: _cases[index].caseId,
-                                                caseTitle: title));
                                       },
                                       decoration: InputDecoration(
                                         hintText: 'Краткое название дела',

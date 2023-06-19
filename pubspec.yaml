@@ -55,6 +55,7 @@ dependencies:
   get_it: ^7.6.0
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:

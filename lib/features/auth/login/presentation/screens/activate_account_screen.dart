@@ -1,10 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 
-import '../../di/service_locator.dart';
+import '../../../../../core/services/isar_service.dart';
+import '../../services/service_locator.dart';
+import '../../domain/user_model.dart';
 import '../controller.dart';
 
 @RoutePage()
@@ -20,6 +24,7 @@ class ActivateAccountScreen extends StatefulWidget {
 
 class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
   final _authController = getIt<AuthController>();
+  final isarService = IsarService();
 
   @override
   Widget build(BuildContext context) {
@@ -88,18 +93,27 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
                     // 65f322
 
                     if (isAuthCode['authCode'].isNotEmpty) {
+                      print('create user');
                       // create user
-                      var student = await _authController.createStudent(
+                      var user = await _authController.createStudent(
                           widget.phone,
                           _authController.authCodeController.text);
-                      // save local storage - Active user
 
-                      print('student');
-                      print(student);
-                      print('student');
+                      isarService.saveUser(user['student']['id']);
+
+                      if (context.mounted) {
+                        AutoRouter.of(context)
+                            .replace(const WelcomeScreenRoute());
+                      }
                     } else {
                       // print warning message
                       print('NULL isAuthCode');
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Неверный код активации'),
+                                duration: Duration(seconds: 2)));
+                      }
                     }
 
                     // var code = await _phone.getSmsCode(
@@ -134,26 +148,6 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
             ),
             const SizedBox(
               height: 40,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Navigator.pushAndRemoveUntil(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const WelcomeScreen()),
-                //     (route) => false);
-                context.router.replace(const WelcomeScreenRoute());
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.accent,
-                minimumSize: const Size(double.infinity, 60),
-                shape: RoundedRectangleBorder(
-                    borderRadius: AppLayout.primaryRadius),
-              ),
-              child: const Text(
-                'Войти',
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
             ),
           ],
         ),

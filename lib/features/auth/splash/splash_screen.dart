@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../core/constants/app_theme.dart';
 import '../../../core/routes/app_router.dart';
+import '../../../core/services/isar_service.dart';
+import '../login/domain/user_model.dart';
 import '../login/presentation/screens/login_screen.dart';
 
 @RoutePage()
@@ -16,19 +20,36 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final _innerRouterKey = GlobalKey<AutoRouterState>();
+  final isarService = IsarService();
 
   startSplashScreenTimer() async {
     var _duration = const Duration(seconds: 3);
     return Timer(_duration, navigateToScreen);
   }
 
-  void navigateToScreen() {
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => LoginScreen()),
-    // );
-    AutoRouter.of(context).push(const LoginEmptyRouter());
+  void navigateToScreen() async {
+    const bool isStream = false;
+    final isar = await isarService.db;
+    final userExists = await isar.users.count();
+
+    // if auth code enable
+    // else if created stream enable
+    // else - login screen
+    if (userExists != 0 && !isStream) {
+      if (context.mounted) {
+        AutoRouter.of(context).push(const WelcomeScreenRoute());
+      }
+    } else if (userExists != 0 && isStream) {
+      if (context.mounted) {
+        AutoRouter.of(context).push(const DashboardScreenRoute());
+      }
+    } else if (userExists == 0) {
+      if (context.mounted) {
+        AutoRouter.of(context).push(const LoginEmptyRouter());
+      }
+    }
+
+    // await isar.close();
   }
 
   @override
@@ -58,17 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Flexible(
                 flex: 3,
                 fit: FlexFit.tight,
-                child: GestureDetector(
-                    onTap: () {
-                      print('object');
-                      // var _r = context.router.parent<StackRouter>();
-                      var _r = context.router.root;
-                      print(_r);
-                      print(_r.stack);
-                      context.router.root.push(DashboardScreenRoute());
-                      // _r.push(WelcomeScreenRoute());
-                    },
-                    child: SvgPicture.asset('assets/icons/splash_logo.svg'))),
+                child: SvgPicture.asset('assets/icons/splash_logo.svg')),
             const Flexible(
                 fit: FlexFit.loose,
                 child: Padding(

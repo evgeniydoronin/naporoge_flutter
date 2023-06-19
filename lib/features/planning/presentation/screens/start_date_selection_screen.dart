@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/routes/app_router.dart';
 
 import '../../../../core/constants/app_theme.dart';
-import '../bloc/planner_bloc.dart';
+import '../bloc/planner_builder_bloc.dart';
 import '../widgets/select_week_widget.dart';
 import '../widgets/stepper_widget.dart';
 
@@ -20,19 +20,15 @@ class StartDateSelectionScreen extends StatefulWidget {
 
 class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
   bool _isActivated = false;
+  String buttonDate = 'Выбрать';
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlannerBloc, PlanningState>(
+    return BlocConsumer<PlannerBuilderBloc, PlannerSelectDateRangeState>(
+      listener: (context, state) {
+        // if (state is PlannerSelectDateRangeState)
+      },
       builder: (context, state) {
-        String buttonDate = 'Выбрать';
-        if (state is PlanningDateRangeState) {
-          _isActivated = true;
-          DateTime startDate = state.date;
-          DateTime endDate = startDate.add(const Duration(days: 20));
-          buttonDate =
-              'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
-        }
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
