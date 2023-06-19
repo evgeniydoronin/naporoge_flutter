@@ -8,11 +8,18 @@ abstract class PlannerBuilderEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class PlannerSelectDateRangeEvent extends PlannerBuilderEvent {
-  final DateTime startDate;
+class PlannerDataEvent extends PlannerBuilderEvent {
+  final DateTime? startDate;
+  final String? courseId;
+  final String? courseTitle;
+  final String? courseDescription;
 
-  const PlannerSelectDateRangeEvent({required this.startDate});
+  const PlannerDataEvent(
+      {this.startDate,
+      this.courseId,
+      this.courseTitle,
+      this.courseDescription});
 
   @override
-  List<Object> get props => [startDate];
+  List<Object> get props => [];
 }

@@ -8,11 +8,34 @@ class PlannerInitial extends PlannerState {
 }
 
 @immutable
-class PlannerSelectDateRangeState extends PlannerState {
+class PlannerDataState extends PlannerState {
   final DateTime startDate;
+  final String courseId;
+  final String courseTitle;
+  final String? courseDescription;
 
-  PlannerSelectDateRangeState(this.startDate);
+  PlannerDataState(
+    this.startDate,
+    this.courseId,
+    this.courseTitle,
+    this.courseDescription,
+  );
+
+  PlannerDataState copyWith({
+    DateTime? startDate,
+    String? courseId,
+    String? courseTitle,
+    String? courseDescription,
+  }) {
+    return PlannerDataState(
+      startDate ?? this.startDate,
+      courseId ?? this.courseId,
+      courseTitle ?? this.courseTitle,
+      this.courseDescription,
+    );
+  }
 
   @override
-  List<Object?> get props => [startDate];
+  List<Object?> get props =>
+      [startDate, courseId, courseTitle, courseDescription];
 }

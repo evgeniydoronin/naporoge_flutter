@@ -29,14 +29,13 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
       },
       builder: (context, state) {
         String buttonDate = 'Выбрать';
-        if (state is PlannerSelectDateRangeState) {
+        if (state is PlannerDataState) {
           _isActivated = true;
           DateTime startDate = state.startDate;
           DateTime endDate = startDate.add(const Duration(days: 20));
           buttonDate =
               'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
         }
-        print('state: $state');
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(

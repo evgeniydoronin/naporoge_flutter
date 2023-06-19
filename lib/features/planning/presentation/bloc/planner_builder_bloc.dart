@@ -10,8 +10,17 @@ part 'planner_builder_state.dart';
 
 class PlannerBuilderBloc extends Bloc<PlannerBuilderEvent, PlannerState> {
   PlannerBuilderBloc() : super(PlannerInitial()) {
-    on<PlannerSelectDateRangeEvent>((event, emit) {
-      emit(PlannerSelectDateRangeState(event.startDate));
-    });
+    on<PlannerDataEvent>(_onPlannerDataEvent);
+  }
+
+  void _onPlannerDataEvent(PlannerDataEvent event, Emitter<PlannerState> emit) {
+    emit(
+      PlannerDataState(DateTime.now(), '', '', '').copyWith(
+        startDate: event.startDate,
+        courseId: event.courseId,
+        courseTitle: event.courseTitle,
+        courseDescription: event.courseDescription,
+      ),
+    );
   }
 }

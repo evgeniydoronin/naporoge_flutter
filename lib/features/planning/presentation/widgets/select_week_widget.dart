@@ -277,9 +277,8 @@ class _NPCalendarState extends State<NPCalendar> {
         DateTime mondayStartRange =
             selectCell.subtract(Duration(days: selectCell.weekday - 1));
 
-        context
-            .read<PlannerBuilderBloc>()
-            .add(PlannerSelectDateRangeEvent(startDate: mondayStartRange));
+        context.read<PlannerBuilderBloc>().add(PlannerDataEvent(
+            startDate: mondayStartRange, courseId: '', courseTitle: ''));
       },
       child: cellContainer(cellDate),
     );
@@ -291,12 +290,12 @@ class _NPCalendarState extends State<NPCalendar> {
     BoxDecoration decoration = const BoxDecoration();
     TextStyle style = const TextStyle(fontSize: 20);
 
-    if (state is PlannerSelectDateRangeState) {
+    if (state is PlannerDataState) {
       DateTime startDate = state.startDate;
 
       for (int i = 0; i < 21; i++) {
         if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
-          print(startDate.add(Duration(days: i)));
+          // print(startDate.add(Duration(days: i)));
           colorCell = AppColor.accent;
           if (i == 0) {
             decoration = BoxDecoration(
@@ -330,51 +329,6 @@ class _NPCalendarState extends State<NPCalendar> {
             decoration = BoxDecoration(
               color: AppColor.accent.withOpacity(0.1),
             );
-          }
-        }
-      }
-
-      if (state is PlannerSelectDateRangeState) {
-        DateTime startDate = state.startDate;
-
-        for (int i = 0; i < 21; i++) {
-          if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
-            colorCell = AppColor.accent;
-            if (i == 0) {
-              decoration = BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColor.accent.withOpacity(0.3),
-              );
-              decorationFirstLast = BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  bottomLeft: Radius.circular(50),
-                ),
-                // borderRadius: const BorderRadius.all(Radius.circular(50)),
-                color: AppColor.accent.withOpacity(0.1),
-              );
-              style =
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-            } else if (i == 20) {
-              decoration = BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColor.accent.withOpacity(0.3),
-              );
-              decorationFirstLast = BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(50),
-                  bottomRight: Radius.circular(50),
-                ),
-                // borderRadius: const BorderRadius.all(Radius.circular(50)),
-                color: AppColor.accent.withOpacity(0.1),
-              );
-              style =
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-            } else {
-              decoration = BoxDecoration(
-                color: AppColor.accent.withOpacity(0.1),
-              );
-            }
           }
         }
       }

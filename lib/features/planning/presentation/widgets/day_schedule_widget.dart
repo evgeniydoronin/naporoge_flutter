@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:naporoge/core/constants/app_theme.dart';
+
+import '../bloc/planner_builder_bloc.dart';
 
 Map<String, dynamic> globalSelectedCells = {};
 Map<String, dynamic> tempSelectedCells = {};
@@ -28,65 +31,70 @@ class DayScheduleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RotatedBox(
-                  quarterTurns: 2,
-                  child: SvgPicture.asset('assets/icons/arrow.svg')),
-              Column(
+    String startDateInfo = '';
+
+    return BlocConsumer<PlannerBuilderBloc, PlannerState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state is PlannerDataState) {
+          DateTime startDate = state.startDate;
+          DateTime endDate = startDate.add(const Duration(days: 20));
+          startDateInfo =
+              '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
+        }
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
                 children: [
-                  Text(
-                    'Недля 1/3',
+                  const Text(
+                    'Неделя 1/3',
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  Text('1 декабря - 13 декабря'),
+                  Text(startDateInfo),
                 ],
               ),
-              SvgPicture.asset('assets/icons/arrow.svg'),
-            ],
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 7),
-              alignment: Alignment.centerLeft,
-              width: 50,
-              child: SvgPicture.asset('assets/icons/time.svg'),
             ),
-            Expanded(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  crossAxisSpacing: 1,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(left: 7),
+                  alignment: Alignment.centerLeft,
+                  width: 50,
+                  child: SvgPicture.asset('assets/icons/time.svg'),
                 ),
-                itemCount: weekDaysNameRu.length,
-                itemBuilder: (BuildContext context, dayIndex) {
-                  return Center(
-                    child: Text(
-                      weekDaysNameRu[dayIndex].toString().toUpperCase(),
-                      style: TextStyle(
-                          fontSize: AppFont.smaller,
-                          color: weekDaysNameRu[dayIndex] == 'вс'
-                              ? AppColor.grey2
-                              : AppColor.accent),
+                Expanded(
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 7,
+                      crossAxisSpacing: 1,
                     ),
-                  );
-                },
-              ),
+                    itemCount: weekDaysNameRu.length,
+                    itemBuilder: (BuildContext context, dayIndex) {
+                      return Center(
+                        child: Text(
+                          weekDaysNameRu[dayIndex].toString().toUpperCase(),
+                          style: TextStyle(
+                              fontSize: AppFont.smaller,
+                              color: weekDaysNameRu[dayIndex] == 'вс'
+                                  ? AppColor.grey2
+                                  : AppColor.accent),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
+            const ExpandDayPeriod(),
           ],
-        ),
-        const ExpandDayPeriod(),
-      ],
+        );
+      },
     );
   }
 }

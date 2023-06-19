@@ -1,101 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/routes/app_router.dart';
-import '../bloc/planner_builder_bloc.dart';
-import '../widgets/day_schedule_widget.dart';
+import 'package:naporoge/features/planning/presentation/widgets/day_schedule_widget.dart';
 import '../../../../core/constants/app_theme.dart';
-import '../widgets/stepper_widget.dart';
+import '../bloc/planner_builder_bloc.dart';
 
 @RoutePage()
-class SelectDayPeriod extends StatelessWidget {
-  const SelectDayPeriod({Key? key}) : super(key: key);
+class PlanningScreen extends StatelessWidget {
+  const PlanningScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String courseTitle = '';
-
-    // final _formKey = GlobalKey<FormState>();
-    // var state = context.watch<PlannerBloc>().state;
-    //
-    // print('context.read<PlannerBloc>()');
-    // print(BlocProvider.of<PlannerBloc>(context));
-    // print(BlocProvider.of<PlannerBloc>(context).state);
-    // print('context.read<PlannerBloc>()');
-    //
-    // if (state is PlannerSelectDateRangeState) {
-    //   startDate = state.date;
-    //   print('select day period');
-    //   print(startDate);
-    //   print('select day period');
-    // }
-    // if (state is PlannerSelectCaseTitleState) {
-    //   courseId = state.courseId;
-    //   courseTitle = state.courseTitle;
-    //
-    //   // print('select day period');
-    //   // print(courseId);
-    //   // print(courseTitle);
-    //   // print('select day period');
-    // }
-
     return BlocConsumer<PlannerBuilderBloc, PlannerState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+      listener: (context, state) {},
       builder: (context, state) {
-        if (state is PlannerDataState) {
-          courseTitle = state.courseTitle;
-        }
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
-            foregroundColor: Colors.black,
             backgroundColor: AppColor.lightBG,
             elevation: 0,
             centerTitle: true,
             title: Text(
-              'Планирование',
+              'Планирование1',
               style: AppFont.scaffoldTitleDark,
             ),
           ),
           body: ListView(
             shrinkWrap: true,
             children: [
-              const StepperIcons(step: 2),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.accentBOW,
-                    borderRadius: AppLayout.primaryRadius,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: AppLayout.primaryRadius,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: -20,
-                          right: -60,
-                          child: Image.asset(
-                            'assets/images/19.png',
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 15, bottom: 15, left: 15, right: 80),
-                          child: Text(
-                            'Старт курса – с понедельника. Выберите, с какого начнете',
-                            style: TextStyle(
-                                color: Colors.white, fontSize: AppFont.regular),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -104,9 +37,9 @@ class SelectDayPeriod extends StatelessWidget {
                       top: 15, bottom: 15, left: 18, right: 18),
                   decoration: AppLayout.boxDecorationShadowBG,
                   child: Text(
-                    courseTitle,
+                    'Йога',
                     style: TextStyle(
-                        color: AppColor.accentBOW,
+                        color: Colors.black,
                         fontSize: AppFont.large,
                         fontWeight: FontWeight.w500),
                     textAlign: TextAlign.center,
@@ -128,7 +61,6 @@ class SelectDayPeriod extends StatelessWidget {
                         }
                         return null;
                       },
-                      onChanged: (val) {},
                       maxLines: 2,
                       maxLength: 200,
                       decoration: InputDecoration(
@@ -159,7 +91,7 @@ class SelectDayPeriod extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                    padding: const EdgeInsets.only(bottom: 15),
+                    padding: EdgeInsets.only(bottom: 5),
                     decoration: AppLayout.boxDecorationShadowBG,
                     child: const DayScheduleWidget()),
               ),
@@ -170,9 +102,7 @@ class SelectDayPeriod extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          context.router.replace(const DashboardScreenRoute());
-                        },
+                        onPressed: () {},
                         style: AppLayout.accentBTNStyle,
                         child: Text(
                           'План мне подходит',
