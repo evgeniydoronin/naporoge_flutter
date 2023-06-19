@@ -66,14 +66,15 @@ class NPCalendar extends StatefulWidget {
   /// Use built-in `DateTime` weekday constants (e.g. `DateTime.monday`) instead of `int` literals (e.g. `1`).
   final List<int>? weekendDays;
 
-  const NPCalendar({super.key,
-    this.rangeStartDay,
-    this.rangeEndDay,
-    this.focusedDay,
-    this.firstDay,
-    this.lastDay,
-    required this.currentDay,
-    this.weekendDays});
+  const NPCalendar(
+      {super.key,
+      this.rangeStartDay,
+      this.rangeEndDay,
+      this.focusedDay,
+      this.firstDay,
+      this.lastDay,
+      required this.currentDay,
+      this.weekendDays});
 
   @override
   State<NPCalendar> createState() => _NPCalendarState();
@@ -87,9 +88,9 @@ class _NPCalendarState extends State<NPCalendar> {
   late DateTime firstDayOfNextMonth;
 
   late DateTime lastDayOfMonth =
-  DateTime(_currentDay.year, _currentDay.month + 1, 0);
+      DateTime(_currentDay.year, _currentDay.month + 1, 0);
   late DateTime lastDayOfPreviousMonth =
-  DateTime(_currentDay.year, _currentDay.month, 0);
+      DateTime(_currentDay.year, _currentDay.month, 0);
 
   // Начало месяца со сдвигом на нужную неделю
   late int offsetStartMonth;
@@ -102,9 +103,7 @@ class _NPCalendarState extends State<NPCalendar> {
     firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
     firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
     offsetStartMonth = firstDayOfMonth.weekday - 1;
-    dayInMonth = (firstDayOfMonth
-        .difference(firstDayOfNextMonth)
-        .inDays).abs();
+    dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
 
     super.initState();
   }
@@ -122,21 +121,19 @@ class _NPCalendarState extends State<NPCalendar> {
 
     // понедельник текущей недели
     DateTime mondayCurrentWeek =
-    DateTime.now().subtract(Duration(days: DateTime
-        .now()
-        .weekday - 1));
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
     // понедельник следующей недели
     DateTime mondayNextWeek = mondayCurrentWeek.add(const Duration(days: 7));
 
     int lastWeekNumberOfCurrentMonth = weekNumber(lastDayOfMonth);
 
     DateTime lastMondayOfMonth =
-    lastDayOfMonth.subtract(Duration(days: lastDayOfMonth.weekday - 1));
+        lastDayOfMonth.subtract(Duration(days: lastDayOfMonth.weekday - 1));
 
     // если дата в рамках последней недели месяца
     // выводим следующий месяц
     if (DateTime.now().isBefore(lastDayOfMonth
-        .add(const Duration(hours: 23, minutes: 59, seconds: 59))) &&
+            .add(const Duration(hours: 23, minutes: 59, seconds: 59))) &&
         DateTime.now().isAfter(lastMondayOfMonth)) {
       // print(lastDayOfMonth.add(const Duration(days: 1)));
       setState(() {
@@ -145,16 +142,14 @@ class _NPCalendarState extends State<NPCalendar> {
         firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
         offsetStartMonth = firstDayOfMonth.weekday - 1;
         dayInMonth =
-            (firstDayOfMonth
-                .difference(firstDayOfNextMonth)
-                .inDays).abs();
+            (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
       });
     }
 
     String month = DateFormat.MMMM('ru')
         .format(DateTime.parse(firstDayOfMonth.toString()));
 
-    return BlocConsumer<PlannerBuilderBloc, PlannerSelectDateRangeState>(
+    return BlocConsumer<PlannerBuilderBloc, PlannerState>(
       listener: (context, state) {
         // TODO: implement listener
       },
@@ -212,7 +207,7 @@ class _NPCalendarState extends State<NPCalendar> {
                       style: TextStyle(
                           fontSize: 12,
                           color:
-                          weekDayIndex != 0 ? Colors.grey : Colors.black),
+                              weekDayIndex != 0 ? Colors.grey : Colors.black),
                       textAlign: TextAlign.center,
                     );
                   }),
@@ -238,18 +233,18 @@ class _NPCalendarState extends State<NPCalendar> {
                 return cellIndex < offsetStartMonth
                     ? const SizedBox()
                     : isActiveCellDay
-                    ? cellBuilder(cellIndex, offsetStartMonth)
-                    : Center(
-                  child: Text(
-                    firstDayOfMonth
-                        .add(Duration(
-                        days: cellIndex - offsetStartMonth))
-                        .day
-                        .toString(),
-                    style: TextStyle(
-                        color: AppColor.grey2, fontSize: 20),
-                  ),
-                );
+                        ? cellBuilder(cellIndex, offsetStartMonth)
+                        : Center(
+                            child: Text(
+                              firstDayOfMonth
+                                  .add(Duration(
+                                      days: cellIndex - offsetStartMonth))
+                                  .day
+                                  .toString(),
+                              style: TextStyle(
+                                  color: AppColor.grey2, fontSize: 20),
+                            ),
+                          );
               },
             ),
           ],
@@ -267,22 +262,20 @@ class _NPCalendarState extends State<NPCalendar> {
       firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
       offsetStartMonth = firstDayOfMonth.weekday - 1;
       dayInMonth =
-          (firstDayOfMonth
-              .difference(firstDayOfNextMonth)
-              .inDays).abs();
+          (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
     });
   }
 
   Widget cellBuilder(cellIndex, offsetStartMonth) {
     DateTime cellDate =
-    firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth));
+        firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth));
 
     return GestureDetector(
       onTap: () {
         DateTime selectCell = firstDayOfMonth.add(Duration(
             days: cellIndex - offsetStartMonth)); // 2022-10-14 00:00:00.000
         DateTime mondayStartRange =
-        selectCell.subtract(Duration(days: selectCell.weekday - 1));
+            selectCell.subtract(Duration(days: selectCell.weekday - 1));
 
         context
             .read<PlannerBuilderBloc>()
@@ -293,97 +286,99 @@ class _NPCalendarState extends State<NPCalendar> {
   }
 
   Container cellContainer(cellDate) {
+    var state = context.watch<PlannerBuilderBloc>().state;
     BoxDecoration decorationFirstLast = const BoxDecoration();
     BoxDecoration decoration = const BoxDecoration();
     TextStyle style = const TextStyle(fontSize: 20);
 
-    DateTime startDate = context
-        .watch<PlannerBuilderBloc>()
-        .state
-        .startDate;
+    if (state is PlannerSelectDateRangeState) {
+      DateTime startDate = state.startDate;
 
-    for (int i = 0; i < 21; i++) {
-      if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
-        print(startDate.add(Duration(days: i)));
-        colorCell = AppColor.accent;
-        if (i == 0) {
-          decoration = BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColor.accent.withOpacity(0.3),
-          );
-          decorationFirstLast = BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(50),
-              bottomLeft: Radius.circular(50),
-            ),
-            // borderRadius: const BorderRadius.all(Radius.circular(50)),
-            color: AppColor.accent.withOpacity(0.1),
-          );
-          style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-        } else if (i == 20) {
-          decoration = BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColor.accent.withOpacity(0.3),
-          );
-          decorationFirstLast = BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(50),
-              bottomRight: Radius.circular(50),
-            ),
-            // borderRadius: const BorderRadius.all(Radius.circular(50)),
-            color: AppColor.accent.withOpacity(0.1),
-          );
-          style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-        } else {
-          decoration = BoxDecoration(
-            color: AppColor.accent.withOpacity(0.1),
-          );
+      for (int i = 0; i < 21; i++) {
+        if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
+          print(startDate.add(Duration(days: i)));
+          colorCell = AppColor.accent;
+          if (i == 0) {
+            decoration = BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColor.accent.withOpacity(0.3),
+            );
+            decorationFirstLast = BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(50),
+                bottomLeft: Radius.circular(50),
+              ),
+              // borderRadius: const BorderRadius.all(Radius.circular(50)),
+              color: AppColor.accent.withOpacity(0.1),
+            );
+            style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+          } else if (i == 20) {
+            decoration = BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColor.accent.withOpacity(0.3),
+            );
+            decorationFirstLast = BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(50),
+                bottomRight: Radius.circular(50),
+              ),
+              // borderRadius: const BorderRadius.all(Radius.circular(50)),
+              color: AppColor.accent.withOpacity(0.1),
+            );
+            style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+          } else {
+            decoration = BoxDecoration(
+              color: AppColor.accent.withOpacity(0.1),
+            );
+          }
+        }
+      }
+
+      if (state is PlannerSelectDateRangeState) {
+        DateTime startDate = state.startDate;
+
+        for (int i = 0; i < 21; i++) {
+          if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
+            colorCell = AppColor.accent;
+            if (i == 0) {
+              decoration = BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColor.accent.withOpacity(0.3),
+              );
+              decorationFirstLast = BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  bottomLeft: Radius.circular(50),
+                ),
+                // borderRadius: const BorderRadius.all(Radius.circular(50)),
+                color: AppColor.accent.withOpacity(0.1),
+              );
+              style =
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+            } else if (i == 20) {
+              decoration = BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColor.accent.withOpacity(0.3),
+              );
+              decorationFirstLast = BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(50),
+                  bottomRight: Radius.circular(50),
+                ),
+                // borderRadius: const BorderRadius.all(Radius.circular(50)),
+                color: AppColor.accent.withOpacity(0.1),
+              );
+              style =
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+            } else {
+              decoration = BoxDecoration(
+                color: AppColor.accent.withOpacity(0.1),
+              );
+            }
+          }
         }
       }
     }
-
-    // if (state is PlannerSelectDateRangeState) {
-    //   DateTime startDate = state.startDate;
-    //
-    //   for (int i = 0; i < 21; i++) {
-    //     if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
-    //       colorCell = AppColor.accent;
-    //       if (i == 0) {
-    //         decoration = BoxDecoration(
-    //           shape: BoxShape.circle,
-    //           color: AppColor.accent.withOpacity(0.3),
-    //         );
-    //         decorationFirstLast = BoxDecoration(
-    //           borderRadius: const BorderRadius.only(
-    //             topLeft: Radius.circular(50),
-    //             bottomLeft: Radius.circular(50),
-    //           ),
-    //           // borderRadius: const BorderRadius.all(Radius.circular(50)),
-    //           color: AppColor.accent.withOpacity(0.1),
-    //         );
-    //         style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-    //       } else if (i == 20) {
-    //         decoration = BoxDecoration(
-    //           shape: BoxShape.circle,
-    //           color: AppColor.accent.withOpacity(0.3),
-    //         );
-    //         decorationFirstLast = BoxDecoration(
-    //           borderRadius: const BorderRadius.only(
-    //             topRight: Radius.circular(50),
-    //             bottomRight: Radius.circular(50),
-    //           ),
-    //           // borderRadius: const BorderRadius.all(Radius.circular(50)),
-    //           color: AppColor.accent.withOpacity(0.1),
-    //         );
-    //         style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-    //       } else {
-    //         decoration = BoxDecoration(
-    //           color: AppColor.accent.withOpacity(0.1),
-    //         );
-    //       }
-    //     }
-    //   }
-    // }
 
     return Container(
       decoration: decorationFirstLast,

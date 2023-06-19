@@ -20,15 +20,23 @@ class StartDateSelectionScreen extends StatefulWidget {
 
 class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
   bool _isActivated = false;
-  String buttonDate = 'Выбрать';
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PlannerBuilderBloc, PlannerSelectDateRangeState>(
+    return BlocConsumer<PlannerBuilderBloc, PlannerState>(
       listener: (context, state) {
         // if (state is PlannerSelectDateRangeState)
       },
       builder: (context, state) {
+        String buttonDate = 'Выбрать';
+        if (state is PlannerSelectDateRangeState) {
+          _isActivated = true;
+          DateTime startDate = state.startDate;
+          DateTime endDate = startDate.add(const Duration(days: 20));
+          buttonDate =
+              'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
+        }
+        print('state: $state');
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
