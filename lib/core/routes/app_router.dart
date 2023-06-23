@@ -12,7 +12,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/home/presentation/screens/results_stream_screen.dart';
 import '../../features/more/presentation/screen/more_screen.dart';
 import '../../features/planning/presentation/screens/choice_of_case.dart';
-import '../../features/planning/presentation/screens/planning_screen++.dart';
+import '../../features/planning/presentation/screens/planning_screen.dart';
 import '../../features/planning/presentation/screens/select_day_period.dart';
 import '../../features/planning/presentation/screens/start_date_selection_screen.dart';
 import '../../features/rules/presentation/screens/personal_data_screen.dart';
@@ -96,10 +96,10 @@ class AppRouter extends _$AppRouter {
                 CustomRoute(page: HomeScreenRoute.page, path: ''),
               ],
             ),
-            // CustomRoute(
-            //   page: PlanningScreenRoute.page,
-            //   path: 'planning',
-            // ),
+            CustomRoute(
+              page: PlanningScreenRoute.page,
+              path: 'planning',
+            ),
             CustomRoute(
               page: DiaryEmptyRouter.page,
               path: 'diary',

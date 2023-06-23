@@ -5,10 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:naporoge/core/constants/app_theme.dart';
 
-import '../bloc/planner_builder_bloc.dart';
-
-Map<String, dynamic> globalSelectedCells = {};
-Map<String, dynamic> tempSelectedCells = {};
+import '../bloc/planner_bloc.dart';
 
 final List<DayPeriod> period = [
   DayPeriod(title: 'Утро', rows: 8, start: 4),
@@ -33,15 +30,16 @@ class DayScheduleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     String startDateInfo = '';
 
-    return BlocConsumer<PlannerBuilderBloc, PlannerState>(
+    return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        if (state is PlannerDataState) {
-          DateTime startDate = state.startDate;
-          DateTime endDate = startDate.add(const Duration(days: 20));
-          startDateInfo =
-              '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
-        }
+        print(state);
+        String startDateString = state.startDate;
+        DateTime startDate = DateTime.parse(startDateString);
+        DateTime endDate = startDate.add(const Duration(days: 20));
+        startDateInfo =
+            '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
+
         return Column(
           children: [
             Padding(
@@ -191,7 +189,6 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
   @override
   Widget build(BuildContext context) {
     int periodIndex = widget.periodIndex;
-    Planner planner = Planner(globalSelectedCells: globalSelectedCells);
 
     return ListView.builder(
       shrinkWrap: true,
@@ -251,7 +248,6 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                           period: period[periodIndex],
                           periodIndex: periodIndex,
                           rowIndex: rowIndex,
-                          tempSelectedCells: tempSelectedCells,
                           gridIndex: gridIndex);
 
                       return gridIndex == 6
@@ -265,17 +261,13 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                               onTapDown: null,
                               onTapUp: null,
                               onTap: () {
-                                setState(() {
-                                  tempSelectedCells[
-                                      '$periodIndex.$rowIndex.$gridIndex'] = '';
-                                });
+                                // setState(() {
+                                //   tempSelectedCells[
+                                //       '$periodIndex.$rowIndex.$gridIndex'] = '';
+                                // });
                                 dialogBuilder.open();
                               },
                               onDoubleTap: () {
-                                print(
-                                    'globalSelectedCells: $globalSelectedCells');
-                                planner.removeCell(
-                                    '$periodIndex.$rowIndex.$gridIndex');
                                 // print('globalSelectedCells: $globalSelectedCells');
                                 // context.read<CellProvider>().removeGlobalSelectedCell(
                                 //     '${item.panelIndex}.$rowIndex.$gridIndex');
@@ -296,10 +288,10 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                                   double max = min + cellWidth;
                                   if (xGlobalPosition > min &&
                                       xGlobalPosition <= max) {
-                                    setState(() {
-                                      tempSelectedCells[
-                                          '$periodIndex.$rowIndex.$i'] = '';
-                                    });
+                                    // setState(() {
+                                    //   tempSelectedCells[
+                                    //   '$periodIndex.$rowIndex.$i'] = '';
+                                    // });
                                   }
                                 }
                               },
@@ -369,22 +361,14 @@ Color getColorCell(periodIndex, rowIndex, gridIndex, context) {
   Color _color = Colors.white;
   if (gridIndex == 6) {
     _color = AppColor.accent.withOpacity(0.3);
-  } else if (tempSelectedCells.isNotEmpty) {
-    if (tempSelectedCells.keys.contains('$periodIndex.$rowIndex.$gridIndex') ||
-        globalSelectedCells.keys
-            .contains('$periodIndex.$rowIndex.$gridIndex')) {
-      _color = AppColor.accent;
-    }
+  } else {
+    _color = AppColor.accent;
   }
   return _color;
 }
 
 Column getCellData(periodIndex, rowIndex, gridIndex, context) {
-  String time = '';
-  if (globalSelectedCells.keys.contains('$periodIndex.$rowIndex.$gridIndex')) {
-    DateTime date = globalSelectedCells['$periodIndex.$rowIndex.$gridIndex'];
-    time = DateFormat('Hm').format(date);
-  }
+  String time = '14:55';
 
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -408,75 +392,20 @@ class DayPeriod {
   bool isExpanded;
 }
 
-class Planner {
-  final Map<String, dynamic>? tempSelectedCells;
-  final Map<String, dynamic>? globalSelectedCells;
-
-  Planner({
-    this.tempSelectedCells,
-    this.globalSelectedCells,
-  });
-
-  void removeCell(key) {
-    globalSelectedCells!.remove(key);
-  }
-
-  void clearTempSelectedIndexes() {
-    tempSelectedCells!.clear();
-  }
-
-  Map<String, dynamic> setCellData(bool isFirstSelect, DateTime newDate) {
-    Map<String, dynamic> newGlobalSelectedCells = {};
-
-    if (isFirstSelect) {
-      tempSelectedCells!.updateAll((key, value) => value = newDate);
-      newGlobalSelectedCells = Map<String, dynamic>.from(tempSelectedCells!);
-    } else {
-      // Ячейки для удаления
-      Set<String> prepareDeleteSelectedCells = {};
-
-      final tempSelectedKeys = Set<String>.from(tempSelectedCells!.keys);
-      final globalSelectedKeys = Set<String>.from(globalSelectedCells!.keys);
-
-      // 1. Подготовка ячеек для удаления
-      for (var oldCell in globalSelectedKeys) {
-        for (var newCell in tempSelectedKeys) {
-          if (oldCell.split('.')[2] == newCell.split('.')[2]) {
-            prepareDeleteSelectedCells.add(oldCell);
-          }
-        }
-      }
-
-      // 2. Удаляем из globalSelectedCells пересечение
-      globalSelectedCells!.removeWhere(
-          (key, value) => prepareDeleteSelectedCells.contains(key));
-
-      // 3. Обновляем инфу в новых ячейках
-      tempSelectedCells!.updateAll((key, value) => value = newDate);
-
-      // 4. Объединяем старые и новые ячейки
-      newGlobalSelectedCells = {...globalSelectedCells!, ...tempSelectedCells!};
-    }
-
-    return newGlobalSelectedCells;
-  }
-}
-
 class DialogBuilder {
   BuildContext context;
   DayPeriod period;
   int periodIndex;
   int rowIndex;
   int gridIndex;
-  Map<String, dynamic> tempSelectedCells;
 
-  DialogBuilder(
-      {required this.period,
-      required this.periodIndex,
-      required this.rowIndex,
-      required this.gridIndex,
-      required this.tempSelectedCells,
-      required this.context});
+  DialogBuilder({
+    required this.period,
+    required this.periodIndex,
+    required this.rowIndex,
+    required this.gridIndex,
+    required this.context,
+  });
 
   List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
   List<Widget> defaultMinutesText =
@@ -503,10 +432,6 @@ class DialogBuilder {
         initialDate.year, initialDate.month, initialDate.day, hour, 00);
 
     DateTime newDate = initialHour;
-
-    Planner planner = Planner(
-        tempSelectedCells: tempSelectedCells,
-        globalSelectedCells: globalSelectedCells);
 
     return showDialog<void>(
       barrierDismissible: false,
@@ -535,12 +460,15 @@ class DialogBuilder {
                     child: CupertinoPicker(
                         itemExtent: 26,
                         onSelectedItemChanged: (index) {
+                          print(index);
                           newCellTimeString = DateFormat('Hm').format(DateTime(
                               initialDate.year,
                               initialDate.month,
                               initialDate.day,
                               hour,
                               defaultMinutes[index]));
+
+                          print(newCellTimeString);
                         },
                         children: defaultMinutesText),
                   ),
@@ -557,7 +485,6 @@ class DialogBuilder {
               ),
               child: const Text('Отменить'),
               onPressed: () async {
-                tempSelectedCells.clear();
                 // await planner.clearTempSelectedIndexes();
                 // context.read<CellProvider>().changeCellEnabled(true);
                 Navigator.of(context).pop();
@@ -569,19 +496,8 @@ class DialogBuilder {
               ),
               child: const Text('Выбрать'),
               onPressed: () {
-                // context.read<CellProvider>().changeCellData(newDate);
-                // context.read<CellProvider>().changeCellEnabled(true);
-
-                print(globalSelectedCells);
-                print(newCellTimeString);
-
-                // если глобальных данных нет
-                if (globalSelectedCells.isEmpty) {
-                  globalSelectedCells = planner.setCellData(true, newDate);
-                } else {
-                  globalSelectedCells = planner.setCellData(false, newDate);
-                }
-                planner.clearTempSelectedIndexes();
+                print('newCellTimeString: $newCellTimeString');
+                print('newDate: $newDate');
 
                 Navigator.of(context).pop();
               },

@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_theme.dart';
-import '../bloc/planner_builder_bloc.dart';
+import '../bloc/planner_bloc.dart';
 
 List<String> weekDaysNameRu = [
   'пн',
@@ -21,16 +21,6 @@ class SelectWeekWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // DateTime now = DateTime.now();
-    // DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-    // DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-    // DateTime firstDayOfNextMonth = DateTime(now.year, now.month + 1);
-    // DateTime lastDayOfPreviousMonth = DateTime(now.year, now.month, 0);
-    // int currentDay = now.weekday;
-    // DateTime firstDayOfWeek = now.subtract(Duration(days: currentDay - 1));
-    //
-    // var diff = firstDayOfMonth.difference(firstDayOfNextMonth);
-
     return NPCalendar(currentDay: DateTime.now());
   }
 }
@@ -149,107 +139,96 @@ class _NPCalendarState extends State<NPCalendar> {
     String month = DateFormat.MMMM('ru')
         .format(DateTime.parse(firstDayOfMonth.toString()));
 
-    return BlocConsumer<PlannerBuilderBloc, PlannerState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
-      builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Text(
+              month.replaceFirst(month[0], month[0].toUpperCase()),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.left,
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  month.replaceFirst(month[0], month[0].toUpperCase()),
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.left,
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          if (DateTime.now().compareTo(_currentDay) < 0) {
-                            changeMonth(false);
-                          }
-                        },
-                        icon: RotatedBox(
-                            quarterTurns: 2,
-                            child: SvgPicture.asset('assets/icons/arrow.svg'))),
-                    IconButton(
-                        onPressed: () {
-                          changeMonth(true);
-                        },
-                        icon: SvgPicture.asset(
-                          'assets/icons/arrow.svg',
-                        )),
-                  ],
-                )
+                IconButton(
+                    onPressed: () {
+                      if (DateTime.now().compareTo(_currentDay) < 0) {
+                        changeMonth(false);
+                      }
+                    },
+                    icon: RotatedBox(
+                        quarterTurns: 2,
+                        child: SvgPicture.asset('assets/icons/arrow.svg'))),
+                IconButton(
+                    onPressed: () {
+                      changeMonth(true);
+                    },
+                    icon: SvgPicture.asset(
+                      'assets/icons/arrow.svg',
+                    )),
               ],
-            ),
-            const SizedBox(height: 20),
-            Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 1, color: Color(0x20000000)),
-                ),
-              ),
-              height: 25,
-              child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 7),
-                  itemCount: weekDaysNameRu.length,
-                  itemBuilder: (BuildContext context, weekDayIndex) {
-                    return Text(
-                      weekDaysNameRu[weekDayIndex].toUpperCase(),
-                      style: TextStyle(
-                          fontSize: 12,
-                          color:
-                              weekDayIndex != 0 ? Colors.grey : Colors.black),
-                      textAlign: TextAlign.center,
-                    );
-                  }),
-            ),
-            const SizedBox(height: 10),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7, mainAxisSpacing: 1, childAspectRatio: 1),
-              itemCount: dayInMonth + offsetStartMonth,
-              itemBuilder: (BuildContext context, cellIndex) {
-                // Дата в ячейке
-                DateTime cellDate = firstDayOfMonth
-                    .add(Duration(days: cellIndex - offsetStartMonth));
-                // Если следующая неделя и не последняя неделя месяца
-                // делаем ячейки активные для выбора
-                // Если последняя неделя месяца - выводим следующий месяц для выбора
-                if (cellDate.isAfter(
-                    mondayNextWeek.subtract(const Duration(days: 1)))) {
-                  isActiveCellDay = true;
-                }
-                return cellIndex < offsetStartMonth
-                    ? const SizedBox()
-                    : isActiveCellDay
-                        ? cellBuilder(cellIndex, offsetStartMonth)
-                        : Center(
-                            child: Text(
-                              firstDayOfMonth
-                                  .add(Duration(
-                                      days: cellIndex - offsetStartMonth))
-                                  .day
-                                  .toString(),
-                              style: TextStyle(
-                                  color: AppColor.grey2, fontSize: 20),
-                            ),
-                          );
-              },
-            ),
+            )
           ],
-        );
-      },
+        ),
+        const SizedBox(height: 20),
+        Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(width: 1, color: Color(0x20000000)),
+            ),
+          ),
+          height: 25,
+          child: GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7),
+              itemCount: weekDaysNameRu.length,
+              itemBuilder: (BuildContext context, weekDayIndex) {
+                return Text(
+                  weekDaysNameRu[weekDayIndex].toUpperCase(),
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: weekDayIndex != 0 ? Colors.grey : Colors.black),
+                  textAlign: TextAlign.center,
+                );
+              }),
+        ),
+        const SizedBox(height: 10),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7, mainAxisSpacing: 1, childAspectRatio: 1),
+          itemCount: dayInMonth + offsetStartMonth,
+          itemBuilder: (BuildContext context, cellIndex) {
+            // Дата в ячейке
+            DateTime cellDate = firstDayOfMonth
+                .add(Duration(days: cellIndex - offsetStartMonth));
+            // Если следующая неделя и не последняя неделя месяца
+            // делаем ячейки активные для выбора
+            // Если последняя неделя месяца - выводим следующий месяц для выбора
+            if (cellDate
+                .isAfter(mondayNextWeek.subtract(const Duration(days: 1)))) {
+              isActiveCellDay = true;
+            }
+            return cellIndex < offsetStartMonth
+                ? const SizedBox()
+                : isActiveCellDay
+                    ? cellBuilder(cellIndex, offsetStartMonth)
+                    : Center(
+                        child: Text(
+                          firstDayOfMonth
+                              .add(Duration(days: cellIndex - offsetStartMonth))
+                              .day
+                              .toString(),
+                          style: TextStyle(color: AppColor.grey2, fontSize: 20),
+                        ),
+                      );
+          },
+        ),
+      ],
     );
   }
 
@@ -277,59 +256,63 @@ class _NPCalendarState extends State<NPCalendar> {
         DateTime mondayStartRange =
             selectCell.subtract(Duration(days: selectCell.weekday - 1));
 
-        context.read<PlannerBuilderBloc>().add(PlannerDataEvent(
-            startDate: mondayStartRange, courseId: '', courseTitle: ''));
+        context.read<PlannerBloc>().add(StreamStartDateChanged(
+            DateFormat('yyyy-MM-dd').format(mondayStartRange)));
       },
       child: cellContainer(cellDate),
     );
   }
 
   Container cellContainer(cellDate) {
-    var state = context.watch<PlannerBuilderBloc>().state;
+    var state = context.watch<PlannerBloc>().state;
     BoxDecoration decorationFirstLast = const BoxDecoration();
     BoxDecoration decoration = const BoxDecoration();
     TextStyle style = const TextStyle(fontSize: 20);
 
-    if (state is PlannerDataState) {
-      DateTime startDate = state.startDate;
+    String startDateString = state.startDate;
 
-      for (int i = 0; i < 21; i++) {
-        if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
-          // print(startDate.add(Duration(days: i)));
-          colorCell = AppColor.accent;
-          if (i == 0) {
-            decoration = BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColor.accent.withOpacity(0.3),
-            );
-            decorationFirstLast = BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(50),
-                bottomLeft: Radius.circular(50),
-              ),
-              // borderRadius: const BorderRadius.all(Radius.circular(50)),
-              color: AppColor.accent.withOpacity(0.1),
-            );
-            style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-          } else if (i == 20) {
-            decoration = BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColor.accent.withOpacity(0.3),
-            );
-            decorationFirstLast = BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(50),
-                bottomRight: Radius.circular(50),
-              ),
-              // borderRadius: const BorderRadius.all(Radius.circular(50)),
-              color: AppColor.accent.withOpacity(0.1),
-            );
-            style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-          } else {
-            decoration = BoxDecoration(
-              color: AppColor.accent.withOpacity(0.1),
-            );
-          }
+    DateTime startDate = DateTime.now();
+
+    if (startDateString.isNotEmpty) {
+      startDate = DateTime.parse(startDateString);
+    }
+
+    for (int i = 0; i < 21; i++) {
+      if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
+        // print(startDate.add(Duration(days: i)));
+        colorCell = AppColor.accent;
+        if (i == 0) {
+          decoration = BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColor.accent.withOpacity(0.3),
+          );
+          decorationFirstLast = BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(50),
+              bottomLeft: Radius.circular(50),
+            ),
+            // borderRadius: const BorderRadius.all(Radius.circular(50)),
+            color: AppColor.accent.withOpacity(0.1),
+          );
+          style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+        } else if (i == 20) {
+          decoration = BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColor.accent.withOpacity(0.3),
+          );
+          decorationFirstLast = BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(50),
+              bottomRight: Radius.circular(50),
+            ),
+            // borderRadius: const BorderRadius.all(Radius.circular(50)),
+            color: AppColor.accent.withOpacity(0.1),
+          );
+          style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+        } else {
+          decoration = BoxDecoration(
+            color: AppColor.accent.withOpacity(0.1),
+          );
         }
       }
     }

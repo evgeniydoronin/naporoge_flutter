@@ -2,51 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/routes/app_router.dart';
-import '../bloc/planner_builder_bloc.dart';
+import '../bloc/planner_bloc.dart';
 import '../widgets/day_schedule_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../widgets/stepper_widget.dart';
 
 @RoutePage()
-class SelectDayPeriod extends StatelessWidget {
+class SelectDayPeriod extends StatefulWidget {
   const SelectDayPeriod({Key? key}) : super(key: key);
 
   @override
+  State<SelectDayPeriod> createState() => _SelectDayPeriodState();
+}
+
+class _SelectDayPeriodState extends State<SelectDayPeriod> {
+  @override
   Widget build(BuildContext context) {
-    String courseTitle = '';
+    String courseDescription = '';
 
-    // final _formKey = GlobalKey<FormState>();
-    // var state = context.watch<PlannerBloc>().state;
-    //
-    // print('context.read<PlannerBloc>()');
-    // print(BlocProvider.of<PlannerBloc>(context));
-    // print(BlocProvider.of<PlannerBloc>(context).state);
-    // print('context.read<PlannerBloc>()');
-    //
-    // if (state is PlannerSelectDateRangeState) {
-    //   startDate = state.date;
-    //   print('select day period');
-    //   print(startDate);
-    //   print('select day period');
-    // }
-    // if (state is PlannerSelectCaseTitleState) {
-    //   courseId = state.courseId;
-    //   courseTitle = state.courseTitle;
-    //
-    //   // print('select day period');
-    //   // print(courseId);
-    //   // print(courseTitle);
-    //   // print('select day period');
-    // }
-
-    return BlocConsumer<PlannerBuilderBloc, PlannerState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+    return BlocConsumer<PlannerBloc, PlannerState>(
+      listener: (context, state) {},
       builder: (context, state) {
-        if (state is PlannerDataState) {
-          courseTitle = state.courseTitle;
-        }
+        print(state);
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
@@ -104,7 +81,7 @@ class SelectDayPeriod extends StatelessWidget {
                       top: 15, bottom: 15, left: 18, right: 18),
                   decoration: AppLayout.boxDecorationShadowBG,
                   child: Text(
-                    courseTitle,
+                    state.courseTitle,
                     style: TextStyle(
                         color: AppColor.accentBOW,
                         fontSize: AppFont.large,
@@ -128,7 +105,11 @@ class SelectDayPeriod extends StatelessWidget {
                         }
                         return null;
                       },
-                      onChanged: (val) {},
+                      onChanged: (description) {
+                        context
+                            .read<PlannerBloc>()
+                            .add(StreamCourseDescriptionChanged(description));
+                      },
                       maxLines: 2,
                       maxLength: 200,
                       decoration: InputDecoration(
