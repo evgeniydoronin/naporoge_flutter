@@ -113,10 +113,12 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                       maxLines: 2,
                       maxLength: 200,
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(10),
+                        contentPadding: const EdgeInsets.all(10),
                         hintText: 'Укажите объем выполнения и цель дела',
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
-                        labelStyle: TextStyle(color: Colors.grey, fontSize: 12),
+                        hintStyle:
+                            const TextStyle(color: Colors.grey, fontSize: 12),
+                        labelStyle:
+                            const TextStyle(color: Colors.grey, fontSize: 12),
                         fillColor: Colors.white,
                         filled: true,
                         errorBorder: OutlineInputBorder(

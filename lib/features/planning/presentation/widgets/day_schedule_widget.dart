@@ -4,14 +4,107 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:naporoge/core/constants/app_theme.dart';
+import 'package:collection/collection.dart';
 
 import '../bloc/planner_bloc.dart';
+
+Function eq = const ListEquality().equals;
+
+// REMOVE DUPLICATE ELEMENTS
+extension ListExtension<T> on List<T> {
+  bool _containsElement(T e) {
+    for (T element in this) {
+      if (element.toString().compareTo(e.toString()) == 0) return true;
+    }
+    return false;
+  }
+
+  List<T> removeDuplicates() {
+    List<T> tempList = [];
+
+    for (var element in this) {
+      if (!tempList._containsElement(element)) tempList.add(element);
+    }
+
+    return tempList;
+  }
+}
 
 final List<DayPeriod> period = [
   DayPeriod(title: 'Утро', rows: 8, start: 4),
   DayPeriod(title: 'День', rows: 7, start: 12),
   DayPeriod(title: 'Вечер', rows: 8, start: 19),
 ];
+
+List<Map> cells = [];
+List<List> newCellsList = [];
+List<List> deleteCellsList = [];
+
+void deleteFromList(List deleteCellsList) {
+  for (List deleteCell in deleteCellsList) {
+    cells.removeWhere((cell) => eq(cell['id'], deleteCell));
+  }
+}
+
+void addOrUpdateCellList(newCellsList, cellData) {
+  // Существующие пункты
+  List existingCell = [];
+
+  // если есть активные ячейки
+  if (cells.isNotEmpty) {
+    List globalCellsIDs = cells.map((e) => e['id']).toList();
+
+    // print('Входящий список для обновления данными');
+    // print('Входящий новый список: $newCellsList');
+    for (List newCellId in newCellsList) {
+      existingCell
+          .addAll(globalCellsIDs.where((cellID) => eq(cellID, newCellId)));
+    }
+
+    // print('existingCell: $existingCell');
+
+    // перекрестные ячейки, на замену новой
+    List<List> prepareForDelete = [];
+
+    for (List cellID in globalCellsIDs) {
+      for (List newCellId in newCellsList) {
+        if (newCellId[2] == cellID[2]) {
+          prepareForDelete.addAll([cellID]);
+        }
+      }
+    }
+
+    for (List cellForDelete in prepareForDelete) {
+      globalCellsIDs.removeWhere((cell) => eq(cell, cellForDelete));
+    }
+
+    // Удаляем старые перекрестные ячейки
+    // print('prepareForDelete: $prepareForDelete');
+    deleteFromList(prepareForDelete);
+
+    // print('Глобальный страый оставляем без изменений');
+    // print(
+    //     'Глобальный страый список после удаления перекрестных: $globalCellsIDs');
+  }
+
+  // Создаем новые ячейки
+  for (List newCellId in newCellsList) {
+    List<Map> addNewMapToCell = [
+      {
+        'id': newCellId,
+        'startTime': cellData['startTime'],
+        'actualTime': '10:20',
+        'data': {
+          'message': 'Message',
+        }
+      },
+    ];
+
+    cells.addAll(addNewMapToCell);
+  }
+
+  // print('AFTER ADD or UPDATE: $cells');
+}
 
 final List<String> weekDaysNameRu = [
   'пн',
