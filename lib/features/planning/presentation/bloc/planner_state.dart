@@ -11,13 +11,13 @@ final class PlannerState extends Equatable {
   final String startDate;
   final String courseTitle;
   final String courseDescription;
-  final List<List> selectedCellIDs;
+  final List selectedCellIDs;
 
   PlannerState copyWith({
     String? startDate,
     String? courseTitle,
     String? courseDescription,
-    List<List>? selectedCellIDs,
+    List? selectedCellIDs,
   }) {
     return PlannerState(
       startDate: startDate ?? this.startDate,

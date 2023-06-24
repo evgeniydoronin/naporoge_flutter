@@ -151,7 +151,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                       onChanged: (title) {
                                         context.read<PlannerBloc>().add(
                                             StreamCourseTitleChanged(title));
-                                        print(title);
+                                        // print(title);
                                         // context
                                         //     .read<PlannerBuilderBloc>()
                                         //     .add(PlannerDataEvent(

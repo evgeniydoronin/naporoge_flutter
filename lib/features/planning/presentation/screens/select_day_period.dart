@@ -23,7 +23,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        print(state);
+        // print(state);
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
@@ -154,7 +154,11 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          context.router.replace(const DashboardScreenRoute());
+                          print(context.read<PlannerBloc>().state);
+                          print(cells);
+                          Map<String, dynamic> StreamData = {};
+
+                          // context.router.replace(const DashboardScreenRoute());
                         },
                         style: AppLayout.accentBTNStyle,
                         child: Text(

@@ -64,7 +64,7 @@ void addOrUpdateCellList(newCellsList, cellData) {
     // print('existingCell: $existingCell');
 
     // перекрестные ячейки, на замену новой
-    List<List> prepareForDelete = [];
+    List prepareForDelete = [];
 
     for (List cellID in globalCellsIDs) {
       for (List newCellId in newCellsList) {
@@ -93,9 +93,9 @@ void addOrUpdateCellList(newCellsList, cellData) {
       {
         'id': newCellId,
         'startTime': cellData['startTime'],
-        'actualTime': '10:20',
+        'actualTime': '',
         'data': {
-          'message': 'Message',
+          'message': '',
         }
       },
     ];
@@ -126,7 +126,6 @@ class DayScheduleWidget extends StatelessWidget {
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        print(state);
         String startDateString = state.startDate;
         DateTime startDate = DateTime.parse(startDateString);
         DateTime endDate = startDate.add(const Duration(days: 20));
@@ -281,255 +280,195 @@ class DayPeriodRow extends StatefulWidget {
 class _DayPeriodRowState extends State<DayPeriodRow> {
   @override
   Widget build(BuildContext context) {
+    List newCells = [];
     int periodIndex = widget.periodIndex;
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: period[periodIndex].rows,
-      itemBuilder: (BuildContext context, int rowIndex) {
-        String hourStart = (period[periodIndex].start + rowIndex).toString();
-        String hourFinished = '';
-        if (int.parse(hourStart) < 9) {
-          hourStart = '0$hourStart';
-          hourFinished =
-              '0${(period[periodIndex].start + rowIndex + 1).toString()}';
-        } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
-          hourFinished = (period[periodIndex].start + rowIndex + 1).toString();
-        } else if (int.parse(hourStart) == 23) {
-          hourFinished = '00';
-        } else if (int.parse(hourStart) > 23) {
-          hourStart = '0${(rowIndex - 5).toString()}';
-          hourFinished = '0${(rowIndex - 4).toString()}';
-        }
+    return BlocConsumer<PlannerBloc, PlannerState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: period[periodIndex].rows,
+          itemBuilder: (BuildContext context, int rowIndex) {
+            String hourStart =
+                (period[periodIndex].start + rowIndex).toString();
+            String hourFinished = '';
+            if (int.parse(hourStart) < 9) {
+              hourStart = '0$hourStart';
+              hourFinished =
+                  '0${(period[periodIndex].start + rowIndex + 1).toString()}';
+            } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
+              hourFinished =
+                  (period[periodIndex].start + rowIndex + 1).toString();
+            } else if (int.parse(hourStart) == 23) {
+              hourFinished = '00';
+            } else if (int.parse(hourStart) > 23) {
+              hourStart = '0${(rowIndex - 5).toString()}';
+              hourFinished = '0${(rowIndex - 4).toString()}';
+            }
 
-        return Container(
-          padding: const EdgeInsets.only(bottom: 1),
-          color: AppColor.grey1,
-          child: Row(
-            children: [
-              Container(
-                color: Colors.white,
-                width: 49,
-                height: 42,
-                margin: const EdgeInsets.only(right: 1),
-                child: Center(
-                  child: Text(
-                    '$hourStart - $hourFinished',
-                    style: TextStyle(
-                        fontSize: AppFont.smaller, color: AppColor.grey3),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: LayoutBuilder(builder:
-                    (BuildContext context, BoxConstraints constraints) {
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 7,
-                      crossAxisSpacing: 1,
-                      mainAxisSpacing: 10,
+            return Container(
+              padding: const EdgeInsets.only(bottom: 1),
+              color: AppColor.grey1,
+              child: Row(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    width: 49,
+                    height: 42,
+                    margin: const EdgeInsets.only(right: 1),
+                    child: Center(
+                      child: Text(
+                        '$hourStart - $hourFinished',
+                        style: TextStyle(
+                            fontSize: AppFont.smaller, color: AppColor.grey3),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    itemCount: 7,
-                    itemBuilder: (BuildContext context, gridIndex) {
-                      DialogBuilder dialogBuilder = DialogBuilder(
-                          context: context,
-                          period: period[periodIndex],
-                          periodIndex: periodIndex,
-                          rowIndex: rowIndex,
-                          gridIndex: gridIndex);
+                  ),
+                  Expanded(
+                    child: LayoutBuilder(builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                          crossAxisSpacing: 1,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemCount: 7,
+                        itemBuilder: (BuildContext context, gridIndex) {
+                          // DialogBuilder dialogBuilder = DialogBuilder(
+                          //     context: context,
+                          //     newCells: newCells,
+                          //     period: period[periodIndex],
+                          //     periodIndex: periodIndex,
+                          //     rowIndex: rowIndex,
+                          //     gridIndex: gridIndex);
 
-                      return gridIndex == 6
-                          ? DayPeriodCell(
-                              periodIndex: periodIndex,
-                              gridIndex: gridIndex,
-                              rowIndex: rowIndex,
-                              constraints: constraints,
-                            )
-                          : GestureDetector(
-                              onTapDown: null,
-                              onTapUp: null,
-                              onTap: () {
-                                // setState(() {
-                                //   tempSelectedCells[
-                                //       '$periodIndex.$rowIndex.$gridIndex'] = '';
-                                // });
-                                dialogBuilder.open();
-                              },
-                              onDoubleTap: () {
-                                // print('globalSelectedCells: $globalSelectedCells');
-                                // context.read<CellProvider>().removeGlobalSelectedCell(
-                                //     '${item.panelIndex}.$rowIndex.$gridIndex');
-                              },
-                              onLongPressMoveUpdate:
-                                  (LongPressMoveUpdateDetails details) {
-                                double cellWidth =
-                                    (constraints.maxWidth / 7).floorToDouble();
-                                double widthWeekPeriodRow =
-                                    constraints.maxWidth -
-                                        6; // 303.0, 6 - grid gap
-                                double xGlobalPosition = details
-                                        .globalPosition.dx -
-                                    70; // (20 : padding-right) + (50 : 04-05 hours period)
+                          return gridIndex == 6
+                              ? DayPeriodCell(
+                                  periodIndex: periodIndex,
+                                  gridIndex: gridIndex,
+                                  rowIndex: rowIndex,
+                                  constraints: constraints,
+                                )
+                              : GestureDetector(
+                                  onTapDown: null,
+                                  onTapUp: null,
+                                  onTap: () async {
+                                    // print('SelectCell');
 
-                                for (int i = 0; i < 6; i++) {
-                                  double min = cellWidth * i;
-                                  double max = min + cellWidth;
-                                  if (xGlobalPosition > min &&
-                                      xGlobalPosition <= max) {
-                                    // setState(() {
-                                    //   tempSelectedCells[
-                                    //   '$periodIndex.$rowIndex.$i'] = '';
-                                    // });
-                                  }
-                                }
-                              },
-                              onLongPressEnd: (details) {
-                                dialogBuilder.open();
-                              },
-                              child: DayPeriodCell(
-                                periodIndex: periodIndex,
-                                gridIndex: gridIndex,
-                                rowIndex: rowIndex,
-                                constraints: constraints,
-                              ),
-                            );
-                    },
-                  );
-                }),
+                                    newCells.add(
+                                        [periodIndex, rowIndex, gridIndex]);
+
+                                    context.read<PlannerBloc>().add(
+                                        SelectCell(selectedCellIDs: newCells));
+
+                                    _dialogBuilder(newCells);
+
+                                    // dialogBuilder.open();
+                                  },
+                                  onDoubleTap: () {
+                                    newCells.add(
+                                        [periodIndex, rowIndex, gridIndex]);
+                                    deleteFromList(newCells);
+                                    setState(() {});
+                                  },
+                                  onLongPressMoveUpdate:
+                                      (LongPressMoveUpdateDetails details) {
+                                    double cellWidth =
+                                        (constraints.maxWidth / 7)
+                                            .floorToDouble();
+                                    double widthWeekPeriodRow =
+                                        constraints.maxWidth -
+                                            6; // 303.0, 6 - grid gap
+                                    double xGlobalPosition = details
+                                            .globalPosition.dx -
+                                        70; // (20 : padding-right) + (50 : 04-05 hours period)
+
+                                    for (int i = 0; i < 6; i++) {
+                                      double min = cellWidth * i;
+                                      double max = min + cellWidth;
+                                      if (xGlobalPosition > min &&
+                                          xGlobalPosition <= max) {
+                                        newCells
+                                            .add([periodIndex, rowIndex, i]);
+
+                                        context
+                                            .read<PlannerBloc>()
+                                            .add(SelectCell(selectedCellIDs: [
+                                              [periodIndex, rowIndex, i]
+                                            ]));
+                                      }
+                                    }
+                                  },
+                                  onLongPressEnd: (details) {
+                                    var _ids = newCells.removeDuplicates();
+
+                                    _dialogBuilder(_ids);
+
+                                    context.read<PlannerBloc>().add(SelectCell(
+                                            selectedCellIDs: [
+                                              newCells.removeDuplicates()
+                                            ]));
+                                    setState(() {});
+                                  },
+                                  child: DayPeriodCell(
+                                    periodIndex: periodIndex,
+                                    gridIndex: gridIndex,
+                                    rowIndex: rowIndex,
+                                    constraints: constraints,
+                                  ),
+                                );
+                        },
+                      );
+                    }),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
-}
 
-class DayPeriodCell extends StatefulWidget {
-  final int periodIndex, rowIndex, gridIndex;
-  final BoxConstraints constraints;
-
-  const DayPeriodCell(
-      {Key? key,
-      required this.periodIndex,
-      required this.rowIndex,
-      required this.gridIndex,
-      required this.constraints})
-      : super(key: key);
-
-  @override
-  State<DayPeriodCell> createState() => _DayPeriodCellState();
-}
-
-class _DayPeriodCellState extends State<DayPeriodCell> {
-  late int gridIndex;
-
-  @override
-  void initState() {
-    gridIndex = widget.gridIndex;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    int periodIndex = widget.periodIndex;
-    int rowIndex = widget.rowIndex;
-
-    // TODO: добавить стейты
-    return Container(
-      color: getColorCell(periodIndex, rowIndex, gridIndex, context),
-      child: getCellData(periodIndex, rowIndex, gridIndex, context),
-    );
-  }
-}
-
-Color getColorCell(periodIndex, rowIndex, gridIndex, context) {
-  // print(tempSelectedCells);
-  // print(globalSelectedCells);
-  Color _color = Colors.white;
-  if (gridIndex == 6) {
-    _color = AppColor.accent.withOpacity(0.3);
-  } else {
-    _color = AppColor.accent;
-  }
-  return _color;
-}
-
-Column getCellData(periodIndex, rowIndex, gridIndex, context) {
-  String time = '14:55';
-
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(time),
-    ],
-  );
-}
-
-class DayPeriod {
-  DayPeriod({
-    required this.title,
-    required this.rows,
-    required this.start,
-    this.isExpanded = false,
-  });
-
-  String title;
-  int rows;
-  int start;
-  bool isExpanded;
-}
-
-class DialogBuilder {
-  BuildContext context;
-  DayPeriod period;
-  int periodIndex;
-  int rowIndex;
-  int gridIndex;
-
-  DialogBuilder({
-    required this.period,
-    required this.periodIndex,
-    required this.rowIndex,
-    required this.gridIndex,
-    required this.context,
-  });
-
-  List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
-  List<Widget> defaultMinutesText =
-      List.generate(12, (index) => Text('${index * 5}'));
-
-  Future<void> open() async {
-    int hour = (period.start + rowIndex).toInt();
-
-    switch (hour) {
-      case 24:
-        hour = 0;
-        break;
-      case 25:
-        hour = 1;
-        break;
-      case 26:
-        hour = 2;
-        break;
-    }
-
-    String newCellTimeString = '$hour:00';
-    DateTime initialDate = DateTime.now();
-    DateTime initialHour = DateTime(
-        initialDate.year, initialDate.month, initialDate.day, hour, 00);
-
-    DateTime newDate = initialHour;
-
+  _dialogBuilder(ids) {
     return showDialog<void>(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext ctx) {
+        List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
+        List<Widget> defaultMinutesText =
+            List.generate(12, (index) => Text('${index * 5}'));
+
+        int periodStart = period[ids[0][0]].start;
+        int rowIndex = ids[0][1];
+        int hour = (periodStart + rowIndex).toInt();
+
+        switch (hour) {
+          case 24:
+            hour = 0;
+            break;
+          case 25:
+            hour = 1;
+            break;
+          case 26:
+            hour = 2;
+            break;
+        }
+
+        String newCellTimeString = '$hour:00';
+        DateTime initialDate = DateTime.now();
+        DateTime initialHour = DateTime(
+            initialDate.year, initialDate.month, initialDate.day, hour, 00);
+
+        DateTime newDate = initialHour;
+
         return AlertDialog(
           title: const Text('Выбрать время'),
           content: SizedBox(
@@ -553,7 +492,7 @@ class DialogBuilder {
                     child: CupertinoPicker(
                         itemExtent: 26,
                         onSelectedItemChanged: (index) {
-                          print(index);
+                          // print(index);
                           newCellTimeString = DateFormat('Hm').format(DateTime(
                               initialDate.year,
                               initialDate.month,
@@ -561,7 +500,7 @@ class DialogBuilder {
                               hour,
                               defaultMinutes[index]));
 
-                          print(newCellTimeString);
+                          // print(newCellTimeString);
                         },
                         children: defaultMinutesText),
                   ),
@@ -578,9 +517,13 @@ class DialogBuilder {
               ),
               child: const Text('Отменить'),
               onPressed: () async {
-                // await planner.clearTempSelectedIndexes();
-                // context.read<CellProvider>().changeCellEnabled(true);
-                Navigator.of(context).pop();
+                // Удаляем из стейта перекрестные значения
+                context
+                    .read<PlannerBloc>()
+                    .add(RemoveCell(selectedCellIDs: ids));
+                setState(() {});
+
+                Navigator.pop(context);
               },
             ),
             TextButton(
@@ -589,10 +532,18 @@ class DialogBuilder {
               ),
               child: const Text('Выбрать'),
               onPressed: () {
-                print('newCellTimeString: $newCellTimeString');
-                print('newDate: $newDate');
+                Map data = {'startTime': newCellTimeString};
 
-                Navigator.of(context).pop();
+                // Удаляем из стейта перекрестные значения
+                context
+                    .read<PlannerBloc>()
+                    .add(RemoveCell(selectedCellIDs: ids));
+
+                addOrUpdateCellList(ids, data);
+
+                setState(() {});
+
+                Navigator.pop(context);
               },
             ),
           ],
@@ -600,4 +551,107 @@ class DialogBuilder {
       },
     );
   }
+}
+
+class DayPeriodCell extends StatefulWidget {
+  final int periodIndex, rowIndex, gridIndex;
+  final BoxConstraints constraints;
+
+  const DayPeriodCell(
+      {Key? key,
+      required this.periodIndex,
+      required this.rowIndex,
+      required this.gridIndex,
+      required this.constraints})
+      : super(key: key);
+
+  @override
+  State<DayPeriodCell> createState() => _DayPeriodCellState();
+}
+
+class _DayPeriodCellState extends State<DayPeriodCell> {
+  late int periodIndex;
+  late int rowIndex;
+  late int gridIndex;
+
+  @override
+  void initState() {
+    periodIndex = widget.periodIndex;
+    rowIndex = widget.rowIndex;
+    gridIndex = widget.gridIndex;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color cellColor =
+        gridIndex == 6 ? Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
+    Color bgColor = Colors.transparent;
+    Color fontColor = Colors.black;
+
+    String textCell = '';
+
+    final List cellsState = context.read<PlannerBloc>().state.selectedCellIDs;
+
+    if (cellsState.isNotEmpty) {
+      // print('cellsState');
+      // print(cellsState);
+      // print('cellsState');
+      for (List cell in cellsState) {
+        // print('cell: $cell');
+        if (eq(cell, [periodIndex, rowIndex, gridIndex])) {
+          cellColor = Colors.redAccent;
+        }
+      }
+    }
+
+    if (cells.isNotEmpty) {
+      for (Map cell in cells) {
+        // print('cell: $cell');
+        if (eq(cell['id'], [periodIndex, rowIndex, gridIndex])) {
+          cellColor = const Color.fromARGB(255, 82, 194, 255);
+          textCell = cell['startTime'];
+        }
+        // if (cell["id"] == [periodIndex, rowIndex, gridIndex]) {
+        //   cellColor = Colors.redAccent;
+      }
+      // print('cells');
+      // print(cells);
+      // print('cells');
+    }
+
+    // TODO: добавить стейты
+    return BlocConsumer<PlannerBloc, PlannerState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Container(
+          color: cellColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                textCell.isNotEmpty ? textCell : "",
+                style: TextStyle(color: fontColor, fontSize: 12),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class DayPeriod {
+  DayPeriod({
+    required this.title,
+    required this.rows,
+    required this.start,
+    this.isExpanded = false,
+  });
+
+  String title;
+  int rows;
+  int start;
+  bool isExpanded;
 }

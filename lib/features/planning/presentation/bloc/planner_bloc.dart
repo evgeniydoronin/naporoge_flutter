@@ -13,7 +13,7 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
     on<StreamStartDateChanged>(_onStreamStartDateChanged);
     on<StreamCourseTitleChanged>(_onCourseTitleChanged);
     on<StreamCourseDescriptionChanged>(_onCourseDescriptionChanged);
-    on<SelectCell>(_onAddorUpdateCell);
+    on<SelectCell>(_onAddOrUpdateCell);
     on<RemoveCell>(_onRemoveCell);
   }
 
@@ -41,9 +41,9 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
     emit(state.copyWith(courseDescription: courseDescription));
   }
 
-  void _onAddorUpdateCell(SelectCell event, Emitter<PlannerState> emit) {
+  void _onAddOrUpdateCell(SelectCell event, Emitter<PlannerState> emit) {
     // print('SelectCell');
-    List<List> newCellsList = event.selectedCellIDs;
+    List newCellsList = event.selectedCellIDs;
 
     if (state.selectedCellIDs.isNotEmpty) {
       // print(state.selectedCellIDs);
@@ -57,9 +57,9 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
   }
 
   void _onRemoveCell(RemoveCell event, Emitter<PlannerState> emit) {
-    List<List> newCellsList = event.selectedCellIDs;
+    // List newCellsList = event.selectedCellIDs;
     // print('RemoveCell');
     // print(state.selectedCellIDs);
-    emit(state.copyWith(selectedCellIDs: newCellsList));
+    emit(state.copyWith(selectedCellIDs: []));
   }
 }

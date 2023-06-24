@@ -35,16 +35,16 @@ final class StreamCourseDescriptionChanged extends PlannerEvent {
 }
 
 final class SelectCell extends PlannerEvent {
-  final List<List> selectedCellIDs;
+  final List selectedCellIDs;
 
   const SelectCell({required this.selectedCellIDs});
-
+  
   @override
   List<Object> get props => [selectedCellIDs];
 }
 
 final class RemoveCell extends PlannerEvent {
-  final List<List> selectedCellIDs;
+  final List selectedCellIDs;
 
   const RemoveCell({required this.selectedCellIDs});
 
