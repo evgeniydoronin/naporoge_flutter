@@ -1,13 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
-
-import '../../../../core/services/isar_service.dart';
-import '../data/models/new_user_model.dart';
-import '../data/models/user_model.dart';
 import '../data/repository/user_repository.dart';
-import '../services/service_locator.dart';
-import '../domain/user_model.dart';
+import '../../../../core/services/controllers/service_locator.dart';
 
 class AuthController {
   // --------------- Repository -------------
@@ -19,7 +12,7 @@ class AuthController {
   final authCodeController = TextEditingController();
 
   // -------------- Local Variables ---------------
-  final List<NewUser> newUsers = [];
+  // final List<NewUser> newUsers = [];
 
   // -------------- DATABASE ---------------
 

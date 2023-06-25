@@ -3,47 +3,16 @@ import 'package:dio/dio.dart';
 import '../../../../../../core/services/http_client/dio_client.dart';
 import '../../../../../../core/constants/endpoints.dart';
 
-class UserApi {
+class StreamApi {
   final DioClient dioClient;
 
-  UserApi({required this.dioClient});
+  StreamApi({required this.dioClient});
 
-  Future<Response> getSmsConfirmCodeApi(String phone) async {
+  Future<Response> createStreamApi(Map streamData) async {
     try {
       final Response response = await dioClient.post(
-        Endpoints.smsCode,
-        data: {
-          'phone': phone,
-        },
-      );
-      return response;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<Response> confirmAuthCodeApi(String authCode) async {
-    try {
-      final Response response = await dioClient.post(
-        Endpoints.authCode,
-        data: {
-          'authCode': authCode,
-        },
-      );
-      return response;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<Response> createStudentApi(String phone, String authCode) async {
-    try {
-      final Response response = await dioClient.post(
-        Endpoints.createStudent,
-        data: {
-          'phone': phone,
-          'authCode': authCode,
-        },
+        Endpoints.createStream,
+        data: streamData,
       );
       return response;
     } catch (e) {

@@ -7,7 +7,7 @@ import 'package:naporoge/features/planning/presentation/bloc/planner_bloc.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 
-import '../../../../core/data/models/case_model.dart';
+import '../../../../core/data/models/course_model.dart';
 
 // import '../bloc/planner_builder_bloc.dart';
 import '../widgets/stepper_widget.dart';
@@ -22,29 +22,29 @@ class ChoiceOfCaseScreen extends StatefulWidget {
 
 class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
   int? selected;
-  final List<NPCase> _cases = NPCase.generateDeal();
+  final List<Course> _courses = Course.generateDeal();
   late bool _isActivated;
 
   final _formKey = GlobalKey<FormState>();
 
   final Map<String, TextEditingController> _shortTitleController = {};
 
-  String caseId = '';
-  String caseTitle = '';
+  String courseId = '';
+  String courseTitle = '';
 
   @override
   void initState() {
     super.initState();
     _isActivated = false;
 
-    for (var cases in _cases) {
+    for (var cases in _courses) {
       _shortTitleController[cases.title] = TextEditingController();
     }
   }
 
   @override
   void dispose() {
-    for (var cases in _cases) {
+    for (var cases in _courses) {
       _shortTitleController[cases.title]?.dispose();
     }
     super.dispose();
@@ -83,7 +83,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                   padding: const EdgeInsets.only(bottom: 25.0),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _cases.length,
+                  itemCount: _courses.length,
                   itemBuilder: (context, index) {
                     return Container(
                       decoration: AppLayout.boxDecorationShadowBG,
@@ -97,7 +97,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                               key: Key(index.toString()),
                               initiallyExpanded: index == selected,
                               title: Text(
-                                _cases[index].title,
+                                _courses[index].title,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black,
@@ -109,7 +109,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                 width: 50,
                                 padding: const EdgeInsets.only(left: 15),
                                 child: SvgPicture.asset(
-                                  _cases[index].iconUrl,
+                                  _courses[index].iconUrl,
                                 ),
                               ),
                               trailing: Padding(
@@ -122,12 +122,12 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                 if (newState) {
                                   setState(() {
                                     // деактивируем все курсы
-                                    for (int i = 0; i < _cases.length; i++) {
-                                      _cases[i].isExpanded = false;
+                                    for (int i = 0; i < _courses.length; i++) {
+                                      _courses[i].isExpanded = false;
                                     }
                                     // активируем выбранный
                                     selected = index;
-                                    _cases[index].isExpanded = newState;
+                                    _courses[index].isExpanded = newState;
                                     _isActivated = false;
                                   });
                                 } else {
@@ -141,16 +141,19 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                 Column(
                                   children: [
                                     Text(
-                                      _cases[index].description,
+                                      _courses[index].description,
                                       style: const TextStyle(height: 1.5),
                                     ),
                                     const SizedBox(height: 30),
                                     TextFormField(
                                       controller: _shortTitleController[
-                                          _cases[index].caseId],
+                                          _courses[index].courseId],
                                       onChanged: (title) {
                                         context.read<PlannerBloc>().add(
                                             StreamCourseTitleChanged(title));
+                                        context.read<PlannerBloc>().add(
+                                            StreamCourseIdChanged(
+                                                _courses[index].courseId));
                                         // print(title);
                                         // context
                                         //     .read<PlannerBuilderBloc>()

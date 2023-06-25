@@ -93,10 +93,6 @@ void addOrUpdateCellList(newCellsList, cellData) {
       {
         'id': newCellId,
         'startTime': cellData['startTime'],
-        'actualTime': '',
-        'data': {
-          'message': '',
-        }
       },
     ];
 
@@ -106,15 +102,7 @@ void addOrUpdateCellList(newCellsList, cellData) {
   // print('AFTER ADD or UPDATE: $cells');
 }
 
-final List<String> weekDaysNameRu = [
-  'пн',
-  'вт',
-  'ср',
-  'чт',
-  'пт',
-  'сб',
-  'вс',
-];
+final List<String> weekDaysNameRu = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
 class DayScheduleWidget extends StatelessWidget {
   const DayScheduleWidget({Key? key}) : super(key: key);
@@ -126,9 +114,12 @@ class DayScheduleWidget extends StatelessWidget {
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
+        // TODO: доработать входящие данные по количеству недель курса
+        int weeks = 3;
         String startDateString = state.startDate;
         DateTime startDate = DateTime.parse(startDateString);
-        DateTime endDate = startDate.add(const Duration(days: 20));
+
+        DateTime endDate = startDate.add(Duration(days: (weeks * 7) - 1));
         startDateInfo =
             '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
 
@@ -257,7 +248,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               height: period[periodIndex].isExpanded
-                  ? (period[periodIndex].rows * 45)
+                  ? (period[periodIndex].rows * 43)
                   : 0,
               child: DayPeriodRow(periodIndex: periodIndex),
             )
@@ -341,14 +332,6 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                         ),
                         itemCount: 7,
                         itemBuilder: (BuildContext context, gridIndex) {
-                          // DialogBuilder dialogBuilder = DialogBuilder(
-                          //     context: context,
-                          //     newCells: newCells,
-                          //     period: period[periodIndex],
-                          //     periodIndex: periodIndex,
-                          //     rowIndex: rowIndex,
-                          //     gridIndex: gridIndex);
-
                           return gridIndex == 6
                               ? DayPeriodCell(
                                   periodIndex: periodIndex,
@@ -585,8 +568,9 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
 
   @override
   Widget build(BuildContext context) {
-    Color cellColor =
-        gridIndex == 6 ? Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
+    Color cellColor = gridIndex == 6
+        ? const Color(0xFF00A2FF).withOpacity(0.3)
+        : Colors.white;
     Color bgColor = Colors.transparent;
     Color fontColor = Colors.black;
 
@@ -595,11 +579,7 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
     final List cellsState = context.read<PlannerBloc>().state.selectedCellIDs;
 
     if (cellsState.isNotEmpty) {
-      // print('cellsState');
-      // print(cellsState);
-      // print('cellsState');
       for (List cell in cellsState) {
-        // print('cell: $cell');
         if (eq(cell, [periodIndex, rowIndex, gridIndex])) {
           cellColor = Colors.redAccent;
         }
@@ -613,15 +593,9 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
           cellColor = const Color.fromARGB(255, 82, 194, 255);
           textCell = cell['startTime'];
         }
-        // if (cell["id"] == [periodIndex, rowIndex, gridIndex]) {
-        //   cellColor = Colors.redAccent;
       }
-      // print('cells');
-      // print(cells);
-      // print('cells');
     }
 
-    // TODO: добавить стейты
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {

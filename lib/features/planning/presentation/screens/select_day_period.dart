@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/services/controllers/service_locator.dart';
+import '../../../../core/services/db_client/isar_service.dart';
 import '../bloc/planner_bloc.dart';
+import '../stream_controller.dart';
 import '../widgets/day_schedule_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../widgets/stepper_widget.dart';
@@ -16,14 +19,21 @@ class SelectDayPeriod extends StatefulWidget {
 }
 
 class _SelectDayPeriodState extends State<SelectDayPeriod> {
+  final _streamController = getIt<StreamController>();
+
   @override
   Widget build(BuildContext context) {
     String courseDescription = '';
+    final isarService = IsarService();
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
         // print(state);
+        context
+            .read<PlannerBloc>()
+            .add(FinalCellForCreateStream(finalCellIDs: cells));
+
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
@@ -153,10 +163,25 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          print(context.read<PlannerBloc>().state);
-                          print(cells);
-                          Map<String, dynamic> StreamData = {};
+                        onPressed: () async {
+                          var user = await isarService.getUser();
+                          Map streamData = {
+                            "user_id": user.first.id,
+                            "start_at": state.startDate,
+                            "weeks": 3,
+                            "is_active": true,
+                            "course_id": state.courseId,
+                            "title": state.courseTitle,
+                            "description": state.courseDescription,
+                            "cells": state.finalCellIDs,
+                          };
+
+                          // var newStream =
+                          //     await _streamController.createStream(streamData);
+
+                          print('newStream');
+                          print(state.finalCellIDs);
+                          print('newStream');
 
                           // context.router.replace(const DashboardScreenRoute());
                         },

@@ -4,8 +4,8 @@ import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 
-import '../../services/service_locator.dart';
-import '../controller.dart';
+import '../../../../../core/services/controllers/service_locator.dart';
+import '../auth_controller.dart';
 
 @RoutePage()
 class LoginPhoneConfirmScreen extends StatefulWidget {

@@ -10,7 +10,11 @@ class Endpoints {
   // connectTimeout
   static const Duration connectionTimeout = Duration(seconds: 5);
 
+  // User data
   static const String smsCode = '/code';
   static const String authCode = '/auth';
   static const String createStudent = '/create-student';
+  
+  // Stream data
+  static const String createStream = '/create-stream';
 }

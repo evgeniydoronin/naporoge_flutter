@@ -6,10 +6,10 @@ import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 
-import '../../../../../core/services/isar_service.dart';
-import '../../services/service_locator.dart';
+import '../../../../../core/services/db_client/isar_service.dart';
+import '../../../../../core/services/controllers/service_locator.dart';
 import '../../domain/user_model.dart';
-import '../controller.dart';
+import '../auth_controller.dart';
 
 @RoutePage()
 class ActivateAccountScreen extends StatefulWidget {

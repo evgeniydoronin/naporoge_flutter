@@ -16,6 +16,15 @@ final class StreamStartDateChanged extends PlannerEvent {
   List<Object> get props => [startDate];
 }
 
+final class StreamCourseIdChanged extends PlannerEvent {
+  const StreamCourseIdChanged(this.courseId);
+
+  final String courseId;
+
+  @override
+  List<Object> get props => [courseId];
+}
+
 final class StreamCourseTitleChanged extends PlannerEvent {
   const StreamCourseTitleChanged(this.courseTitle);
 
@@ -38,9 +47,18 @@ final class SelectCell extends PlannerEvent {
   final List selectedCellIDs;
 
   const SelectCell({required this.selectedCellIDs});
-  
+
   @override
   List<Object> get props => [selectedCellIDs];
+}
+
+final class FinalCellForCreateStream extends PlannerEvent {
+  final List finalCellIDs;
+
+  const FinalCellForCreateStream({required this.finalCellIDs});
+
+  @override
+  List<Object> get props => [finalCellIDs];
 }
 
 final class RemoveCell extends PlannerEvent {

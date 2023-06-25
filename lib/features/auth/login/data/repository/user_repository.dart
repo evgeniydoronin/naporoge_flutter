@@ -1,7 +1,4 @@
 import 'package:dio/dio.dart';
-
-import '../models/new_user_model.dart';
-import '../models/user_model.dart';
 import '../network/api/user_api.dart';
 
 class UserRepository {

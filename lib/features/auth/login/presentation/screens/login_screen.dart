@@ -8,8 +8,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../../core/routes/app_router.dart';
 import '../../../../../core/constants/app_theme.dart';
-import '../../services/service_locator.dart';
-import '../controller.dart';
+import '../../../../../core/services/controllers/service_locator.dart';
+import '../auth_controller.dart';
 
 @RoutePage(name: 'LoginEmptyRouter')
 class LoginEmptyRouterPage extends AutoRouter {}

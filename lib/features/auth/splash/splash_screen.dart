@@ -7,7 +7,7 @@ import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/constants/app_theme.dart';
 import '../../../core/routes/app_router.dart';
-import '../../../core/services/isar_service.dart';
+import '../../../core/services/db_client/isar_service.dart';
 import '../login/domain/user_model.dart';
 import '../login/presentation/screens/login_screen.dart';
 
