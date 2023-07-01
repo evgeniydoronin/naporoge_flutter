@@ -169,7 +169,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
-                          CircularLoading(context).startLoading();
+                          // CircularLoading(context).startLoading();
                           var user = await isarService.getUser();
                           Map streamData = {
                             "user_id": user.first.id,

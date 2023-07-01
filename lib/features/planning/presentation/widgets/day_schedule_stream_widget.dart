@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:naporoge/core/constants/app_theme.dart';
 import 'package:collection/collection.dart';
+import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
 
 import '../bloc/planner_bloc.dart';
 
@@ -105,84 +108,158 @@ void addOrUpdateCellList(newCellsList, cellData) {
 
 final List<String> weekDaysNameRu = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
-class DayScheduleWidget extends StatelessWidget {
-  const DayScheduleWidget({Key? key}) : super(key: key);
+class DayScheduleStreamWidget extends StatelessWidget {
+  final NPStream stream;
+
+  const DayScheduleStreamWidget({Key? key, required this.stream})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String startDateInfo = '';
+    // До старта курса
+    // - можно редактировать первую неделю
+    //
+    // Во время курса
+    // - Если текущая неделя не последняя на курсе:
+    // -- Текущая неделя только на просмотр
+    // -- Предыдущая неделя только на просмотр
+    // -- Следующая неделя активна для редактирования
+    // - Иначе
+    // -- только на просмотр текущей недели и предыдущих
+    //
+    // После завершения курса
+    // - посмотреть все недели курса
 
-    return BlocConsumer<PlannerBloc, PlannerState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        // TODO: доработать входящие данные по количеству недель курса
-        int weeks = 3;
-        String startDateString = state.startDate;
-        DateTime startDate = DateTime.parse(startDateString);
+    List cells = jsonDecode(stream.weekBacklink.first.cells!);
 
-        DateTime endDate = startDate.add(Duration(days: (weeks * 7) - 1));
-        startDateInfo =
-            '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
-
-        return Column(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
+            children: [
+              const Text(
+                'Неделя 1/3',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              Text(DateFormat('dd.MM.y').format(stream.startAt!)),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(
-                children: [
-                  const Text(
-                    'Неделя 1/3',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  Text(startDateInfo),
-                ],
+            Container(
+              padding: const EdgeInsets.only(left: 7),
+              alignment: Alignment.centerLeft,
+              width: 50,
+              child: SvgPicture.asset('assets/icons/time.svg'),
+            ),
+            Expanded(
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  crossAxisSpacing: 1,
+                ),
+                itemCount: weekDaysNameRu.length,
+                itemBuilder: (BuildContext context, dayIndex) {
+                  return Center(
+                    child: Text(
+                      weekDaysNameRu[dayIndex].toString().toUpperCase(),
+                      style: TextStyle(
+                          fontSize: AppFont.smaller,
+                          color: weekDaysNameRu[dayIndex] == 'вс'
+                              ? AppColor.grey2
+                              : AppColor.accent),
+                    ),
+                  );
+                },
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(left: 7),
-                  alignment: Alignment.centerLeft,
-                  width: 50,
-                  child: SvgPicture.asset('assets/icons/time.svg'),
-                ),
-                Expanded(
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 7,
-                      crossAxisSpacing: 1,
-                    ),
-                    itemCount: weekDaysNameRu.length,
-                    itemBuilder: (BuildContext context, dayIndex) {
-                      return Center(
-                        child: Text(
-                          weekDaysNameRu[dayIndex].toString().toUpperCase(),
-                          style: TextStyle(
-                              fontSize: AppFont.smaller,
-                              color: weekDaysNameRu[dayIndex] == 'вс'
-                                  ? AppColor.grey2
-                                  : AppColor.accent),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const ExpandDayPeriod(),
           ],
-        );
-      },
+        ),
+        ExpandDayPeriod(
+          cells: cells,
+        ),
+      ],
     );
+
+    // return BlocConsumer<PlannerBloc, PlannerState>(
+    //   listener: (context, state) {},
+    //   builder: (context, state) {
+    //     // TODO: доработать входящие данные по количеству недель курса
+    //     int weeks = 3;
+    //     String startDateString = state.startDate;
+    //     DateTime startDate = DateTime.parse(startDateString);
+    //
+    //     DateTime endDate = startDate.add(Duration(days: (weeks * 7) - 1));
+    //     startDateInfo =
+    //         '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
+    //
+    //     return Column(
+    //       children: [
+    //         Padding(
+    //           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    //           child: Column(
+    //             children: [
+    //               const Text(
+    //                 'Неделя 1/3',
+    //                 style: TextStyle(fontWeight: FontWeight.w500),
+    //               ),
+    //               Text(startDateInfo),
+    //             ],
+    //           ),
+    //         ),
+    //         Row(
+    //           mainAxisAlignment: MainAxisAlignment.start,
+    //           children: [
+    //             Container(
+    //               padding: const EdgeInsets.only(left: 7),
+    //               alignment: Alignment.centerLeft,
+    //               width: 50,
+    //               child: SvgPicture.asset('assets/icons/time.svg'),
+    //             ),
+    //             Expanded(
+    //               child: GridView.builder(
+    //                 shrinkWrap: true,
+    //                 physics: const NeverScrollableScrollPhysics(),
+    //                 gridDelegate:
+    //                     const SliverGridDelegateWithFixedCrossAxisCount(
+    //                   crossAxisCount: 7,
+    //                   crossAxisSpacing: 1,
+    //                 ),
+    //                 itemCount: weekDaysNameRu.length,
+    //                 itemBuilder: (BuildContext context, dayIndex) {
+    //                   return Center(
+    //                     child: Text(
+    //                       weekDaysNameRu[dayIndex].toString().toUpperCase(),
+    //                       style: TextStyle(
+    //                           fontSize: AppFont.smaller,
+    //                           color: weekDaysNameRu[dayIndex] == 'вс'
+    //                               ? AppColor.grey2
+    //                               : AppColor.accent),
+    //                     ),
+    //                   );
+    //                 },
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         const ExpandDayPeriod(),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 }
 
 class ExpandDayPeriod extends StatefulWidget {
-  const ExpandDayPeriod({Key? key}) : super(key: key);
+  final List cells;
+
+  const ExpandDayPeriod({Key? key, required this.cells}) : super(key: key);
 
   @override
   State<ExpandDayPeriod> createState() => _ExpandDayPeriodState();
@@ -213,6 +290,9 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
 
   @override
   Widget build(BuildContext context) {
+    List cells = widget.cells;
+    print(cells);
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

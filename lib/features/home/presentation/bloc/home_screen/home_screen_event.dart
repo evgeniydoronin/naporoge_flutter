@@ -15,3 +15,21 @@ final class TopMessageChanged extends HomeScreenEvent {
   @override
   List<Object> get props => [message];
 }
+
+final class WeekDayIndexChanged extends HomeScreenEvent {
+  const WeekDayIndexChanged(this.weekDayIndex);
+
+  final int weekDayIndex;
+
+  @override
+  List<Object> get props => [weekDayIndex];
+}
+
+final class StreamProgressChanged extends HomeScreenEvent {
+  const StreamProgressChanged(this.streamProgress);
+
+  final Map streamProgress;
+
+  @override
+  List<Object> get props => [streamProgress];
+}

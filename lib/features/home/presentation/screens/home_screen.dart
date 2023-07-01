@@ -7,7 +7,6 @@ import '../../../../core/utils/get_status_stream.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../../../planning/data/sources/local/stream_local_storage.dart';
 import '../bloc/home_screen/home_screen_bloc.dart';
@@ -45,9 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String _btnText = '';
-    String topMessage = '';
-
     return Scaffold(
       backgroundColor: AppColor.lightBG,
       body: FutureBuilder(
@@ -56,6 +52,10 @@ class _HomeScreenState extends State<HomeScreen> {
           if (snapshot.hasData) {
             NPStream stream = snapshot.data;
             Map streamStatus = getStreamStatus(stream);
+
+            context
+                .read<HomeScreenBloc>()
+                .add(StreamProgressChanged(streamStatus));
 
             return ListView(
               children: [
@@ -68,10 +68,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                           child: Text(DateFormat('dd-MM-y', 'ru_RU')
                               .format(DateTime.now()))),
-                      BlocBuilder<HomeScreenBloc, HomeScreenState>(
+                      BlocConsumer<HomeScreenBloc, HomeScreenState>(
+                        listener: (context, state) {},
+                        buildWhen: (previous, current) =>
+                            previous.streamProgress != current.streamProgress,
+                        listenWhen: (previous, current) =>
+                            previous.streamProgress != current.streamProgress,
                         builder: (context, state) {
-                          return Text(
-                              state.message ?? streamStatus['topMessage']);
+                          String title = streamStatus['messages']['topMessage'];
+                          if (state.streamProgress != null) {
+                            title =
+                                state.streamProgress!['messages']['topMessage'];
+                          }
+                          return Text(title);
                         },
                       ),
                     ],
@@ -116,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 10),
                 WeekStatusPoint(stream: stream),
                 const SizedBox(height: 10),
-                // WeekProgress(stream: stream),
+                WeekProgress(stream: stream),
                 const SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),

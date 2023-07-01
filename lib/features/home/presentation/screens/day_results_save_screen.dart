@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/core/constants/app_messages.dart';
 import 'package:naporoge/features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
 import '../../../../core/utils/circular_loading.dart';
+import '../../../../core/utils/get_status_stream.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
 import '../../../../core/utils/get_week_number.dart';
 
@@ -86,14 +86,14 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     data: const CupertinoThemeData(
                                       textTheme: CupertinoTextThemeData(
                                         dateTimePickerTextStyle:
-                                        TextStyle(fontSize: 26),
+                                            TextStyle(fontSize: 26),
                                       ),
                                     ),
                                     child: Row(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                                          CrossAxisAlignment.center,
                                       mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                       children: [
                                         SizedBox(
                                           width: 230,
@@ -108,8 +108,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                               // print(DateFormat('HH:mm').parse(
                                               //     newDuration.toString()));
                                               setState(
-                                                      () =>
-                                                  duration = newDuration);
+                                                  () => duration = newDuration);
                                             },
                                           ),
                                         ),
@@ -122,8 +121,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 actions: <Widget>[
                                   TextButton(
                                     style: TextButton.styleFrom(
-                                      textStyle: Theme
-                                          .of(context)
+                                      textStyle: Theme.of(context)
                                           .textTheme
                                           .labelLarge,
                                     ),
@@ -134,8 +132,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                   ),
                                   TextButton(
                                     style: TextButton.styleFrom(
-                                      textStyle: Theme
-                                          .of(context)
+                                      textStyle: Theme.of(context)
                                           .textTheme
                                           .labelLarge,
                                     ),
@@ -152,8 +149,8 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                           time.minute);
 
                                       final formatter =
-                                      DateFormat('yyyy-MM-dd HH:mm')
-                                          .format(completedTime);
+                                          DateFormat('yyyy-MM-dd HH:mm')
+                                              .format(completedTime);
 
                                       context.read<DayResultBloc>().add(
                                           CompletedTimeChanged(
@@ -174,11 +171,11 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                           decoration: BoxDecoration(
                               color: AppColor.grey1,
                               borderRadius:
-                              const BorderRadius.all(Radius.circular(7))),
+                                  const BorderRadius.all(Radius.circular(7))),
                           child: Text(
                             state.completedAt != null
                                 ? DateFormat('HH:mm').format(DateTime.parse(
-                                state.completedAt.toString()))
+                                    state.completedAt.toString()))
                                 : '',
                             style: TextStyle(
                                 fontSize: AppFont.small,
@@ -249,7 +246,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: AppLayout.smallRadius,
                             borderSide:
-                            BorderSide(width: 1, color: AppColor.grey1),
+                                BorderSide(width: 1, color: AppColor.grey1),
                           ),
                         ),
                       ),
@@ -265,15 +262,15 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                   children: [
                     Flexible(
                         child: WishBox(
-                          title: 'Сила желаний',
-                          category: 'desires',
-                        )),
+                      title: 'Сила желаний',
+                      category: 'desires',
+                    )),
                     SizedBox(width: 20),
                     Flexible(
                         child: WishBox(
-                          title: 'Сила нежеланий',
-                          category: 'reluctance',
-                        )),
+                      title: 'Сила нежеланий',
+                      category: 'reluctance',
+                    )),
                   ],
                 ),
               ),
@@ -304,7 +301,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: AppLayout.smallRadius,
                             borderSide:
-                            BorderSide(width: 1, color: AppColor.grey1),
+                                BorderSide(width: 1, color: AppColor.grey1),
                           ),
                         ),
                         onChanged: (val) {
@@ -368,15 +365,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                     var user = await isarService.getUser();
 
                     String currDay = DateFormat('y-MM-dd').format(DateTime(
-                        DateTime
-                            .now()
-                            .year,
-                        DateTime
-                            .now()
-                            .month,
-                        DateTime
-                            .now()
-                            .day));
+                        DateTime.now().year,
+                        DateTime.now().month,
+                        DateTime.now().day));
 
                     final weekNumber = getWeekNumber(DateTime.now());
                     final currWeekData = await isar.weeks
@@ -408,15 +399,18 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                     // print('dayResultData: $dayResultData');
                     // create on server
                     var newDayResult =
-                    await _streamController.createDayResult(dayResultData);
+                        await _streamController.createDayResult(dayResultData);
 
                     await streamLocalStorage.saveDayResult(newDayResult);
                     // print(newDayResult);
 
+                    final stream = await streamLocalStorage.getActiveStream();
 
                     if (context.mounted) {
-                      context.read<HomeScreenBloc>().add(TopMessageChanged(
-                          AppMessages.dayResults['resultExists']));
+                      context
+                          .read<HomeScreenBloc>()
+                          .add(StreamProgressChanged(getStreamStatus(stream)));
+
                       CircularLoading(context).stopLoading();
                       context.router.pop();
                     }
@@ -524,38 +518,37 @@ class _WishBoxState extends State<WishBox> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ...buttonStatus.map(
-                    (e) =>
-                    GestureDetector(
-                      onTap: () {
-                        for (Map btn in buttonStatus) {
-                          btn['isActive'] = false;
-                        }
-                        e['isActive'] = true;
+                (e) => GestureDetector(
+                  onTap: () {
+                    for (Map btn in buttonStatus) {
+                      btn['isActive'] = false;
+                    }
+                    e['isActive'] = true;
 
-                        if (widget.category == 'desires') {
-                          context
-                              .read<DayResultBloc>()
-                              .add(DesiresChanged(e['result']));
-                        } else if (widget.category == 'reluctance') {
-                          context
-                              .read<DayResultBloc>()
-                              .add(ReluctanceChanged(e['result']));
-                        }
+                    if (widget.category == 'desires') {
+                      context
+                          .read<DayResultBloc>()
+                          .add(DesiresChanged(e['result']));
+                    } else if (widget.category == 'reluctance') {
+                      context
+                          .read<DayResultBloc>()
+                          .add(ReluctanceChanged(e['result']));
+                    }
 
-                        setState(() {});
-                      },
-                      child: Container(
-                        width: 33,
-                        height: 33,
-                        decoration: BoxDecoration(
-                          color: e['isActive'] ? AppColor.accent : Colors.white,
-                          border: e['isActive']
-                              ? const Border()
-                              : Border.all(color: AppColor.deep),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: 33,
+                    height: 33,
+                    decoration: BoxDecoration(
+                      color: e['isActive'] ? AppColor.accent : Colors.white,
+                      border: e['isActive']
+                          ? const Border()
+                          : Border.all(color: AppColor.deep),
+                      shape: BoxShape.circle,
                     ),
+                  ),
+                ),
               )
             ],
           )

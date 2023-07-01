@@ -54,9 +54,11 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
   void _onAddOrUpdateCell(SelectCell event, Emitter<PlannerState> emit) {
     // print('SelectCell');
     List newCellsList = event.selectedCellIDs;
+    // print('event.selectedCellIDs: $newCellsList');
 
     if (state.selectedCellIDs.isNotEmpty) {
       // print(state.selectedCellIDs);
+
       newCellsList.addAll(state.selectedCellIDs);
       // print('event.selectedCellIDs');
       // print(event.selectedCellIDs);

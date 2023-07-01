@@ -28,13 +28,9 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     ResultsStreamScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<ResultsStreamScreenRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: ResultsStreamScreen(
-          key: args.key,
-          npStream: args.npStream,
-        ),
+        child: const ResultsStreamScreen(),
       );
     },
     DayResultsSaveScreenRoute.name: (routeData) {
@@ -247,41 +243,16 @@ class StatisticsScreenRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ResultsStreamScreen]
-class ResultsStreamScreenRoute
-    extends PageRouteInfo<ResultsStreamScreenRouteArgs> {
-  ResultsStreamScreenRoute({
-    Key? key,
-    required NPStream npStream,
-    List<PageRouteInfo>? children,
-  }) : super(
+class ResultsStreamScreenRoute extends PageRouteInfo<void> {
+  const ResultsStreamScreenRoute({List<PageRouteInfo>? children})
+      : super(
           ResultsStreamScreenRoute.name,
-          args: ResultsStreamScreenRouteArgs(
-            key: key,
-            npStream: npStream,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'ResultsStreamScreenRoute';
 
-  static const PageInfo<ResultsStreamScreenRouteArgs> page =
-      PageInfo<ResultsStreamScreenRouteArgs>(name);
-}
-
-class ResultsStreamScreenRouteArgs {
-  const ResultsStreamScreenRouteArgs({
-    this.key,
-    required this.npStream,
-  });
-
-  final Key? key;
-
-  final NPStream npStream;
-
-  @override
-  String toString() {
-    return 'ResultsStreamScreenRouteArgs{key: $key, npStream: $npStream}';
-  }
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
