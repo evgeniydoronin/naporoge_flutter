@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
-import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../../planning/domain/entities/stream_entity.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../../../../core/constants/app_theme.dart';
@@ -17,13 +16,17 @@ class WeekProgress extends StatelessWidget {
     int weekNumber = getWeekNumber(DateTime.now());
 
     List completedDays = [];
+    late int weekIndex;
+
     for (Week week in stream.weekBacklink) {
       completedDays.addAll(
           week.dayBacklink.where((element) => element.completedAt != null));
       if (week.weekNumber == weekNumber) {
-        print(week);
+        weekIndex = stream.weekBacklink.indexed.single.$1;
       }
     }
+
+    print('weekIndex: $weekIndex');
 
     int completedDaysInPercent =
         (completedDays.length * 100 / (stream.weeks! * 6))
@@ -60,7 +63,7 @@ class WeekProgress extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Ты на первой неделе',
+                    'Ты на ${weekIndex + 1} неделе',
                     style: AppFont.largeExtraBold,
                   ),
                   Text(

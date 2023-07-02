@@ -4,7 +4,12 @@ import '../../features/planning/domain/entities/stream_entity.dart';
 import 'get_week_number.dart';
 
 getStreamStatus(stream) {
+  Map statusStream = {};
+
   DateTime now = DateTime.now();
+  DateTime completedTime = DateTime(now.year, now.month, now.day, 0, 0, 0);
+  // текущая неделя
+  int weekNumber = getWeekNumber(DateTime.now());
 
   int daysBefore = stream.startAt!.difference(now).inDays;
 
@@ -15,24 +20,22 @@ getStreamStatus(stream) {
   bool isBeforeStartStream = startStream.isAfter(now);
   bool isAfterEndStream = endStream.isBefore(now);
 
-  Map statusStream = {};
-
   if (isBeforeStartStream) {
+    // до старта курса
     statusStream = {
       'status': 'beforeStartStream',
       'topMessage': 'Осталось дней до старта курса - $daysBefore'
     };
   } else if (isAfterEndStream) {
-    statusStream = {'status': 'isAfterEndStream', 'topMessage': 'Курс пройден'};
-    // _btnText = 'Итоги работы';
-    // topMessage = 'Курс пройден';
-    // activeBtnDayResultSave = true;
+    // после завершения курса
+    statusStream = {'status': 'afterEndStream', 'topMessage': 'Курс пройден'};
   } else if (!isBeforeStartStream && !isAfterEndStream) {
+    // во время
     statusStream = {
       'status': 'inStream',
+      'weekNumber': weekNumber,
+      'completedTime': completedTime,
     };
-    // текущая неделя
-    int weekNumber = getWeekNumber(DateTime.now());
     for (Week week in stream.weekBacklink) {
       if (week.weekNumber == weekNumber) {
         // дни текущей недели

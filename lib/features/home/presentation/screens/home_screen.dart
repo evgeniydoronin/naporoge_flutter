@@ -11,6 +11,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../../../planning/data/sources/local/stream_local_storage.dart';
 import '../bloc/home_screen/home_screen_bloc.dart';
+import '../widgets/total_button.dart';
 import '../widgets/video_box.dart';
 import '../widgets/week_progress.dart';
 import '../widgets/week_status_point.dart';
@@ -115,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 10),
                 WeekStatusPoint(stream: stream),
                 const SizedBox(height: 10),
-                WeekProgress(stream: stream),
+                // WeekProgress(stream: stream),
                 const SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -179,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 25),
                 const VideoBox(),
                 const SizedBox(height: 25),
-                totalButton(streamStatus, stream),
+                TotalButton(stream: stream),
                 const SizedBox(height: 25),
               ],
             );
@@ -187,35 +188,6 @@ class _HomeScreenState extends State<HomeScreen> {
           // while waiting for data to arrive, show a spinning indicator
           return const Center(child: CircularProgressIndicator());
         },
-      ),
-    );
-  }
-
-  Padding totalButton(Map streamStatus, stream) {
-    if (streamStatus['status'] == 'isAfterEndStream') {
-      // _btnText = 'Итоги работы';
-    } else if (streamStatus['status'] == 'beforeStartStream') {
-      // _btnText = 'Курс не стартовал';
-    } else if (streamStatus['status'] == 'inStream') {
-      // _btnText = 'Внести результаты';
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: ElevatedButton(
-        onPressed: () {
-          if (streamStatus['status'] == 'isAfterEndStream') {
-            context.router.push(ResultsStreamScreenRoute(npStream: stream));
-          } else if (streamStatus['status'] == 'beforeStartStream') {
-          } else if (streamStatus['status'] == 'inStream') {
-            context.router.push(const DayResultsSaveScreenRoute());
-          }
-        },
-        style: AppLayout.accentBowBTNStyle,
-        child: Text(
-          '_btnText',
-          style: AppFont.regularSemibold,
-        ),
       ),
     );
   }
