@@ -28,6 +28,8 @@ class DayResultsSaveScreen extends StatefulWidget {
 
 class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
   final _streamController = getIt<StreamController>();
+  final _formKey = GlobalKey<FormState>();
+  final List<bool> _selections = List.generate(2, (_) => false);
 
   @override
   Widget build(BuildContext context) {
@@ -60,370 +62,450 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
           ),
           body: ListView(
             children: [
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Время начала дела', style: AppFont.formLabel),
-                      const SizedBox(height: 5),
-                      GestureDetector(
-                        onTap: () async {
-                          showDialog<void>(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext ctx) {
-                              return AlertDialog(
-                                title: const Text('Выбрать время'),
-                                content: SizedBox(
-                                  height: 150,
-                                  child: CupertinoTheme(
-                                    data: const CupertinoThemeData(
-                                      textTheme: CupertinoTextThemeData(
-                                        dateTimePickerTextStyle:
-                                            TextStyle(fontSize: 26),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          width: 230,
-                                          child: CupertinoTimerPicker(
-                                            mode: CupertinoTimerPickerMode.hm,
-                                            minuteInterval: 5,
-                                            initialTimerDuration: duration,
-                                            // This is called when the user changes the timer's
-                                            // duration.
-                                            onTimerDurationChanged:
-                                                (Duration newDuration) {
-                                              // print(DateFormat('HH:mm').parse(
-                                              //     newDuration.toString()));
-                                              setState(
-                                                  () => duration = newDuration);
-                                            },
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 15, bottom: 15, left: 18, right: 18),
+                        decoration: AppLayout.boxDecorationShadowBG,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Время начала дела', style: AppFont.formLabel),
+                            const SizedBox(height: 5),
+                            Column(
+                              children: [
+                                TextFormField(
+                                  readOnly: true,
+                                  onTap: () async {
+                                    showDialog<void>(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext ctx) {
+                                        return AlertDialog(
+                                          title: const Text('Выбрать время'),
+                                          content: SizedBox(
+                                            height: 150,
+                                            child: CupertinoTheme(
+                                              data: const CupertinoThemeData(
+                                                textTheme:
+                                                    CupertinoTextThemeData(
+                                                  dateTimePickerTextStyle:
+                                                      TextStyle(fontSize: 26),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 230,
+                                                    child: CupertinoTimerPicker(
+                                                      mode:
+                                                          CupertinoTimerPickerMode
+                                                              .hm,
+                                                      minuteInterval: 5,
+                                                      initialTimerDuration:
+                                                          duration,
+                                                      // This is called when the user changes the timer's
+                                                      // duration.
+                                                      onTimerDurationChanged:
+                                                          (Duration
+                                                              newDuration) {
+                                                        // print(DateFormat('HH:mm').parse(
+                                                        //     newDuration.toString()));
+                                                        setState(() =>
+                                                            duration =
+                                                                newDuration);
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                          contentPadding: EdgeInsets.zero,
+                                          insetPadding: EdgeInsets.zero,
+                                          actions: <Widget>[
+                                            TextButton(
+                                              style: TextButton.styleFrom(
+                                                textStyle: Theme.of(context)
+                                                    .textTheme
+                                                    .labelLarge,
+                                              ),
+                                              child: const Text('Отменить'),
+                                              onPressed: () async {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            TextButton(
+                                              style: TextButton.styleFrom(
+                                                textStyle: Theme.of(context)
+                                                    .textTheme
+                                                    .labelLarge,
+                                              ),
+                                              child: const Text('Выбрать'),
+                                              onPressed: () {
+                                                DateTime now = DateTime.now();
+                                                DateTime time =
+                                                    DateFormat('HH:mm').parse(
+                                                        duration.toString());
+                                                DateTime completedTime =
+                                                    DateTime(
+                                                        now.year,
+                                                        now.month,
+                                                        now.day,
+                                                        time.hour,
+                                                        time.minute);
+
+                                                final formatter = DateFormat(
+                                                        'yyyy-MM-dd HH:mm')
+                                                    .format(completedTime);
+
+                                                context
+                                                    .read<DayResultBloc>()
+                                                    .add(CompletedTimeChanged(
+                                                        formatter.toString()));
+
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Заполните обязательное поле!';
+                                    }
+                                    return null;
+                                  },
+                                  controller: TextEditingController(
+                                      text: state.completedAt != null
+                                          ? DateFormat('HH:mm').format(
+                                              DateTime.parse(
+                                                  state.completedAt.toString()))
+                                          : null),
+                                  style: TextStyle(fontSize: AppFont.small),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: AppColor.grey1,
+                                    hintText: state.completedAt != null
+                                        ? DateFormat('HH:mm').format(
+                                            DateTime.parse(
+                                                state.completedAt.toString()))
+                                        : 'Выбрать время начала дня',
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 7, vertical: 10),
+                                    isDense: true,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: AppLayout.smallRadius,
+                                      borderSide: BorderSide(
+                                          width: 1, color: AppColor.grey1),
                                     ),
                                   ),
                                 ),
-                                contentPadding: EdgeInsets.zero,
-                                insetPadding: EdgeInsets.zero,
-                                actions: <Widget>[
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge,
-                                    ),
-                                    child: const Text('Отменить'),
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      textStyle: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge,
-                                    ),
-                                    child: const Text('Выбрать'),
-                                    onPressed: () {
-                                      DateTime now = DateTime.now();
-                                      DateTime time = DateFormat('HH:mm')
-                                          .parse(duration.toString());
-                                      DateTime completedTime = DateTime(
-                                          now.year,
-                                          now.month,
-                                          now.day,
-                                          time.hour,
-                                          time.minute);
-
-                                      final formatter =
-                                          DateFormat('yyyy-MM-dd HH:mm')
-                                              .format(completedTime);
-
-                                      context.read<DayResultBloc>().add(
-                                          CompletedTimeChanged(
-                                              formatter.toString()));
-
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          width: double.maxFinite,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          decoration: BoxDecoration(
-                              color: AppColor.grey1,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(7))),
-                          child: Text(
-                            state.completedAt != null
-                                ? DateFormat('HH:mm').format(DateTime.parse(
-                                    state.completedAt.toString()))
-                                : '',
-                            style: TextStyle(
-                                fontSize: AppFont.small,
-                                color: Colors.black.withOpacity(0.7)),
-                          ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 15, bottom: 0, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 15, bottom: 0, left: 18, right: 18),
+                        decoration: AppLayout.boxDecorationShadowBG,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Объем выполнения',
+                                    style: AppFont.formLabel),
+                                Text(
+                                    state.executionScope != null
+                                        ? state.executionScope.toString()
+                                        : '0',
+                                    style: AppFont.formLabel),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            const SliderBox(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 15, bottom: 15, left: 18, right: 18),
+                        decoration: AppLayout.boxDecorationShadowBG,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Результат дня',
+                              style: AppFont.formLabel,
+                            ),
+                            const SizedBox(height: 5),
+                            TextFormField(
+                              onChanged: (val) {
+                                context
+                                    .read<DayResultBloc>()
+                                    .add(ResultOfTheDayChanged(val));
+                              },
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Заполните обязательное поле!';
+                                }
+                                return null;
+                              },
+                              style: TextStyle(fontSize: AppFont.small),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: AppColor.grey1,
+                                hintText: '10 кругов',
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 10),
+                                isDense: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: AppLayout.smallRadius,
+                                  borderSide: BorderSide(
+                                      width: 1, color: AppColor.grey1),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Объем выполнения', style: AppFont.formLabel),
-                          Text(
-                              state.executionScope != null
-                                  ? state.executionScope.toString()
-                                  : '0',
-                              style: AppFont.formLabel),
+                          Flexible(
+                              child: WishBox(
+                            title: 'Сила желаний',
+                            category: 'desires',
+                          )),
+                          SizedBox(width: 20),
+                          Flexible(
+                              child: WishBox(
+                            title: 'Сила нежеланий',
+                            category: 'reluctance',
+                          )),
                         ],
                       ),
-                      const SizedBox(height: 5),
-                      const SliderBox(),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Результат дня',
-                        style: AppFont.formLabel,
-                      ),
-                      const SizedBox(height: 5),
-                      TextField(
-                        onChanged: (val) {
-                          context
-                              .read<DayResultBloc>()
-                              .add(ResultOfTheDayChanged(val));
-                        },
-                        style: TextStyle(fontSize: AppFont.small),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: AppColor.grey1,
-                          hintText: '10 кругов',
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 10),
-                          isDense: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: AppLayout.smallRadius,
-                            borderSide:
-                                BorderSide(width: 1, color: AppColor.grey1),
-                          ),
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 15, bottom: 15, left: 18, right: 18),
+                        decoration: AppLayout.boxDecorationShadowBG,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Иные помехи и трудности',
+                              style: AppFont.formLabel,
+                            ),
+                            const SizedBox(height: 5),
+                            TextField(
+                              style: TextStyle(fontSize: AppFont.small),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: AppColor.grey1,
+                                hintText:
+                                    'Запишите все, что мешало выполнять дело',
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 10),
+                                isDense: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: AppLayout.smallRadius,
+                                  borderSide: BorderSide(
+                                      width: 1, color: AppColor.grey1),
+                                ),
+                              ),
+                              onChanged: (val) {
+                                context
+                                    .read<DayResultBloc>()
+                                    .add(InterferenceChanged(val));
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                        child: WishBox(
-                      title: 'Сила желаний',
-                      category: 'desires',
-                    )),
-                    SizedBox(width: 20),
-                    Flexible(
-                        child: WishBox(
-                      title: 'Сила нежеланий',
-                      category: 'reluctance',
-                    )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Иные помехи и трудности',
-                        style: AppFont.formLabel,
-                      ),
-                      const SizedBox(height: 5),
-                      TextField(
-                        style: TextStyle(fontSize: AppFont.small),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: AppColor.grey1,
-                          hintText: 'Запишите все, что мешало выполнять дело',
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 10),
-                          isDense: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: AppLayout.smallRadius,
-                            borderSide:
-                                BorderSide(width: 1, color: AppColor.grey1),
-                          ),
-                        ),
-                        onChanged: (val) {
-                          context
-                              .read<DayResultBloc>()
-                              .add(InterferenceChanged(val));
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Удалось порадоваться?',
-                        style: AppFont.formLabel,
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          RotatedBox(
-                            quarterTurns: 2,
-                            child: IconButton(
-                                onPressed: () {
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 15, bottom: 15, left: 18, right: 18),
+                        decoration: AppLayout.boxDecorationShadowBG,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Удалось порадоваться?',
+                              style: AppFont.formLabel,
+                            ),
+                            const SizedBox(height: 5),
+                            ToggleButtons(
+                              direction: Axis.horizontal,
+                              onPressed: (int index) {
+                                if (index == 0) {
                                   context
                                       .read<DayResultBloc>()
                                       .add(const RejoiceChanged('no'));
-                                },
-                                icon: SvgPicture.asset('assets/icons/342.svg')),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                context
-                                    .read<DayResultBloc>()
-                                    .add(const RejoiceChanged('yes'));
+                                } else {
+                                  context
+                                      .read<DayResultBloc>()
+                                      .add(const RejoiceChanged('yes'));
+                                }
+                                setState(() {
+                                  // The button that is tapped is set to true, and the others to false.
+                                  for (int i = 0; i < _selections.length; i++) {
+                                    _selections[i] = i == index;
+                                  }
+                                });
                               },
-                              icon: SvgPicture.asset('assets/icons/342.svg')),
+                              borderWidth: 0,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                              // selectedBorderColor: Colors.red[700],
+                              selectedColor: Colors.white,
+                              fillColor: AppColor.accent,
+                              constraints: const BoxConstraints(
+                                minHeight: 40.0,
+                                minWidth: double.minPositive,
+                              ),
+                              isSelected: _selections,
+                              children: [
+                                SizedBox(
+                                    width: (MediaQuery.of(context).size.width -
+                                            81) /
+                                        2,
+                                    child: RotatedBox(
+                                      quarterTurns: 2,
+                                      child: SvgPicture.asset(
+                                          'assets/icons/342.svg'),
+                                    )),
+                                SizedBox(
+                                    width: (MediaQuery.of(context).size.width -
+                                            81) /
+                                        2,
+                                    child: SvgPicture.asset(
+                                        'assets/icons/342.svg')),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  CircularLoading(context).startLoading();
+                                  final isar = await isarService.db;
+                                  var user = await isarService.getUser();
+
+                                  String currDay = DateFormat('y-MM-dd').format(
+                                      DateTime(
+                                          DateTime.now().year,
+                                          DateTime.now().month,
+                                          DateTime.now().day));
+
+                                  final weekNumber =
+                                      getWeekNumber(DateTime.now());
+                                  final currWeekData = await isar.weeks
+                                      .filter()
+                                      .weekNumberEqualTo(weekNumber)
+                                      .findFirst();
+
+                                  late int dayId;
+
+                                  for (Day day in currWeekData!.dayBacklink) {
+                                    if (currDay ==
+                                        DateFormat('y-MM-dd')
+                                            .format(day.startAt!)) {
+                                      dayId = day.id!;
+                                    }
+                                  }
+
+                                  Map dayResultData = {
+                                    "user_id": user.first.id,
+                                    "day_id": dayId,
+                                    "completed_at": state.completedAt,
+                                    "execution_scope": state.executionScope,
+                                    "result": state.result,
+                                    "desires": state.desires,
+                                    "reluctance": state.reluctance,
+                                    "interference": state.interference,
+                                    "rejoice": state.rejoice,
+                                  };
+
+                                  // print('dayResultData: $dayResultData');
+                                  // create on server
+                                  var newDayResult = await _streamController
+                                      .createDayResult(dayResultData);
+
+                                  await streamLocalStorage
+                                      .saveDayResult(newDayResult);
+                                  // print(newDayResult);
+
+                                  final stream = await streamLocalStorage
+                                      .getActiveStream();
+
+                                  if (context.mounted) {
+                                    context.read<HomeScreenBloc>().add(
+                                        StreamProgressChanged(
+                                            getStreamStatus(stream)));
+
+                                    CircularLoading(context).stopLoading();
+                                    context.router.pop();
+                                  }
+                                  // context.router.push(const ResultsStreamScreenRoute());
+                                }
+                              },
+                              // style: AppLayout.accentBowBTNStyle,
+                              child: Text(
+                                'Сохранить',
+                                style: AppFont.regularSemibold,
+                              ),
+                            ),
+                          ),
                         ],
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                  ],
                 ),
               ),
-              const SizedBox(height: 25),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    CircularLoading(context).startLoading();
-                    final isar = await isarService.db;
-                    var user = await isarService.getUser();
-
-                    String currDay = DateFormat('y-MM-dd').format(DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day));
-
-                    final weekNumber = getWeekNumber(DateTime.now());
-                    final currWeekData = await isar.weeks
-                        .filter()
-                        .weekNumberEqualTo(weekNumber)
-                        .findFirst();
-
-                    late int dayId;
-
-                    for (Day day in currWeekData!.dayBacklink) {
-                      if (currDay ==
-                          DateFormat('y-MM-dd').format(day.startAt!)) {
-                        dayId = day.id!;
-                      }
-                    }
-
-                    Map dayResultData = {
-                      "user_id": user.first.id,
-                      "day_id": dayId,
-                      "completed_at": state.completedAt,
-                      "execution_scope": state.executionScope,
-                      "result": state.result,
-                      "desires": state.desires,
-                      "reluctance": state.reluctance,
-                      "interference": state.interference,
-                      "rejoice": state.rejoice,
-                    };
-
-                    // print('dayResultData: $dayResultData');
-                    // create on server
-                    var newDayResult =
-                        await _streamController.createDayResult(dayResultData);
-
-                    await streamLocalStorage.saveDayResult(newDayResult);
-                    // print(newDayResult);
-
-                    final stream = await streamLocalStorage.getActiveStream();
-
-                    if (context.mounted) {
-                      context
-                          .read<HomeScreenBloc>()
-                          .add(StreamProgressChanged(getStreamStatus(stream)));
-
-                      CircularLoading(context).stopLoading();
-                      context.router.pop();
-                    }
-                    // context.router.push(const ResultsStreamScreenRoute());
-                  },
-                  // style: AppLayout.accentBowBTNStyle,
-                  child: Text(
-                    'Сохранить',
-                    style: AppFont.regularSemibold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 25),
             ],
           ),
         );

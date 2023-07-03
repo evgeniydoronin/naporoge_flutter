@@ -17,5 +17,6 @@ class Endpoints {
 
   // Stream data
   static const String createStream = '/create-stream';
+  static const String updateStream = '/update-stream';
   static const String createDayResult = '/create-day-result';
 }

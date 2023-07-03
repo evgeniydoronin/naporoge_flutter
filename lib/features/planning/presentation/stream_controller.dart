@@ -22,6 +22,11 @@ class StreamController {
     return stream;
   }
 
+  Future updateStream(data) async {
+    final stream = await streamRepository.updateStreamRequested(data);
+    return stream;
+  }
+
   Future createDayResult(data) async {
     final dayResult = await streamRepository.createDayResultRequested(data);
     return dayResult;

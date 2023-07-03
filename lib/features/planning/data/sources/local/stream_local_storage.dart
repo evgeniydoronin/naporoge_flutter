@@ -44,6 +44,64 @@ class StreamLocalStorage {
     });
   }
 
+  Future<void> updateStream(Map streamDataFromServer) async {
+    final isar = await isarService.db;
+
+    Map streamData = streamDataFromServer['stream'];
+    Map weekData = streamDataFromServer['week'];
+
+    final stream = await isar.nPStreams.get(streamData['id']);
+    stream!.description = streamData['description'];
+
+    final week = await isar.weeks.get(weekData['id']);
+    week!.cells = json.encode(weekData['cells']);
+
+    isar.writeTxnSync(() {
+      // update stream
+      isar.nPStreams.putSync(stream);
+
+      // update week
+      isar.weeks.putSync(week);
+
+      // update days
+      for (Map dayData in streamDataFromServer['updatedDays']) {
+        final newDay = isar.days.getSync(dayData['id']);
+        newDay!.startAt = DateTime.parse(dayData['start_at']);
+        isar.days.putSync(newDay);
+      }
+    });
+
+    // final newStream = NPStream()
+    //   ..id = streamData['id']
+    //   ..courseId = streamData['course_id']
+    //   ..isActive = streamData['is_active']
+    //   ..title = streamData['title']
+    //   ..weeks = streamData['weeks']
+    //   ..description = streamData['description']
+    //   ..startAt = DateTime.parse(streamData['start_at']);
+    //
+    // final newWeek = Week()
+    //   ..id = weekData['id']
+    //   ..weekNumber = weekData['number']
+    //   ..streamId = weekData['stream_id']
+    //   ..cells = json.encode(weekData['cells'])
+    //   ..nPStream.value = newStream;
+    //
+    // isar.writeTxnSync(() async {
+    //   isar.nPStreams.putSync(newStream);
+    //   isar.weeks.putSync(newWeek);
+    //
+    //   for (Map dayData in streamDataFromServer['days']) {
+    //     final newDay = Day()
+    //       ..id = dayData['day']['id']
+    //       ..weekId = dayData['day']['week_id']
+    //       ..startAt = DateTime.parse(dayData['day']['start_at'])
+    //       ..week.value = newWeek;
+    //     isar.days.putSync(newDay);
+    //   }
+    // });
+  }
+
   Future<List<NPStream>> getAllStreams() async {
     final isar = await isarService.db;
 
