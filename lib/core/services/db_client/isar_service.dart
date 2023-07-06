@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import '../../../features/planning/domain/entities/stream_entity.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../features/auth/login/domain/user_model.dart';
@@ -14,7 +15,9 @@ class IsarService {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([UserSchema], directory: dir.path);
+      return await Isar.open(
+          [UserSchema, NPStreamSchema, WeekSchema, DaySchema, DayResultSchema],
+          directory: dir.path);
     }
 
     return Future.value(Isar.getInstance());

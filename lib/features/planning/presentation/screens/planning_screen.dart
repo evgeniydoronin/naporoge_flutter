@@ -81,13 +81,13 @@ class PlanningScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Container(
-                padding: EdgeInsets.only(bottom: 5),
-                decoration: AppLayout.boxDecorationShadowBG,
-                child: const DayScheduleWidget()),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+          //   child: Container(
+          //       padding: EdgeInsets.only(bottom: 5),
+          //       decoration: AppLayout.boxDecorationShadowBG,
+          //       child: const DayScheduleWidget()),
+          // ),
           const SizedBox(height: 25),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),

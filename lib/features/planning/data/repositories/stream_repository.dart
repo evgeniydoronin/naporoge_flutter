@@ -15,6 +15,15 @@ class StreamRepository {
     }
   }
 
+  Future createDayResultRequested(Map data) async {
+    try {
+      final response = await streamApi.createDayResultApi(data);
+      return response.data;
+    } on DioError catch (e) {
+      rethrow;
+    }
+  }
+
 // Future<List<UserModel>> getUsersRequested() async {
 //   try {
 //     final response = await streamApi.getUsersApi();

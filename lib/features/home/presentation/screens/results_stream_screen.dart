@@ -3,13 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../core/constants/app_theme.dart';
+import '../../../planning/domain/entities/stream_entity.dart';
 
 @RoutePage()
-class ResultsStreamScreen extends StatelessWidget {
-  const ResultsStreamScreen({Key? key}) : super(key: key);
+class ResultsStreamScreen extends StatefulWidget {
+  final NPStream npStream;
+
+  const ResultsStreamScreen({Key? key, required this.npStream})
+      : super(key: key);
 
   @override
+  State<ResultsStreamScreen> createState() => _ResultsStreamScreenState();
+}
+
+class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
+  @override
   Widget build(BuildContext context) {
+    print(widget.npStream);
     return Scaffold(
       backgroundColor: AppColor.lightBG,
       appBar: AppBar(
@@ -278,7 +288,7 @@ class ResultsStreamScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       children: [
                         Expanded(

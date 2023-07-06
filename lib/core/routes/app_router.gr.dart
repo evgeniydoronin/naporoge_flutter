@@ -28,9 +28,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     ResultsStreamScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ResultsStreamScreenRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const ResultsStreamScreen(),
+        child: ResultsStreamScreen(
+          key: args.key,
+          npStream: args.npStream,
+        ),
       );
     },
     DayResultsSaveScreenRoute.name: (routeData) {
@@ -100,12 +104,6 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const StartDateSelectionScreen(),
-      );
-    },
-    ChoiceOfCaseScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ChoiceOfCaseScreen(),
       );
     },
     WelcomeDescriptionScreenRoute.name: (routeData) {
@@ -210,6 +208,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const PlanningScreen(),
       );
     },
+    ChoiceOfCaseScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ChoiceOfCaseScreen(),
+      );
+    },
   };
 }
 
@@ -243,16 +247,41 @@ class StatisticsScreenRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ResultsStreamScreen]
-class ResultsStreamScreenRoute extends PageRouteInfo<void> {
-  const ResultsStreamScreenRoute({List<PageRouteInfo>? children})
-      : super(
+class ResultsStreamScreenRoute
+    extends PageRouteInfo<ResultsStreamScreenRouteArgs> {
+  ResultsStreamScreenRoute({
+    Key? key,
+    required NPStream npStream,
+    List<PageRouteInfo>? children,
+  }) : super(
           ResultsStreamScreenRoute.name,
+          args: ResultsStreamScreenRouteArgs(
+            key: key,
+            npStream: npStream,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'ResultsStreamScreenRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<ResultsStreamScreenRouteArgs> page =
+      PageInfo<ResultsStreamScreenRouteArgs>(name);
+}
+
+class ResultsStreamScreenRouteArgs {
+  const ResultsStreamScreenRouteArgs({
+    this.key,
+    required this.npStream,
+  });
+
+  final Key? key;
+
+  final NPStream npStream;
+
+  @override
+  String toString() {
+    return 'ResultsStreamScreenRouteArgs{key: $key, npStream: $npStream}';
+  }
 }
 
 /// generated route for
@@ -446,20 +475,6 @@ class StartDateSelectionScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'StartDateSelectionScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [ChoiceOfCaseScreen]
-class ChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
-  const ChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          ChoiceOfCaseScreenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'ChoiceOfCaseScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -709,6 +724,20 @@ class PlanningScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'PlanningScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ChoiceOfCaseScreen]
+class ChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
+  const ChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          ChoiceOfCaseScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ChoiceOfCaseScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -14,7 +14,8 @@ class Endpoints {
   static const String smsCode = '/code';
   static const String authCode = '/auth';
   static const String createStudent = '/create-student';
-  
+
   // Stream data
   static const String createStream = '/create-stream';
+  static const String createDayResult = '/create-day-result';
 }

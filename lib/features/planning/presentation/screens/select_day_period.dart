@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/services/db_client/isar_service.dart';
+import '../../../../core/utils/circular_loading.dart';
+import '../../data/sources/local/stream_local_storage.dart';
 import '../bloc/planner_bloc.dart';
 import '../stream_controller.dart';
 import '../widgets/day_schedule_widget.dart';
@@ -25,6 +29,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
   Widget build(BuildContext context) {
     String courseDescription = '';
     final isarService = IsarService();
+    final streamLocalStorage = StreamLocalStorage();
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
@@ -164,6 +169,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
+                          CircularLoading(context).startLoading();
                           var user = await isarService.getUser();
                           Map streamData = {
                             "user_id": user.first.id,
@@ -176,14 +182,23 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                             "cells": state.finalCellIDs,
                           };
 
-                          // var newStream =
-                          //     await _streamController.createStream(streamData);
+                          // print('streamData: $streamData');
 
-                          print('newStream');
-                          print(state.finalCellIDs);
-                          print('newStream');
+                          // create on server
+                          var newStream =
+                              await _streamController.createStream(streamData);
 
-                          // context.router.replace(const DashboardScreenRoute());
+                          // print('newStream: $newStream');
+
+                          // create local
+                          if (newStream['stream']['id'] != null) {
+                            streamLocalStorage.saveStream(newStream);
+                            if (context.mounted) {
+                              CircularLoading(context).stopLoading();
+                              context.router
+                                  .replace(const DashboardScreenRoute());
+                            }
+                          }
                         },
                         style: AppLayout.accentBTNStyle,
                         child: Text(

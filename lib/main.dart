@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:naporoge/features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
+import 'package:naporoge/features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
+import 'features/home/presentation/bloc/save_day_result/day_result_bloc.dart';
 
 import 'core/routes/app_router.dart';
 import 'core/services/controllers/service_locator.dart';
@@ -25,6 +28,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PlannerBloc>(create: (context) => PlannerBloc()),
+        BlocProvider<DayResultBloc>(create: (context) => DayResultBloc()),
+        BlocProvider<HomeScreenBloc>(create: (context) => HomeScreenBloc()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',

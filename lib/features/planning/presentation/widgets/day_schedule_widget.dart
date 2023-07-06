@@ -319,97 +319,100 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                     ),
                   ),
                   Expanded(
-                    child: LayoutBuilder(builder:
-                        (BuildContext context, BoxConstraints constraints) {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 7,
-                          crossAxisSpacing: 1,
-                          mainAxisSpacing: 10,
-                        ),
-                        itemCount: 7,
-                        itemBuilder: (BuildContext context, gridIndex) {
-                          return gridIndex == 6
-                              ? DayPeriodCell(
-                                  periodIndex: periodIndex,
-                                  gridIndex: gridIndex,
-                                  rowIndex: rowIndex,
-                                  constraints: constraints,
-                                )
-                              : GestureDetector(
-                                  onTapDown: null,
-                                  onTapUp: null,
-                                  onTap: () async {
-                                    // print('SelectCell');
-
-                                    newCells.add(
-                                        [periodIndex, rowIndex, gridIndex]);
-
-                                    context.read<PlannerBloc>().add(
-                                        SelectCell(selectedCellIDs: newCells));
-
-                                    _dialogBuilder(newCells);
-
-                                    // dialogBuilder.open();
-                                  },
-                                  onDoubleTap: () {
-                                    newCells.add(
-                                        [periodIndex, rowIndex, gridIndex]);
-                                    deleteFromList(newCells);
-                                    setState(() {});
-                                  },
-                                  onLongPressMoveUpdate:
-                                      (LongPressMoveUpdateDetails details) {
-                                    double cellWidth =
-                                        (constraints.maxWidth / 7)
-                                            .floorToDouble();
-                                    double widthWeekPeriodRow =
-                                        constraints.maxWidth -
-                                            6; // 303.0, 6 - grid gap
-                                    double xGlobalPosition = details
-                                            .globalPosition.dx -
-                                        70; // (20 : padding-right) + (50 : 04-05 hours period)
-
-                                    for (int i = 0; i < 6; i++) {
-                                      double min = cellWidth * i;
-                                      double max = min + cellWidth;
-                                      if (xGlobalPosition > min &&
-                                          xGlobalPosition <= max) {
-                                        newCells
-                                            .add([periodIndex, rowIndex, i]);
-
-                                        context
-                                            .read<PlannerBloc>()
-                                            .add(SelectCell(selectedCellIDs: [
-                                              [periodIndex, rowIndex, i]
-                                            ]));
-                                      }
-                                    }
-                                  },
-                                  onLongPressEnd: (details) {
-                                    var _ids = newCells.removeDuplicates();
-
-                                    _dialogBuilder(_ids);
-
-                                    context.read<PlannerBloc>().add(SelectCell(
-                                            selectedCellIDs: [
-                                              newCells.removeDuplicates()
-                                            ]));
-                                    setState(() {});
-                                  },
-                                  child: DayPeriodCell(
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 7,
+                            crossAxisSpacing: 1,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: 7,
+                          itemBuilder: (BuildContext context, gridIndex) {
+                            return gridIndex == 6
+                                ? DayPeriodCell(
                                     periodIndex: periodIndex,
                                     gridIndex: gridIndex,
                                     rowIndex: rowIndex,
                                     constraints: constraints,
-                                  ),
-                                );
-                        },
-                      );
-                    }),
+                                  )
+                                : GestureDetector(
+                                    onTapDown: null,
+                                    onTapUp: null,
+                                    onTap: () async {
+                                      // print('SelectCell');
+
+                                      newCells.add(
+                                          [periodIndex, rowIndex, gridIndex]);
+
+                                      context.read<PlannerBloc>().add(
+                                          SelectCell(
+                                              selectedCellIDs: newCells));
+
+                                      _dialogBuilder(newCells);
+
+                                      // dialogBuilder.open();
+                                    },
+                                    onDoubleTap: () {
+                                      newCells.add(
+                                          [periodIndex, rowIndex, gridIndex]);
+                                      deleteFromList(newCells);
+                                      setState(() {});
+                                    },
+                                    onLongPressMoveUpdate:
+                                        (LongPressMoveUpdateDetails details) {
+                                      double cellWidth =
+                                          (constraints.maxWidth / 7)
+                                              .floorToDouble();
+                                      double widthWeekPeriodRow =
+                                          constraints.maxWidth -
+                                              6; // 303.0, 6 - grid gap
+                                      double xGlobalPosition = details
+                                              .globalPosition.dx -
+                                          70; // (20 : padding-right) + (50 : 04-05 hours period)
+
+                                      for (int i = 0; i < 6; i++) {
+                                        double min = cellWidth * i;
+                                        double max = min + cellWidth;
+                                        if (xGlobalPosition > min &&
+                                            xGlobalPosition <= max) {
+                                          newCells
+                                              .add([periodIndex, rowIndex, i]);
+
+                                          context
+                                              .read<PlannerBloc>()
+                                              .add(SelectCell(selectedCellIDs: [
+                                                [periodIndex, rowIndex, i]
+                                              ]));
+                                        }
+                                      }
+                                    },
+                                    onLongPressEnd: (details) {
+                                      var _ids = newCells.removeDuplicates();
+
+                                      _dialogBuilder(_ids);
+
+                                      context.read<PlannerBloc>().add(
+                                              SelectCell(selectedCellIDs: [
+                                            newCells.removeDuplicates()
+                                          ]));
+                                      setState(() {});
+                                    },
+                                    child: DayPeriodCell(
+                                      periodIndex: periodIndex,
+                                      gridIndex: gridIndex,
+                                      rowIndex: rowIndex,
+                                      constraints: constraints,
+                                    ),
+                                  );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

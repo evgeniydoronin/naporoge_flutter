@@ -4,10 +4,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isar/isar.dart';
+import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/constants/app_theme.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../core/services/db_client/isar_service.dart';
+import '../../planning/data/sources/local/stream_local_storage.dart';
 import '../login/domain/user_model.dart';
 import '../login/presentation/screens/login_screen.dart';
 
@@ -28,9 +30,17 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigateToScreen() async {
-    const bool isStream = false;
+    bool isStream = false;
     final isar = await isarService.db;
     final userExists = await isar.users.count();
+
+    // final activeStream = await isar.streams.where().findAll();
+    final activeStreamFilter =
+        await isar.nPStreams.filter().isActiveEqualTo(true).findAll();
+
+    if (activeStreamFilter.length == 1) {
+      isStream = true;
+    }
 
     // if auth code enable
     // else if created stream enable

@@ -11,6 +11,7 @@ import '../../features/home/presentation/screens/day_results_save_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/home/presentation/screens/results_stream_screen.dart';
 import '../../features/more/presentation/screen/more_screen.dart';
+import '../../features/planning/domain/entities/stream_entity.dart';
 import '../../features/planning/presentation/screens/choice_of_course.dart';
 import '../../features/planning/presentation/screens/planning_screen.dart';
 import '../../features/planning/presentation/screens/select_day_period.dart';
@@ -120,6 +121,7 @@ class AppRouter extends _$AppRouter {
           ],
         ),
         CustomRoute(page: DayResultsSaveScreenRoute.page, path: '/save-day'),
+
         CustomRoute(
             page: ResultsStreamScreenRoute.page, path: '/results-stream'),
         CustomRoute(
