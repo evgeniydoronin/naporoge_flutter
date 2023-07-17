@@ -75,7 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         listenWhen: (previous, current) =>
                             previous.streamProgress != current.streamProgress,
                         builder: (context, state) {
-                          String title = streamStatus['messages']['topMessage'];
+                          String title = 'streamStatus';
+                          // String title = streamStatus['messages']['topMessage'];
                           if (state.streamProgress != null) {
                             title =
                                 state.streamProgress!['messages']['topMessage'];

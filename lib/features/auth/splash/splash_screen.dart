@@ -30,30 +30,89 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigateToScreen() async {
-    bool isStream = false;
     final isar = await isarService.db;
     final userExists = await isar.users.count();
+    final NPStream? activeStream =
+        await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
-    // final activeStream = await isar.streams.where().findAll();
-    final activeStreamFilter =
-        await isar.nPStreams.filter().isActiveEqualTo(true).findAll();
+    DateTime now = DateTime.now();
+    // пользователь зарегистрирован
+    if (userExists != 0) {
+      print('SplashScreen - пользователь зарегистрирован');
+      // курс не создан
+      if (activeStream == null) {
+        print('SplashScreen - курс не создан');
+        if (context.mounted) {
+          AutoRouter.of(context).push(const WelcomeScreenRoute());
+        }
+      }
+      // курс создан
+      else {
+        print('SplashScreen - курс создан');
+        DateTime startStream = activeStream.startAt!;
+        DateTime endStream = activeStream.startAt!.add(Duration(
+            days: (activeStream.weeks! * 7) - 1,
+            hours: 23,
+            minutes: 59,
+            seconds: 59));
+        bool streamNotStarted = startStream.isAfter(now);
+        bool streamStarted = startStream.isBefore(now);
+        bool isAfterEndStream = endStream.isBefore(now);
 
-    if (activeStreamFilter.length == 1) {
-      isStream = true;
+        // до старта
+        if (streamNotStarted) {
+          print('SplashScreen - до старта');
+          // дни созданы
+          if (activeStream.weekBacklink.first.dayBacklink.isNotEmpty) {
+            print('SplashScreen - дни созданы');
+            if (context.mounted) {
+              AutoRouter.of(context).push(const DashboardScreenRoute());
+            }
+          }
+          // дни не созданы
+          else {
+            print('SplashScreen - дни не созданы');
+            if (context.mounted) {
+              AutoRouter.of(context)
+                  .push(SelectDayPeriodRoute(isBackArrow: false));
+            }
+          }
+        }
+        // после старта
+        else if (streamStarted) {
+          print('SplashScreen - после старта');
+          // дни созданы
+          if (activeStream.weekBacklink.first.dayBacklink.isNotEmpty) {
+            print('SplashScreen - дни созданы');
+            if (context.mounted) {
+              AutoRouter.of(context).push(const DashboardScreenRoute());
+            }
+          }
+          // дни не созданы
+          else {
+            print('SplashScreen - дни не созданы');
+            if (context.mounted) {
+              AutoRouter.of(context).push(const DashboardScreenRoute());
+            }
+          }
+        }
+      }
+
+      //   if (context.mounted) {
+      //     AutoRouter.of(context).push(const WelcomeScreenRoute());
+      //   }
+      // } else if (userExists != 0 && isStream && !isDays) {
+      //   if (context.mounted) {
+      //     AutoRouter.of(context).push(SelectDayPeriodRoute(isBackArrow: false));
+      //   }
+      // } else if (userExists != 0 && isStream && isDays) {
+      //   if (context.mounted) {
+      //     AutoRouter.of(context).push(const DashboardScreenRoute());
+      //   }
     }
-
-    // if auth code enable
-    // else if created stream enable
-    // else - login screen
-    if (userExists != 0 && !isStream) {
-      if (context.mounted) {
-        AutoRouter.of(context).push(const WelcomeScreenRoute());
-      }
-    } else if (userExists != 0 && isStream) {
-      if (context.mounted) {
-        AutoRouter.of(context).push(const DashboardScreenRoute());
-      }
-    } else if (userExists == 0) {
+    // нет пользователя
+    else if (userExists == 0) {
+      print('SplashScreen - нет пользователя');
       if (context.mounted) {
         AutoRouter.of(context).push(const LoginEmptyRouter());
       }

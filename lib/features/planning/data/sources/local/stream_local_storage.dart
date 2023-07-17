@@ -33,14 +33,14 @@ class StreamLocalStorage {
       isar.nPStreams.putSync(newStream);
       isar.weeks.putSync(newWeek);
 
-      for (Map dayData in streamDataFromServer['days']) {
-        final newDay = Day()
-          ..id = dayData['day']['id']
-          ..weekId = dayData['day']['week_id']
-          ..startAt = DateTime.parse(dayData['day']['start_at'])
-          ..week.value = newWeek;
-        isar.days.putSync(newDay);
-      }
+      // for (Map dayData in streamDataFromServer['days']) {
+      //   final newDay = Day()
+      //     ..id = dayData['day']['id']
+      //     ..weekId = dayData['day']['week_id']
+      //     ..startAt = DateTime.parse(dayData['day']['start_at'])
+      //     ..week.value = newWeek;
+      //   isar.days.putSync(newDay);
+      // }
     });
   }
 
@@ -51,7 +51,9 @@ class StreamLocalStorage {
     Map weekData = streamDataFromServer['week'];
 
     final stream = await isar.nPStreams.get(streamData['id']);
-    stream!.description = streamData['description'];
+    stream!.description = streamData['title'];
+    stream.title = streamData['description'];
+    stream.courseId = streamData['course_id'];
 
     final week = await isar.weeks.get(weekData['id']);
     week!.cells = json.encode(weekData['cells']);
@@ -64,11 +66,19 @@ class StreamLocalStorage {
       isar.weeks.putSync(week);
 
       // update days
-      for (Map dayData in streamDataFromServer['updatedDays']) {
-        final newDay = isar.days.getSync(dayData['id']);
-        newDay!.startAt = DateTime.parse(dayData['start_at']);
+      for (Map dayData in streamDataFromServer['days']) {
+        final newDay = Day()
+          ..id = dayData['day']['id']
+          ..weekId = dayData['day']['week_id']
+          ..startAt = DateTime.parse(dayData['day']['start_at'])
+          ..week.value = week;
         isar.days.putSync(newDay);
       }
+      // for (Map dayData in streamDataFromServer['updatedDays']) {
+      //   final newDay = isar.days.getSync(dayData['id']);
+      //   newDay!.startAt = DateTime.parse(dayData['start_at']);
+      //   isar.days.putSync(newDay);
+      // }
     });
 
     // final newStream = NPStream()
@@ -115,7 +125,7 @@ class StreamLocalStorage {
     final activeStream =
         await isar.nPStreams.filter().isActiveEqualTo(true).findAll();
 
-    return activeStream.first; // get
+    return activeStream.isNotEmpty ? activeStream.first : null; // get
   }
 
   Future saveDayResult(Map data) async {

@@ -64,13 +64,6 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
             const SizedBox(
               height: 30,
             ),
-            Text(
-              widget.phone,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColor.grey2,
-              ),
-            ),
             const SizedBox(
               height: 30,
             ),

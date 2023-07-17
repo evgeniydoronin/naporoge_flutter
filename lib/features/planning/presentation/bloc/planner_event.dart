@@ -69,3 +69,12 @@ final class RemoveCell extends PlannerEvent {
   @override
   List<Object> get props => [selectedCellIDs];
 }
+
+final class WrapWeekBoxHeightStream extends PlannerEvent {
+  final double wrapWeekBoxHeight;
+
+  const WrapWeekBoxHeightStream({required this.wrapWeekBoxHeight});
+
+  @override
+  List<Object> get props => [wrapWeekBoxHeight];
+}

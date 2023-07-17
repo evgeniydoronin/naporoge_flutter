@@ -8,6 +8,7 @@ final class PlannerState extends Equatable {
     this.courseDescription = '',
     this.selectedCellIDs = const [],
     this.finalCellIDs = const [],
+    this.wrapWeekBoxHeight = 0,
   });
 
   final String startDate;
@@ -16,6 +17,7 @@ final class PlannerState extends Equatable {
   final String courseDescription;
   final List selectedCellIDs;
   final List finalCellIDs;
+  final double wrapWeekBoxHeight;
 
   PlannerState copyWith({
     String? startDate,
@@ -24,6 +26,7 @@ final class PlannerState extends Equatable {
     String? courseDescription,
     List? selectedCellIDs,
     List? finalCellIDs,
+    double? wrapWeekBoxHeight,
   }) {
     return PlannerState(
       startDate: startDate ?? this.startDate,
@@ -32,6 +35,7 @@ final class PlannerState extends Equatable {
       courseDescription: courseDescription ?? this.courseDescription,
       selectedCellIDs: selectedCellIDs ?? this.selectedCellIDs,
       finalCellIDs: finalCellIDs ?? this.finalCellIDs,
+      wrapWeekBoxHeight: wrapWeekBoxHeight ?? this.wrapWeekBoxHeight,
     );
   }
 
@@ -42,6 +46,7 @@ final class PlannerState extends Equatable {
         courseTitle,
         courseDescription,
         selectedCellIDs,
-        finalCellIDs
+        finalCellIDs,
+        wrapWeekBoxHeight
       ];
 }

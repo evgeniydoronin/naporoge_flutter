@@ -213,22 +213,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? null
                                   : () async {
                                       if (_formKey.currentState!.validate()) {
-                                        var code = await _phone.getSmsCode(
-                                            maskFormatter.getUnmaskedText());
-                                        print(code);
+                                        if (isChecked) {
+                                          var code = await _phone.getSmsCode(
+                                              maskFormatter.getUnmaskedText());
+                                          print(code);
 
-                                        if (context.mounted) {
-                                          context.router.push(
-                                            LoginPhoneConfirmScreenRoute(
-                                              phone: maskFormatter
-                                                  .getUnmaskedText(),
-                                              code: code['code'],
-                                            ),
-                                          );
+                                          if (context.mounted) {
+                                            context.router.push(
+                                              LoginPhoneConfirmScreenRoute(
+                                                phone: maskFormatter
+                                                    .getUnmaskedText(),
+                                                code: code['code'],
+                                              ),
+                                            );
+                                          }
+
+                                          // TODO: uncomment
+                                          // startTimer();
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'Вы должны принять условия')));
                                         }
-
-                                        // TODO: uncomment
-                                        // startTimer();
                                       }
                                     }
                               : null,

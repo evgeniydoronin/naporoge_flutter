@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:naporoge/core/constants/app_theme.dart';
 import 'package:collection/collection.dart';
+import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
 
 import '../bloc/planner_bloc.dart';
 
@@ -106,22 +107,22 @@ void addOrUpdateCellList(newCellsList, cellData) {
 final List<String> weekDaysNameRu = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
 class DayScheduleWidget extends StatelessWidget {
-  const DayScheduleWidget({Key? key}) : super(key: key);
+  final NPStream stream;
+
+  const DayScheduleWidget({Key? key, required this.stream}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String startDateInfo = '';
-
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
         // TODO: доработать входящие данные по количеству недель курса
-        int weeks = 3;
-        String startDateString = state.startDate;
+        int weeks = stream.weeks!;
+        String startDateString = stream.startAt.toString();
         DateTime startDate = DateTime.parse(startDateString);
 
         DateTime endDate = startDate.add(Duration(days: (weeks * 7) - 1));
-        startDateInfo =
+        String startDateInfo =
             '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
 
         return Column(

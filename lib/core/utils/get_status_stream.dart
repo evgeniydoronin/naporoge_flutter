@@ -180,59 +180,109 @@ getStreamStatus(NPStream stream) {
         'page': 'DayResultsSaveScreenRoute',
       },
       'weekProgress': {
-        'title': 'Ты на первой 2 неделе',
+        'title': 'Ты на первой неделе',
       },
       'weekStatusPoint': [],
     };
 
+    // print('stream.weekBacklink: ${stream.weekBacklink.length}');
+
+    List weeksTitle = [
+      'первой',
+      'второй',
+      'третьей',
+      'четвертой',
+      'пятой',
+      'шестой',
+      'седьмой',
+      'восьмой',
+      'девятой'
+    ];
     for (Week week in stream.weekBacklink) {
-      // формируем завершенные дни
-      completedDays.addAll(
-          week.dayBacklink.where((element) => element.completedAt != null));
+      // print('weekNumber: $weekNumber');
+      // print('week.weekNumber: ${week.weekNumber}');
+      if (weekNumber == week.weekNumber) {
+        var weekIndex = stream.weekBacklink
+            .whereIndexed((index, element) => element.weekNumber == weekNumber);
+        // print('weekIndex::: ${weekIndex.indexed.first.$1}');
+        statusStream['weekProgress']['title'] =
+            'Ты на ${weeksTitle[weekIndex.indexed.first.$1]} неделе';
+      }
+      // если дни недели были созданы при создании курса
+      if (week.dayBacklink.isNotEmpty) {
+        // формируем завершенные дни
+        completedDays.addAll(
+            week.dayBacklink.where((element) => element.completedAt != null));
 
-      // воскресенье
-      Day sunday =
-          week.dayBacklink.whereIndexed((index, element) => index == 6).first;
+        // воскресенье
+        Day sunday =
+            week.dayBacklink.whereIndexed((index, element) => index == 6).first;
 
-      for (Day day in week.dayBacklink) {
-        DateTime dayStartAt =
-            DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
-        DateTime currentDay = DateTime.parse(DateFormat('y-MM-dd').format(now));
-        /////////////////////
-        // Текущая неделя
-        if (week.weekNumber == weekNumber) {
-          // statusStream['messages']['topMessage'] = 'Результаты сохранены';
+        for (Day day in week.dayBacklink) {
+          DateTime dayStartAt =
+              DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+          DateTime currentDay =
+              DateTime.parse(DateFormat('y-MM-dd').format(now));
+          /////////////////////
+          // Текущая неделя
+          if (week.weekNumber == weekNumber) {
+            // statusStream['messages']['topMessage'] = 'Результаты сохранены';
 
-          // print('dayStartAt: $dayStartAt');
-          // print('currentDay: $currentDay');
+            // print('dayStartAt: $dayStartAt');
+            // print('currentDay: $currentDay');
 
-          // Перебираем дни недели
-          // если день прошел и day.completedAt == null, статус - skipped
-          if (dayStartAt.isBefore(currentDay) && day.completedAt == null) {
-            // print('skipped == dayStartAt.isBefore(currentDay)');
-            statusStream['weekStatusPoint'].add({
-              'status': 'skipped',
-              'dayID': day.id!,
-              'title': DateFormat('HH:mm').format(day.startAt!),
-              'weekDay': DateFormat('EEEE').format(day.startAt!),
-            });
-          }
-          // если день прошел и day.completedAt != null, статус - completed
-          else if (dayStartAt.isBefore(currentDay) && day.completedAt != null) {
-            // print('completed == dayStartAt.isBefore(currentDay)');
-            statusStream['weekStatusPoint'].add({
-              'status': 'completed',
-              'dayID': day.id!,
-              'title': DateFormat('HH:mm').format(day.startAt!),
-              'weekDay': DateFormat('EEEE').format(day.startAt!),
-            });
-          }
-          // если текущий день не прошел,
-          else if (dayStartAt.isAtSameMomentAs(currentDay)) {
-            // если текущий и day.completedAt == null, статус - opened
-            if (day.completedAt == null) {
-              statusStream['messages']['topMessage'] = 'Внесите результаты дня';
+            // Перебираем дни недели
+            // если день прошел и day.completedAt == null, статус - skipped
+            if (dayStartAt.isBefore(currentDay) && day.completedAt == null) {
+              // print('skipped == dayStartAt.isBefore(currentDay)');
+              statusStream['weekStatusPoint'].add({
+                'status': 'skipped',
+                'dayID': day.id!,
+                'title': DateFormat('HH:mm').format(day.startAt!),
+                'weekDay': DateFormat('EEEE').format(day.startAt!),
+              });
+            }
+            // если день прошел и day.completedAt != null, статус - completed
+            else if (dayStartAt.isBefore(currentDay) &&
+                day.completedAt != null) {
+              // print('completed == dayStartAt.isBefore(currentDay)');
+              statusStream['weekStatusPoint'].add({
+                'status': 'completed',
+                'dayID': day.id!,
+                'title': DateFormat('HH:mm').format(day.startAt!),
+                'weekDay': DateFormat('EEEE').format(day.startAt!),
+              });
+            }
+            // если текущий день не прошел,
+            else if (dayStartAt.isAtSameMomentAs(currentDay)) {
+              // если текущий и day.completedAt == null, статус - opened
+              if (day.completedAt == null) {
+                statusStream['messages']['topMessage'] =
+                    'Внесите результаты дня';
 
+                statusStream['weekStatusPoint'].add({
+                  'status': 'opened',
+                  'dayID': day.id!,
+                  'title': DateFormat('HH:mm').format(day.startAt!),
+                  'weekDay': DateFormat('EEEE').format(day.startAt!),
+                });
+              }
+              // если текущий и day.completedAt != null, статус - completed
+              else {
+                statusStream['messages']['topMessage'] = 'Результаты сохранены';
+
+                statusStream['weekStatusPoint'].add({
+                  'status': 'completed',
+                  'dayID': day.id!,
+                  'title': DateFormat('HH:mm').format(day.startAt!),
+                  'weekDay': DateFormat('EEEE').format(day.startAt!),
+                });
+
+                statusStream['buttons']['status'] = 'disable';
+              }
+            }
+            // последующие дни в статусе - opened
+            else if (dayStartAt.isAfter(currentDay)) {
               statusStream['weekStatusPoint'].add({
                 'status': 'opened',
                 'dayID': day.id!,
@@ -240,28 +290,6 @@ getStreamStatus(NPStream stream) {
                 'weekDay': DateFormat('EEEE').format(day.startAt!),
               });
             }
-            // если текущий и day.completedAt != null, статус - completed
-            else {
-              statusStream['messages']['topMessage'] = 'Результаты сохранены';
-
-              statusStream['weekStatusPoint'].add({
-                'status': 'completed',
-                'dayID': day.id!,
-                'title': DateFormat('HH:mm').format(day.startAt!),
-                'weekDay': DateFormat('EEEE').format(day.startAt!),
-              });
-
-              statusStream['buttons']['status'] = 'disable';
-            }
-          }
-          // последующие дни в статусе - opened
-          else if (dayStartAt.isAfter(currentDay)) {
-            statusStream['weekStatusPoint'].add({
-              'status': 'opened',
-              'dayID': day.id!,
-              'title': DateFormat('HH:mm').format(day.startAt!),
-              'weekDay': DateFormat('EEEE').format(day.startAt!),
-            });
           }
         }
       }

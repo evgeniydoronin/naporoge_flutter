@@ -91,15 +91,31 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     SelectDayPeriodRoute.name: (routeData) {
+      final args = routeData.argsAs<SelectDayPeriodRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const SelectDayPeriod(),
+        child: SelectDayPeriod(
+          key: args.key,
+          isBackArrow: args.isBackArrow,
+        ),
       );
     },
     StartDateSelectionScreenRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const StartDateSelectionScreen(),
+      );
+    },
+    PlanningScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PlanningScreen(),
+      );
+    },
+    ChoiceOfCaseScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ChoiceOfCaseScreen(),
       );
     },
     WelcomeDescriptionScreenRoute.name: (routeData) {
@@ -196,18 +212,6 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const TestScreen(),
-      );
-    },
-    PlanningScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const PlanningScreen(),
-      );
-    },
-    ChoiceOfCaseScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ChoiceOfCaseScreen(),
       );
     },
   };
@@ -424,16 +428,40 @@ class LoginScreenRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [SelectDayPeriod]
-class SelectDayPeriodRoute extends PageRouteInfo<void> {
-  const SelectDayPeriodRoute({List<PageRouteInfo>? children})
-      : super(
+class SelectDayPeriodRoute extends PageRouteInfo<SelectDayPeriodRouteArgs> {
+  SelectDayPeriodRoute({
+    Key? key,
+    required bool isBackArrow,
+    List<PageRouteInfo>? children,
+  }) : super(
           SelectDayPeriodRoute.name,
+          args: SelectDayPeriodRouteArgs(
+            key: key,
+            isBackArrow: isBackArrow,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'SelectDayPeriodRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<SelectDayPeriodRouteArgs> page =
+      PageInfo<SelectDayPeriodRouteArgs>(name);
+}
+
+class SelectDayPeriodRouteArgs {
+  const SelectDayPeriodRouteArgs({
+    this.key,
+    required this.isBackArrow,
+  });
+
+  final Key? key;
+
+  final bool isBackArrow;
+
+  @override
+  String toString() {
+    return 'SelectDayPeriodRouteArgs{key: $key, isBackArrow: $isBackArrow}';
+  }
 }
 
 /// generated route for
@@ -446,6 +474,34 @@ class StartDateSelectionScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'StartDateSelectionScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PlanningScreen]
+class PlanningScreenRoute extends PageRouteInfo<void> {
+  const PlanningScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          PlanningScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PlanningScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ChoiceOfCaseScreen]
+class ChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
+  const ChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          ChoiceOfCaseScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ChoiceOfCaseScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -681,34 +737,6 @@ class TestScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'TestScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [PlanningScreen]
-class PlanningScreenRoute extends PageRouteInfo<void> {
-  const PlanningScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          PlanningScreenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'PlanningScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [ChoiceOfCaseScreen]
-class ChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
-  const ChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          ChoiceOfCaseScreenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'ChoiceOfCaseScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -24,6 +24,8 @@ class WeekStatusPoint extends StatelessWidget {
           // print('weekStatusPoint: $weekStatusPoint');
           // print('weekStatusPoint.length: ${weekStatusPoint.length}');
         }
+        // print('weekDay.length: ${weekDay.length}');
+        // print('weekStatusPoint: ${weekStatusPoint.length}');
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
@@ -42,10 +44,54 @@ class WeekStatusPoint extends StatelessWidget {
               },
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
-              itemCount: weekStatusPoint.length,
+              itemCount: weekDay.length,
               itemBuilder: (context, index) {
                 Container _container = Container();
-                if (weekStatusPoint[index]['status'] == 'completed') {
+                // если не заполнялась
+                if (weekStatusPoint.isEmpty) {
+                  _container = Container(
+                    decoration: BoxDecoration(
+                        color: AppColor.grey1,
+                        borderRadius: BorderRadius.circular(34)),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                              color: AppColor.primary,
+                              borderRadius: BorderRadius.circular(34)),
+                          child: Center(
+                            child: Text(
+                              weekDay[index].toUpperCase(),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 28,
+                          width: 34,
+                          decoration: const BoxDecoration(
+                            // color: AppColor.primary,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(34),
+                              bottomRight: Radius.circular(34),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '-',
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else if (weekStatusPoint[index]['status'] == 'completed') {
                   _container = Container(
                     decoration: BoxDecoration(
                         color: AppColor.primary,

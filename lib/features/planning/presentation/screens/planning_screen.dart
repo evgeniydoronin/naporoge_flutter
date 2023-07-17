@@ -51,8 +51,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
-      buildWhen: (previous, current) =>
-          previous.courseDescription != current.courseDescription,
       builder: (context, state) {
         context
             .watch<PlannerBloc>()
@@ -223,8 +221,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                             // Validate returns true if the form is valid, or false otherwise.
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              CircularLoading(context)
-                                                  .startLoading();
+                                              // CircularLoading(context)
+                                              //     .startLoading();
+
+                                              print('state: $state');
 
                                               Map streamData = {};
                                               // Update week
@@ -234,109 +234,106 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                               final int firstWeekId =
                                                   stream.weekBacklink.first.id!;
 
-                                              // До старта курса
-                                              if (isBeforeStartStream) {
-                                                // обновляем первую неделю курса
-                                                streamData = {
-                                                  "stream_id": streamId,
-                                                  "description": state
-                                                          .courseDescription
-                                                          .isNotEmpty
-                                                      ? state.courseDescription
-                                                      : stream.description,
-                                                  "week_id": firstWeekId,
-                                                  "cells": cells,
-                                                };
-
-                                                // найти соответствие ячейки
-                                                // [0, 0, 0] соответствует первому по индексу дню недели
-                                                // [0, 0, 1] соответствует второму по индексу дню недели
-
-                                                List newDaysData = [];
-
-                                                for (int i = 0;
-                                                    i < cells.length;
-                                                    i++) {
-                                                  int cellIndex =
-                                                      cells[i]['id'][2];
-                                                  var _day = firstWeek
-                                                      .dayBacklink.indexed
-                                                      .where((element) =>
-                                                          element.$1 ==
-                                                          cellIndex);
-                                                  Day day = _day.first.$2;
-                                                  // print(day.id);
-                                                  DateTime initialDate =
-                                                      DateTime.parse(DateFormat(
-                                                              'y-MM-dd')
-                                                          .format(
-                                                              day.startAt!));
-
-                                                  String newCellTimeString = DateFormat(
-                                                          'y-MM-dd HH:mm')
-                                                      .format(DateTime(
-                                                          initialDate.year,
-                                                          initialDate.month,
-                                                          initialDate.day,
-                                                          int.parse((cells[i]
-                                                                  ['startTime'])
-                                                              .split(':')[0]),
-                                                          int.parse((cells[i]
-                                                                  ['startTime'])
-                                                              .split(':')[1])));
-
-                                                  newDaysData.addAll([
-                                                    {
-                                                      'day_id': day.id,
-                                                      'start_at':
-                                                          newCellTimeString
-                                                    }
-                                                  ]);
-                                                }
-
-                                                streamData['newDaysData'] =
-                                                    newDaysData;
-
-                                                // update on server
-                                                var updateStream =
-                                                    await _streamController
-                                                        .updateStream(
-                                                            streamData);
-
-                                                // create local
-                                                if (updateStream['stream']
-                                                        ['id'] !=
-                                                    null) {
-                                                  streamLocalStorage
-                                                      .updateStream(
-                                                          updateStream);
-
-                                                  if (context.mounted) {
-                                                    CircularLoading(context)
-                                                        .stopLoading();
-
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                            'План успешно обновлен'),
-                                                      ),
-                                                    );
-                                                  }
-                                                }
-
-                                                // print(
-                                                //     'updateStream: $updateStream');
-                                              }
-                                              // После завершения курса
-                                              else if (isAfterEndStream) {
-                                                // просмотр последней недели открыт по умолчанию
-                                                // предыдущие можно пролистывать
-                                              }
-                                              // Во время прохождения курса
-                                              else if (!isBeforeStartStream &&
-                                                  !isAfterEndStream) {}
+                                              // // До старта курса
+                                              // if (isBeforeStartStream) {
+                                              //   // обновляем первую неделю курса
+                                              //   streamData = {
+                                              //     "stream_id": streamId,
+                                              //     "description": state
+                                              //             .courseDescription
+                                              //             .isNotEmpty
+                                              //         ? state.courseDescription
+                                              //         : stream.description,
+                                              //     "week_id": firstWeekId,
+                                              //     "cells": cells,
+                                              //   };
+                                              //
+                                              //
+                                              //   List newDaysData = [];
+                                              //
+                                              //   for (int i = 0;
+                                              //       i < cells.length;
+                                              //       i++) {
+                                              //     int cellIndex =
+                                              //         cells[i]['id'][2];
+                                              //     var _day = firstWeek
+                                              //         .dayBacklink.indexed
+                                              //         .where((element) =>
+                                              //             element.$1 ==
+                                              //             cellIndex);
+                                              //     Day day = _day.first.$2;
+                                              //     // print(day.id);
+                                              //     DateTime initialDate =
+                                              //         DateTime.parse(DateFormat(
+                                              //                 'y-MM-dd')
+                                              //             .format(
+                                              //                 day.startAt!));
+                                              //
+                                              //     String newCellTimeString = DateFormat(
+                                              //             'y-MM-dd HH:mm')
+                                              //         .format(DateTime(
+                                              //             initialDate.year,
+                                              //             initialDate.month,
+                                              //             initialDate.day,
+                                              //             int.parse((cells[i]
+                                              //                     ['startTime'])
+                                              //                 .split(':')[0]),
+                                              //             int.parse((cells[i]
+                                              //                     ['startTime'])
+                                              //                 .split(':')[1])));
+                                              //
+                                              //     newDaysData.addAll([
+                                              //       {
+                                              //         'day_id': day.id,
+                                              //         'start_at':
+                                              //             newCellTimeString
+                                              //       }
+                                              //     ]);
+                                              //   }
+                                              //
+                                              //   streamData['newDaysData'] =
+                                              //       newDaysData;
+                                              //
+                                              //   // update on server
+                                              //   var updateStream =
+                                              //       await _streamController
+                                              //           .updateStream(
+                                              //               streamData);
+                                              //
+                                              //   // update local
+                                              //   if (updateStream['stream']
+                                              //           ['id'] !=
+                                              //       null) {
+                                              //     streamLocalStorage
+                                              //         .updateStream(
+                                              //             updateStream);
+                                              //
+                                              //     if (context.mounted) {
+                                              //       CircularLoading(context)
+                                              //           .stopLoading();
+                                              //
+                                              //       ScaffoldMessenger.of(
+                                              //               context)
+                                              //           .showSnackBar(
+                                              //         const SnackBar(
+                                              //           content: Text(
+                                              //               'План успешно обновлен'),
+                                              //         ),
+                                              //       );
+                                              //     }
+                                              //   }
+                                              //
+                                              //   // print(
+                                              //   //     'updateStream: $updateStream');
+                                              // }
+                                              // // После завершения курса
+                                              // else if (isAfterEndStream) {
+                                              //   // просмотр последней недели открыт по умолчанию
+                                              //   // предыдущие можно пролистывать
+                                              // }
+                                              // // Во время прохождения курса
+                                              // else if (!isBeforeStartStream &&
+                                              //     !isAfterEndStream) {}
                                             }
                                           },
                                           style: AppLayout.accentBTNStyle,
