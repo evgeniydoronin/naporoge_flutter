@@ -2,6 +2,26 @@ import 'package:collection/collection.dart';
 
 Function eq = const ListEquality().equals;
 
+// REMOVE DUPLICATE ELEMENTS
+extension ListExtension<T> on List<T> {
+  bool _containsElement(T e) {
+    for (T element in this) {
+      if (element.toString().compareTo(e.toString()) == 0) return true;
+    }
+    return false;
+  }
+
+  List<T> removeDuplicates() {
+    List<T> tempList = [];
+
+    for (var element in this) {
+      if (!tempList._containsElement(element)) tempList.add(element);
+    }
+
+    return tempList;
+  }
+}
+
 final List<String> weekDaysNameRu = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
 class NPDayPeriod {

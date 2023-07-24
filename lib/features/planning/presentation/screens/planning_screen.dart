@@ -6,7 +6,6 @@ import '../../../../core/constants/app_theme.dart';
 import '../../data/sources/local/stream_local_storage.dart';
 import '../../domain/entities/stream_entity.dart';
 import '../bloc/planner_bloc.dart';
-import '../widgets/day_schedule_stream_widget.dart';
 
 @RoutePage()
 class PlanningScreen extends StatefulWidget {
@@ -37,15 +36,18 @@ class _PlanningScreenState extends State<PlanningScreen> {
   @override
   Widget build(BuildContext context) {
     print('Planning Screen');
-    bool isActiveConfirmBtn = true;
+    bool isPlanningConfirmBtn =
+        context.watch<PlannerBloc>().state.isPlanningConfirmBtn;
     String _description = '';
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        context
-            .watch<PlannerBloc>()
-            .add(FinalCellForCreateStream(finalCellIDs: cells));
+        // context
+        //     .watch<PlannerBloc>()
+        //     .add(FinalCellForCreateStream(finalCellIDs: cells));
+
+        print('state.finalCellIDs: ${state.finalCellIDs}');
 
         return Scaffold(
           backgroundColor: AppColor.lightBG,
@@ -160,22 +162,16 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                 decoration: AppLayout.boxDecorationShadowBG,
                                 child: WeekPlanningWidget(stream: stream)),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                          //   child: Container(
-                          //       padding: const EdgeInsets.only(bottom: 5),
-                          //       decoration: AppLayout.boxDecorationShadowBG,
-                          //       child: DayScheduleStreamWidget(stream: stream)),
-                          // ),
                           const SizedBox(height: 25),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: isActiveConfirmBtn
+                                  child: isPlanningConfirmBtn
                                       ? ElevatedButton(
                                           onPressed: () async {
+                                            print('state: $state');
                                             if (cells.length < 7) {
                                               // If the form is valid, display a snackbar. In the real world,
                                               // you'd often call a server or save the information in a database.

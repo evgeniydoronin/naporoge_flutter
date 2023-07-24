@@ -1,11 +1,82 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_theme.dart';
+import '../../bloc/planner_bloc.dart';
 import '../core.dart';
 
 ///////////////////////////
 // Редактируемая неделя
 ///////////////////////////
+
+List<Map> cells = [];
+List<List> newCellsList = [];
+List<List> deleteCellsList = [];
+
+void deleteFromList(List deleteCellsList) {
+  for (List deleteCell in deleteCellsList) {
+    cells.removeWhere((cell) => eq(cell['id'], deleteCell));
+  }
+}
+
+void addOrUpdateCellList(newCellsList, cellData) {
+  // Существующие пункты
+  List existingCell = [];
+
+  // если есть активные ячейки
+  if (cells.isNotEmpty) {
+    List globalCellsIDs = cells.map((e) => e['id']).toList();
+
+    // print('Входящий список для обновления данными');
+    // print('Входящий новый список: $newCellsList');
+    for (List newCellId in newCellsList) {
+      existingCell
+          .addAll(globalCellsIDs.where((cellID) => eq(cellID, newCellId)));
+    }
+
+    // print('existingCell: $existingCell');
+
+    // перекрестные ячейки, на замену новой
+    List prepareForDelete = [];
+
+    for (List cellID in globalCellsIDs) {
+      for (List newCellId in newCellsList) {
+        if (newCellId[2] == cellID[2]) {
+          prepareForDelete.addAll([cellID]);
+        }
+      }
+    }
+
+    for (List cellForDelete in prepareForDelete) {
+      globalCellsIDs.removeWhere((cell) => eq(cell, cellForDelete));
+    }
+
+    // Удаляем старые перекрестные ячейки
+    // print('prepareForDelete: $prepareForDelete');
+    deleteFromList(prepareForDelete);
+
+    // print('Глобальный страый оставляем без изменений');
+    // print(
+    //     'Глобальный страый список после удаления перекрестных: $globalCellsIDs');
+  }
+
+  // Создаем новые ячейки
+  for (List newCellId in newCellsList) {
+    List<Map> addNewMapToCell = [
+      {
+        'id': newCellId,
+        'startTime': cellData['startTime'],
+      },
+    ];
+
+    cells.addAll(addNewMapToCell);
+    // добавляем пустое воскресенье
+  }
+
+  // print('AFTER ADD or UPDATE: $cells');
+}
 
 class EditableDayPeriodRow extends StatefulWidget {
   final int periodIndex;
@@ -21,89 +92,294 @@ class EditableDayPeriodRow extends StatefulWidget {
 class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
   Map dayData = {};
 
+  _dialogBuilder(ids) {
+    return showDialog<void>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext ctx) {
+        List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
+        List<Widget> defaultMinutesText =
+            List.generate(12, (index) => Text('${index * 5}'));
+
+        int periodStart = periodRows[ids[0][0]].start;
+        int rowIndex = ids[0][1];
+        int hour = (periodStart + rowIndex).toInt();
+
+        switch (hour) {
+          case 24:
+            hour = 0;
+            break;
+          case 25:
+            hour = 1;
+            break;
+          case 26:
+            hour = 2;
+            break;
+        }
+
+        String newCellTimeString = '$hour:00';
+        DateTime initialDate = DateTime.now();
+        DateTime initialHour = DateTime(
+            initialDate.year, initialDate.month, initialDate.day, hour, 00);
+
+        DateTime newDate = initialHour;
+
+        return AlertDialog(
+          title: const Text('Выбрать время'),
+          content: SizedBox(
+            height: 150,
+            child: CupertinoTheme(
+              data: const CupertinoThemeData(
+                textTheme: CupertinoTextThemeData(
+                  dateTimePickerTextStyle: TextStyle(fontSize: 26),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$hour',
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(
+                    width: 100,
+                    child: CupertinoPicker(
+                        itemExtent: 26,
+                        onSelectedItemChanged: (index) {
+                          // print(index);
+                          newCellTimeString = DateFormat('Hm').format(DateTime(
+                              initialDate.year,
+                              initialDate.month,
+                              initialDate.day,
+                              hour,
+                              defaultMinutes[index]));
+
+                          // print(newCellTimeString);
+                        },
+                        children: defaultMinutesText),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          contentPadding: EdgeInsets.zero,
+          insetPadding: EdgeInsets.zero,
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Отменить'),
+              onPressed: () async {
+                // Удаляем из стейта перекрестные значения
+                context
+                    .read<PlannerBloc>()
+                    .add(RemoveCell(selectedCellIDs: ids));
+                setState(() {});
+
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Выбрать'),
+              onPressed: () {
+                Map data = {'startTime': newCellTimeString};
+
+                // Удаляем из стейта перекрестные значения
+                context
+                    .read<PlannerBloc>()
+                    .add(RemoveCell(selectedCellIDs: ids));
+
+                // Добавляем пустое воскресенье
+                List newIds = [
+                  ...ids,
+                  [0, 0, 6]
+                ];
+
+                addOrUpdateCellList(newIds, data);
+
+                print('cells:  $cells');
+
+                context
+                    .read<PlannerBloc>()
+                    .add(FinalCellForCreateStream(finalCellIDs: cells));
+
+                setState(() {});
+
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List daysData = widget.daysData;
-    final periodIndex = widget.periodIndex;
+    List newCells = [];
+    context
+        .read<PlannerBloc>()
+        .add(const PlanningConfirmBtnStream(isPlanningConfirmBtn: true));
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: periodRows[periodIndex].rows,
-      itemBuilder: (context, rowIndex) {
-        String hourStart =
-            (periodRows[periodIndex].start + rowIndex).toString();
-        String hourFinished = '';
-        if (int.parse(hourStart) < 9) {
-          hourStart = '0$hourStart';
-          hourFinished =
-              '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
-        } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
-          hourFinished =
-              (periodRows[periodIndex].start + rowIndex + 1).toString();
-        } else if (int.parse(hourStart) == 23) {
-          hourFinished = '00';
-        } else if (int.parse(hourStart) > 23) {
-          hourStart = '0${(rowIndex - 5).toString()}';
-          hourFinished = '0${(rowIndex - 4).toString()}';
-        }
+    final int periodIndex = widget.periodIndex;
 
-        return Container(
-          padding: const EdgeInsets.only(bottom: 1),
-          color: AppColor.grey1,
-          child: Row(
-            children: [
-              Container(
-                color: Colors.white,
-                width: 49,
-                height: 42,
-                margin: const EdgeInsets.only(right: 1),
-                child: Center(
-                  child: Text(
-                    '$hourStart - $hourFinished',
-                    style: TextStyle(
-                        fontSize: AppFont.smaller, color: AppColor.grey3),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    // print('widget.isEditable: ${widget.isEditable}');
-                    return GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 7,
-                        crossAxisSpacing: 1,
-                        mainAxisSpacing: 10,
+    return BlocConsumer<PlannerBloc, PlannerState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: periodRows[periodIndex].rows,
+          itemBuilder: (context, rowIndex) {
+            String hourStart =
+                (periodRows[periodIndex].start + rowIndex).toString();
+            String hourFinished = '';
+            if (int.parse(hourStart) < 9) {
+              hourStart = '0$hourStart';
+              hourFinished =
+                  '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
+            } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
+              hourFinished =
+                  (periodRows[periodIndex].start + rowIndex + 1).toString();
+            } else if (int.parse(hourStart) == 23) {
+              hourFinished = '00';
+            } else if (int.parse(hourStart) > 23) {
+              hourStart = '0${(rowIndex - 5).toString()}';
+              hourFinished = '0${(rowIndex - 4).toString()}';
+            }
+
+            return Container(
+              padding: const EdgeInsets.only(bottom: 1),
+              color: AppColor.grey1,
+              child: Row(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    width: 49,
+                    height: 42,
+                    margin: const EdgeInsets.only(right: 1),
+                    child: Center(
+                      child: Text(
+                        '$hourStart - $hourFinished',
+                        style: TextStyle(
+                            fontSize: AppFont.smaller, color: AppColor.grey3),
+                        textAlign: TextAlign.center,
                       ),
-                      itemCount: 7,
-                      itemBuilder: (BuildContext context, gridIndex) {
-                        // формируем данные ячейки
-                        for (int i = 0; i < daysData.length; i++) {
-                          if (eq(daysData[i]['cellId'],
-                              [periodIndex, rowIndex, gridIndex])) {
-                            // print(widget.newDaysData[i]);
-                            dayData = daysData[i];
-                          }
-                        }
+                    ),
+                  ),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        // print('widget.isEditable: ${widget.isEditable}');
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 7,
+                            crossAxisSpacing: 1,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: 7,
+                          itemBuilder: (BuildContext context, gridIndex) {
+                            // формируем данные ячейки
+                            for (int i = 0; i < daysData.length; i++) {
+                              if (eq(daysData[i]['cellId'],
+                                  [periodIndex, rowIndex, gridIndex])) {
+                                // print(widget.newDaysData[i]);
+                                dayData = daysData[i];
+                              }
+                            }
 
-                        return EditableDayPeriodCell(
-                          periodIndex: periodIndex,
-                          gridIndex: gridIndex,
-                          rowIndex: rowIndex,
-                          dayData: dayData,
+                            return GestureDetector(
+                              onTapDown: null,
+                              onTapUp: null,
+                              onTap: () async {
+                                // print(
+                                //     '$periodIndex, $rowIndex, $gridIndex');
+                                newCells
+                                    .add([periodIndex, rowIndex, gridIndex]);
+
+                                context
+                                    .read<PlannerBloc>()
+                                    .add(SelectCell(selectedCellIDs: newCells));
+
+                                _dialogBuilder(newCells);
+                                setState(() {});
+                              },
+                              onDoubleTap: () {
+                                newCells
+                                    .add([periodIndex, rowIndex, gridIndex]);
+                                deleteFromList(newCells);
+                                setState(() {});
+                              },
+                              onLongPressMoveUpdate:
+                                  (LongPressMoveUpdateDetails details) {
+                                double cellWidth =
+                                    (constraints.maxWidth / 7).floorToDouble();
+                                double widthWeekPeriodRow =
+                                    constraints.maxWidth -
+                                        6; // 303.0, 6 - grid gap
+                                double xGlobalPosition = details
+                                        .globalPosition.dx -
+                                    70; // (20 : padding-right) + (50 : 04-05 hours period)
+
+                                for (int i = 0; i < 6; i++) {
+                                  double min = cellWidth * i;
+                                  double max = min + cellWidth;
+                                  if (xGlobalPosition > min &&
+                                      xGlobalPosition <= max) {
+                                    // print('$periodIndex, $rowIndex, $i');
+
+                                    // newCells
+                                    //     .add([periodIndex, rowIndex, i]);
+
+                                    context
+                                        .read<PlannerBloc>()
+                                        .add(SelectCell(selectedCellIDs: [
+                                          [periodIndex, rowIndex, i]
+                                        ]));
+                                  }
+                                }
+                              },
+                              onLongPressEnd: (details) {
+                                var _newCells = state.selectedCellIDs;
+                                var _ids = _newCells.removeDuplicates();
+
+                                _dialogBuilder(_ids);
+
+                                context.read<PlannerBloc>().add(SelectCell(
+                                        selectedCellIDs: [
+                                          _newCells.removeDuplicates()
+                                        ]));
+                                setState(() {});
+                              },
+                              child: EditableDayPeriodCell(
+                                periodIndex: periodIndex,
+                                gridIndex: gridIndex,
+                                rowIndex: rowIndex,
+                                dayData: dayData,
+                                constraints: constraints,
+                              ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -112,6 +388,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
 
 class EditableDayPeriodCell extends StatefulWidget {
   final Map dayData;
+  final BoxConstraints constraints;
   final int periodIndex, rowIndex, gridIndex;
 
   const EditableDayPeriodCell(
@@ -119,7 +396,8 @@ class EditableDayPeriodCell extends StatefulWidget {
       required this.dayData,
       required this.periodIndex,
       required this.rowIndex,
-      required this.gridIndex});
+      required this.gridIndex,
+      required this.constraints});
 
   @override
   State<EditableDayPeriodCell> createState() => _EditableDayPeriodCellState();
@@ -142,9 +420,30 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
     Color badgeColor = AppColor.grey1.withOpacity(0);
     String textCell = '';
 
-    // print('dayData: $dayData');
+    final List cellsState = context.read<PlannerBloc>().state.selectedCellIDs;
 
-    if (dayData.isNotEmpty) {
+    // вывод ячеек стейта при выборе
+    if (cellsState.isNotEmpty) {
+      for (List cell in cellsState) {
+        if (eq(cell, [periodIndex, rowIndex, gridIndex])) {
+          // print('cellsState: $cellsState');
+          cellColor = Colors.redAccent;
+        }
+      }
+    }
+
+    if (cells.isNotEmpty) {
+      for (Map cell in cells) {
+        // print('cell: $cell');
+        if (eq(cell['id'], [periodIndex, rowIndex, gridIndex])) {
+          // print('cells: $cells');
+          badgeColor = gridIndex == 6 ? Colors.transparent : AppColor.grey1;
+          textCell = gridIndex == 6 ? "" : cell['startTime'] ?? '';
+        }
+      }
+    }
+    // вывод подсказок
+    else {
       // {day_id: 825, cellId: [0, 2, 2], start_at: 06:10, completed_at: 16:00}
 
       if (eq(dayData['cellId'], [periodIndex, rowIndex, gridIndex])) {
@@ -152,80 +451,11 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
         int dayIndex = gridIndex + 1;
 
         // print('dayData: $dayData');
-
-        // проверка на статусы выполнения
-        // текущий день
-        if (now.weekday == dayIndex) {
-          // если не воскресенье
-          if (dayIndex != 7) {
-            // не выполнен
-            if (dayData['completed_at'].isEmpty) {
-              badgeColor = AppColor.grey1;
-              textCell = dayData['start_at'];
-            }
-            // выполнен
-            else {
-              if (dayData['newCellId'] != null) {
-                badgeColor = AppColor.accent.withOpacity(0.5);
-                textCell = dayData['completed_at'];
-              } else if (dayData['oldCellId'] != null) {
-                badgeColor = AppColor.accent.withOpacity(0);
-                textCell = dayData['start_at'];
-              } else if (dayData['day_matches'] != null) {
-                badgeColor = AppColor.accent;
-                textCell = dayData['completed_at'];
-              }
-            }
-          }
-          // если воскресенье
-          else {
-            // не выполнен
-            if (dayData['completed_at'].isEmpty) {
-              textCell = ''; // скрываем время ячейки
-            }
-            // выполнен
-            else {
-              if (dayData['oldCellId'] != null) {
-                // скрываем значение по умолчанию ячейки
-                textCell = '';
-              } else if (dayData['newCellId'] != null) {
-                textCell = dayData['completed_at'];
-                fontColor = AppColor.red;
-              }
-            }
-          }
-        }
-        // день прошел
-        else if (now.weekday > dayIndex) {
-          // не выполнен
-          if (dayData['completed_at'].isEmpty) {
-            badgeColor = AppColor.red;
-            textCell = dayData['start_at'];
-          }
-          // выполнен
-          else {
-            if (dayData['newCellId'] != null) {
-              badgeColor = AppColor.accent.withOpacity(0.5);
-              textCell = dayData['completed_at'];
-            } else if (dayData['oldCellId'] != null) {
-              badgeColor = AppColor.accent.withOpacity(0);
-              textCell = dayData['start_at'];
-            } else if (dayData['day_matches'] != null) {
-              badgeColor = AppColor.accent;
-              textCell = dayData['completed_at'];
-            }
-          }
-        }
-        // запланированный день
-        else {
-          // если не воскресенье
-          if (gridIndex != 6) {
-            badgeColor = AppColor.grey1;
-            textCell = dayData['start_at'];
-          } else {
-            badgeColor = AppColor.grey1.withOpacity(0);
-            fontColor = AppColor.red;
-          }
+        // если не воскресенье
+        if (dayIndex != 7) {
+          badgeColor = Colors.white;
+          textCell = dayData['start_at'];
+          fontColor = AppColor.grey2;
         }
       }
     }

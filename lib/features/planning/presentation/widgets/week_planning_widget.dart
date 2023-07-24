@@ -11,6 +11,11 @@ import '../../data/sources/local/stream_local_storage.dart';
 import '../bloc/planner_bloc.dart';
 import 'core.dart';
 import 'editable_week/editable_day_period_row.dart';
+import 'utils/get_week_data.dart';
+
+List<Map> cells = [];
+List<List> newCellsList = [];
+List<List> deleteCellsList = [];
 
 Future getStreamStatus() async {
   Map streamStatus = {};
@@ -56,17 +61,21 @@ Future getWeeksData() async {
   weeksData['stream'] = stream;
   weeksData['weeks'] = weeks;
   // создано недель на курсе
-  int existsWeeks = stream.weekBacklink.length;
-  weeksData['existsWeeks'] = existsWeeks;
+  weeksData['existsWeeks'] = stream.weekBacklink.length;
   // статус курса (before, after, process)
   Map streamStatus = await getStreamStatus();
 
   // формирование недели по умолчанию при открытии Календаря
   // До старта курса
   if (streamStatus['status'] == 'before') {
-    // первая неделя курса по умолчанию
-    weeksData['defaultPageIndex'] = 0;
-    print('streamStatus: $streamStatus');
+    Map _weekData = getWeekData(stream, 'before');
+
+    // добавляем после
+    weeksData['weeksOnPage'] = _weekData['weeksOnPage'];
+    weeksData['allPages'] = _weekData['allPages'];
+    weeksData['defaultPageIndex'] = _weekData['defaultPageIndex'];
+
+    // print('streamStatus before: $streamStatus');
   }
   // После окончания курса
   else if (streamStatus['status'] == 'after') {
@@ -206,7 +215,7 @@ Future getWeeksData() async {
     }
 
     // формируем будущую редактируемую неделю
-    if (existsWeeks < weeks) {
+    if (stream.weekBacklink.length < weeks) {
       // индекс следующей недели
       int nextWeekIndex = currentWeekIndex! + 1;
       // добавляем новую страницу в планере
@@ -264,28 +273,6 @@ Future getWeeksData() async {
     weeksData['weeksOnPage'] = weeksOnPage;
     weeksData['allPages'] = allPages;
 
-    // количество недель назначать на одну больше чем создано
-    // для того, чтобы пользователь смог создать будущую неделю
-
-    // Нужно получить все созданные недели на курсе
-    // определить текущую неделю
-    // взять индекс этой недели и назначить
-    // этот индекс странице Календаря - pageIndex
-    // проверить неделю на создано или нет
-    // если текущая неделя не создана
-    // если неделя первая - дать возможность создать
-    // если не первая, то
-    // проверить предыдущую неделю
-    // если создана - взять данные для отображения подсказок
-    // если не создана, проверить первую неделю
-    // и взять подсказки, при условии что первая создана
-
-    // проверка предыдущих недель осуществляется
-    // по входящему индексу страницы
-
-    //
-
-    // print('pageIndex 33: $pageIndex');
     // print('streamStatus: $streamStatus');
   }
 
@@ -328,8 +315,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Map pageData = snapshot.data;
-            // print('pageData 333: ${pageData['weeksOnPage'][1]}');
-            // print('pageData 333: ${pageData['weeksOnPage'][1]}');
+            // print('pageData 333: $pageData');
 
             _pageIndex = pageData['defaultPageIndex'];
             NPStream stream = pageData['stream'];
@@ -386,9 +372,6 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
-                                          // сброс блока высоты периодов
-                                          // periodAllTitlesClosedHeight = [220];
-
                                           pageController.previousPage(
                                               duration: const Duration(
                                                   milliseconds: 10),
@@ -512,7 +495,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     context
         .read<PlannerBloc>()
         .add(const WrapWeekBoxHeightStream(wrapWeekBoxHeight: 0));
-    print('pageData 11: $pageData');
+    // print('pageData 11: $pageData');
     // перебираем недели
     for (Map page in pageData['weeksOnPage']) {
       // если входящий индекс страницы совпадает с недельным
@@ -540,7 +523,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
   }
 
   onCollapseToggle(val, pageIndex) {
-    print('val: $val, pageIndex: $pageIndex, period.length: ${period.length}');
+    // print('val: $val, pageIndex: $pageIndex, period.length: ${period.length}');
     for (int i = 0; i < period.length; i++) {
       if (i == val && period[val].isExpanded) {
         setState(() {
@@ -555,7 +538,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
             wrapWeekBoxHeight:
                 weeksPeriodsHeight[0]['height'].fold(0, (a, b) => a + b)));
       } else if (i == val && !period[val].isExpanded) {
-        print('open: ${weeksPeriodsHeight}');
+        // print('open: ${weeksPeriodsHeight}');
         setState(() {
           period[val].isExpanded = true;
         });
@@ -576,6 +559,10 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
   Widget build(BuildContext context) {
     bool isEditable = pageData['weeksOnPage'][pageIndex]['isEditable'] ?? false;
     List cellsData = pageData['weeksOnPage'][pageIndex]['cellsWeekData'];
+
+    context
+        .read<PlannerBloc>()
+        .add(PlanningConfirmBtnStream(isPlanningConfirmBtn: isEditable));
     // print(pageData['weeksOnPage'][pageIndex]['cellsWeekData']);
     // print('ExpandDay weeksPeriodsHeight: $weeksPeriodsHeight');
     return ListView.builder(

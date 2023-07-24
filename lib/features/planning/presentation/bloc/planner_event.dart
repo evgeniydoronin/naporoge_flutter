@@ -78,3 +78,12 @@ final class WrapWeekBoxHeightStream extends PlannerEvent {
   @override
   List<Object> get props => [wrapWeekBoxHeight];
 }
+
+final class PlanningConfirmBtnStream extends PlannerEvent {
+  final bool isPlanningConfirmBtn;
+
+  const PlanningConfirmBtnStream({required this.isPlanningConfirmBtn});
+
+  @override
+  List<Object> get props => [isPlanningConfirmBtn];
+}
