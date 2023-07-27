@@ -1,19 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import '../../../../core/constants/app_theme.dart';
-import '../../../../core/services/controllers/service_locator.dart';
-import '../../../../core/services/db_client/isar_service.dart';
-import '../../../../core/utils/circular_loading.dart';
-import '../../../../core/utils/get_status_stream.dart';
-import '../../../../core/utils/get_week_number.dart';
 import '../../data/sources/local/stream_local_storage.dart';
 import '../../domain/entities/stream_entity.dart';
 import '../bloc/planner_bloc.dart';
-import '../stream_controller.dart';
 import '../widgets/day_schedule_stream_widget.dart';
 
 @RoutePage()
@@ -25,7 +16,6 @@ class PlanningScreen extends StatefulWidget {
 }
 
 class _PlanningScreenState extends State<PlanningScreen> {
-  final _streamController = getIt<StreamController>();
   late final Future _getStream;
   late bool activeBtnPlanConfirm;
   final _formKey = GlobalKey<FormState>();
@@ -44,9 +34,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isarService = IsarService();
-    final streamLocalStorage = StreamLocalStorage();
-    bool isActiveConfirmBtn = false;
+    bool isActiveConfirmBtn = true;
     String _description = '';
 
     return BlocConsumer<PlannerBloc, PlannerState>(
@@ -72,7 +60,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 NPStream stream = snapshot.data;
-                Map streamStatus = getStreamStatus(stream);
 
                 // описание курса из БД по умолчанию
                 TextEditingController descriptionEditingController =
@@ -83,33 +70,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     state.courseDescription.isEmpty
                         ? stream.description!
                         : context.read<PlannerBloc>().state.courseDescription;
-
-                DateTime now = DateTime.now();
-                // текущая неделя
-                int weekNumber = getWeekNumber(DateTime.now());
-                int daysBefore = stream.startAt!.difference(now).inDays;
-
-                DateTime startStream = stream.startAt!;
-                DateTime endStream = stream.startAt!.add(Duration(
-                    days: (stream.weeks! * 7) - 1,
-                    hours: 23,
-                    minutes: 59,
-                    seconds: 59));
-
-                bool isBeforeStartStream = startStream.isAfter(now);
-                bool isAfterEndStream = endStream.isBefore(now);
-
-                // До старта курса
-                if (isBeforeStartStream) {
-                  isActiveConfirmBtn = true;
-                }
-                // После завершения курса
-                else if (isAfterEndStream) {
-                }
-                // Во время прохождения курса
-                else if (!isBeforeStartStream && !isAfterEndStream) {
-                  isActiveConfirmBtn = true;
-                }
 
                 return ListView(
                   shrinkWrap: true,

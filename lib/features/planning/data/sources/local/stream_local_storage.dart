@@ -51,8 +51,8 @@ class StreamLocalStorage {
     Map weekData = streamDataFromServer['week'];
 
     final stream = await isar.nPStreams.get(streamData['id']);
-    stream!.description = streamData['title'];
-    stream.title = streamData['description'];
+    stream!.title = streamData['title'];
+    stream.description = streamData['description'];
     stream.courseId = streamData['course_id'];
 
     final week = await isar.weeks.get(weekData['id']);
