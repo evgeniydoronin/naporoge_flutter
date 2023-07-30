@@ -24,6 +24,24 @@ class StreamRepository {
     }
   }
 
+  Future createWeekRequested(Map data) async {
+    try {
+      final response = await streamApi.createWeekApi(data);
+      return response.data;
+    } on DioError catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateWeekRequested(Map data) async {
+    try {
+      final response = await streamApi.updateWeekApi(data);
+      return response.data;
+    } on DioError catch (e) {
+      rethrow;
+    }
+  }
+
   Future createDayResultRequested(Map data) async {
     try {
       final response = await streamApi.createDayResultApi(data);

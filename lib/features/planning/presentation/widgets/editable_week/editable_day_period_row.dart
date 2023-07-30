@@ -17,7 +17,7 @@ List<List> deleteCellsList = [];
 
 void deleteFromList(List deleteCellsList) {
   for (List deleteCell in deleteCellsList) {
-    cells.removeWhere((cell) => eq(cell['id'], deleteCell));
+    cells.removeWhere((cell) => eq(cell['cellId'], deleteCell));
   }
 }
 
@@ -27,13 +27,12 @@ void addOrUpdateCellList(newCellsList, cellData) {
 
   // если есть активные ячейки
   if (cells.isNotEmpty) {
-    List globalCellsIDs = cells.map((e) => e['id']).toList();
+    List globalCellsIDs = cells.map((e) => e['cellId']).toList();
 
     // print('Входящий список для обновления данными');
     // print('Входящий новый список: $newCellsList');
     for (List newCellId in newCellsList) {
-      existingCell
-          .addAll(globalCellsIDs.where((cellID) => eq(cellID, newCellId)));
+      existingCell.addAll(globalCellsIDs.where((cellID) => eq(cellID, newCellId)));
     }
 
     // print('existingCell: $existingCell');
@@ -66,7 +65,7 @@ void addOrUpdateCellList(newCellsList, cellData) {
   for (List newCellId in newCellsList) {
     List<Map> addNewMapToCell = [
       {
-        'id': newCellId,
+        'cellId': newCellId,
         'startTime': cellData['startTime'],
       },
     ];
@@ -82,8 +81,7 @@ class EditableDayPeriodRow extends StatefulWidget {
   final int periodIndex;
   final List daysData;
 
-  const EditableDayPeriodRow(
-      {super.key, required this.periodIndex, required this.daysData});
+  const EditableDayPeriodRow({super.key, required this.periodIndex, required this.daysData});
 
   @override
   State<EditableDayPeriodRow> createState() => _EditableDayPeriodRowState();
@@ -105,9 +103,10 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
       context: context,
       builder: (BuildContext ctx) {
         List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
-        List<Widget> defaultMinutesText =
-            List.generate(12, (index) => Text('${index * 5}'));
+        List<Widget> defaultMinutesText = List.generate(12, (index) => Text('${index * 5}'));
 
+        // TODO: RangeError (index): Invalid value: Valid value range is empty: 0
+        // TODO: Решить проблему
         int periodStart = periodRows[ids[0][0]].start;
         int rowIndex = ids[0][1];
         int hour = (periodStart + rowIndex).toInt();
@@ -126,8 +125,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
 
         String newCellTimeString = '$hour:00';
         DateTime initialDate = DateTime.now();
-        DateTime initialHour = DateTime(
-            initialDate.year, initialDate.month, initialDate.day, hour, 00);
+        DateTime initialHour = DateTime(initialDate.year, initialDate.month, initialDate.day, hour, 00);
 
         DateTime newDate = initialHour;
 
@@ -156,11 +154,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                         onSelectedItemChanged: (index) {
                           // print(index);
                           newCellTimeString = DateFormat('Hm').format(DateTime(
-                              initialDate.year,
-                              initialDate.month,
-                              initialDate.day,
-                              hour,
-                              defaultMinutes[index]));
+                              initialDate.year, initialDate.month, initialDate.day, hour, defaultMinutes[index]));
 
                           // print(newCellTimeString);
                         },
@@ -180,9 +174,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
               child: const Text('Отменить'),
               onPressed: () async {
                 // Удаляем из стейта перекрестные значения
-                context
-                    .read<PlannerBloc>()
-                    .add(RemoveCell(selectedCellIDs: ids));
+                context.read<PlannerBloc>().add(RemoveCell(selectedCellIDs: ids));
                 setState(() {});
 
                 Navigator.pop(context);
@@ -197,9 +189,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                 Map data = {'startTime': newCellTimeString};
 
                 // Удаляем из стейта перекрестные значения
-                context
-                    .read<PlannerBloc>()
-                    .add(RemoveCell(selectedCellIDs: ids));
+                context.read<PlannerBloc>().add(RemoveCell(selectedCellIDs: ids));
 
                 // Добавляем пустое воскресенье
                 List newIds = [
@@ -209,9 +199,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
 
                 addOrUpdateCellList(newIds, data);
 
-                context
-                    .read<PlannerBloc>()
-                    .add(FinalCellForCreateStream(finalCellIDs: cells));
+                context.read<PlannerBloc>().add(FinalCellForCreateStream(finalCellIDs: cells));
 
                 setState(() {});
 
@@ -228,9 +216,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
   Widget build(BuildContext context) {
     List daysData = widget.daysData;
     List newCells = [];
-    context
-        .read<PlannerBloc>()
-        .add(const PlanningConfirmBtnStream(isPlanningConfirmBtn: true));
+    context.read<PlannerBloc>().add(const PlanningConfirmBtnStream(isPlanningConfirmBtn: true));
 
     final int periodIndex = widget.periodIndex;
 
@@ -242,16 +228,13 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: periodRows[periodIndex].rows,
           itemBuilder: (context, rowIndex) {
-            String hourStart =
-                (periodRows[periodIndex].start + rowIndex).toString();
+            String hourStart = (periodRows[periodIndex].start + rowIndex).toString();
             String hourFinished = '';
             if (int.parse(hourStart) < 9) {
               hourStart = '0$hourStart';
-              hourFinished =
-                  '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
+              hourFinished = '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
             } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
-              hourFinished =
-                  (periodRows[periodIndex].start + rowIndex + 1).toString();
+              hourFinished = (periodRows[periodIndex].start + rowIndex + 1).toString();
             } else if (int.parse(hourStart) == 23) {
               hourFinished = '00';
             } else if (int.parse(hourStart) > 23) {
@@ -272,22 +255,19 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                     child: Center(
                       child: Text(
                         '$hourStart - $hourFinished',
-                        style: TextStyle(
-                            fontSize: AppFont.smaller, color: AppColor.grey3),
+                        style: TextStyle(fontSize: AppFont.smaller, color: AppColor.grey3),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
                   Expanded(
                     child: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constraints) {
+                      builder: (BuildContext context, BoxConstraints constraints) {
                         // print('widget.isEditable: ${widget.isEditable}');
                         return GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 7,
                             crossAxisSpacing: 1,
                             mainAxisSpacing: 10,
@@ -298,8 +278,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                             // TODO: неверно формируются ячеки, нет соответствия
                             for (int i = 0; i < daysData.length; i++) {
                               // print("daysData: ${daysData[i]}");
-                              if (eq(daysData[i]['cellId'],
-                                  [periodIndex, rowIndex, gridIndex])) {
+                              if (eq(daysData[i]['cellId'], [periodIndex, rowIndex, gridIndex])) {
                                 // print(widget.newDaysData[i]);
                                 dayData = daysData[i];
                               }
@@ -311,46 +290,34 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                               onTap: () async {
                                 // print(
                                 //     '$periodIndex, $rowIndex, $gridIndex');
-                                newCells
-                                    .add([periodIndex, rowIndex, gridIndex]);
+                                newCells.add([periodIndex, rowIndex, gridIndex]);
 
-                                context
-                                    .read<PlannerBloc>()
-                                    .add(SelectCell(selectedCellIDs: newCells));
+                                context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: newCells));
 
                                 _dialogBuilder(newCells);
                                 setState(() {});
                               },
                               onDoubleTap: () {
-                                newCells
-                                    .add([periodIndex, rowIndex, gridIndex]);
+                                newCells.add([periodIndex, rowIndex, gridIndex]);
                                 deleteFromList(newCells);
                                 setState(() {});
                               },
-                              onLongPressMoveUpdate:
-                                  (LongPressMoveUpdateDetails details) {
-                                double cellWidth =
-                                    (constraints.maxWidth / 7).floorToDouble();
-                                double widthWeekPeriodRow =
-                                    constraints.maxWidth -
-                                        6; // 303.0, 6 - grid gap
-                                double xGlobalPosition = details
-                                        .globalPosition.dx -
-                                    70; // (20 : padding-right) + (50 : 04-05 hours period)
+                              onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
+                                double cellWidth = (constraints.maxWidth / 7).floorToDouble();
+                                double widthWeekPeriodRow = constraints.maxWidth - 6; // 303.0, 6 - grid gap
+                                double xGlobalPosition =
+                                    details.globalPosition.dx - 70; // (20 : padding-right) + (50 : 04-05 hours period)
 
                                 for (int i = 0; i < 6; i++) {
                                   double min = cellWidth * i;
                                   double max = min + cellWidth;
-                                  if (xGlobalPosition > min &&
-                                      xGlobalPosition <= max) {
+                                  if (xGlobalPosition > min && xGlobalPosition <= max) {
                                     // print('$periodIndex, $rowIndex, $i');
 
                                     // newCells
                                     //     .add([periodIndex, rowIndex, i]);
 
-                                    context
-                                        .read<PlannerBloc>()
-                                        .add(SelectCell(selectedCellIDs: [
+                                    context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: [
                                           [periodIndex, rowIndex, i]
                                         ]));
                                   }
@@ -362,10 +329,9 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
 
                                 _dialogBuilder(_ids);
 
-                                context.read<PlannerBloc>().add(SelectCell(
-                                        selectedCellIDs: [
-                                          _newCells.removeDuplicates()
-                                        ]));
+                                context
+                                    .read<PlannerBloc>()
+                                    .add(SelectCell(selectedCellIDs: [_newCells.removeDuplicates()]));
                                 setState(() {});
                               },
                               child: EditableDayPeriodCell(
@@ -417,9 +383,7 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
     int gridIndex = widget.gridIndex;
 
     DateTime now = DateTime.now();
-    Color cellColor = gridIndex == 6
-        ? const Color(0xFF00A2FF).withOpacity(0.3)
-        : Colors.white;
+    Color cellColor = gridIndex == 6 ? const Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
 
     Color fontColor = AppColor.blk;
     Color badgeColor = AppColor.grey1.withOpacity(0);
@@ -440,7 +404,7 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
     // print('cells 333: $cells');
     if (cells.isNotEmpty) {
       for (Map cell in cells) {
-        if (eq(cell['id'], [periodIndex, rowIndex, gridIndex])) {
+        if (eq(cell['cellId'], [periodIndex, rowIndex, gridIndex])) {
           // print('cell 22: $cell');
           badgeColor = gridIndex == 6 ? Colors.transparent : AppColor.grey1;
           textCell = gridIndex == 6 ? "" : cell['startTime'] ?? '';

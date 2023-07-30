@@ -25,8 +25,8 @@ Future getStreamStatus() async {
   DateTime now = DateTime.now();
 
   DateTime startStream = stream.startAt!;
-  DateTime endStream = stream.startAt!.add(Duration(
-      days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
+  DateTime endStream =
+      stream.startAt!.add(Duration(days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
 
   bool isBeforeStartStream = startStream.isAfter(now);
   bool isAfterEndStream = endStream.isBefore(now);
@@ -135,6 +135,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
           if (snapshot.hasData) {
             Map pageData = snapshot.data;
             // print('pageData 333: $pageData');
+            // print('weeksOnPage: ${pageData['weeksOnPage'][0]}');
 
             _pageIndex = pageData['defaultPageIndex'];
             NPStream stream = pageData['stream'];
@@ -148,12 +149,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
               listener: (context, state) {},
               builder: (context, state) {
                 double wrapHeight = 0;
-                wrapHeight = defaultAllTitleHeight +
-                    context
-                        .read<PlannerBloc>()
-                        .state
-                        .wrapWeekBoxHeight
-                        .toDouble();
+                wrapHeight = defaultAllTitleHeight + context.read<PlannerBloc>().state.wrapWeekBoxHeight.toDouble();
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: wrapHeight,
@@ -162,10 +158,8 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                       itemCount: allPages,
                       itemBuilder: (context, pageIndex) {
                         String pageTitle = "Неделя  ${pageIndex + 1}/$weeks";
-                        String weekMonday = DateFormat('dd.MM').format(
-                            pageData['weeksOnPage'][pageIndex]['monday']);
-                        String weekSunday = DateFormat('dd.MM').format(
-                            pageData['weeksOnPage'][pageIndex]['sunday']);
+                        String weekMonday = DateFormat('dd.MM').format(pageData['weeksOnPage'][pageIndex]['monday']);
+                        String weekSunday = DateFormat('dd.MM').format(pageData['weeksOnPage'][pageIndex]['sunday']);
                         String weekPeriod = "$weekMonday - $weekSunday";
                         return ListView(
                           shrinkWrap: true,
@@ -173,18 +167,15 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                           children: [
                             // Навигация по неделям и период недели
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                               child: Column(
                                 children: [
                                   Text(
                                     pageTitle,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500),
+                                    style: const TextStyle(fontWeight: FontWeight.w500),
                                   ),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
@@ -192,17 +183,14 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                           // при переходе по вкладкам
                                           // необходим для сброса стейта с финальными ячейками
                                           // если пользователь ушёл с планнера без сохранения
-                                          context.read<PlannerBloc>().add(
-                                              const FinalCellForCreateStream(
-                                                  finalCellIDs: []));
+                                          context
+                                              .read<PlannerBloc>()
+                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
 
                                           pageController.previousPage(
-                                              duration: const Duration(
-                                                  milliseconds: 10),
-                                              curve: Curves.easeIn);
+                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
                                         },
-                                        child: const Icon(
-                                            Icons.arrow_back_ios_new),
+                                        child: const Icon(Icons.arrow_back_ios_new),
                                       ),
                                       Text(weekPeriod),
                                       GestureDetector(
@@ -211,19 +199,14 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                           // при переходе по вкладкам
                                           // необходим для сброса стейта с финальными ячейками
                                           // если пользователь ушёл с планнера без сохранения
-                                          context.read<PlannerBloc>().add(
-                                              const FinalCellForCreateStream(
-                                                  finalCellIDs: []));
+                                          context
+                                              .read<PlannerBloc>()
+                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
 
                                           pageController.nextPage(
-                                              duration: const Duration(
-                                                  milliseconds: 10),
-                                              curve: Curves.easeIn);
+                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
                                         },
-                                        child: const RotatedBox(
-                                            quarterTurns: 2,
-                                            child:
-                                                Icon(Icons.arrow_back_ios_new)),
+                                        child: const RotatedBox(quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
                                       ),
                                     ],
                                   ),
@@ -238,33 +221,25 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                   padding: const EdgeInsets.only(left: 7),
                                   alignment: Alignment.centerLeft,
                                   width: 50,
-                                  child:
-                                      SvgPicture.asset('assets/icons/time.svg'),
+                                  child: SvgPicture.asset('assets/icons/time.svg'),
                                 ),
                                 Expanded(
                                   child: GridView.builder(
                                     shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 7,
                                       crossAxisSpacing: 1,
                                     ),
                                     itemCount: weekDaysNameRu.length,
-                                    itemBuilder:
-                                        (BuildContext context, dayIndex) {
+                                    itemBuilder: (BuildContext context, dayIndex) {
                                       return Center(
                                         child: Text(
-                                          weekDaysNameRu[dayIndex]
-                                              .toString()
-                                              .toUpperCase(),
+                                          weekDaysNameRu[dayIndex].toString().toUpperCase(),
                                           style: TextStyle(
                                               fontSize: AppFont.smaller,
-                                              color: weekDaysNameRu[dayIndex] ==
-                                                      'вс'
-                                                  ? AppColor.grey2
-                                                  : AppColor.accent),
+                                              color:
+                                                  weekDaysNameRu[dayIndex] == 'вс' ? AppColor.grey2 : AppColor.accent),
                                         ),
                                       );
                                     },
@@ -272,8 +247,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                 ),
                               ],
                             ),
-                            ExpandDayPeriod(
-                                pageData: pageData, pageIndex: pageIndex),
+                            ExpandDayPeriod(stream: stream, pageData: pageData, pageIndex: pageIndex),
                           ],
                         );
                       }),
@@ -288,11 +262,11 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
 }
 
 class ExpandDayPeriod extends StatefulWidget {
+  final NPStream stream;
   final Map pageData;
   final int pageIndex;
 
-  const ExpandDayPeriod(
-      {super.key, required this.pageData, required this.pageIndex});
+  const ExpandDayPeriod({super.key, required this.pageData, required this.pageIndex, required this.stream});
 
   @override
   State<ExpandDayPeriod> createState() => _ExpandDayPeriodState();
@@ -324,9 +298,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     // сброс высоты всех страниц
     weeksPeriodsHeight = [];
     // сброс высоту периода в стейте
-    context
-        .read<PlannerBloc>()
-        .add(const WrapWeekBoxHeightStream(wrapWeekBoxHeight: 0));
+    context.read<PlannerBloc>().add(const WrapWeekBoxHeightStream(wrapWeekBoxHeight: 0));
     // print('pageData 11: $pageData');
     // перебираем недели
     for (Map page in pageData['weeksOnPage']) {
@@ -369,9 +341,9 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
         weeksPeriodsHeight[0]['height'].remove((period[val].rows * 43).toInt());
 
         // удаляем высоту периода в стейте
-        context.read<PlannerBloc>().add(WrapWeekBoxHeightStream(
-            wrapWeekBoxHeight:
-                weeksPeriodsHeight[0]['height'].fold(0, (a, b) => a + b)));
+        context
+            .read<PlannerBloc>()
+            .add(WrapWeekBoxHeightStream(wrapWeekBoxHeight: weeksPeriodsHeight[0]['height'].fold(0, (a, b) => a + b)));
       } else if (i == val && !period[val].isExpanded) {
         // print('open: ${weeksPeriodsHeight}');
         setState(() {
@@ -379,13 +351,12 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
         });
 
         // добавляем высоту периода в список
-        weeksPeriodsHeight[0]['height']
-            .addAll([(period[val].rows * 43).toInt()]);
+        weeksPeriodsHeight[0]['height'].addAll([(period[val].rows * 43).toInt()]);
 
         // добавляем высоту периода в стейт
-        context.read<PlannerBloc>().add(WrapWeekBoxHeightStream(
-            wrapWeekBoxHeight:
-                weeksPeriodsHeight[0]['height'].fold(0, (a, b) => a + b)));
+        context
+            .read<PlannerBloc>()
+            .add(WrapWeekBoxHeightStream(wrapWeekBoxHeight: weeksPeriodsHeight[0]['height'].fold(0, (a, b) => a + b)));
       }
     }
   }
@@ -395,20 +366,18 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     bool isEditable = pageData['weeksOnPage'][pageIndex]['isEditable'] ?? false;
     List cellsData = pageData['weeksOnPage'][pageIndex]['cellsWeekData'];
 
+    // print('weeksOnPage: ${pageData['weeksOnPage'][pageIndex]}');
+
     // выводим кнопку План мне подходит
     // если неделя редактируемая
-    context
-        .read<PlannerBloc>()
-        .add(PlanningConfirmBtnStream(isPlanningConfirmBtn: isEditable));
+    context.read<PlannerBloc>().add(PlanningConfirmBtnStream(isPlanningConfirmBtn: isEditable));
 
     // добавляем в стейт данные по редактируемой неделе
     // если ячейки дней не созданы
     context.read<PlannerBloc>().add(EditableWeekStream(editableWeekData: {
           'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
-          'createOrUpdate':
-              pageData['weeksOnPage'][pageIndex]['cellsWeekData'].isEmpty
-                  ? 'createWeek'
-                  : 'updateWeek',
+          'monday': pageData['weeksOnPage'][pageIndex]['monday'],
+          'weekOfYear': pageData['weeksOnPage'][pageIndex]['weekOfYear'],
         }));
 
     // print("ячейки дней : ${pageData['weeksOnPage'][pageIndex]['weekId']}");
@@ -431,8 +400,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
               child: Container(
                 width: double.maxFinite,
                 margin: const EdgeInsets.only(bottom: 2),
-                padding: const EdgeInsets.only(
-                    top: 10, bottom: 10, left: 6, right: 10),
+                padding: const EdgeInsets.only(top: 10, bottom: 10, left: 6, right: 10),
                 decoration: BoxDecoration(
                     color: AppColor.grey1,
                     borderRadius: const BorderRadius.only(
@@ -452,9 +420,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              height: period[periodIndex].isExpanded
-                  ? (period[periodIndex].rows * 43)
-                  : 0,
+              height: period[periodIndex].isExpanded ? (period[periodIndex].rows * 43) : 0,
               child: isEditable
                   ? EditableDayPeriodRow(
                       periodIndex: periodIndex,
@@ -463,6 +429,8 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
                   : DayPeriodRow(
                       periodIndex: periodIndex,
                       daysData: cellsData,
+                      weeksOnPage: pageData['weeksOnPage'][pageIndex],
+                      stream: widget.stream,
                     ),
             ),
           ],
@@ -475,37 +443,41 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
 class DayPeriodRow extends StatefulWidget {
   final int periodIndex;
   final List daysData;
+  final Map weeksOnPage;
+  final NPStream stream;
 
   const DayPeriodRow(
-      {super.key, required this.periodIndex, required this.daysData});
+      {super.key, required this.periodIndex, required this.daysData, required this.weeksOnPage, required this.stream});
 
   @override
   State<DayPeriodRow> createState() => _DayPeriodRowState();
 }
 
 class _DayPeriodRowState extends State<DayPeriodRow> {
-  Map dayData = {};
-
   @override
   Widget build(BuildContext context) {
+    // print('weekOnPage: $weekOnPage');
+
     List daysData = widget.daysData;
     final periodIndex = widget.periodIndex;
+
+    // print('periodIndex: $periodIndex');
+    // print('weekId: ${widget.weeksOnPage['weekId']}');
+
+    Week week = widget.stream.weekBacklink.where((week) => week.id == widget.weeksOnPage['weekId']).first;
 
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: periodRows[periodIndex].rows,
       itemBuilder: (context, rowIndex) {
-        String hourStart =
-            (periodRows[periodIndex].start + rowIndex).toString();
+        String hourStart = (periodRows[periodIndex].start + rowIndex).toString();
         String hourFinished = '';
         if (int.parse(hourStart) < 9) {
           hourStart = '0$hourStart';
-          hourFinished =
-              '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
+          hourFinished = '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
         } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
-          hourFinished =
-              (periodRows[periodIndex].start + rowIndex + 1).toString();
+          hourFinished = (periodRows[periodIndex].start + rowIndex + 1).toString();
         } else if (int.parse(hourStart) == 23) {
           hourFinished = '00';
         } else if (int.parse(hourStart) > 23) {
@@ -526,8 +498,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                 child: Center(
                   child: Text(
                     '$hourStart - $hourFinished',
-                    style: TextStyle(
-                        fontSize: AppFont.smaller, color: AppColor.grey3),
+                    style: TextStyle(fontSize: AppFont.smaller, color: AppColor.grey3),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -535,12 +506,10 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
               Expanded(
                 child: LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
-                    // print('widget.isEditable: ${widget.isEditable}');
                     return GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 7,
                         crossAxisSpacing: 1,
                         mainAxisSpacing: 10,
@@ -548,19 +517,31 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                       itemCount: 7,
                       itemBuilder: (BuildContext context, gridIndex) {
                         // формируем данные ячейки
+                        Map dayData = {};
+
                         for (int i = 0; i < daysData.length; i++) {
-                          if (eq(daysData[i]['cellId'],
-                              [periodIndex, rowIndex, gridIndex])) {
-                            // print(widget.newDaysData[i]);
-                            dayData = daysData[i];
+                          if (eq(daysData[i]['cellId'], [periodIndex, rowIndex, gridIndex])) {
+                            // print('daysData[i] : ${daysData[i]}');
+                            // Находим объект ДНЯ и добавляем
+                            Day day = week.dayBacklink.where((day) => day.id == daysData[i]['day_id']).first;
+                            // print("day: ${day.completedAt}");
+                            dayData = {
+                              ...daysData[i],
+                              ...{'day': day}
+                            };
+
+                            // print('dayData: ${dayData['day']}');
+                            // print('day: ${week.dayBacklink.where((day) => day.id == daysData[i]['day_id']).first}');
                           }
                         }
+                        // print('dayData: ${dayData}');
 
                         return DayPeriodExistedCell(
                           periodIndex: periodIndex,
                           gridIndex: gridIndex,
                           rowIndex: rowIndex,
                           dayData: dayData,
+                          weeksOnPage: widget.weeksOnPage,
                         );
                       },
                     );
@@ -577,6 +558,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
 
 class DayPeriodExistedCell extends StatefulWidget {
   final Map dayData;
+  final Map weeksOnPage;
   final int periodIndex, rowIndex, gridIndex;
 
   const DayPeriodExistedCell(
@@ -584,7 +566,8 @@ class DayPeriodExistedCell extends StatefulWidget {
       required this.dayData,
       required this.periodIndex,
       required this.rowIndex,
-      required this.gridIndex});
+      required this.gridIndex,
+      required this.weeksOnPage});
 
   @override
   State<DayPeriodExistedCell> createState() => _DayPeriodExistedCellState();
@@ -598,29 +581,40 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
     int rowIndex = widget.rowIndex;
     int gridIndex = widget.gridIndex;
 
-    DateTime now = DateTime.now();
-    Color cellColor = gridIndex == 6
-        ? const Color(0xFF00A2FF).withOpacity(0.3)
-        : Colors.white;
+    // print('dayData: $dayData');
+
+    Color cellColor = gridIndex == 6 ? const Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
 
     Color fontColor = AppColor.blk;
     Color badgeColor = AppColor.grey1.withOpacity(0);
     String textCell = '';
 
     // print('dayData: $dayData');
-
     if (dayData.isNotEmpty) {
-      // {day_id: 825, cellId: [0, 2, 2], start_at: 06:10, completed_at: 16:00}
+      // print('day: ${day}');
+
+      // {day_id: 1029, cellId: [0, 6, 2], start_at: 08:00, completed_at: 10:00, newCellId: true}
+      // {day_id: 1029, cellId: [0, 4, 2], start_at: 08:00, completed_at: 10:00, oldCellId: true}
+      // {day_id: 1026, cellId: [0, 5, 0], start_at: 09:00, completed_at: 09:55, day_matches: true}
 
       if (eq(dayData['cellId'], [periodIndex, rowIndex, gridIndex])) {
-        // print(dayData);
         int dayIndex = gridIndex + 1;
+        DateTime now = DateTime.parse(DateFormat('y-MM-dd').format(DateTime.now()));
+        Day day = dayData['day'];
+        DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
 
-        // print('dayData: $dayData');
+        // String? completedAt = DateFormat('Y-mm-dd').format(day.completedAt);
 
+        // print('dayStartAt: $dayStartAt, ${dayStartAt.isAtSameMomentAs(now)}');
+        // print('isAfter: $dayStartAt, ${dayStartAt.isAfter(now)}');
+        // print('isBefore: $dayStartAt, ${dayStartAt.isBefore(now)}');
+        // print('now: ${DateTime.parse(DateFormat('y-MM-dd').format(now))}');
+
+        ///////////////////////////////////////////
         // проверка на статусы выполнения
+        ///////////////////////////////////////////
         // текущий день
-        if (now.weekday == dayIndex) {
+        if (dayStartAt.isAtSameMomentAs(now)) {
           // если не воскресенье
           if (dayIndex != 7) {
             // не выполнен
@@ -661,28 +655,75 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
           }
         }
         // день прошел
-        else if (now.weekday > dayIndex) {
-          // не выполнен
-          if (dayData['completed_at'].isEmpty) {
-            badgeColor = AppColor.red;
-            textCell = dayData['start_at'];
-          }
-          // выполнен
-          else {
-            if (dayData['newCellId'] != null) {
-              badgeColor = AppColor.accent.withOpacity(0.5);
-              textCell = dayData['completed_at'];
-            } else if (dayData['oldCellId'] != null) {
-              badgeColor = AppColor.accent.withOpacity(0);
+        else if (dayStartAt.isBefore(now)) {
+          // если не воскресенье
+          if (dayIndex != 7) {
+            // print('dayData: $dayData');
+            // не выполнен
+            if (day.completedAt == null) {
+              badgeColor = AppColor.red;
               textCell = dayData['start_at'];
-            } else if (dayData['day_matches'] != null) {
-              badgeColor = AppColor.accent;
-              textCell = dayData['completed_at'];
+            } else {
+              if (dayData['completed_at'].isEmpty) {
+                badgeColor = AppColor.red;
+                textCell = dayData['start_at'];
+              }
+              // выполнен
+              else {
+                if (dayData['newCellId'] != null) {
+                  badgeColor = AppColor.accent.withOpacity(0.5);
+                  textCell = dayData['completed_at'];
+                } else if (dayData['oldCellId'] != null) {
+                  badgeColor = AppColor.accent.withOpacity(0);
+                  textCell = dayData['start_at'];
+                } else if (dayData['day_matches'] != null) {
+                  badgeColor = AppColor.accent;
+                  textCell = dayData['completed_at'];
+                }
+              }
+            }
+          }
+          // если воскресенье
+          else {
+            // не выполнен
+            if (dayData['completed_at'].isEmpty) {
+              textCell = ''; // скрываем время ячейки
+            }
+            // выполнен
+            else {
+              if (dayData['oldCellId'] != null) {
+                // скрываем значение по умолчанию ячейки
+                textCell = '';
+              } else if (dayData['newCellId'] != null) {
+                textCell = dayData['completed_at'];
+                fontColor = AppColor.red;
+              }
+            }
+          }
+          // если не воскресенье
+          if (dayIndex != 7) {
+            // не выполнен
+            if (dayData['completed_at'].isEmpty) {
+              badgeColor = AppColor.red;
+              textCell = dayData['start_at'];
+            }
+            // выполнен
+            else {
+              if (dayData['newCellId'] != null) {
+                badgeColor = AppColor.accent.withOpacity(0.5);
+                textCell = dayData['completed_at'];
+              } else if (dayData['oldCellId'] != null) {
+                badgeColor = AppColor.accent.withOpacity(0);
+                textCell = dayData['start_at'];
+              } else if (dayData['day_matches'] != null) {
+                badgeColor = AppColor.accent;
+                textCell = dayData['completed_at'];
+              }
             }
           }
         }
         // запланированный день
-        else {
+        else if (dayStartAt.isAfter(now)) {
           // если не воскресенье
           if (gridIndex != 6) {
             badgeColor = AppColor.grey1;

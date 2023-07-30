@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/services/controllers/service_locator.dart';
+import '../../../../core/utils/circular_loading.dart';
+import '../stream_controller.dart';
 import '../widgets/week_planning_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../data/sources/local/stream_local_storage.dart';
@@ -16,6 +21,9 @@ class PlanningScreen extends StatefulWidget {
 }
 
 class _PlanningScreenState extends State<PlanningScreen> {
+  final _streamController = getIt<StreamController>();
+  final streamLocalStorage = StreamLocalStorage();
+
   late final Future _getStream;
 
   // late bool activeBtnPlanConfirm;
@@ -36,8 +44,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
   @override
   Widget build(BuildContext context) {
     print('Planning Screen');
-    bool isPlanningConfirmBtn =
-        context.watch<PlannerBloc>().state.isPlanningConfirmBtn;
+    bool isPlanningConfirmBtn = context.watch<PlannerBloc>().state.isPlanningConfirmBtn;
 
     String _description = '';
 
@@ -66,10 +73,9 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     TextEditingController(text: stream.description ?? '');
 
                 // если были изменения описания курса - меняем данные
-                descriptionEditingController.text =
-                    state.courseDescription.isEmpty
-                        ? stream.description ?? ''
-                        : context.read<PlannerBloc>().state.courseDescription;
+                descriptionEditingController.text = state.courseDescription.isEmpty
+                    ? stream.description ?? ''
+                    : context.read<PlannerBloc>().state.courseDescription;
 
                 return ListView(
                   shrinkWrap: true,
@@ -83,15 +89,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Container(
                               width: double.maxFinite,
-                              padding: const EdgeInsets.only(
-                                  top: 15, bottom: 15, left: 18, right: 18),
+                              padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                               decoration: AppLayout.boxDecorationShadowBG,
                               child: Text(
                                 stream.title!,
                                 style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: AppFont.large,
-                                    fontWeight: FontWeight.w500),
+                                    color: Colors.black, fontSize: AppFont.large, fontWeight: FontWeight.w500),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -116,33 +119,25 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                     _description = description;
                                   },
                                   onTapOutside: (val) {
-                                    context.read<PlannerBloc>().add(
-                                        StreamCourseDescriptionChanged(
-                                            _description));
+                                    context.read<PlannerBloc>().add(StreamCourseDescriptionChanged(_description));
                                   },
                                   maxLines: 2,
                                   maxLength: 200,
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.all(10),
-                                    hintText:
-                                        'Укажите объем выполнения и цель дела',
-                                    hintStyle: const TextStyle(
-                                        color: Colors.grey, fontSize: 12),
-                                    labelStyle: const TextStyle(
-                                        color: Colors.grey, fontSize: 12),
+                                    hintText: 'Укажите объем выполнения и цель дела',
+                                    hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                    labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                                     fillColor: Colors.white,
                                     filled: true,
                                     errorBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.redAccent),
+                                        borderSide: const BorderSide(color: Colors.redAccent),
                                         borderRadius: AppLayout.primaryRadius),
                                     enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent),
+                                        borderSide: const BorderSide(color: Colors.transparent),
                                         borderRadius: AppLayout.primaryRadius),
                                     focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent),
+                                        borderSide: const BorderSide(color: Colors.transparent),
                                         borderRadius: AppLayout.primaryRadius),
                                   ),
                                 ),
@@ -169,134 +164,94 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                             // print(
                                             //     'state: ${state.finalCellIDs.length}');
                                             if (state.finalCellIDs.length < 7) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
+                                              ScaffoldMessenger.of(context).showSnackBar(
                                                 const SnackBar(
-                                                  content: Text(
-                                                      'Нужно выбрать 6 дней'),
+                                                  content: Text('Нужно выбрать 6 дней'),
                                                 ),
                                               );
                                               return;
                                             }
                                             // Validate returns true if the form is valid, or false otherwise.
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              // CircularLoading(context)
-                                              //     .startLoading();
+                                            if (_formKey.currentState!.validate()) {
+                                              CircularLoading(context).startLoading();
 
-                                              print(
-                                                  'state finalCellIDs: ${state.finalCellIDs}');
-                                              print(
-                                                  'state weekData: ${state.editableWeekData}');
+                                              Map newWeekData = {};
+                                              Map weekData = state.editableWeekData;
+                                              List selectedCells = state.finalCellIDs;
 
-                                              Map streamData = {};
-                                              // Update week
-                                              final int streamId = stream.id!;
-                                              final Week firstWeek =
-                                                  stream.weekBacklink.first;
-                                              final int firstWeekId =
-                                                  stream.weekBacklink.first.id!;
+                                              print('weekData:: ${state.editableWeekData}');
+                                              print('selectedCells: $selectedCells');
 
-                                              // // До старта курса
-                                              // if (isBeforeStartStream) {
-                                              //   // обновляем первую неделю курса
-                                              //   streamData = {
-                                              //     "stream_id": streamId,
-                                              //     "description": state
-                                              //             .courseDescription
-                                              //             .isNotEmpty
-                                              //         ? state.courseDescription
-                                              //         : stream.description,
-                                              //     "week_id": firstWeekId,
-                                              //     "cells": cells,
-                                              //   };
-                                              //
-                                              //
-                                              //   List newDaysData = [];
-                                              //
-                                              //   for (int i = 0;
-                                              //       i < cells.length;
-                                              //       i++) {
-                                              //     int cellIndex =
-                                              //         cells[i]['id'][2];
-                                              //     var _day = firstWeek
-                                              //         .dayBacklink.indexed
-                                              //         .where((element) =>
-                                              //             element.$1 ==
-                                              //             cellIndex);
-                                              //     Day day = _day.first.$2;
-                                              //     // print(day.id);
-                                              //     DateTime initialDate =
-                                              //         DateTime.parse(DateFormat(
-                                              //                 'y-MM-dd')
-                                              //             .format(
-                                              //                 day.startAt!));
-                                              //
-                                              //     String newCellTimeString = DateFormat(
-                                              //             'y-MM-dd HH:mm')
-                                              //         .format(DateTime(
-                                              //             initialDate.year,
-                                              //             initialDate.month,
-                                              //             initialDate.day,
-                                              //             int.parse((cells[i]
-                                              //                     ['startTime'])
-                                              //                 .split(':')[0]),
-                                              //             int.parse((cells[i]
-                                              //                     ['startTime'])
-                                              //                 .split(':')[1])));
-                                              //
-                                              //     newDaysData.addAll([
-                                              //       {
-                                              //         'day_id': day.id,
-                                              //         'start_at':
-                                              //             newCellTimeString
-                                              //       }
-                                              //     ]);
-                                              //   }
-                                              //
-                                              //   streamData['newDaysData'] =
-                                              //       newDaysData;
-                                              //
-                                              //   // update on server
-                                              //   var updateStream =
-                                              //       await _streamController
-                                              //           .updateStream(
-                                              //               streamData);
-                                              //
-                                              //   // update local
-                                              //   if (updateStream['stream']
-                                              //           ['id'] !=
-                                              //       null) {
-                                              //     streamLocalStorage
-                                              //         .updateStream(
-                                              //             updateStream);
-                                              //
-                                              //     if (context.mounted) {
-                                              //       CircularLoading(context)
-                                              //           .stopLoading();
-                                              //
-                                              //       ScaffoldMessenger.of(
-                                              //               context)
-                                              //           .showSnackBar(
-                                              //         const SnackBar(
-                                              //           content: Text(
-                                              //               'План успешно обновлен'),
-                                              //         ),
-                                              //       );
-                                              //     }
-                                              //   }
-                                              //
-                                              //   // print(
-                                              //   //     'updateStream: $updateStream');
-                                              // }
-                                              // // После завершения курса
-                                              // else if (isAfterEndStream) {
-                                              //   // просмотр последней недели открыт по умолчанию
-                                              //   // предыдущие можно пролистывать
-                                              // }
-                                              // // Во время прохождения курса
-                                              // else if (!isBeforeStartStream &&
-                                              //     !isAfterEndStream) {}
+                                              // /////////////////////////////
+                                              // CREATE WEEK
+                                              // /////////////////////////////
+                                              if (state.editableWeekData['weekId'] == null) {
+                                                print('CREATE WEEK');
+                                                newWeekData['streamId'] = stream.id;
+                                                newWeekData['cells'] = selectedCells;
+                                                newWeekData['monday'] = state.editableWeekData['monday'].toString();
+                                                newWeekData['weekOfYear'] = state.editableWeekData['weekOfYear'];
+
+                                                var createWeek = await _streamController.createWeek(newWeekData);
+
+                                                // update local
+                                                if (createWeek['week'] != null) {
+                                                  streamLocalStorage.createWeek(createWeek);
+
+                                                  if (context.mounted) {
+                                                    CircularLoading(context).stopLoading();
+                                                  }
+                                                }
+                                                // print('createWeek: $createWeek');
+                                              }
+                                              // /////////////////////////////
+                                              // UPDATE WEEK
+                                              // /////////////////////////////
+                                              else if (state.editableWeekData['weekId'] != null) {
+                                                print('UPDATE WEEK: ${state.editableWeekData['weekId']}');
+                                                // Неделя для обновления
+                                                final weekForUpdate = stream.weekBacklink
+                                                    .where((week) => week.id == weekData['weekId'])
+                                                    .first;
+
+                                                // Ячейки созданной недели
+                                                List oldCells = jsonDecode(weekForUpdate.cells!);
+
+                                                // Формируем новый список ячеек
+                                                // с обновленными данными
+                                                List newCells = [];
+
+                                                for (Map oldCell in oldCells) {
+                                                  for (Map selectedCell in selectedCells) {
+                                                    if (oldCell['cellId'][2] == selectedCell['cellId'][2]) {
+                                                      newCells.addAll([
+                                                        {
+                                                          'dayId': oldCell['dayId'],
+                                                          'cellId': selectedCell['cellId'],
+                                                          'startTime': selectedCell['startTime'],
+                                                        }
+                                                      ]);
+                                                    }
+                                                  }
+                                                }
+
+                                                newWeekData['week_id'] = weekForUpdate.id;
+                                                // подтверждение сохранения от пользователя
+                                                newWeekData['user_confirmed'] = true;
+                                                newWeekData['cells'] = newCells;
+
+                                                // update on server
+                                                var updateWeek = await _streamController.updateWeek(newWeekData);
+
+                                                // update local
+                                                if (updateWeek['week'] != null) {
+                                                  streamLocalStorage.updateWeek(updateWeek);
+
+                                                  if (context.mounted) {
+                                                    CircularLoading(context).stopLoading();
+                                                  }
+                                                }
+                                              }
                                             }
                                           },
                                           style: AppLayout.accentBTNStyle,

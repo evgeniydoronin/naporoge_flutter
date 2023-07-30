@@ -112,6 +112,75 @@ class StreamLocalStorage {
     // });
   }
 
+  Future<void> createWeek(Map weekDataFromServer) async {
+    final isar = await isarService.db;
+    final stream = await isar.nPStreams.get(weekDataFromServer['week']['stream_id']);
+
+    // получить stream
+    // создать неделю
+    final newWeek = Week()
+      ..id = weekDataFromServer['week']['id']
+      ..weekNumber = weekDataFromServer['week']['number']
+      ..streamId = weekDataFromServer['week']['stream_id']
+      ..cells = json.encode(weekDataFromServer['week']['cells'])
+      ..nPStream.value = stream;
+
+    isar.writeTxnSync(() async {
+      isar.weeks.putSync(newWeek);
+
+      for (Map dayData in weekDataFromServer['days']) {
+        final newDay = Day()
+          ..id = dayData['day']['id']
+          ..weekId = dayData['day']['week_id']
+          ..startAt = DateTime.parse(dayData['day']['start_at'])
+          ..week.value = newWeek;
+        isar.days.putSync(newDay);
+      }
+    });
+    // final week = await isar.weeks.get(weekDataFromServer['week']['id']);
+    // {"cells":"[{\"dayId\":949,\"cellId\":[2,0,5]},{\"dayId\":950,\"cellId\":[1,6,4]},{\"dayId\":951,\"cellId\":[1,4,2]},{\"dayId\":952,\"cellId\":[0,0,0]},{\"dayId\":953,\"cellId\":[1,5,3]},{\"dayId\":954,\"cellId\":[1,3,1]},{\"dayId\":955,\"cellId\":[0,0,6]}]","id":215,"streamId":239,"weekNumber":31}
+    // week!.cells = jsonEncode(weekDataFromServer['newCells']);
+    // TODO: решить вопрос с кто подтверждает неделю
+    // TODO: user_confirmed или system_confirmed
+    // print('weekDataFromServer:: $weekDataFromServer');
+    // print('day 949:: ${week.dayBacklink.where((day) => day.id == 949)}');
+
+    // isar.writeTxnSync(() {
+    //   // update week
+    //   isar.weeks.putSync(week);
+    //   // update days
+    //   for (Map dayData in weekDataFromServer['days']) {
+    //     final day = isar.days.getSync(dayData['day']['id']);
+    //     day!.startAt = DateTime.parse(dayData['day']['start_at']);
+    //
+    //     isar.days.putSync(day);
+    //   }
+    // });
+  }
+
+  Future<void> updateWeek(Map weekDataFromServer) async {
+    final isar = await isarService.db;
+    final week = await isar.weeks.get(weekDataFromServer['week']['id']);
+    // {"cells":"[{\"dayId\":949,\"cellId\":[2,0,5]},{\"dayId\":950,\"cellId\":[1,6,4]},{\"dayId\":951,\"cellId\":[1,4,2]},{\"dayId\":952,\"cellId\":[0,0,0]},{\"dayId\":953,\"cellId\":[1,5,3]},{\"dayId\":954,\"cellId\":[1,3,1]},{\"dayId\":955,\"cellId\":[0,0,6]}]","id":215,"streamId":239,"weekNumber":31}
+    week!.cells = jsonEncode(weekDataFromServer['newCells']);
+    // TODO: решить вопрос с кто подтверждает неделю
+    // TODO: user_confirmed или system_confirmed
+    // print('weekDataFromServer:: $weekDataFromServer');
+    // print('day 949:: ${week.dayBacklink.where((day) => day.id == 949)}');
+
+    isar.writeTxnSync(() {
+      // update week
+      isar.weeks.putSync(week);
+      // update days
+      for (Map dayData in weekDataFromServer['days']) {
+        final day = isar.days.getSync(dayData['day']['id']);
+        day!.startAt = DateTime.parse(dayData['day']['start_at']);
+
+        isar.days.putSync(day);
+      }
+    });
+  }
+
   Future<List<NPStream>> getAllStreams() async {
     final isar = await isarService.db;
 
@@ -122,8 +191,7 @@ class StreamLocalStorage {
   Future getActiveStream() async {
     final isar = await isarService.db;
 
-    final activeStream =
-        await isar.nPStreams.filter().isActiveEqualTo(true).findAll();
+    final activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findAll();
 
     return activeStream.isNotEmpty ? activeStream.first : null; // get
   }
@@ -153,5 +221,12 @@ class StreamLocalStorage {
       await isar.days.put(day);
       await dayResult.day.save();
     });
+  }
+
+  Future getDayById(dayId) async {
+    final isar = await isarService.db;
+    final day = await isar.days.get(dayId);
+
+    return day;
   }
 }
