@@ -1188,22 +1188,42 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
         // проверка на статусы выполнения
         // текущий день
         if (now.weekday == dayIndex) {
-          // не выполнен
-          if (dayData['completed_at'].isEmpty) {
-            badgeColor = AppColor.grey1;
-            textCell = dayData['start_at'];
-          }
-          // выполнен
-          else {
-            if (dayData['newCellId'] != null) {
-              badgeColor = AppColor.accent.withOpacity(0.5);
-              textCell = dayData['completed_at'];
-            } else if (dayData['oldCellId'] != null) {
-              badgeColor = AppColor.accent.withOpacity(0);
+          // если не воскресенье
+          if (dayIndex != 7) {
+            // не выполнен
+            if (dayData['completed_at'].isEmpty) {
+              badgeColor = AppColor.grey1;
               textCell = dayData['start_at'];
-            } else if (dayData['day_matches'] != null) {
-              badgeColor = AppColor.accent;
-              textCell = dayData['completed_at'];
+            }
+            // выполнен
+            else {
+              if (dayData['newCellId'] != null) {
+                badgeColor = AppColor.accent.withOpacity(0.5);
+                textCell = dayData['completed_at'];
+              } else if (dayData['oldCellId'] != null) {
+                badgeColor = AppColor.accent.withOpacity(0);
+                textCell = dayData['start_at'];
+              } else if (dayData['day_matches'] != null) {
+                badgeColor = AppColor.accent;
+                textCell = dayData['completed_at'];
+              }
+            }
+          }
+          // если воскресенье
+          else {
+            // не выполнен
+            if (dayData['completed_at'].isEmpty) {
+              textCell = ''; // скрываем время ячейки
+            }
+            // выполнен
+            else {
+              if (dayData['oldCellId'] != null) {
+                // скрываем значение по умолчанию ячейки
+                textCell = '';
+              } else if (dayData['newCellId'] != null) {
+                textCell = dayData['completed_at'];
+                fontColor = AppColor.red;
+              }
             }
           }
         }
@@ -1236,6 +1256,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
             textCell = dayData['start_at'];
           } else {
             badgeColor = AppColor.grey1.withOpacity(0);
+            fontColor = AppColor.red;
           }
         }
       }
