@@ -93,11 +93,13 @@ class _SplashScreenState extends State<SplashScreen> {
           print('SplashScreen activeStream.weekBacklink: ${activeStream.weekBacklink.length}');
 
           // проверяем количество созданных недель
+          // первая неделя может быть пустой, проверяем
           // если меньше чем можно создать
           // создаем неделю
-          if (weeks < activeStream.weekBacklink.length) {
-            // текущая неделя НЕ создана
-            if (week == null) {
+          if (week == null) {
+            // если на курсе нет созданных недель
+            if (activeStream.weekBacklink.isEmpty) {
+              // текущая неделя НЕ создана
               Map newWeekData = {};
 
               print('SplashScreen текущая неделя НЕ создана');
@@ -120,7 +122,6 @@ class _SplashScreenState extends State<SplashScreen> {
               var createWeek = await _streamController.createWeek(newWeekData);
 
               print('SplashScreen createWeek: $createWeek');
-              AutoRouter.of(context).push(const DashboardScreenRoute());
 
               // create on local
               if (createWeek['week'] != null) {
@@ -130,31 +131,48 @@ class _SplashScreenState extends State<SplashScreen> {
                   AutoRouter.of(context).push(const DashboardScreenRoute());
                 }
               }
-
-              // // first day of the year
-              // final DateTime firstDayOfYear = DateTime.utc(2023, 1, 1);
-              //
-              // // first day of the year weekday (Monday, Tuesday, etc...)
-              // final int firstDayOfWeek = firstDayOfYear.weekday;
-              //
-              // // Calculate the number of days to the first day of the week (an offset)
-              // final int daysToFirstWeek = (8 - firstDayOfWeek) % 7;
-              //
-              // // Get the date of the first day of the week
-              // final DateTime firstDayOfGivenWeek = firstDayOfYear
-              //     .add(Duration(days: daysToFirstWeek + (currentWeekNumber - 1) * 7));
-              //
-              // // Get the last date of the week
-              // final DateTime lastDayOfGivenWeek =
-              // firstDayOfGivenWeek.add(const Duration(days: 6));
-              //
-              // print('firstDayOfGivenWeek: $firstDayOfGivenWeek');
             }
-            // текущая неделя создана
+            // на курсе уже есть созданные недели
             else {
-              print('SplashScreen текущая неделя создана');
-              AutoRouter.of(context).push(const DashboardScreenRoute());
+              if (weeks < activeStream.weekBacklink.length) {
+                // текущая неделя НЕ создана
+                Map newWeekData = {};
+
+                print('SplashScreen текущая неделя НЕ создана');
+
+                // понедельник текущей недели
+                int daysOfWeek = now.weekday - 1;
+                DateTime firstDay = DateTime(now.year, now.month, now.day - daysOfWeek);
+                DateTime lastDay = firstDay.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+
+                print('firstDay: $firstDay');
+                print('lastDay: $lastDay');
+
+                // CREATE WEEK
+                newWeekData['streamId'] = activeStream.id;
+                newWeekData['cells'] = [];
+                newWeekData['monday'] = DateFormat('y-MM-dd').format(firstDay);
+                newWeekData['weekOfYear'] = currentWeekNumber;
+
+                // create on server
+                var createWeek = await _streamController.createWeek(newWeekData);
+
+                print('SplashScreen createWeek: $createWeek');
+
+                // create on local
+                if (createWeek['week'] != null) {
+                  streamLocalStorage.createWeek(createWeek);
+
+                  if (context.mounted) {
+                    AutoRouter.of(context).push(const DashboardScreenRoute());
+                  }
+                }
+              }
             }
+          }
+          // текущая неделя создана
+          else {
+            print('SplashScreen текущая неделя создана');
           }
 
           if (context.mounted) {

@@ -34,7 +34,7 @@ Future getWeeksData() async {
   // статус курса (before, after, process)
   Map streamStatus = await getStreamStatus();
 
-  print('streamStatus: $streamStatus');
+  // print('streamStatus: $streamStatus');
 
   // формирование недели по умолчанию при открытии Календаря
   // До старта курса
