@@ -304,12 +304,12 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
             return Container(
               padding: const EdgeInsets.only(bottom: 1),
               color: AppColor.grey1,
+              height: 43,
               child: Row(
                 children: [
                   Container(
                     color: Colors.white,
                     width: 49,
-                    height: 42,
                     margin: const EdgeInsets.only(right: 1),
                     child: Center(
                       child: Text(

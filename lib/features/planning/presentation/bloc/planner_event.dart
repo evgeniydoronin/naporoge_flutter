@@ -71,7 +71,7 @@ final class RemoveCell extends PlannerEvent {
 }
 
 final class WrapWeekBoxHeightStream extends PlannerEvent {
-  final double wrapWeekBoxHeight;
+  final int wrapWeekBoxHeight;
 
   const WrapWeekBoxHeightStream({required this.wrapWeekBoxHeight});
 

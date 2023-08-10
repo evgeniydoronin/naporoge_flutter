@@ -26,6 +26,7 @@ class WeekStatusPoint extends StatelessWidget {
         }
         // print('weekDay.length: ${weekDay.length}');
         // print('weekStatusPoint: ${weekStatusPoint.length}');
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
@@ -33,37 +34,34 @@ class WeekStatusPoint extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 10, bottom: 10, left: 18, right: 18),
             decoration: AppLayout.boxDecorationShadowBG,
-            child: ListView.separated(
-              separatorBuilder: (context, index) {
-                return Divider(
-                  color: Theme.of(context).primaryColor,
-                  height: 3,
-                  indent: 0,
-                  endIndent: 12,
-                );
-              },
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: weekDay.length,
-              itemBuilder: (context, index) {
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                crossAxisSpacing: 10,
+                childAspectRatio: 1 / 1.7,
+              ),
+              itemCount: 7,
+              itemBuilder: (context, gridIndex) {
                 Container _container = Container();
-                // если не заполнялась
+                // Результат дня НЕ сохранялся
                 if (weekStatusPoint.isEmpty) {
                   _container = Container(
+                    height: 110,
                     decoration: BoxDecoration(
                         color: AppColor.grey1,
                         borderRadius: BorderRadius.circular(34)),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
                           width: 34,
-                          height: 34,
+                          height: 33,
                           decoration: BoxDecoration(
                               color: AppColor.primary,
                               borderRadius: BorderRadius.circular(34)),
                           child: Center(
                             child: Text(
-                              weekDay[index].toUpperCase(),
+                              weekDay[gridIndex].toUpperCase(),
                               style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.white,
@@ -84,19 +82,22 @@ class WeekStatusPoint extends StatelessWidget {
                           child: const Center(
                             child: Text(
                               '-',
-                              style: const TextStyle(fontSize: 10),
+                              style: TextStyle(fontSize: 10),
                             ),
                           ),
                         ),
                       ],
                     ),
                   );
-                } else if (weekStatusPoint[index]['status'] == 'completed') {
+                }
+                // Результат дня сохранялся
+                else if (weekStatusPoint[gridIndex]['status'] == 'completed') {
                   _container = Container(
                     decoration: BoxDecoration(
                         color: AppColor.primary,
                         borderRadius: BorderRadius.circular(34)),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
                           width: 34,
@@ -106,7 +107,7 @@ class WeekStatusPoint extends StatelessWidget {
                               borderRadius: BorderRadius.circular(34)),
                           child: Center(
                             child: Text(
-                              weekDay[index].toUpperCase(),
+                              weekDay[gridIndex].toUpperCase(),
                               style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.white,
@@ -129,12 +130,15 @@ class WeekStatusPoint extends StatelessWidget {
                       ],
                     ),
                   );
-                } else if (weekStatusPoint[index]['status'] == 'skipped') {
+                }
+                // День пропущен
+                else if (weekStatusPoint[gridIndex]['status'] == 'skipped') {
                   _container = Container(
                     decoration: BoxDecoration(
                         color: AppColor.blk,
                         borderRadius: BorderRadius.circular(34)),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
                           width: 34,
@@ -144,7 +148,7 @@ class WeekStatusPoint extends StatelessWidget {
                               borderRadius: BorderRadius.circular(34)),
                           child: Center(
                             child: Text(
-                              weekDay[index].toUpperCase(),
+                              weekDay[gridIndex].toUpperCase(),
                               style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.white,
@@ -167,7 +171,9 @@ class WeekStatusPoint extends StatelessWidget {
                       ],
                     ),
                   );
-                } else if (weekStatusPoint[index]['status'] == 'opened') {
+                }
+                // Текущий день
+                else if (weekStatusPoint[gridIndex]['status'] == 'opened') {
                   _container = Container(
                     decoration: BoxDecoration(
                         color: AppColor.grey1,
@@ -182,7 +188,7 @@ class WeekStatusPoint extends StatelessWidget {
                               borderRadius: BorderRadius.circular(34)),
                           child: Center(
                             child: Text(
-                              weekDay[index].toUpperCase(),
+                              weekDay[gridIndex].toUpperCase(),
                               style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.white,
@@ -191,8 +197,7 @@ class WeekStatusPoint extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          height: 28,
-                          width: 34,
+                          height: 24,
                           decoration: const BoxDecoration(
                             // color: AppColor.primary,
                             borderRadius: BorderRadius.only(
@@ -202,9 +207,10 @@ class WeekStatusPoint extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              weekStatusPoint[index]['weekDay'] == 'Sunday'
+                              weekStatusPoint[gridIndex]['weekDay'] == 'Sunday'
                                   ? '-'
-                                  : weekStatusPoint[index]['title'].toString(),
+                                  : weekStatusPoint[gridIndex]['title']
+                                      .toString(),
                               style: const TextStyle(fontSize: 10),
                             ),
                           ),
@@ -219,6 +225,207 @@ class WeekStatusPoint extends StatelessWidget {
             ),
           ),
         );
+
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 20),
+        //   child: Container(
+        //     height: 84,
+        //     padding: const EdgeInsets.only(
+        //         top: 10, bottom: 10, left: 18, right: 18),
+        //     decoration: AppLayout.boxDecorationShadowBG,
+        //     child: ListView.separated(
+        //       separatorBuilder: (context, index) {
+        //         return Divider(
+        //           color: Theme.of(context).primaryColor,
+        //           height: 3,
+        //           indent: 0,
+        //           endIndent: 12,
+        //         );
+        //       },
+        //       scrollDirection: Axis.horizontal,
+        //       shrinkWrap: true,
+        //       itemCount: weekDay.length,
+        //       itemBuilder: (context, index) {
+        //         Container _container = Container();
+        //         // Результат дня НЕ сохранялся
+        //         if (weekStatusPoint.isEmpty) {
+        //           _container = Container(
+        //             decoration: BoxDecoration(
+        //                 color: AppColor.grey1,
+        //                 borderRadius: BorderRadius.circular(34)),
+        //             child: Column(
+        //               children: [
+        //                 Container(
+        //                   width: 34,
+        //                   height: 34,
+        //                   decoration: BoxDecoration(
+        //                       color: AppColor.primary,
+        //                       borderRadius: BorderRadius.circular(34)),
+        //                   child: Center(
+        //                     child: Text(
+        //                       weekDay[index].toUpperCase(),
+        //                       style: const TextStyle(
+        //                           fontSize: 12,
+        //                           color: Colors.white,
+        //                           fontWeight: FontWeight.w500),
+        //                     ),
+        //                   ),
+        //                 ),
+        //                 Container(
+        //                   height: 28,
+        //                   width: 34,
+        //                   decoration: const BoxDecoration(
+        //                     // color: AppColor.primary,
+        //                     borderRadius: BorderRadius.only(
+        //                       bottomLeft: Radius.circular(34),
+        //                       bottomRight: Radius.circular(34),
+        //                     ),
+        //                   ),
+        //                   child: const Center(
+        //                     child: Text(
+        //                       '-',
+        //                       style: const TextStyle(fontSize: 10),
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ],
+        //             ),
+        //           );
+        //         }
+        //         // Результат дня сохранялся
+        //         else if (weekStatusPoint[index]['status'] == 'completed') {
+        //           _container = Container(
+        //             decoration: BoxDecoration(
+        //                 color: AppColor.primary,
+        //                 borderRadius: BorderRadius.circular(34)),
+        //             child: Column(
+        //               children: [
+        //                 Container(
+        //                   width: 34,
+        //                   height: 34,
+        //                   decoration: BoxDecoration(
+        //                       color: AppColor.primary,
+        //                       borderRadius: BorderRadius.circular(34)),
+        //                   child: Center(
+        //                     child: Text(
+        //                       weekDay[index].toUpperCase(),
+        //                       style: const TextStyle(
+        //                           fontSize: 12,
+        //                           color: Colors.white,
+        //                           fontWeight: FontWeight.w500),
+        //                     ),
+        //                   ),
+        //                 ),
+        //                 Container(
+        //                   height: 24,
+        //                   padding: const EdgeInsets.only(bottom: 3),
+        //                   decoration: BoxDecoration(
+        //                       color: AppColor.primary,
+        //                       borderRadius: AppLayout.primaryRadius),
+        //                   child: SvgPicture.asset(
+        //                     'assets/icons/checked_day.svg',
+        //                     height: 24,
+        //                     clipBehavior: Clip.none,
+        //                   ),
+        //                 ),
+        //               ],
+        //             ),
+        //           );
+        //         }
+        //         // День пропущен
+        //         else if (weekStatusPoint[index]['status'] == 'skipped') {
+        //           _container = Container(
+        //             decoration: BoxDecoration(
+        //                 color: AppColor.blk,
+        //                 borderRadius: BorderRadius.circular(34)),
+        //             child: Column(
+        //               children: [
+        //                 Container(
+        //                   width: 34,
+        //                   height: 34,
+        //                   decoration: BoxDecoration(
+        //                       color: AppColor.blk,
+        //                       borderRadius: BorderRadius.circular(34)),
+        //                   child: Center(
+        //                     child: Text(
+        //                       weekDay[index].toUpperCase(),
+        //                       style: const TextStyle(
+        //                           fontSize: 12,
+        //                           color: Colors.white,
+        //                           fontWeight: FontWeight.w500),
+        //                     ),
+        //                   ),
+        //                 ),
+        //                 Container(
+        //                   height: 24,
+        //                   padding: const EdgeInsets.only(bottom: 3),
+        //                   decoration: BoxDecoration(
+        //                       color: AppColor.blk,
+        //                       borderRadius: AppLayout.primaryRadius),
+        //                   child: SvgPicture.asset(
+        //                     'assets/icons/missed_day.svg',
+        //                     height: 24,
+        //                     clipBehavior: Clip.none,
+        //                   ),
+        //                 ),
+        //               ],
+        //             ),
+        //           );
+        //         }
+        //         // Текущий день
+        //         else if (weekStatusPoint[index]['status'] == 'opened') {
+        //           _container = Container(
+        //             decoration: BoxDecoration(
+        //                 color: AppColor.grey1,
+        //                 borderRadius: BorderRadius.circular(34)),
+        //             child: Column(
+        //               children: [
+        //                 Container(
+        //                   width: 34,
+        //                   height: 34,
+        //                   decoration: BoxDecoration(
+        //                       color: AppColor.primary,
+        //                       borderRadius: BorderRadius.circular(34)),
+        //                   child: Center(
+        //                     child: Text(
+        //                       weekDay[index].toUpperCase(),
+        //                       style: const TextStyle(
+        //                           fontSize: 12,
+        //                           color: Colors.white,
+        //                           fontWeight: FontWeight.w500),
+        //                     ),
+        //                   ),
+        //                 ),
+        //                 Container(
+        //                   height: 28,
+        //                   width: 34,
+        //                   decoration: const BoxDecoration(
+        //                     // color: AppColor.primary,
+        //                     borderRadius: BorderRadius.only(
+        //                       bottomLeft: Radius.circular(34),
+        //                       bottomRight: Radius.circular(34),
+        //                     ),
+        //                   ),
+        //                   child: Center(
+        //                     child: Text(
+        //                       weekStatusPoint[index]['weekDay'] == 'Sunday'
+        //                           ? '-'
+        //                           : weekStatusPoint[index]['title']
+        //                           .toString(),
+        //                       style: const TextStyle(fontSize: 10),
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ],
+        //             ),
+        //           );
+        //         }
+        //
+        //         return _container;
+        //       },
+        //     ),
+        //   ),
+        // ),
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naporoge/features/planning/presentation/widgets/week_planning_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../data/sources/local/stream_local_storage.dart';
 import '../../domain/entities/stream_entity.dart';
@@ -17,13 +18,14 @@ class PlanningScreen extends StatefulWidget {
 
 class _PlanningScreenState extends State<PlanningScreen> {
   late final Future _getStream;
-  late bool activeBtnPlanConfirm;
+
+  // late bool activeBtnPlanConfirm;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     _getStream = getActiveStream();
-    activeBtnPlanConfirm = false;
+    // activeBtnPlanConfirm = false;
     super.initState();
   }
 
@@ -34,6 +36,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('Planning Screen');
     bool isActiveConfirmBtn = true;
     String _description = '';
 
@@ -155,8 +158,15 @@ class _PlanningScreenState extends State<PlanningScreen> {
                             child: Container(
                                 padding: const EdgeInsets.only(bottom: 5),
                                 decoration: AppLayout.boxDecorationShadowBG,
-                                child: DayScheduleStreamWidget(stream: stream)),
+                                child: WeekPlanningWidget(stream: stream)),
                           ),
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   child: Container(
+                          //       padding: const EdgeInsets.only(bottom: 5),
+                          //       decoration: AppLayout.boxDecorationShadowBG,
+                          //       child: DayScheduleStreamWidget(stream: stream)),
+                          // ),
                           const SizedBox(height: 25),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),

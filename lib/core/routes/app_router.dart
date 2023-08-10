@@ -100,6 +100,7 @@ class AppRouter extends _$AppRouter {
             CustomRoute(
               page: PlanningScreenRoute.page,
               path: 'planning',
+              maintainState: false,
             ),
             CustomRoute(
               page: DiaryEmptyRouter.page,

@@ -183,268 +183,218 @@ List periodHoursIndexList = [
   },
 ];
 
-class DayScheduleStreamWidget extends StatelessWidget {
+class DayScheduleStreamWidget extends StatefulWidget {
   final NPStream stream;
 
   const DayScheduleStreamWidget({Key? key, required this.stream})
       : super(key: key);
 
   @override
+  State<DayScheduleStreamWidget> createState() =>
+      _DayScheduleStreamWidgetState();
+}
+
+// Формируем список заполненных дней текущей или выполненной недели
+List newDaysData = [];
+
+class _DayScheduleStreamWidgetState extends State<DayScheduleStreamWidget> {
+  DateTime now = DateTime.now();
+  String weekTitle = '';
+  String weekPeriod = '';
+
+  bool isEditable = false;
+  bool previousWeekArrow = false;
+  bool nextWeekArrow = false;
+
+  PageController pageController = PageController();
+
+  @override
   Widget build(BuildContext context) {
-    int streamWeeks = stream.weeks!;
+    print('newDaysData: ${newDaysData.length}');
+    int streamWeeks = widget.stream.weeks!;
 
-    String startDateInfo = DateFormat('dd.MM.y').format(stream.startAt!);
-    DateTime now = DateTime.now();
-    String weekTitle = '';
-    String weekPeriod = '';
-    // текущая неделя
-    int weekNumber = getWeekNumber(DateTime.now());
-    int daysBefore = stream.startAt!.difference(now).inDays;
+    // String startDateInfo = DateFormat('dd.MM.y').format(widget.stream.startAt!);
+    //
+    // // текущая неделя
+    // int weekNumber = getWeekNumber(DateTime.now());
+    // int daysBefore = widget.stream.startAt!.difference(now).inDays;
 
-    DateTime startStream = stream.startAt!;
-    DateTime endStream = stream.startAt!.add(Duration(
-        days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
+    DateTime startStream = widget.stream.startAt!;
+    DateTime endStream = widget.stream.startAt!.add(Duration(
+        days: (widget.stream.weeks! * 7) - 1,
+        hours: 23,
+        minutes: 59,
+        seconds: 59));
 
     bool isBeforeStartStream = startStream.isAfter(now);
     bool isAfterEndStream = endStream.isBefore(now);
 
     // все созданные недели курса
-    List createdWeeksInStream = stream.weekBacklink.toList();
-    int currentWeekIndex = 0;
-    int isNextWeek = 0;
-    bool _isEditable = false;
-    bool _previousWeekArrow = false;
-    bool _nextWeekArrow = false;
-
-    // До старта курса
-    if (isBeforeStartStream) {
-      print('До старта курса: isBeforeStartStream');
-      // DateTime nextWeek = stream.startAt!
-      //     .add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
-      // weekTitle = 'Неделя 1/${stream.weeks}';
-      // weekPeriod = '$startDateInfo - ${DateFormat('dd.MM.y').format(nextWeek)}';
-    }
-    // После завершения курса
-    else if (isAfterEndStream) {
-      print('После завершения курса: isAfterEndStream');
-    }
-    // Во время прохождения курса
-    else if (!isBeforeStartStream && !isAfterEndStream) {
-      // текущая неделя
-      for (int i = 0; i < createdWeeksInStream.length; i++) {
-        var instanceWeek =
-            stream.weekBacklink.indexed.where((element) => element.$1 == i);
-        // print(instanceWeek);
-        Week week = instanceWeek.first.$2;
-        // текущая неделя
-        if (week.weekNumber == weekNumber) {
-          currentWeekIndex = instanceWeek.first.$1;
-        }
-      }
-      // добавляем следующую неделю на добавление,
-      // если нет последней недели в курсе
-      if (createdWeeksInStream.length < streamWeeks) {
-        isNextWeek = 1;
-      }
-      // weekPeriod = startDateInfo;
-
-      // print('Во время прохождения курса: isStream');
-      // print('weekNumber: $weekNumber');
-      // print('currentWeekIndex: $currentWeekIndex');
-      // print('streamWeeks: $streamWeeks');
-      // print('created weeks: ${createdWeeksInStream.length}');
-      // print('isNextWeek: ${createdWeeksInStream.length + isNextWeek}');
-    }
-
-    PageController pageController =
-        PageController(initialPage: currentWeekIndex);
+    List createdWeeksInStream = widget.stream.weekBacklink.toList();
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (previous, current) {},
+      // buildWhen: (previous, current) =>
+      //     previous.finalCellIDs != current.finalCellIDs,
       builder: (context, state) {
+        bool isLoadingPage = true;
         // print('wrapWeekBoxHeight: ${state.wrapWeekBoxHeight}');
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 10),
-          height:
-              state.wrapWeekBoxHeight == 0.0 ? 220 : state.wrapWeekBoxHeight,
-          child: PageView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            // текущая неделя открыта по умолчанию
-            controller: pageController,
-            onPageChanged: (index) {
-              print('pageIndex: $index');
-            },
-            itemCount: createdWeeksInStream.length + isNextWeek,
-            itemBuilder: (context, pageIndex) {
-              weekTitle = 'Неделя ${pageIndex + 1}/$streamWeeks';
-              // Формируем список заполненных дней текущей или выполненной недели
-              List newDaysData = [];
-              // // первая неделя
-              // if (pageIndex == 0) {
-              //   print('первая неделя');
-              //   _isEditable = true;
-              //   _nextWeekArrow = true;
-              //   Week _week = createdWeeksInStream[pageIndex];
-              //   List _cells = jsonDecode(_week.cells!);
-              //
-              //   for (int i = 0; i < _cells.length; i++) {
-              //     // print(_cells[i]);
-              //     int cellIndex = _cells[i]['id'][2];
-              //
-              //     var _day = _week.dayBacklink.indexed
-              //         .where((element) => element.$1 == cellIndex);
-              //     Day day = _day.first.$2;
-              //     // START AT
-              //     DateTime startAtDate = DateTime.parse(
-              //         DateFormat('y-MM-dd').format(day.startAt!));
-              //
-              //     String startAtCellTimeString = DateFormat('HH:mm').format(
-              //         DateTime(
-              //             startAtDate.year,
-              //             startAtDate.month,
-              //             startAtDate.day,
-              //             int.parse((_cells[i]['startTime']).split(':')[0]),
-              //             int.parse((_cells[i]['startTime']).split(':')[1])));
-              //
-              //     // COMPLETED AT
-              //     String completedAtCellTimeString = '';
-              //     if (day.completedAt != null) {
-              //       completedAtCellTimeString =
-              //           DateFormat('HH:mm').format(day.completedAt!);
-              //       // print(
-              //       //     'dayCompleted: ${DateFormat('HH:mm').format(day.completedAt!)}');
-              //     }
-              //
-              //     newDaysData.addAll([
-              //       {
-              //         'day_id': day.id,
-              //         'cellId': _cells[i]['id'],
-              //         'start_at': startAtCellTimeString,
-              //         'completed_at': completedAtCellTimeString,
-              //       }
-              //     ]);
-              //   }
-              // }
-              // // последняя неделя
-              // else if (streamWeeks == pageIndex + 1) {
-              //   print('последняя неделя');
-              //   _previousWeekArrow = true;
-              // }
-              // // не первая и не последняя
-              // else {
-              //   print('не первая и не последняя');
-              //   if (createdWeeksInStream.length == pageIndex) {
-              //     print('неделя не создана');
-              //     _isEditable = true;
-              //     _nextWeekArrow = false;
-              //     _previousWeekArrow = true;
-              //   } else {
-              //     print('неделя создана');
-              //     _isEditable = false;
-              //   }
-              // }
+        return isLoadingPage
+            ? AnimatedContainer(
+                duration: const Duration(milliseconds: 10),
+                height: state.wrapWeekBoxHeight.toDouble() == 0.0
+                    ? 220
+                    : state.wrapWeekBoxHeight.toDouble(),
+                child: PageView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  // текущая неделя открыта по умолчанию
+                  controller: pageController,
+                  onPageChanged: (index) async {
+                    print('pageIndex: $index');
+                  },
+                  // itemCount: createdWeeksInStream.length + isNextWeek,
+                  itemCount: streamWeeks,
+                  itemBuilder: (context, pageIndex) {
+                    weekTitle = 'Неделя ${pageIndex + 1}/$streamWeeks';
 
-              // До старта курса
-              if (isBeforeStartStream) {
-              } // После завершения курса
-              else if (isAfterEndStream) {
-                print('После завершения курса: isAfterEndStream');
-              }
-              // Во время прохождения курса
-              else if (!isBeforeStartStream && !isAfterEndStream) {
-                var currentWeekOnPage = stream.weekBacklink.indexed
-                    .where((element) => element.$1 == pageIndex);
-                int currentWeekIndexOnPage = currentWeekOnPage.first.$1;
-                // Проверка текущей недели:
-                //
-                // - Если не последняя на курсе
-                // - - Если первая неделя:
-                // - - - Дни не созданы: Создание и редактирование текущей недели
-                // - - - Иначе: Создание и редактирование следующей недели.
-                // - - Иначе: Создание и редактирование следующей недели. Если предыдущая неделя создавалась, заполняем ячеки подсказками до первого сохранения недели.
-                // - Иначе: Просмотр
-                //
-                print('Во время прохождения курса+');
-                // Если неделя не последняя
-                if (createdWeeksInStream.length < streamWeeks) {
-                  print('Если неделя не последняя');
-                  if (pageIndex == currentWeekIndexOnPage) {
-                    print('Если первая неделя');
-                    Week week = createdWeeksInStream[pageIndex];
-                    // Дни не созданы: Создание и редактирование текущей недели
-                    if (week.dayBacklink.length != 7) {
-                      print(
-                          'Дни не созданы: Создание и редактирование текущей недели');
+                    // До старта курса
+                    if (isBeforeStartStream) {
+                    } // После завершения курса
+                    else if (isAfterEndStream) {
+                      print('После завершения курса: isAfterEndStream');
                     }
-                    // Дни созданы: Отображение текущей и Создание и Редактирование следующей недели.
-                    else {
-                      List _cells = jsonDecode(week.cells!);
-                      print(
-                          'Дни созданы: Отображение текущей и Редактирование следующей недели.');
-                      // Добавление новой страницы планера для создания и редактирования недели
+                    // Во время прохождения курса
+                    else if (!isBeforeStartStream && !isAfterEndStream) {
+                      // var currentWeekOnPage = stream.weekBacklink.indexed
+                      //     .where((element) => element.$1 == pageIndex);
+                      // int currentWeekIndexOnPage = currentWeekOnPage.first.$1;
 
-                      // Формирование данных ячеек
-                      for (int i = 0; i < _cells.length; i++) {
-                        // print(_cells[i]);
-                        int cellIndex = _cells[i]['id'][2];
+                      // print('pageIndex: $pageIndex');
+                      // print('stream.weekBacklink: ${widget.stream.weekBacklink}');
+                      // print(
+                      //     'Создано уже недель: ${widget.stream.weekBacklink.length}');
+                      // Проверка текущей недели:
+                      //
+                      // - Если не последняя на курсе
+                      // - - Если первая неделя:
+                      // - - - Дни не созданы: Создание и редактирование текущей недели
+                      // - - - Иначе: Создание и редактирование следующей недели.
+                      // - - Иначе: Создание и редактирование следующей недели. Если предыдущая неделя создавалась, заполняем ячеки подсказками до первого сохранения недели.
+                      // - Иначе: Просмотр
+                      //
+                      // print('Во время прохождения курса+');
+                      // Если неделя не последняя
+                      if (createdWeeksInStream.length < streamWeeks) {
+                        // добавляем переход на следующую неделю
+                        nextWeekArrow = true;
+                        // print('Если неделя не последняя');
+                        // если не первая страница - стрелка назад активна
+                        previousWeekArrow = pageIndex != 0 ? true : false;
+                        if (pageIndex == 0) {
+                          // print('Если первая неделя');
 
-                        var _day = week.dayBacklink.indexed
-                            .where((element) => element.$1 == cellIndex);
-                        Day day = _day.first.$2;
-                        // START AT
-                        DateTime startAtDate = DateTime.parse(
-                            DateFormat('y-MM-dd').format(day.startAt!));
+                          Week week = createdWeeksInStream[pageIndex];
+                          // Дни не созданы: Создание и редактирование текущей недели
+                          if (week.dayBacklink.length != 7) {
+                            // print(
+                            //     'Дни не созданы: Создание и редактирование текущей недели');
+                          }
+                          // Дни созданы: Отображение текущей и Создание и Редактирование следующей недели.
+                          else {
+                            List _cells = jsonDecode(week.cells!);
+                            // print(
+                            //     'Дни созданы: Отображение текущей и Если не создана следующая неделя - Создание Редактирование следующей недели.');
+                            // Добавление новой страницы планера для создания и редактирования недели
 
-                        String startAtCellTimeString = DateFormat('HH:mm')
-                            .format(DateTime(
-                                startAtDate.year,
-                                startAtDate.month,
-                                startAtDate.day,
-                                int.parse(
-                                    (_cells[i]['startTime']).split(':')[0]),
-                                int.parse(
-                                    (_cells[i]['startTime']).split(':')[1])));
+                            // Формирование данных ячеек
+                            for (int i = 0; i < _cells.length; i++) {
+                              // print(_cells[i]);
+                              int cellIndex = _cells[i]['id'][2];
 
-                        // COMPLETED AT
-                        String completedAtCellTimeString = '';
-                        if (day.completedAt != null) {
-                          List hourIndex = [];
+                              var _day = week.dayBacklink.indexed
+                                  .where((element) => element.$1 == cellIndex);
+                              Day day = _day.first.$2;
+                              // START AT
+                              DateTime startAtDate = DateTime.parse(
+                                  DateFormat('y-MM-dd').format(day.startAt!));
 
-                          completedAtCellTimeString =
-                              DateFormat('HH:mm').format(day.completedAt!);
-                          String _hour =
-                              completedAtCellTimeString.split(':')[0]; // 04
+                              String startAtCellTimeString = DateFormat('HH:mm')
+                                  .format(DateTime(
+                                      startAtDate.year,
+                                      startAtDate.month,
+                                      startAtDate.day,
+                                      int.parse((_cells[i]['startTime'])
+                                          .split(':')[0]),
+                                      int.parse((_cells[i]['startTime'])
+                                          .split(':')[1])));
 
-                          String startAtCell =
-                              DateFormat('H').format(day.startAt!);
-                          String completedAtCell =
-                              DateFormat('H').format(day.completedAt!);
+                              // COMPLETED AT
+                              String completedAtCellTimeString = '';
+                              if (day.completedAt != null) {
+                                List hourIndex = [];
 
-                          // Если час выполнения не совпадает
-                          if (startAtCell != completedAtCell) {
-                            // print('_hour: $_hour');
-                            for (Map hour in periodHoursIndexList) {
-                              if (hour.keys.first == _hour) {
-                                // print(hour.keys.first is String);
-                                // находим индекс дня ячейки
-                                int gridIndex = _cells[i]['id'].last;
-                                // Создаем новый список
-                                List newHourCellId =
-                                    List.from(hour.values.first);
-                                newHourCellId.add(gridIndex);
+                                completedAtCellTimeString = DateFormat('HH:mm')
+                                    .format(day.completedAt!);
+                                String _hour = completedAtCellTimeString
+                                    .split(':')[0]; // 04
 
-                                // добавляем новую ячейку с новым индексом
-                                newDaysData.addAll([
-                                  {
-                                    'day_id': day.id,
-                                    'cellId': newHourCellId,
-                                    'start_at': startAtCellTimeString,
-                                    'completed_at': completedAtCellTimeString,
-                                    'newCellId': true,
+                                String startAtCell =
+                                    DateFormat('H').format(day.startAt!);
+                                String completedAtCell =
+                                    DateFormat('H').format(day.completedAt!);
+
+                                // Если час выполнения не совпадает
+                                if (startAtCell != completedAtCell) {
+                                  // print('_hour: $_hour');
+                                  for (Map hour in periodHoursIndexList) {
+                                    if (hour.keys.first == _hour) {
+                                      // print(hour.keys.first is String);
+                                      // находим индекс дня ячейки
+                                      int gridIndex = _cells[i]['id'].last;
+                                      // Создаем новый список
+                                      List newHourCellId =
+                                          List.from(hour.values.first);
+                                      newHourCellId.add(gridIndex);
+
+                                      // добавляем новую ячейку с новым индексом
+                                      newDaysData.addAll([
+                                        {
+                                          'day_id': day.id,
+                                          'cellId': newHourCellId,
+                                          'start_at': startAtCellTimeString,
+                                          'completed_at':
+                                              completedAtCellTimeString,
+                                          'newCellId': true,
+                                        }
+                                      ]);
+
+                                      // print('hourIndex: $hourIndex');
+                                    } else {
+                                      newDaysData.addAll([
+                                        {
+                                          'day_id': day.id,
+                                          'cellId': _cells[i]['id'],
+                                          'start_at': startAtCellTimeString,
+                                          'completed_at':
+                                              completedAtCellTimeString,
+                                          'oldCellId': true,
+                                        }
+                                      ]);
+                                    }
                                   }
-                                ]);
-
-                                // print('hourIndex: $hourIndex');
+                                }
+                                // Если час выполнения совпадает
+                                else {
+                                  newDaysData.addAll([
+                                    {
+                                      'day_id': day.id,
+                                      'cellId': _cells[i]['id'],
+                                      'start_at': startAtCellTimeString,
+                                      'completed_at': completedAtCellTimeString,
+                                      'day_matches': true,
+                                    }
+                                  ]);
+                                }
                               } else {
                                 newDaysData.addAll([
                                   {
@@ -452,140 +402,135 @@ class DayScheduleStreamWidget extends StatelessWidget {
                                     'cellId': _cells[i]['id'],
                                     'start_at': startAtCellTimeString,
                                     'completed_at': completedAtCellTimeString,
-                                    'oldCellId': true,
                                   }
                                 ]);
                               }
+
+                              // print('newDaysData: $newDaysData');
                             }
-                          }
-                          // Если час выполнения совпадает
-                          else {
-                            newDaysData.addAll([
-                              {
-                                'day_id': day.id,
-                                'cellId': _cells[i]['id'],
-                                'start_at': startAtCellTimeString,
-                                'completed_at': completedAtCellTimeString,
-                                'day_matches': true,
-                              }
-                            ]);
                           }
                         } else {
-                          newDaysData.addAll([
-                            {
-                              'day_id': day.id,
-                              'cellId': _cells[i]['id'],
-                              'start_at': startAtCellTimeString,
-                              'completed_at': completedAtCellTimeString,
-                            }
-                          ]);
+                          isEditable = true;
                         }
-
-                        // print('newDaysData: $newDaysData');
+                        // Если неделя не создана
+                        // Если неделя создана
                       }
                     }
-                  }
-                  // Если неделя не создана
-                  // Если неделя создана
-                }
-              }
-              // print('newDaysData: $newDaysData');
+                    // print('newDaysData: $newDaysData');
 
-              // print('isEditable: $_isEditable');
-              return ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: Column(
+                    // print('isEditable: $_isEditable');
+                    return ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
-                        Text(
-                          weekTitle,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: Column(
+                            children: [
+                              Text(
+                                weekTitle,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  pageIndex != 0
+                                      ? GestureDetector(
+                                          onTap: previousWeekArrow
+                                              ? () {
+                                                  pageController.previousPage(
+                                                      duration: const Duration(
+                                                          milliseconds: 200),
+                                                      curve: Curves.easeIn);
+                                                }
+                                              : null,
+                                          child: const Icon(
+                                              Icons.arrow_back_ios_new),
+                                        )
+                                      : const Icon(Icons.arrow_back_ios_new),
+                                  Text(weekPeriod),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      // setState(() {
+                                      //   isLoadingPage = false;
+                                      // });
+                                      print('isLoadingPage: $isLoadingPage');
+                                      isLoadingPage = false;
+
+                                      print('isLoadingPage: $isLoadingPage');
+                                      Future.delayed(
+                                          const Duration(seconds: 2));
+                                      isLoadingPage = true;
+                                      // print('pageIndex: $pageIndex');
+                                      // nextWeekArrow
+                                      //     ? pageController.nextPage(
+                                      //     duration: const Duration(
+                                      //         milliseconds: 200),
+                                      //     curve: Curves.easeIn)
+                                      //     : null;
+                                    },
+                                    child: const RotatedBox(
+                                        quarterTurns: 2,
+                                        child: Icon(Icons.arrow_back_ios_new)),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            pageIndex != 0
-                                ? GestureDetector(
-                                    onTap: _previousWeekArrow
-                                        ? () {
-                                            pageController.previousPage(
-                                                duration: const Duration(
-                                                    milliseconds: 200),
-                                                curve: Curves.easeIn);
-                                          }
-                                        : null,
-                                    child: const Icon(Icons.arrow_back_ios_new),
-                                  )
-                                : const Icon(Icons.arrow_back_ios_new),
-                            Text(weekPeriod),
-                            GestureDetector(
-                              onTap: () {
-                                _nextWeekArrow
-                                    ? pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        curve: Curves.easeIn)
-                                    : null;
-                              },
-                              child: const RotatedBox(
-                                  quarterTurns: 2,
-                                  child: Icon(Icons.arrow_back_ios_new)),
+                            Container(
+                              padding: const EdgeInsets.only(left: 7),
+                              alignment: Alignment.centerLeft,
+                              width: 50,
+                              child: SvgPicture.asset('assets/icons/time.svg'),
+                            ),
+                            Expanded(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 7,
+                                  crossAxisSpacing: 1,
+                                ),
+                                itemCount: weekDaysNameRu.length,
+                                itemBuilder: (BuildContext context, dayIndex) {
+                                  return Center(
+                                    child: Text(
+                                      weekDaysNameRu[dayIndex]
+                                          .toString()
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontSize: AppFont.smaller,
+                                          color:
+                                              weekDaysNameRu[dayIndex] == 'вс'
+                                                  ? AppColor.grey2
+                                                  : AppColor.accent),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(left: 7),
-                        alignment: Alignment.centerLeft,
-                        width: 50,
-                        child: SvgPicture.asset('assets/icons/time.svg'),
-                      ),
-                      Expanded(
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 7,
-                            crossAxisSpacing: 1,
-                          ),
-                          itemCount: weekDaysNameRu.length,
-                          itemBuilder: (BuildContext context, dayIndex) {
-                            return Center(
-                              child: Text(
-                                weekDaysNameRu[dayIndex]
-                                    .toString()
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                    fontSize: AppFont.smaller,
-                                    color: weekDaysNameRu[dayIndex] == 'вс'
-                                        ? AppColor.grey2
-                                        : AppColor.accent),
-                              ),
-                            );
-                          },
+                        ExpandDayPeriod(
+                          isEditable: isEditable,
+                          newDaysData: newDaysData,
+                          pageIndex: pageIndex,
+                          stream: widget.stream,
                         ),
-                      ),
-                    ],
-                  ),
-                  ExpandDayPeriod(
-                    isEditable: _isEditable,
-                    newDaysData: newDaysData,
-                  ),
-                ],
-              );
-            },
-          ),
-        );
+                      ],
+                    );
+                  },
+                ),
+              )
+            : const Center(child: CircularProgressIndicator());
       },
     );
   }
@@ -594,9 +539,15 @@ class DayScheduleStreamWidget extends StatelessWidget {
 class ExpandDayPeriod extends StatefulWidget {
   final bool isEditable;
   final List newDaysData;
+  final int pageIndex;
+  final NPStream stream;
 
   const ExpandDayPeriod(
-      {Key? key, required this.isEditable, required this.newDaysData})
+      {Key? key,
+      required this.isEditable,
+      required this.newDaysData,
+      required this.pageIndex,
+      required this.stream})
       : super(key: key);
 
   @override
@@ -605,40 +556,61 @@ class ExpandDayPeriod extends StatefulWidget {
 
 class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
   late bool isExpanded;
+  late List isExpandedList;
+  late int pageIndex;
+  late NPStream stream;
+  late int streamWeeks;
 
   @override
   void initState() {
+    stream = widget.stream;
+    streamWeeks = widget.stream.weeks!;
     isExpanded = false;
+    isExpandedList = [];
+    pageIndex = widget.pageIndex;
     super.initState();
   }
 
-  onCollapseToggle(val) async {
-    for (int i = 0; i < period.length; i++) {
-      if (i == val && period[val].isExpanded) {
-        setState(() {
-          period[val].isExpanded = false;
-        });
+  onCollapseToggle(val) {
+    print('isExpanded: $isExpanded');
+    print('ExpandDay val: $val');
+    print('ExpandDay pageIndex: ${val[0]}');
+    print('ExpandDay periodIndex: ${val[1]}');
+    // isExpandedList.add({val, isExpanded});
+    print('isExpandedList: $isExpandedList');
 
-        periodHeight.remove((period[val].rows * 43).toInt());
-        if (context.mounted) {
-          context.read<PlannerBloc>().add(WrapWeekBoxHeightStream(
-              wrapWeekBoxHeight: periodHeight.fold(0, (a, b) => a + b)));
-        }
-      } else if (i == val && !period[val].isExpanded) {
-        setState(() {
-          period[val].isExpanded = true;
-        });
-        periodHeight.addAll([(period[val].rows * 43).toInt()]);
-        if (context.mounted) {
-          context.read<PlannerBloc>().add(WrapWeekBoxHeightStream(
-              wrapWeekBoxHeight: periodHeight.fold(0, (a, b) => a + b)));
-        }
-      }
-    }
+    // for (int i = 0; i < isExpandedList.length; i++) {
+    //
+    // }
+
+    // for (int i = 0; i < period.length; i++) {
+    //   if (i == val && period[val].isExpanded) {
+    //     setState(() {
+    //       period[val].isExpanded = false;
+    //     });
+    //
+    //     periodHeight.remove((period[val].rows * 43).toInt());
+    //     if (context.mounted) {
+    //       context.read<PlannerBloc>().add(WrapWeekBoxHeightStream(
+    //           wrapWeekBoxHeight: periodHeight.fold(0, (a, b) => a + b)));
+    //     }
+    //   } else if (i == val && !period[val].isExpanded) {
+    //     setState(() {
+    //       period[val].isExpanded = true;
+    //     });
+    //     periodHeight.addAll([(period[val].rows * 43).toInt()]);
+    //     if (context.mounted) {
+    //       context.read<PlannerBloc>().add(WrapWeekBoxHeightStream(
+    //           wrapWeekBoxHeight: periodHeight.fold(0, (a, b) => a + b)));
+    //     }
+    //   }
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('ExpandDay pageIndex: $pageIndex');
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -648,7 +620,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
           children: [
             GestureDetector(
               onTap: () async {
-                await onCollapseToggle(periodIndex);
+                await onCollapseToggle([pageIndex, periodIndex]);
               },
               child: Container(
                 width: double.maxFinite,
@@ -1183,7 +1155,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
         // print(dayData);
         int dayIndex = gridIndex + 1;
 
-        print('dayData: $dayData');
+        // print('dayData: $dayData');
 
         // проверка на статусы выполнения
         // текущий день
@@ -1260,19 +1232,6 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
           }
         }
       }
-
-      // if (gridIndex != 6) {
-      //   startAt = dayData['start_at'];
-      //   completedAt = dayData['completed_at'];
-      //   bgColorCompleted = AppColor.accent.withOpacity(0.4);
-      //   if (dayData['start_at'] == dayData['completed_at']) {
-      //     // выполнено вовремя
-      //     // print('вовремя: $dayData');
-      //     bgColorCompleted = AppColor.accent;
-      //   }
-      // } else {
-      //   completedAt = dayData['completed_at'];
-      // }
     }
 
     return Container(

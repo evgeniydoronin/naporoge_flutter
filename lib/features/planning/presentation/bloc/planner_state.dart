@@ -17,7 +17,7 @@ final class PlannerState extends Equatable {
   final String courseDescription;
   final List selectedCellIDs;
   final List finalCellIDs;
-  final double wrapWeekBoxHeight;
+  final int wrapWeekBoxHeight;
 
   PlannerState copyWith({
     String? startDate,
@@ -26,7 +26,7 @@ final class PlannerState extends Equatable {
     String? courseDescription,
     List? selectedCellIDs,
     List? finalCellIDs,
-    double? wrapWeekBoxHeight,
+    int? wrapWeekBoxHeight,
   }) {
     return PlannerState(
       startDate: startDate ?? this.startDate,
