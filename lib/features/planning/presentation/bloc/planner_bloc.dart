@@ -19,44 +19,35 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
     on<FinalCellForCreateStream>(_onFinalCell);
     on<WrapWeekBoxHeightStream>(_onWrapWeekBoxHeight);
     on<PlanningConfirmBtnStream>(_onPlanningConfirmBtnStream);
+    on<EditableWeekStream>(_onEditableWeekStream);
   }
 
-  void _onStreamStartDateChanged(
-    StreamStartDateChanged event,
-    Emitter<PlannerState> emit,
-  ) {
+  void _onStreamStartDateChanged(StreamStartDateChanged event,
+      Emitter<PlannerState> emit,) {
     final startDate = event.startDate;
     emit(state.copyWith(startDate: startDate));
   }
 
-  void _onCourseIdChanged(
-    StreamCourseIdChanged event,
-    Emitter<PlannerState> emit,
-  ) {
+  void _onCourseIdChanged(StreamCourseIdChanged event,
+      Emitter<PlannerState> emit,) {
     final courseId = event.courseId;
     emit(state.copyWith(courseId: courseId));
   }
 
-  void _onCourseTitleChanged(
-    StreamCourseTitleChanged event,
-    Emitter<PlannerState> emit,
-  ) {
+  void _onCourseTitleChanged(StreamCourseTitleChanged event,
+      Emitter<PlannerState> emit,) {
     final courseTitle = event.courseTitle;
     emit(state.copyWith(courseTitle: courseTitle));
   }
 
-  void _onWrapWeekBoxHeight(
-    WrapWeekBoxHeightStream event,
-    Emitter<PlannerState> emit,
-  ) {
+  void _onWrapWeekBoxHeight(WrapWeekBoxHeightStream event,
+      Emitter<PlannerState> emit,) {
     final wrapWeekBoxHeight = event.wrapWeekBoxHeight;
     emit(state.copyWith(wrapWeekBoxHeight: wrapWeekBoxHeight));
   }
 
-  void _onCourseDescriptionChanged(
-    StreamCourseDescriptionChanged event,
-    Emitter<PlannerState> emit,
-  ) {
+  void _onCourseDescriptionChanged(StreamCourseDescriptionChanged event,
+      Emitter<PlannerState> emit,) {
     final courseDescription = event.courseDescription;
     emit(state.copyWith(courseDescription: courseDescription));
   }
@@ -78,8 +69,8 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
     emit(state.copyWith(selectedCellIDs: newCellsList));
   }
 
-  void _onFinalCell(
-      FinalCellForCreateStream event, Emitter<PlannerState> emit) {
+  void _onFinalCell(FinalCellForCreateStream event,
+      Emitter<PlannerState> emit) {
     emit(state.copyWith(finalCellIDs: event.finalCellIDs));
   }
 
@@ -90,9 +81,15 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
     emit(state.copyWith(selectedCellIDs: []));
   }
 
-  void _onPlanningConfirmBtnStream(
-      PlanningConfirmBtnStream event, Emitter<PlannerState> emit) {
+  void _onPlanningConfirmBtnStream(PlanningConfirmBtnStream event,
+      Emitter<PlannerState> emit) {
     final isPlanningConfirmBtn = event.isPlanningConfirmBtn;
     emit(state.copyWith(isPlanningConfirmBtn: isPlanningConfirmBtn));
+  }
+
+  void _onEditableWeekStream(EditableWeekStream event,
+      Emitter<PlannerState> emit) {
+    final editableWeekData = event.editableWeekData;
+    emit(state.copyWith(editableWeekData: editableWeekData));
   }
 }

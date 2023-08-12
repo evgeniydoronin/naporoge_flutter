@@ -221,6 +221,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                       //  на экран 3-го шага создания дела
 
                                       if (_formKey.currentState!.validate()) {
+                                        // выбраны НЕ все дни
                                         if (state.finalCellIDs.length < 7) {
                                           if (context.mounted) {
                                             ScaffoldMessenger.of(context)
@@ -230,7 +231,9 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                                     duration:
                                                         Duration(seconds: 2)));
                                           }
-                                        } else {
+                                        }
+                                        // выбраны все дни
+                                        else {
                                           if (context.mounted) {
                                             CircularLoading(context)
                                                 .startLoading();

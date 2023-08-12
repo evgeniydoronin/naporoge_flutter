@@ -10,6 +10,7 @@ final class PlannerState extends Equatable {
     this.finalCellIDs = const [],
     this.wrapWeekBoxHeight = 0,
     this.isPlanningConfirmBtn = false,
+    this.editableWeekData = const {},
   });
 
   final String startDate;
@@ -20,6 +21,7 @@ final class PlannerState extends Equatable {
   final List finalCellIDs;
   final int wrapWeekBoxHeight;
   final bool isPlanningConfirmBtn;
+  final Map editableWeekData;
 
   PlannerState copyWith({
     String? startDate,
@@ -30,6 +32,7 @@ final class PlannerState extends Equatable {
     List? finalCellIDs,
     int? wrapWeekBoxHeight,
     bool? isPlanningConfirmBtn,
+    Map? editableWeekData,
   }) {
     return PlannerState(
       startDate: startDate ?? this.startDate,
@@ -40,6 +43,7 @@ final class PlannerState extends Equatable {
       finalCellIDs: finalCellIDs ?? this.finalCellIDs,
       wrapWeekBoxHeight: wrapWeekBoxHeight ?? this.wrapWeekBoxHeight,
       isPlanningConfirmBtn: isPlanningConfirmBtn ?? this.isPlanningConfirmBtn,
+      editableWeekData: editableWeekData ?? this.editableWeekData,
     );
   }
 
@@ -53,5 +57,6 @@ final class PlannerState extends Equatable {
         finalCellIDs,
         wrapWeekBoxHeight,
         isPlanningConfirmBtn,
+        editableWeekData,
       ];
 }

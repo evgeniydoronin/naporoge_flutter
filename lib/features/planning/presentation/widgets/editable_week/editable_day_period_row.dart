@@ -22,7 +22,7 @@ void deleteFromList(List deleteCellsList) {
 }
 
 void addOrUpdateCellList(newCellsList, cellData) {
-  // Существующие пункты
+  // Существующие ячейки
   List existingCell = [];
 
   // если есть активные ячейки
@@ -91,6 +91,13 @@ class EditableDayPeriodRow extends StatefulWidget {
 
 class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
   Map dayData = {};
+
+  @override
+  initState() {
+    // сброс состояния выбранных ячеек для вывода подсказок
+    cells = [];
+    super.initState();
+  }
 
   _dialogBuilder(ids) {
     return showDialog<void>(
@@ -202,8 +209,6 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
 
                 addOrUpdateCellList(newIds, data);
 
-                print('cells:  $cells');
-
                 context
                     .read<PlannerBloc>()
                     .add(FinalCellForCreateStream(finalCellIDs: cells));
@@ -230,9 +235,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
     final int periodIndex = widget.periodIndex;
 
     return BlocConsumer<PlannerBloc, PlannerState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return ListView.builder(
           shrinkWrap: true,
@@ -292,7 +295,9 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                           itemCount: 7,
                           itemBuilder: (BuildContext context, gridIndex) {
                             // формируем данные ячейки
+                            // TODO: неверно формируются ячеки, нет соответствия
                             for (int i = 0; i < daysData.length; i++) {
+                              // print("daysData: ${daysData[i]}");
                               if (eq(daysData[i]['cellId'],
                                   [periodIndex, rowIndex, gridIndex])) {
                                 // print(widget.newDaysData[i]);
@@ -432,11 +437,11 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
       }
     }
 
+    // print('cells 333: $cells');
     if (cells.isNotEmpty) {
       for (Map cell in cells) {
-        // print('cell: $cell');
         if (eq(cell['id'], [periodIndex, rowIndex, gridIndex])) {
-          // print('cells: $cells');
+          // print('cell 22: $cell');
           badgeColor = gridIndex == 6 ? Colors.transparent : AppColor.grey1;
           textCell = gridIndex == 6 ? "" : cell['startTime'] ?? '';
         }
@@ -444,13 +449,12 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
     }
     // вывод подсказок
     else {
-      // {day_id: 825, cellId: [0, 2, 2], start_at: 06:10, completed_at: 16:00}
+      // {day_id: 921, cellId: [2, 2, 0], start_at: 19:00, completed_at: }
 
       if (eq(dayData['cellId'], [periodIndex, rowIndex, gridIndex])) {
-        // print(dayData);
+        // print('dayData: $dayData');
         int dayIndex = gridIndex + 1;
 
-        // print('dayData: $dayData');
         // если не воскресенье
         if (dayIndex != 7) {
           badgeColor = Colors.white;

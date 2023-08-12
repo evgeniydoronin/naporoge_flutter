@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:naporoge/features/planning/presentation/widgets/week_planning_widget.dart';
+import '../widgets/week_planning_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../data/sources/local/stream_local_storage.dart';
 import '../../domain/entities/stream_entity.dart';
@@ -38,17 +38,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
     print('Planning Screen');
     bool isPlanningConfirmBtn =
         context.watch<PlannerBloc>().state.isPlanningConfirmBtn;
+
     String _description = '';
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        // context
-        //     .watch<PlannerBloc>()
-        //     .add(FinalCellForCreateStream(finalCellIDs: cells));
-
-        print('state.finalCellIDs: ${state.finalCellIDs}');
-
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
@@ -68,12 +63,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
                 // описание курса из БД по умолчанию
                 TextEditingController descriptionEditingController =
-                    TextEditingController(text: stream.description!);
+                    TextEditingController(text: stream.description ?? '');
 
                 // если были изменения описания курса - меняем данные
                 descriptionEditingController.text =
                     state.courseDescription.isEmpty
-                        ? stream.description!
+                        ? stream.description ?? ''
                         : context.read<PlannerBloc>().state.courseDescription;
 
                 return ListView(
@@ -111,12 +106,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                 const SizedBox(height: 5),
                                 TextFormField(
                                   controller: descriptionEditingController,
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'Заполните обязательное поле!';
-                                    }
-                                    return null;
-                                  },
+                                  // validator: (value) {
+                                  //   if (value == null || value.trim().isEmpty) {
+                                  //     return 'Заполните обязательное поле!';
+                                  //   }
+                                  //   return null;
+                                  // },
                                   onChanged: (description) {
                                     _description = description;
                                   },
@@ -171,10 +166,9 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                   child: isPlanningConfirmBtn
                                       ? ElevatedButton(
                                           onPressed: () async {
-                                            print('state: $state');
-                                            if (cells.length < 7) {
-                                              // If the form is valid, display a snackbar. In the real world,
-                                              // you'd often call a server or save the information in a database.
+                                            // print(
+                                            //     'state: ${state.finalCellIDs.length}');
+                                            if (state.finalCellIDs.length < 7) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 const SnackBar(
@@ -190,7 +184,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                               // CircularLoading(context)
                                               //     .startLoading();
 
-                                              print('state: $state');
+                                              print(
+                                                  'state finalCellIDs: ${state.finalCellIDs}');
+                                              print(
+                                                  'state weekData: ${state.editableWeekData}');
 
                                               Map streamData = {};
                                               // Update week

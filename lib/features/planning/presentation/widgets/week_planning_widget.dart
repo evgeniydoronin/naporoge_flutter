@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_theme.dart';
-import '../../../../core/utils/get_week_number.dart';
 import '../../domain/entities/stream_entity.dart';
 import '../../data/sources/local/stream_local_storage.dart';
 import '../bloc/planner_bloc.dart';
@@ -65,10 +64,12 @@ Future getWeeksData() async {
   // статус курса (before, after, process)
   Map streamStatus = await getStreamStatus();
 
+  print('streamStatus: $streamStatus');
+
   // формирование недели по умолчанию при открытии Календаря
   // До старта курса
   if (streamStatus['status'] == 'before') {
-    Map _weekData = getWeekData(stream, 'before');
+    Map _weekData = await getWeekData(stream, 'before');
 
     // добавляем после
     weeksData['weeksOnPage'] = _weekData['weeksOnPage'];
@@ -81,199 +82,17 @@ Future getWeeksData() async {
   else if (streamStatus['status'] == 'after') {
     // открывать по умолчанию последнюю неделю курса
     weeksData['defaultPageIndex'] = weeks - 1;
-    print('streamStatus: $streamStatus');
+    // print('streamStatus: $streamStatus');
   }
   // Во время прохождения курса
   else if (streamStatus['status'] == 'process') {
-    // страниц планера
-    int allPages = stream.weekBacklink.length;
-    // формируем все недели с данными
-    List weeksOnPage = [];
-    // индекс текущей недели
-    int? currentWeekIndex;
+    // print('streamStatus 2: $streamStatus');
+    Map _weekData = await getWeekData(stream, 'process');
 
-    // формируем созданные недели с данными
-    for (int i = 0; i < stream.weekBacklink.length; i++) {
-      Week week = stream.weekBacklink.elementAt(i);
-      List _cells = jsonDecode(week.cells!);
-      List cellsWeekData = [];
-      List weekOpenedPeriod = [];
-
-      // найти pageIndex текущей недели
-      if (getWeekNumber(DateTime.now()) == week.weekNumber) {
-        currentWeekIndex = i;
-        weeksData['defaultPageIndex'] = i;
-      }
-
-      // Формирование данных ячеек
-      for (int i = 0; i < _cells.length; i++) {
-        int cellIndex = _cells[i]['cellId'][2];
-
-        // добавляем индекс заполненного периода
-        weekOpenedPeriod.add(_cells[i]['cellId'][0]);
-
-        var _day = week.dayBacklink.indexed
-            .where((element) => element.$1 == cellIndex);
-
-        Day day = _day.first.$2;
-        // DAY START AT
-        DateTime startAtDate =
-            DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
-
-        // День завершен
-        if (day.completedAt != null) {
-          // час старта дела по плану
-          String startAtHour = DateFormat('H').format(day.startAt!);
-          // час завершения дела актуальный
-          String completedAtHour = DateFormat('H').format(day.completedAt!);
-          // print('startAtHour: $startAtHour');
-          // print('completedAtHour: $completedAtHour');
-
-          // Если час выполнения не совпадает
-          if (startAtHour != completedAtHour) {
-            for (Map hour in periodHoursIndexList) {
-              // час завершения дела актуальный
-              if (hour.keys.first == completedAtHour) {
-                // находим индекс дня ячейки
-                int gridIndex = _cells[i]['cellId'].last;
-                // Создаем новый список
-                List newHourCellId = List.from(hour.values.first);
-                newHourCellId.add(gridIndex);
-
-                // добавляем новую ячейку с новым индексом
-                cellsWeekData.addAll([
-                  {
-                    'day_id': day.id,
-                    'cellId': newHourCellId,
-                    'start_at': DateFormat('HH:mm').format(day.startAt!),
-                    'completed_at':
-                        DateFormat('HH:mm').format(day.completedAt!),
-                    'newCellId': true,
-                  }
-                ]);
-                // добавляем индекс заполненного периода
-                weekOpenedPeriod.add(gridIndex);
-
-                // print('hourIndex: $hourIndex');
-              } else if (hour.keys.first == startAtHour) {
-                // добавляем  ячейку
-                cellsWeekData.addAll([
-                  {
-                    'day_id': day.id,
-                    'cellId': _cells[i]['cellId'],
-                    'start_at': DateFormat('HH:mm').format(day.startAt!),
-                    'completed_at':
-                        DateFormat('HH:mm').format(day.completedAt!),
-                    'oldCellId': true,
-                  }
-                ]);
-                // добавляем индекс заполненного периода
-                weekOpenedPeriod.add(_cells[i]['cellId'][0]);
-              }
-            }
-          }
-          // Если час выполнения совпадает
-          else if (startAtHour == completedAtHour) {
-            cellsWeekData.addAll([
-              {
-                'day_id': day.id,
-                'cellId': _cells[i]['cellId'],
-                'start_at': DateFormat('HH:mm').format(day.startAt!),
-                'completed_at': DateFormat('HH:mm').format(day.completedAt!),
-                'day_matches': true,
-              }
-            ]);
-            // добавляем индекс заполненного периода
-            weekOpenedPeriod.add(_cells[i]['cellId'][0]);
-          }
-        }
-        // День НЕ завершен
-        else {
-          cellsWeekData.addAll([
-            {
-              'day_id': day.id,
-              'cellId': _cells[i]['cellId'],
-              'start_at': DateFormat('HH:mm').format(day.startAt!),
-              'completed_at': '',
-            }
-          ]);
-        }
-      }
-
-      // print('weekOpenedPeriod 1: ${weekOpenedPeriod.toSet().toList()}');
-
-      // Добавление недель с данными
-      weeksOnPage.addAll([
-        {
-          'pageIndex': i,
-          'monday': week.dayBacklink.first.startAt,
-          'sunday': week.dayBacklink.last.startAt,
-          'cellsWeekData': cellsWeekData,
-          'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
-        }
-      ]);
-    }
-
-    // формируем будущую редактируемую неделю
-    if (stream.weekBacklink.length < weeks) {
-      // индекс следующей недели
-      int nextWeekIndex = currentWeekIndex! + 1;
-      // добавляем новую страницу в планере
-      allPages = stream.weekBacklink.length + 1;
-      // проверить - если неделя не началась
-      // последняя созданная неделя
-      Week lastCreatedWeek = stream.weekBacklink
-          .elementAt(weeksOnPage[currentWeekIndex]['pageIndex']);
-
-      List _cells = jsonDecode(lastCreatedWeek.cells!);
-      List cellsWeekData = [];
-      List weekOpenedPeriod = [];
-
-      // Формирование данных ячеек
-      for (int i = 0; i < _cells.length; i++) {
-        int cellIndex = _cells[i]['cellId'][2];
-
-        // добавляем индекс заполненного периода
-        weekOpenedPeriod.add(_cells[i]['cellId'][0]);
-
-        var _day = lastCreatedWeek.dayBacklink.indexed
-            .where((element) => element.$1 == cellIndex);
-
-        Day day = _day.first.$2;
-        // DAY START AT
-        DateTime startAtDate =
-            DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
-
-        cellsWeekData.addAll([
-          {
-            'day_id': 0,
-            'cellId': _cells[i]['cellId'],
-            'start_at': DateFormat('HH:mm').format(day.startAt!),
-            'completed_at': '',
-          }
-        ]);
-      }
-
-      // Добавление будущей недели с данными
-      weeksOnPage.addAll([
-        {
-          'pageIndex': nextWeekIndex,
-          'monday': lastCreatedWeek.dayBacklink.first.startAt!
-              .add(const Duration(days: 7)),
-          'sunday': lastCreatedWeek.dayBacklink.last.startAt!
-              .add(const Duration(days: 7)),
-          'cellsWeekData': cellsWeekData,
-          'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
-          'isEditable': true,
-        }
-      ]);
-    }
-
-    // добавляем после всех проверок
-    weeksData['weeksOnPage'] = weeksOnPage;
-    weeksData['allPages'] = allPages;
-
-    // print('streamStatus: $streamStatus');
+    // добавляем после
+    weeksData['weeksOnPage'] = _weekData['weeksOnPage'];
+    weeksData['allPages'] = _weekData['allPages'];
+    weeksData['defaultPageIndex'] = _weekData['defaultPageIndex'];
   }
 
   return weeksData;
@@ -329,9 +148,6 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
               listener: (context, state) {},
               builder: (context, state) {
                 double wrapHeight = 0;
-                // print('state.wrapWeekBoxHeight: ${state.wrapWeekBoxHeight}');
-                // print('defaultAllTitleHeight: ${defaultAllTitleHeight}');
-                // print('weeksPeriodsHeight: ${weeksPeriodsHeight[_pageIndex]}');
                 wrapHeight = defaultAllTitleHeight +
                     context
                         .read<PlannerBloc>()
@@ -372,6 +188,14 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
+                                          // сброс раздела Планирование
+                                          // при переходе по вкладкам
+                                          // необходим для сброса стейта с финальными ячейками
+                                          // если пользователь ушёл с планнера без сохранения
+                                          context.read<PlannerBloc>().add(
+                                              const FinalCellForCreateStream(
+                                                  finalCellIDs: []));
+
                                           pageController.previousPage(
                                               duration: const Duration(
                                                   milliseconds: 10),
@@ -383,6 +207,14 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                       Text(weekPeriod),
                                       GestureDetector(
                                         onTap: () async {
+                                          // сброс раздела Планирование
+                                          // при переходе по вкладкам
+                                          // необходим для сброса стейта с финальными ячейками
+                                          // если пользователь ушёл с планнера без сохранения
+                                          context.read<PlannerBloc>().add(
+                                              const FinalCellForCreateStream(
+                                                  finalCellIDs: []));
+
                                           pageController.nextPage(
                                               duration: const Duration(
                                                   milliseconds: 10),
@@ -500,12 +332,14 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     for (Map page in pageData['weeksOnPage']) {
       // если входящий индекс страницы совпадает с недельным
       if (pageIndex == page['pageIndex']) {
+        // print('pageData 11: $pageData');
         // если есть заполненные ячейки
         if (page['weekOpenedPeriod'].isNotEmpty) {
+          // print('page weekOpenedPeriod: ${page['weekOpenedPeriod']}');
           weeksPeriodsHeight.add({
             "pageIndex": page['pageIndex'],
             "height": [],
-            "periodIndex": page['weekOpenedPeriod'],
+            "periodIndex": page['weekOpenedPeriod'], // [0, 2, 1]
           });
         }
       }
@@ -513,10 +347,11 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
 
     // если есть заполненные ячейки страницы - открываем периоды
     if (weeksPeriodsHeight.isNotEmpty) {
+      // print('weeksPeriodsHeight: $weeksPeriodsHeight');
       if (weeksPeriodsHeight[0]['periodIndex'].isNotEmpty) {
-        // print('weeksPeriodsHeight: $weeksPeriodsHeight');
         for (int i = 0; i < weeksPeriodsHeight[0]['periodIndex'].length; i++) {
-          onCollapseToggle(i, pageIndex);
+          int periodIndex = weeksPeriodsHeight[0]['periodIndex'][i];
+          onCollapseToggle(periodIndex, pageIndex);
         }
       }
     }
@@ -560,10 +395,26 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     bool isEditable = pageData['weeksOnPage'][pageIndex]['isEditable'] ?? false;
     List cellsData = pageData['weeksOnPage'][pageIndex]['cellsWeekData'];
 
+    // выводим кнопку План мне подходит
+    // если неделя редактируемая
     context
         .read<PlannerBloc>()
         .add(PlanningConfirmBtnStream(isPlanningConfirmBtn: isEditable));
-    // print(pageData['weeksOnPage'][pageIndex]['cellsWeekData']);
+
+    // добавляем в стейт данные по редактируемой неделе
+    // если ячейки дней не созданы
+    context.read<PlannerBloc>().add(EditableWeekStream(editableWeekData: {
+          'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
+          'createOrUpdate':
+              pageData['weeksOnPage'][pageIndex]['cellsWeekData'].isEmpty
+                  ? 'createWeek'
+                  : 'updateWeek',
+        }));
+
+    // print("ячейки дней : ${pageData['weeksOnPage'][pageIndex]['weekId']}");
+    //
+    // print(
+    //     "ячейки дней : ${pageData['weeksOnPage'][pageIndex]['cellsWeekData'].isEmpty}");
     // print('ExpandDay weeksPeriodsHeight: $weeksPeriodsHeight');
     return ListView.builder(
       shrinkWrap: true,

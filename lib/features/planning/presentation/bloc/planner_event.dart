@@ -87,3 +87,12 @@ final class PlanningConfirmBtnStream extends PlannerEvent {
   @override
   List<Object> get props => [isPlanningConfirmBtn];
 }
+
+final class EditableWeekStream extends PlannerEvent {
+  final Map editableWeekData;
+
+  const EditableWeekStream({required this.editableWeekData});
+
+  @override
+  List<Object> get props => [editableWeekData];
+}
