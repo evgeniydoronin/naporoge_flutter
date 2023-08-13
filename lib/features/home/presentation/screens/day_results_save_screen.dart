@@ -368,6 +368,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
+                                  DateTime now = DateTime.now();
                                   CircularLoading(context).startLoading();
                                   final isar = await isarService.db;
                                   var user = await isarService.getUser();
@@ -376,15 +377,25 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                       .format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
 
                                   final weekNumber = getWeekNumber(DateTime.now());
-                                  final currWeekData =
+                                  Week? currWeekData =
                                       await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
                                   late int dayId;
 
-                                  for (Day day in currWeekData!.dayBacklink) {
-                                    if (currDay == DateFormat('y-MM-dd').format(day.startAt!)) {
-                                      dayId = day.id!;
+                                  // если неделя не пустая
+                                  if (currWeekData!.dayBacklink.first.startAt != null) {
+                                    for (Day day in currWeekData.dayBacklink) {
+                                      if (currDay == DateFormat('y-MM-dd').format(day.startAt!)) {
+                                        dayId = day.id!;
+                                      }
                                     }
+                                  }
+                                  // пустая неделя
+                                  else {
+                                    List days = await isar.days.filter().weekIdEqualTo(currWeekData.id).findAll();
+                                    int freeDayIndex = now.weekday - 1;
+                                    Day freeDay = days[freeDayIndex];
+                                    dayId = freeDay.id!;
                                   }
 
                                   Map dayResultData = {
@@ -404,7 +415,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                   var newDayResult = await _streamController.createDayResult(dayResultData);
 
                                   await streamLocalStorage.saveDayResult(newDayResult);
-                                  // print(newDayResult);
+                                  print(newDayResult);
 
                                   final stream = await streamLocalStorage.getActiveStream();
 

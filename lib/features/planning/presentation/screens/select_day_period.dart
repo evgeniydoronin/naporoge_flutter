@@ -17,8 +17,7 @@ import '../widgets/stepper_widget.dart';
 class SelectDayPeriod extends StatefulWidget {
   final bool isBackArrow;
 
-  const SelectDayPeriod({Key? key, required this.isBackArrow})
-      : super(key: key);
+  const SelectDayPeriod({Key? key, required this.isBackArrow}) : super(key: key);
 
   @override
   State<SelectDayPeriod> createState() => _SelectDayPeriodState();
@@ -57,9 +56,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
       listener: (context, state) {},
       builder: (context, state) {
         // print(state);
-        context
-            .read<PlannerBloc>()
-            .add(FinalCellForCreateStream(finalCellIDs: cells));
+        context.read<PlannerBloc>().add(FinalCellForCreateStream(finalCellIDs: cells));
 
         return Scaffold(
           backgroundColor: AppColor.lightBG,
@@ -108,16 +105,10 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 15,
-                                          bottom: 15,
-                                          left: 15,
-                                          right: 80),
+                                      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 80),
                                       child: Text(
                                         'Старт курса – с понедельника. Выберите, с какого начнете',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: AppFont.regular),
+                                        style: TextStyle(color: Colors.white, fontSize: AppFont.regular),
                                       ),
                                     ),
                                   ],
@@ -130,17 +121,12 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Container(
                               width: double.maxFinite,
-                              padding: const EdgeInsets.only(
-                                  top: 15, bottom: 15, left: 18, right: 18),
+                              padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                               decoration: AppLayout.boxDecorationShadowBG,
                               child: Text(
-                                state.courseTitle.isNotEmpty
-                                    ? state.courseTitle
-                                    : stream.title!,
+                                state.courseTitle.isNotEmpty ? state.courseTitle : stream.title!,
                                 style: TextStyle(
-                                    color: AppColor.accentBOW,
-                                    fontSize: AppFont.large,
-                                    fontWeight: FontWeight.w500),
+                                    color: AppColor.accentBOW, fontSize: AppFont.large, fontWeight: FontWeight.w500),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -162,34 +148,26 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                     return null;
                                   },
                                   onChanged: (description) {
-                                    context.read<PlannerBloc>().add(
-                                        StreamCourseDescriptionChanged(
-                                            description));
+                                    context.read<PlannerBloc>().add(StreamCourseDescriptionChanged(description));
                                   },
                                   focusNode: courseDescriptionFocusNode,
                                   maxLines: 2,
                                   maxLength: 200,
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.all(10),
-                                    hintText:
-                                        'Укажите объем выполнения и цель дела',
-                                    hintStyle: const TextStyle(
-                                        color: Colors.grey, fontSize: 12),
-                                    labelStyle: const TextStyle(
-                                        color: Colors.grey, fontSize: 12),
+                                    hintText: 'Укажите объем выполнения и цель дела',
+                                    hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                    labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                                     fillColor: Colors.white,
                                     filled: true,
                                     errorBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.redAccent),
+                                        borderSide: const BorderSide(color: Colors.redAccent),
                                         borderRadius: AppLayout.primaryRadius),
                                     enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent),
+                                        borderSide: const BorderSide(color: Colors.transparent),
                                         borderRadius: AppLayout.primaryRadius),
                                     focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent),
+                                        borderSide: const BorderSide(color: Colors.transparent),
                                         borderRadius: AppLayout.primaryRadius),
                                   ),
                                 ),
@@ -214,63 +192,45 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: () async {
-                                      // final storage = StreamLocalStorage();
-                                      // NPStream stream =
-                                      // await storage.getActiveStream();
-                                      //  TODO: до старта курса пользователя перекидывать
-                                      //  на экран 3-го шага создания дела
-
                                       if (_formKey.currentState!.validate()) {
                                         // выбраны НЕ все дни
                                         if (state.finalCellIDs.length < 7) {
                                           if (context.mounted) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                                    content: Text(
-                                                        'Нужно выбрать 6 дней!'),
-                                                    duration:
-                                                        Duration(seconds: 2)));
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                content: Text('Нужно выбрать 6 дней!'),
+                                                duration: Duration(seconds: 2)));
                                           }
                                         }
                                         // выбраны все дни
                                         else {
                                           if (context.mounted) {
-                                            CircularLoading(context)
-                                                .startLoading();
+                                            CircularLoading(context).startLoading();
                                           }
                                           // обновляем первую неделю курса
                                           Map streamData = {
                                             "stream_id": stream.id,
-                                            "description": state
-                                                    .courseDescription
-                                                    .isNotEmpty
+                                            "description": state.courseDescription.isNotEmpty
                                                 ? state.courseDescription
                                                 : stream.description,
-                                            "week_id":
-                                                stream.weekBacklink.first.id,
+                                            "week_id": stream.weekBacklink.first.id,
+                                            "user_confirmed": true,
                                             "cells": state.finalCellIDs,
                                           };
 
                                           // print('streamData: $streamData');
 
                                           // update on server
-                                          var updatedStream =
-                                              await _streamController
-                                                  .updateStream(streamData);
+                                          var updatedStream = await _streamController.updateStream(streamData);
 
-                                          print('newStream: $updatedStream');
+                                          // print('newStream: $updatedStream');
 
                                           // update local
-                                          if (updatedStream['stream']['id'] !=
-                                              null) {
-                                            print('newStream: $updatedStream');
-                                            streamLocalStorage
-                                                .updateStream(updatedStream);
+                                          if (updatedStream['stream']['id'] != null) {
+                                            // print('newStream: $updatedStream');
+                                            streamLocalStorage.updateStream(updatedStream);
                                             if (context.mounted) {
-                                              CircularLoading(context)
-                                                  .stopLoading();
-                                              context.router.replace(
-                                                  const DashboardScreenRoute());
+                                              CircularLoading(context).stopLoading();
+                                              context.router.replace(const DashboardScreenRoute());
                                             }
                                           }
                                         }

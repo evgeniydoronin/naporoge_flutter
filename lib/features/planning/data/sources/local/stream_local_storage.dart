@@ -57,6 +57,7 @@ class StreamLocalStorage {
 
     final week = await isar.weeks.get(weekData['id']);
     week!.cells = json.encode(weekData['cells']);
+    week.userConfirmed = true;
 
     isar.writeTxnSync(() {
       // update stream
@@ -122,6 +123,8 @@ class StreamLocalStorage {
       ..id = weekDataFromServer['week']['id']
       ..weekNumber = weekDataFromServer['week']['number']
       ..streamId = weekDataFromServer['week']['stream_id']
+      ..userConfirmed = weekDataFromServer['week']['user_confirmed']
+      ..systemConfirmed = weekDataFromServer['week']['system_confirmed']
       ..cells = json.encode(weekDataFromServer['week']['cells'])
       ..nPStream.value = stream;
 
@@ -132,7 +135,7 @@ class StreamLocalStorage {
         final newDay = Day()
           ..id = dayData['day']['id']
           ..weekId = dayData['day']['week_id']
-          ..startAt = DateTime.parse(dayData['day']['start_at'])
+          ..startAt = dayData['day']['start_at'] != null ? DateTime.parse(dayData['day']['start_at']) : null
           ..week.value = newWeek;
         isar.days.putSync(newDay);
       }

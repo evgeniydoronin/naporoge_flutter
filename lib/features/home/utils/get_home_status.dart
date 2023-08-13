@@ -25,19 +25,25 @@ Future getHomeStatus() async {
   // текущая неделя
   int currentWeekNumber = getWeekNumber(DateTime.now());
 
-  print('currentWeekNumber: $currentWeekNumber');
+  // print('currentWeekNumber: $currentWeekNumber');
 
+  // До старта курса
+  if (streamStatus['status'] == 'before') {
+    topMessage['text'] = '';
+  }
+  // После завершения курса
+  else if (streamStatus['status'] == 'after') {
+    // streamStatus['status'] = "after";
+  }
   // Во время прохождения курса
-  if (streamStatus['status'] == 'process') {
-    Week week = stream!
-        .weekBacklink
-        .where((week) => week.weekNumber == currentWeekNumber)
-        .first;
+  else if (streamStatus['status'] == 'process') {
+    Week week = stream!.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
 
-    print('currentWeek: ${week.weekNumber}');
+    // print('currentWeek 123: ${week.weekNumber}');
 
     List days = await isar.days.filter().weekIdEqualTo(week.id).sortByStartAt().findAll();
 
+    // print('days 123: ${days}');
     // проверки в воскресенье
     if (now.weekday == 7) {
       // завершенные дни
@@ -58,7 +64,7 @@ Future getHomeStatus() async {
               executionScope.add(i);
             }
           }
-          print('executionScope: $executionScope');
+          // print('executionScope: $executionScope');
 
           // количество выполненных дней
           if (executionScope.length < 6) {
@@ -77,14 +83,28 @@ Future getHomeStatus() async {
     // проверки в будни + суббота
     else {
       for (Day day in days) {
-        DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+        // если НЕ пустая неделя
+        if (day.startAt != null) {
+          DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
 
-        // текущий день
-        if (dayStartAt.isAtSameMomentAs(DateTime.parse(DateFormat('y-MM-dd').format(now)))) {
+          // текущий день
+          if (dayStartAt.isAtSameMomentAs(DateTime.parse(DateFormat('y-MM-dd').format(now)))) {
+            // проверяем выполненные дни
+            if (day.completedAt != null) {
+              topMessage['text'] = 'Результаты сохранены';
+            } else {
+              button['isActive'] = true;
+            }
+          }
+        }
+        // если пустая неделя
+        else {
+          int freeDayIndex = now.weekday - 1;
+          Day freeDay = days[freeDayIndex];
           // проверяем выполненные дни
-          if (day.completedAt != null) {
+          if (freeDay.completedAt != null) {
             topMessage['text'] = 'Результаты сохранены';
-          } else {
+          } else if (freeDay.completedAt == null) {
             button['isActive'] = true;
           }
         }

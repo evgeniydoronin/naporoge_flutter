@@ -30,16 +30,29 @@ class WeekStatusPoint extends StatelessWidget {
 
     List days = [];
 
-    // Во время прохождения курса
-    if (streamStatus['status'] == 'process') {
-      Week week = stream!
-          .weekBacklink
-          .where((week) => week.weekNumber == currentWeekNumber)
-          .first;
+    // До старта курса
+    if (streamStatus['status'] == 'before') {
+      // Первая неделя курса
+      Week week = stream!.weekBacklink.first;
 
       days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
     }
-    
+    // После завершения курса
+    else if (streamStatus['status'] == 'after') {
+      // streamStatus['status'] = "after";
+    }
+    // Во время прохождения курса
+    else if (streamStatus['status'] == 'process') {
+      Week week = stream!.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
+
+      print('week: ${week.dayBacklink.first.startAt}');
+      if (week.dayBacklink.first.startAt != null) {
+        days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
+      } else {
+        days = await week.dayBacklink.filter().findAll();
+      }
+    }
+
     return days;
   }
 
@@ -55,41 +68,57 @@ class WeekStatusPoint extends StatelessWidget {
           // список дней и статуса
           List daysStatus = [];
           for (Day day in days) {
-            // print(day.startAt);
-            DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
-            String dayStartAtString = DateFormat('H:mm').format(day.startAt!);
-
-            // текущий день
-            if (dayStartAt.isAtSameMomentAs(now)) {
+            // пустая неделя
+            if (day.startAt == null) {
               // выполнен
               if (day.completedAt != null) {
-                daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
+                // print('пустая неделя день выполнен');
+                daysStatus.add({'status': 'empty_completed', 'startAt': ''});
               }
               // не выполнен
               else {
-                daysStatus.add({'status': 'opened', 'startAt': dayStartAtString});
+                // print('пустая неделя день НЕ выполнен');
+                daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
               }
             }
-            // день прошел
-            else if (dayStartAt.isBefore(now)) {
-              // выполнен
-              if (day.completedAt != null) {
-                daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
-              }
-              // не выполнен и не воскресенье
-              else {
-                if (day.startAt!.weekday != 7) {
-                  daysStatus.add({'status': 'skipped', 'startAt': dayStartAtString});
+            // не пустая неделя
+            else {
+              // print(day.startAt);
+              DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+              String dayStartAtString = DateFormat('H:mm').format(day.startAt!);
+
+              // текущий день
+              if (dayStartAt.isAtSameMomentAs(now)) {
+                // выполнен
+                if (day.completedAt != null) {
+                  daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
+                }
+                // не выполнен
+                else {
+                  daysStatus.add({'status': 'opened', 'startAt': dayStartAtString});
                 }
               }
-            }
-            // запланированный день
-            else if (dayStartAt.isAfter(now)) {
-              daysStatus.add({'status': 'future', 'startAt': dayStartAtString});
+              // день прошел
+              else if (dayStartAt.isBefore(now)) {
+                // выполнен
+                if (day.completedAt != null) {
+                  daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
+                }
+                // не выполнен и не воскресенье
+                else {
+                  if (day.startAt!.weekday != 7) {
+                    daysStatus.add({'status': 'skipped', 'startAt': dayStartAtString});
+                  }
+                }
+              }
+              // запланированный день
+              else if (dayStartAt.isAfter(now)) {
+                daysStatus.add({'status': 'future', 'startAt': dayStartAtString});
+              }
             }
           }
 
-          // print(daysStatus);
+          print(daysStatus);
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
@@ -240,6 +269,78 @@ class WeekStatusPoint extends StatelessWidget {
                                 gridIndex == 6 ? '-' : daysStatus[gridIndex]['startAt'],
                                 style: const TextStyle(fontSize: 10),
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  // Пустая неделя день не выполнен
+                  else if (daysStatus[gridIndex]['status'] == 'empty_not_completed') {
+                    _container = Container(
+                      height: 110,
+                      decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 34,
+                            height: 33,
+                            decoration: BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
+                            child: Center(
+                              child: Text(
+                                weekDay[gridIndex].toUpperCase(),
+                                style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 28,
+                            width: 34,
+                            decoration: const BoxDecoration(
+                              // color: AppColor.primary,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(34),
+                                bottomRight: Radius.circular(34),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                '-',
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  // Пустая неделя день выполнен
+                  else if (daysStatus[gridIndex]['status'] == 'empty_completed') {
+                    _container = Container(
+                      decoration: BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 34,
+                            height: 34,
+                            decoration: BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
+                            child: Center(
+                              child: Text(
+                                weekDay[gridIndex].toUpperCase(),
+                                style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 24,
+                            padding: const EdgeInsets.only(bottom: 3),
+                            decoration: BoxDecoration(color: AppColor.primary, borderRadius: AppLayout.primaryRadius),
+                            child: SvgPicture.asset(
+                              'assets/icons/checked_day.svg',
+                              height: 24,
+                              clipBehavior: Clip.none,
                             ),
                           ),
                         ],

@@ -2289,13 +2289,28 @@ const WeekSchema = CollectionSchema(
       name: r'cells',
       type: IsarType.string,
     ),
-    r'streamId': PropertySchema(
+    r'progress': PropertySchema(
       id: 1,
+      name: r'progress',
+      type: IsarType.string,
+    ),
+    r'streamId': PropertySchema(
+      id: 2,
       name: r'streamId',
       type: IsarType.long,
     ),
+    r'systemConfirmed': PropertySchema(
+      id: 3,
+      name: r'systemConfirmed',
+      type: IsarType.bool,
+    ),
+    r'userConfirmed': PropertySchema(
+      id: 4,
+      name: r'userConfirmed',
+      type: IsarType.bool,
+    ),
     r'weekNumber': PropertySchema(
-      id: 2,
+      id: 5,
       name: r'weekNumber',
       type: IsarType.long,
     )
@@ -2340,6 +2355,12 @@ int _weekEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.progress;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -2350,8 +2371,11 @@ void _weekSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.cells);
-  writer.writeLong(offsets[1], object.streamId);
-  writer.writeLong(offsets[2], object.weekNumber);
+  writer.writeString(offsets[1], object.progress);
+  writer.writeLong(offsets[2], object.streamId);
+  writer.writeBool(offsets[3], object.systemConfirmed);
+  writer.writeBool(offsets[4], object.userConfirmed);
+  writer.writeLong(offsets[5], object.weekNumber);
 }
 
 Week _weekDeserialize(
@@ -2363,8 +2387,11 @@ Week _weekDeserialize(
   final object = Week();
   object.cells = reader.readStringOrNull(offsets[0]);
   object.id = id;
-  object.streamId = reader.readLongOrNull(offsets[1]);
-  object.weekNumber = reader.readLongOrNull(offsets[2]);
+  object.progress = reader.readStringOrNull(offsets[1]);
+  object.streamId = reader.readLongOrNull(offsets[2]);
+  object.systemConfirmed = reader.readBoolOrNull(offsets[3]);
+  object.userConfirmed = reader.readBoolOrNull(offsets[4]);
+  object.weekNumber = reader.readLongOrNull(offsets[5]);
   return object;
 }
 
@@ -2378,8 +2405,14 @@ P _weekDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 4:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 5:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2689,6 +2722,151 @@ extension WeekQueryFilter on QueryBuilder<Week, Week, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'progress',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'progress',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'progress',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'progress',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'progress',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'progress',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'progress',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'progress',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressContains(String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'progress',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'progress',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'progress',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> progressIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'progress',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Week, Week, QAfterFilterCondition> streamIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -2753,6 +2931,58 @@ extension WeekQueryFilter on QueryBuilder<Week, Week, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> systemConfirmedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'systemConfirmed',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> systemConfirmedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'systemConfirmed',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> systemConfirmedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'systemConfirmed',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> userConfirmedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userConfirmed',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> userConfirmedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userConfirmed',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> userConfirmedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'userConfirmed',
+        value: value,
       ));
     });
   }
@@ -2913,6 +3143,18 @@ extension WeekQuerySortBy on QueryBuilder<Week, Week, QSortBy> {
     });
   }
 
+  QueryBuilder<Week, Week, QAfterSortBy> sortByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
+    });
+  }
+
   QueryBuilder<Week, Week, QAfterSortBy> sortByStreamId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'streamId', Sort.asc);
@@ -2922,6 +3164,30 @@ extension WeekQuerySortBy on QueryBuilder<Week, Week, QSortBy> {
   QueryBuilder<Week, Week, QAfterSortBy> sortByStreamIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'streamId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortBySystemConfirmed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'systemConfirmed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortBySystemConfirmedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'systemConfirmed', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortByUserConfirmed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userConfirmed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortByUserConfirmedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userConfirmed', Sort.desc);
     });
   }
 
@@ -2963,6 +3229,18 @@ extension WeekQuerySortThenBy on QueryBuilder<Week, Week, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Week, Week, QAfterSortBy> thenByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
+    });
+  }
+
   QueryBuilder<Week, Week, QAfterSortBy> thenByStreamId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'streamId', Sort.asc);
@@ -2972,6 +3250,30 @@ extension WeekQuerySortThenBy on QueryBuilder<Week, Week, QSortThenBy> {
   QueryBuilder<Week, Week, QAfterSortBy> thenByStreamIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'streamId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenBySystemConfirmed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'systemConfirmed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenBySystemConfirmedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'systemConfirmed', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenByUserConfirmed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userConfirmed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenByUserConfirmedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'userConfirmed', Sort.desc);
     });
   }
 
@@ -2996,9 +3298,28 @@ extension WeekQueryWhereDistinct on QueryBuilder<Week, Week, QDistinct> {
     });
   }
 
+  QueryBuilder<Week, Week, QDistinct> distinctByProgress(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'progress', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Week, Week, QDistinct> distinctByStreamId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'streamId');
+    });
+  }
+
+  QueryBuilder<Week, Week, QDistinct> distinctBySystemConfirmed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'systemConfirmed');
+    });
+  }
+
+  QueryBuilder<Week, Week, QDistinct> distinctByUserConfirmed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'userConfirmed');
     });
   }
 
@@ -3022,9 +3343,27 @@ extension WeekQueryProperty on QueryBuilder<Week, Week, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Week, String?, QQueryOperations> progressProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'progress');
+    });
+  }
+
   QueryBuilder<Week, int?, QQueryOperations> streamIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'streamId');
+    });
+  }
+
+  QueryBuilder<Week, bool?, QQueryOperations> systemConfirmedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'systemConfirmed');
+    });
+  }
+
+  QueryBuilder<Week, bool?, QQueryOperations> userConfirmedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'userConfirmed');
     });
   }
 

@@ -26,6 +26,9 @@ class Week {
   Id? id;
   int? streamId;
   int? weekNumber;
+  bool? systemConfirmed;
+  bool? userConfirmed;
+  String? progress;
   String? cells;
 
   final nPStream = IsarLink<NPStream>();

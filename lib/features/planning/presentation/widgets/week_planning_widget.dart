@@ -457,15 +457,14 @@ class DayPeriodRow extends StatefulWidget {
 class _DayPeriodRowState extends State<DayPeriodRow> {
   @override
   Widget build(BuildContext context) {
-    // print('weekOnPage: $weekOnPage');
-
     List daysData = widget.daysData;
     final periodIndex = widget.periodIndex;
 
-    // print('periodIndex: $periodIndex');
-    // print('weekId: ${widget.weeksOnPage['weekId']}');
+    // print('weekOnPage: ${widget.weeksOnPage}');
+    // print('daysData: $daysData');
 
     Week week = widget.stream.weekBacklink.where((week) => week.id == widget.weeksOnPage['weekId']).first;
+    // print('week: ${week}');
 
     return ListView.builder(
       shrinkWrap: true,
@@ -531,7 +530,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                               ...{'day': day}
                             };
 
-                            // print('dayData: ${dayData['day']}');
+                            // print('dayData: ${dayData}');
                             // print('day: ${week.dayBacklink.where((day) => day.id == daysData[i]['day_id']).first}');
                           }
                         }
@@ -597,74 +596,116 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
       // {day_id: 1029, cellId: [0, 6, 2], start_at: 08:00, completed_at: 10:00, newCellId: true}
       // {day_id: 1029, cellId: [0, 4, 2], start_at: 08:00, completed_at: 10:00, oldCellId: true}
       // {day_id: 1026, cellId: [0, 5, 0], start_at: 09:00, completed_at: 09:55, day_matches: true}
-
       if (eq(dayData['cellId'], [periodIndex, rowIndex, gridIndex])) {
         int dayIndex = gridIndex + 1;
         DateTime now = DateTime.parse(DateFormat('y-MM-dd').format(DateTime.now()));
         Day day = dayData['day'];
-        DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
 
-        // String? completedAt = DateFormat('Y-mm-dd').format(day.completedAt);
+        // print('dayData[statusCell] : ${dayData['statusCell']}');
+        // если дни недели созданы и ячейка не подсказка
+        if (dayData['statusCell'] == null) {
+          DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
 
-        // print('dayStartAt: $dayStartAt, ${dayStartAt.isAtSameMomentAs(now)}');
-        // print('isAfter: $dayStartAt, ${dayStartAt.isAfter(now)}');
-        // print('isBefore: $dayStartAt, ${dayStartAt.isBefore(now)}');
-        // print('now: ${DateTime.parse(DateFormat('y-MM-dd').format(now))}');
+          // String? completedAt = DateFormat('Y-mm-dd').format(day.completedAt);
 
-        ///////////////////////////////////////////
-        // проверка на статусы выполнения
-        ///////////////////////////////////////////
-        // текущий день
-        if (dayStartAt.isAtSameMomentAs(now)) {
-          // если не воскресенье
-          if (dayIndex != 7) {
-            // не выполнен
-            if (dayData['completed_at'].isEmpty) {
-              badgeColor = AppColor.grey1;
-              textCell = dayData['start_at'];
-            }
-            // выполнен
-            else {
-              if (dayData['newCellId'] != null) {
-                badgeColor = AppColor.accent.withOpacity(0.5);
-                textCell = dayData['completed_at'];
-              } else if (dayData['oldCellId'] != null) {
-                badgeColor = AppColor.accent.withOpacity(0);
+          // print('dayStartAt: $dayStartAt, ${dayStartAt.isAtSameMomentAs(now)}');
+          // print('isAfter: $dayStartAt, ${dayStartAt.isAfter(now)}');
+          // print('isBefore: $dayStartAt, ${dayStartAt.isBefore(now)}');
+          // print('now: ${DateTime.parse(DateFormat('y-MM-dd').format(now))}');
+
+          ///////////////////////////////////////////
+          // проверка на статусы выполнения
+          ///////////////////////////////////////////
+          // текущий день
+          if (dayStartAt.isAtSameMomentAs(now)) {
+            // если не воскресенье
+            if (dayIndex != 7) {
+              // не выполнен
+              if (dayData['completed_at'].isEmpty) {
+                badgeColor = AppColor.grey1;
                 textCell = dayData['start_at'];
-              } else if (dayData['day_matches'] != null) {
-                badgeColor = AppColor.accent;
-                textCell = dayData['completed_at'];
+              }
+              // выполнен
+              else {
+                if (dayData['newCellId'] != null) {
+                  badgeColor = AppColor.accent.withOpacity(0.5);
+                  textCell = dayData['completed_at'];
+                } else if (dayData['oldCellId'] != null) {
+                  badgeColor = AppColor.accent.withOpacity(0);
+                  textCell = dayData['start_at'];
+                } else if (dayData['day_matches'] != null) {
+                  badgeColor = AppColor.accent;
+                  textCell = dayData['completed_at'];
+                }
               }
             }
-          }
-          // если воскресенье
-          else {
-            // не выполнен
-            if (dayData['completed_at'].isEmpty) {
-              textCell = ''; // скрываем время ячейки
-            }
-            // выполнен
+            // если воскресенье
             else {
-              if (dayData['oldCellId'] != null) {
-                // скрываем значение по умолчанию ячейки
-                textCell = '';
-              } else if (dayData['newCellId'] != null) {
-                textCell = dayData['completed_at'];
-                fontColor = AppColor.red;
+              // не выполнен
+              if (dayData['completed_at'].isEmpty) {
+                textCell = ''; // скрываем время ячейки
+              }
+              // выполнен
+              else {
+                if (dayData['oldCellId'] != null) {
+                  // скрываем значение по умолчанию ячейки
+                  textCell = '';
+                } else if (dayData['newCellId'] != null) {
+                  textCell = dayData['completed_at'];
+                  fontColor = AppColor.red;
+                }
               }
             }
           }
-        }
-        // день прошел
-        else if (dayStartAt.isBefore(now)) {
-          // если не воскресенье
-          if (dayIndex != 7) {
-            // print('dayData: $dayData');
-            // не выполнен
-            if (day.completedAt == null) {
-              badgeColor = AppColor.red;
-              textCell = dayData['start_at'];
-            } else {
+          // день прошел
+          else if (dayStartAt.isBefore(now)) {
+            // если не воскресенье
+            if (dayIndex != 7) {
+              // print('dayData: $dayData');
+              // не выполнен
+              if (day.completedAt == null) {
+                badgeColor = AppColor.red;
+                textCell = dayData['start_at'];
+              } else {
+                if (dayData['completed_at'].isEmpty) {
+                  badgeColor = AppColor.red;
+                  textCell = dayData['start_at'];
+                }
+                // выполнен
+                else {
+                  if (dayData['newCellId'] != null) {
+                    badgeColor = AppColor.accent.withOpacity(0.5);
+                    textCell = dayData['completed_at'];
+                  } else if (dayData['oldCellId'] != null) {
+                    badgeColor = AppColor.accent.withOpacity(0);
+                    textCell = dayData['start_at'];
+                  } else if (dayData['day_matches'] != null) {
+                    badgeColor = AppColor.accent;
+                    textCell = dayData['completed_at'];
+                  }
+                }
+              }
+            }
+            // если воскресенье
+            else {
+              // не выполнен
+              if (dayData['completed_at'].isEmpty) {
+                textCell = ''; // скрываем время ячейки
+              }
+              // выполнен
+              else {
+                if (dayData['oldCellId'] != null) {
+                  // скрываем значение по умолчанию ячейки
+                  textCell = '';
+                } else if (dayData['newCellId'] != null) {
+                  textCell = dayData['completed_at'];
+                  fontColor = AppColor.red;
+                }
+              }
+            }
+            // если не воскресенье
+            if (dayIndex != 7) {
+              // не выполнен
               if (dayData['completed_at'].isEmpty) {
                 badgeColor = AppColor.red;
                 textCell = dayData['start_at'];
@@ -684,52 +725,41 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
               }
             }
           }
-          // если воскресенье
-          else {
-            // не выполнен
-            if (dayData['completed_at'].isEmpty) {
-              textCell = ''; // скрываем время ячейки
-            }
-            // выполнен
-            else {
-              if (dayData['oldCellId'] != null) {
-                // скрываем значение по умолчанию ячейки
-                textCell = '';
-              } else if (dayData['newCellId'] != null) {
-                textCell = dayData['completed_at'];
-                fontColor = AppColor.red;
-              }
-            }
-          }
-          // если не воскресенье
-          if (dayIndex != 7) {
-            // не выполнен
-            if (dayData['completed_at'].isEmpty) {
-              badgeColor = AppColor.red;
+          // запланированный день
+          else if (dayStartAt.isAfter(now)) {
+            // если не воскресенье
+            if (gridIndex != 6) {
+              badgeColor = AppColor.grey1;
               textCell = dayData['start_at'];
-            }
-            // выполнен
-            else {
-              if (dayData['newCellId'] != null) {
-                badgeColor = AppColor.accent.withOpacity(0.5);
-                textCell = dayData['completed_at'];
-              } else if (dayData['oldCellId'] != null) {
-                badgeColor = AppColor.accent.withOpacity(0);
-                textCell = dayData['start_at'];
-              } else if (dayData['day_matches'] != null) {
-                badgeColor = AppColor.accent;
-                textCell = dayData['completed_at'];
-              }
+            } else {
+              badgeColor = AppColor.grey1.withOpacity(0);
+              fontColor = AppColor.red;
             }
           }
         }
-        // запланированный день
-        else if (dayStartAt.isAfter(now)) {
+        // ячейки подсказки
+        else if (dayData['statusCell'] == 'helper') {
+          // print('helper');
           // если не воскресенье
           if (gridIndex != 6) {
-            badgeColor = AppColor.grey1;
+            badgeColor = AppColor.grey1.withOpacity(0);
+            fontColor = AppColor.grey3;
             textCell = dayData['start_at'];
           } else {
+            badgeColor = AppColor.grey1.withOpacity(0);
+            fontColor = AppColor.red;
+          }
+        }
+        // ячейки подсказки выполненые
+        else if (dayData['statusCell'] == 'completed') {
+          // если не воскресенье
+          if (gridIndex != 6) {
+            badgeColor = AppColor.accent.withOpacity(0.5);
+            // fontColor = AppColor.grey3;
+            textCell = dayData['completed_at'];
+          } else {
+            print('completed: $dayData');
+            textCell = dayData['completed_at'];
             badgeColor = AppColor.grey1.withOpacity(0);
             fontColor = AppColor.red;
           }
