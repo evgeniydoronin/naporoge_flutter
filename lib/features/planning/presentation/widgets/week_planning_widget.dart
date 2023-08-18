@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_theme.dart';
+import '../../../../core/utils/get_stream_status.dart';
 import '../../domain/entities/stream_entity.dart';
 import '../../data/sources/local/stream_local_storage.dart';
 import '../bloc/planner_bloc.dart';
@@ -16,36 +17,36 @@ List<Map> cells = [];
 List<List> newCellsList = [];
 List<List> deleteCellsList = [];
 
-Future getStreamStatus() async {
-  Map streamStatus = {};
-
-  final storage = StreamLocalStorage();
-  NPStream stream = await storage.getActiveStream();
-
-  DateTime now = DateTime.now();
-
-  DateTime startStream = stream.startAt!;
-  DateTime endStream =
-      stream.startAt!.add(Duration(days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
-
-  bool isBeforeStartStream = startStream.isAfter(now);
-  bool isAfterEndStream = endStream.isBefore(now);
-
-  // До старта курса
-  if (isBeforeStartStream) {
-    streamStatus['status'] = "before";
-  }
-  // После завершения курса
-  else if (isAfterEndStream) {
-    streamStatus['status'] = "after";
-  }
-  // Во время прохождения курса
-  else if (!isBeforeStartStream && !isAfterEndStream) {
-    streamStatus['status'] = "process";
-  }
-
-  return streamStatus;
-}
+// Future getStreamStatus() async {
+//   Map streamStatus = {};
+//
+//   final storage = StreamLocalStorage();
+//   NPStream stream = await storage.getActiveStream();
+//
+//   DateTime now = DateTime.now();
+//
+//   DateTime startStream = stream.startAt!;
+//   DateTime endStream =
+//       stream.startAt!.add(Duration(days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
+//
+//   bool isBeforeStartStream = startStream.isAfter(now);
+//   bool isAfterEndStream = endStream.isBefore(now);
+//
+//   // До старта курса
+//   if (isBeforeStartStream) {
+//     streamStatus['status'] = "before";
+//   }
+//   // После завершения курса
+//   else if (isAfterEndStream) {
+//     streamStatus['status'] = "after";
+//   }
+//   // Во время прохождения курса
+//   else if (!isBeforeStartStream && !isAfterEndStream) {
+//     streamStatus['status'] = "process";
+//   }
+//
+//   return streamStatus;
+// }
 
 Future getWeeksData() async {
   await Future.delayed(const Duration(milliseconds: 500));

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../features/planning/domain/entities/stream_entity.dart';
 import 'get_week_number.dart';
 
-getStreamStatus(NPStream stream) {
+getStreamStatusoo(NPStream stream) {
   Map statusStream = {};
 
   DateTime now = DateTime.now();
@@ -15,8 +15,8 @@ getStreamStatus(NPStream stream) {
   int daysBefore = stream.startAt!.difference(now).inDays;
 
   DateTime startStream = stream.startAt!;
-  DateTime endStream = stream.startAt!.add(Duration(
-      days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
+  DateTime endStream =
+      stream.startAt!.add(Duration(days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
 
   bool isBeforeStartStream = startStream.isAfter(now);
   bool isAfterEndStream = endStream.isBefore(now);
@@ -73,18 +73,15 @@ getStreamStatus(NPStream stream) {
 
     for (Week week in stream.weekBacklink) {
       // формируем завершенные дни
-      completedDays.addAll(
-          week.dayBacklink.where((element) => element.completedAt != null));
+      completedDays.addAll(week.dayBacklink.where((element) => element.completedAt != null));
 
       // воскресенье
-      Day sunday =
-          week.dayBacklink.whereIndexed((index, element) => index == 6).first;
+      Day sunday = week.dayBacklink.whereIndexed((index, element) => index == 6).first;
 
       /////////////////////
       // Последняя неделя курса
       for (Day day in stream.weekBacklink.last.dayBacklink) {
-        DateTime dayStartAt =
-            DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+        DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
         DateTime currentDay = DateTime.parse(DateFormat('y-MM-dd').format(now));
 
         // statusStream['messages']['topMessage'] = 'Результаты сохранены';
@@ -152,16 +149,11 @@ getStreamStatus(NPStream stream) {
       }
     }
 
-    int completedDaysInPercent =
-        (completedDays.length * 100 / (stream.weeks! * 6))
-            .floorToDouble()
-            .round();
+    int completedDaysInPercent = (completedDays.length * 100 / (stream.weeks! * 6)).floorToDouble().round();
     int percentLeft = 100 - completedDaysInPercent;
 
-    statusStream['weekProgress']['progress'] =
-        completedDaysInPercent.toString();
-    statusStream['weekProgress']['description'] =
-        'Лузер, ты не выполнил ${percentLeft.toString()}%';
+    statusStream['weekProgress']['progress'] = completedDaysInPercent.toString();
+    statusStream['weekProgress']['description'] = 'Лузер, ты не выполнил ${percentLeft.toString()}%';
   }
   // Во время прохождения курса
   else if (!isBeforeStartStream && !isAfterEndStream) {
@@ -187,42 +179,26 @@ getStreamStatus(NPStream stream) {
 
     // print('stream.weekBacklink: ${stream.weekBacklink.length}');
 
-    List weeksTitle = [
-      'первой',
-      'второй',
-      'третьей',
-      'четвертой',
-      'пятой',
-      'шестой',
-      'седьмой',
-      'восьмой',
-      'девятой'
-    ];
+    List weeksTitle = ['первой', 'второй', 'третьей', 'четвертой', 'пятой', 'шестой', 'седьмой', 'восьмой', 'девятой'];
     for (Week week in stream.weekBacklink) {
       // print('weekNumber: $weekNumber');
       // print('week.weekNumber: ${week.weekNumber}');
       if (weekNumber == week.weekNumber) {
-        var weekIndex = stream.weekBacklink
-            .whereIndexed((index, element) => element.weekNumber == weekNumber);
+        var weekIndex = stream.weekBacklink.whereIndexed((index, element) => element.weekNumber == weekNumber);
         // print('weekIndex::: ${weekIndex.indexed.first.$1}');
-        statusStream['weekProgress']['title'] =
-            'Ты на ${weeksTitle[weekIndex.indexed.first.$1]} неделе';
+        statusStream['weekProgress']['title'] = 'Ты на ${weeksTitle[weekIndex.indexed.first.$1]} неделе';
       }
       // если дни недели были созданы при создании курса
       if (week.dayBacklink.isNotEmpty) {
         // формируем завершенные дни
-        completedDays.addAll(
-            week.dayBacklink.where((element) => element.completedAt != null));
+        completedDays.addAll(week.dayBacklink.where((element) => element.completedAt != null));
 
         // воскресенье
-        Day sunday =
-            week.dayBacklink.whereIndexed((index, element) => index == 6).first;
+        Day sunday = week.dayBacklink.whereIndexed((index, element) => index == 6).first;
 
         for (Day day in week.dayBacklink) {
-          DateTime dayStartAt =
-              DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
-          DateTime currentDay =
-              DateTime.parse(DateFormat('y-MM-dd').format(now));
+          DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+          DateTime currentDay = DateTime.parse(DateFormat('y-MM-dd').format(now));
           /////////////////////
           // Текущая неделя
           if (week.weekNumber == weekNumber) {
@@ -243,8 +219,7 @@ getStreamStatus(NPStream stream) {
               });
             }
             // если день прошел и day.completedAt != null, статус - completed
-            else if (dayStartAt.isBefore(currentDay) &&
-                day.completedAt != null) {
+            else if (dayStartAt.isBefore(currentDay) && day.completedAt != null) {
               // print('completed == dayStartAt.isBefore(currentDay)');
               statusStream['weekStatusPoint'].add({
                 'status': 'completed',
@@ -257,8 +232,7 @@ getStreamStatus(NPStream stream) {
             else if (dayStartAt.isAtSameMomentAs(currentDay)) {
               // если текущий и day.completedAt == null, статус - opened
               if (day.completedAt == null) {
-                statusStream['messages']['topMessage'] =
-                    'Внесите результаты дня';
+                statusStream['messages']['topMessage'] = 'Внесите результаты дня';
 
                 statusStream['weekStatusPoint'].add({
                   'status': 'opened',
@@ -295,16 +269,11 @@ getStreamStatus(NPStream stream) {
       }
     }
 
-    int completedDaysInPercent =
-        (completedDays.length * 100 / (stream.weeks! * 6))
-            .floorToDouble()
-            .round();
+    int completedDaysInPercent = (completedDays.length * 100 / (stream.weeks! * 6)).floorToDouble().round();
     int percentLeft = 100 - completedDaysInPercent;
 
-    statusStream['weekProgress']['progress'] =
-        completedDaysInPercent.toString();
-    statusStream['weekProgress']['description'] =
-        '${percentLeft.toString()}% осталось до полного выполнения дела';
+    statusStream['weekProgress']['progress'] = completedDaysInPercent.toString();
+    statusStream['weekProgress']['description'] = '${percentLeft.toString()}% осталось до полного выполнения дела';
   }
 
   return statusStream;

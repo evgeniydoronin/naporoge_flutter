@@ -179,8 +179,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                               Map weekData = state.editableWeekData;
                                               List selectedCells = state.finalCellIDs;
 
-                                              print('weekData:: ${state.editableWeekData}');
-                                              print('selectedCells: $selectedCells');
+                                              // print('weekData:: ${state.editableWeekData}');
+                                              // print('selectedCells: $selectedCells');
 
                                               // /////////////////////////////
                                               // CREATE WEEK
@@ -240,8 +240,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                 newWeekData['user_confirmed'] = true;
                                                 newWeekData['cells'] = newCells;
 
+                                                // print('newWeekData: $newWeekData');
+
                                                 // update on server
                                                 var updateWeek = await _streamController.updateWeek(newWeekData);
+
+                                                // print('updateWeek: $updateWeek');
 
                                                 // update local
                                                 if (updateWeek['week'] != null) {

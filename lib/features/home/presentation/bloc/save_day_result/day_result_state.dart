@@ -4,7 +4,7 @@ final class DayResultState extends Equatable {
   const DayResultState({
     this.dayId,
     this.completedAt,
-    this.executionScope,
+    this.executionScope = 0,
     this.result,
     this.desires = 'small',
     this.reluctance = 'small',

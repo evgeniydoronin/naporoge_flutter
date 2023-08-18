@@ -6,8 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import 'package:naporoge/features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
+import '../../../../core/routes/app_router.dart';
 import '../../../../core/utils/circular_loading.dart';
-import '../../../../core/utils/get_status_stream.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
 import '../../../../core/utils/get_week_number.dart';
 
@@ -51,9 +51,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
               onPressed: () {
                 context.router.pop();
               },
-              icon: RotatedBox(
-                  quarterTurns: 2,
-                  child: SvgPicture.asset('assets/icons/arrow.svg')),
+              icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
             ),
             title: Text(
               'Внесите результаты',
@@ -70,8 +68,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 18, right: 18),
+                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                         decoration: AppLayout.boxDecorationShadowBG,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,37 +90,26 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                             height: 150,
                                             child: CupertinoTheme(
                                               data: const CupertinoThemeData(
-                                                textTheme:
-                                                    CupertinoTextThemeData(
-                                                  dateTimePickerTextStyle:
-                                                      TextStyle(fontSize: 26),
+                                                textTheme: CupertinoTextThemeData(
+                                                  dateTimePickerTextStyle: TextStyle(fontSize: 26),
                                                 ),
                                               ),
                                               child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
                                                   SizedBox(
                                                     width: 230,
                                                     child: CupertinoTimerPicker(
-                                                      mode:
-                                                          CupertinoTimerPickerMode
-                                                              .hm,
+                                                      mode: CupertinoTimerPickerMode.hm,
                                                       minuteInterval: 5,
-                                                      initialTimerDuration:
-                                                          duration,
+                                                      initialTimerDuration: duration,
                                                       // This is called when the user changes the timer's
                                                       // duration.
-                                                      onTimerDurationChanged:
-                                                          (Duration
-                                                              newDuration) {
+                                                      onTimerDurationChanged: (Duration newDuration) {
                                                         // print(DateFormat('HH:mm').parse(
                                                         //     newDuration.toString()));
-                                                        setState(() =>
-                                                            duration =
-                                                                newDuration);
+                                                        setState(() => duration = newDuration);
                                                       },
                                                     ),
                                                   ),
@@ -136,9 +122,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                           actions: <Widget>[
                                             TextButton(
                                               style: TextButton.styleFrom(
-                                                textStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .labelLarge,
+                                                textStyle: Theme.of(context).textTheme.labelLarge,
                                               ),
                                               child: const Text('Отменить'),
                                               onPressed: () async {
@@ -147,32 +131,20 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                             ),
                                             TextButton(
                                               style: TextButton.styleFrom(
-                                                textStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .labelLarge,
+                                                textStyle: Theme.of(context).textTheme.labelLarge,
                                               ),
                                               child: const Text('Выбрать'),
                                               onPressed: () {
                                                 DateTime now = DateTime.now();
-                                                DateTime time =
-                                                    DateFormat('HH:mm').parse(
-                                                        duration.toString());
+                                                DateTime time = DateFormat('HH:mm').parse(duration.toString());
                                                 DateTime completedTime =
-                                                    DateTime(
-                                                        now.year,
-                                                        now.month,
-                                                        now.day,
-                                                        time.hour,
-                                                        time.minute);
+                                                    DateTime(now.year, now.month, now.day, time.hour, time.minute);
 
-                                                final formatter = DateFormat(
-                                                        'yyyy-MM-dd HH:mm')
-                                                    .format(completedTime);
+                                                final formatter = DateFormat('yyyy-MM-dd HH:mm').format(completedTime);
 
                                                 context
                                                     .read<DayResultBloc>()
-                                                    .add(CompletedTimeChanged(
-                                                        formatter.toString()));
+                                                    .add(CompletedTimeChanged(formatter.toString()));
 
                                                 Navigator.pop(context);
                                               },
@@ -190,26 +162,20 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                   },
                                   controller: TextEditingController(
                                       text: state.completedAt != null
-                                          ? DateFormat('HH:mm').format(
-                                              DateTime.parse(
-                                                  state.completedAt.toString()))
+                                          ? DateFormat('HH:mm').format(DateTime.parse(state.completedAt.toString()))
                                           : null),
                                   style: TextStyle(fontSize: AppFont.small),
                                   decoration: InputDecoration(
                                     filled: true,
                                     fillColor: AppColor.grey1,
                                     hintText: state.completedAt != null
-                                        ? DateFormat('HH:mm').format(
-                                            DateTime.parse(
-                                                state.completedAt.toString()))
+                                        ? DateFormat('HH:mm').format(DateTime.parse(state.completedAt.toString()))
                                         : 'Выбрать время начала дня',
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 7, vertical: 10),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
                                     isDense: true,
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: AppLayout.smallRadius,
-                                      borderSide: BorderSide(
-                                          width: 1, color: AppColor.grey1),
+                                      borderSide: BorderSide(width: 1, color: AppColor.grey1),
                                     ),
                                   ),
                                 ),
@@ -223,8 +189,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 0, left: 18, right: 18),
+                        padding: const EdgeInsets.only(top: 15, bottom: 0, left: 18, right: 18),
                         decoration: AppLayout.boxDecorationShadowBG,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,12 +197,8 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Объем выполнения',
-                                    style: AppFont.formLabel),
-                                Text(
-                                    state.executionScope != null
-                                        ? state.executionScope.toString()
-                                        : '0',
+                                Text('Объем выполнения', style: AppFont.formLabel),
+                                Text(state.executionScope != null ? state.executionScope.toString() : '0',
                                     style: AppFont.formLabel),
                               ],
                             ),
@@ -251,8 +212,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 18, right: 18),
+                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                         decoration: AppLayout.boxDecorationShadowBG,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,9 +224,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                             const SizedBox(height: 5),
                             TextFormField(
                               onChanged: (val) {
-                                context
-                                    .read<DayResultBloc>()
-                                    .add(ResultOfTheDayChanged(val));
+                                context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
@@ -279,13 +237,11 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 filled: true,
                                 fillColor: AppColor.grey1,
                                 hintText: '10 кругов',
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 7, vertical: 10),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
                                 isDense: true,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: AppLayout.smallRadius,
-                                  borderSide: BorderSide(
-                                      width: 1, color: AppColor.grey1),
+                                  borderSide: BorderSide(width: 1, color: AppColor.grey1),
                                 ),
                               ),
                             ),
@@ -317,8 +273,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 18, right: 18),
+                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                         decoration: AppLayout.boxDecorationShadowBG,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,21 +288,16 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: AppColor.grey1,
-                                hintText:
-                                    'Запишите все, что мешало выполнять дело',
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 7, vertical: 10),
+                                hintText: 'Запишите все, что мешало выполнять дело',
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
                                 isDense: true,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: AppLayout.smallRadius,
-                                  borderSide: BorderSide(
-                                      width: 1, color: AppColor.grey1),
+                                  borderSide: BorderSide(width: 1, color: AppColor.grey1),
                                 ),
                               ),
                               onChanged: (val) {
-                                context
-                                    .read<DayResultBloc>()
-                                    .add(InterferenceChanged(val));
+                                context.read<DayResultBloc>().add(InterferenceChanged(val));
                               },
                             ),
                           ],
@@ -358,8 +308,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 18, right: 18),
+                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                         decoration: AppLayout.boxDecorationShadowBG,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,13 +322,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                               direction: Axis.horizontal,
                               onPressed: (int index) {
                                 if (index == 0) {
-                                  context
-                                      .read<DayResultBloc>()
-                                      .add(const RejoiceChanged('no'));
+                                  context.read<DayResultBloc>().add(const RejoiceChanged('no'));
                                 } else {
-                                  context
-                                      .read<DayResultBloc>()
-                                      .add(const RejoiceChanged('yes'));
+                                  context.read<DayResultBloc>().add(const RejoiceChanged('yes'));
                                 }
                                 setState(() {
                                   // The button that is tapped is set to true, and the others to false.
@@ -389,8 +334,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 });
                               },
                               borderWidth: 0,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
+                              borderRadius: const BorderRadius.all(Radius.circular(8)),
                               // selectedBorderColor: Colors.red[700],
                               selectedColor: Colors.white,
                               fillColor: AppColor.accent,
@@ -401,20 +345,14 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                               isSelected: _selections,
                               children: [
                                 SizedBox(
-                                    width: (MediaQuery.of(context).size.width -
-                                            81) /
-                                        2,
+                                    width: (MediaQuery.of(context).size.width - 81) / 2,
                                     child: RotatedBox(
                                       quarterTurns: 2,
-                                      child: SvgPicture.asset(
-                                          'assets/icons/342.svg'),
+                                      child: SvgPicture.asset('assets/icons/342.svg'),
                                     )),
                                 SizedBox(
-                                    width: (MediaQuery.of(context).size.width -
-                                            81) /
-                                        2,
-                                    child: SvgPicture.asset(
-                                        'assets/icons/342.svg')),
+                                    width: (MediaQuery.of(context).size.width - 81) / 2,
+                                    child: SvgPicture.asset('assets/icons/342.svg')),
                               ],
                             ),
                           ],
@@ -434,25 +372,17 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                   final isar = await isarService.db;
                                   var user = await isarService.getUser();
 
-                                  String currDay = DateFormat('y-MM-dd').format(
-                                      DateTime(
-                                          DateTime.now().year,
-                                          DateTime.now().month,
-                                          DateTime.now().day));
+                                  String currDay = DateFormat('y-MM-dd')
+                                      .format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
 
-                                  final weekNumber =
-                                      getWeekNumber(DateTime.now());
-                                  final currWeekData = await isar.weeks
-                                      .filter()
-                                      .weekNumberEqualTo(weekNumber)
-                                      .findFirst();
+                                  final weekNumber = getWeekNumber(DateTime.now());
+                                  final currWeekData =
+                                      await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
                                   late int dayId;
 
                                   for (Day day in currWeekData!.dayBacklink) {
-                                    if (currDay ==
-                                        DateFormat('y-MM-dd')
-                                            .format(day.startAt!)) {
+                                    if (currDay == DateFormat('y-MM-dd').format(day.startAt!)) {
                                       dayId = day.id!;
                                     }
                                   }
@@ -471,25 +401,18 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
 
                                   // print('dayResultData: $dayResultData');
                                   // create on server
-                                  var newDayResult = await _streamController
-                                      .createDayResult(dayResultData);
+                                  var newDayResult = await _streamController.createDayResult(dayResultData);
 
-                                  await streamLocalStorage
-                                      .saveDayResult(newDayResult);
+                                  await streamLocalStorage.saveDayResult(newDayResult);
                                   // print(newDayResult);
 
-                                  final stream = await streamLocalStorage
-                                      .getActiveStream();
+                                  final stream = await streamLocalStorage.getActiveStream();
 
                                   if (context.mounted) {
-                                    context.read<HomeScreenBloc>().add(
-                                        StreamProgressChanged(
-                                            getStreamStatus(stream)));
-
+                                    // context.read<HomeScreenBloc>().add(StreamProgressChanged(getStreamStatus(stream)));
                                     CircularLoading(context).stopLoading();
-                                    context.router.pop();
+                                    context.router.replace(const HomesEmptyRouter());
                                   }
-                                  // context.router.push(const ResultsStreamScreenRoute());
                                 }
                               },
                               // style: AppLayout.accentBowBTNStyle,
@@ -534,9 +457,7 @@ class _SliderBoxState extends State<SliderBox> {
         value: _currentSliderValue,
         max: 100,
         onChanged: (double value) {
-          context
-              .read<DayResultBloc>()
-              .add(ExecutionScopeChanged(value.toInt()));
+          context.read<DayResultBloc>().add(ExecutionScopeChanged(value.toInt()));
           setState(() {
             _currentSliderValue = value;
           });
@@ -557,8 +478,7 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
   }) {
     final double? trackHeight = sliderTheme.trackHeight;
     final double trackLeft = offset.dx;
-    final double trackTop =
-        offset.dy + (parentBox.size.height - trackHeight!) / 2;
+    final double trackTop = offset.dy + (parentBox.size.height - trackHeight!) / 2;
     final double trackWidth = parentBox.size.width;
     return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }
@@ -568,8 +488,7 @@ class WishBox extends StatefulWidget {
   final String title;
   final String category;
 
-  const WishBox({Key? key, required this.title, required this.category})
-      : super(key: key);
+  const WishBox({Key? key, required this.title, required this.category}) : super(key: key);
 
   @override
   State<WishBox> createState() => _WishBoxState();
@@ -608,13 +527,9 @@ class _WishBoxState extends State<WishBox> {
                     e['isActive'] = true;
 
                     if (widget.category == 'desires') {
-                      context
-                          .read<DayResultBloc>()
-                          .add(DesiresChanged(e['result']));
+                      context.read<DayResultBloc>().add(DesiresChanged(e['result']));
                     } else if (widget.category == 'reluctance') {
-                      context
-                          .read<DayResultBloc>()
-                          .add(ReluctanceChanged(e['result']));
+                      context.read<DayResultBloc>().add(ReluctanceChanged(e['result']));
                     }
 
                     setState(() {});
@@ -624,9 +539,7 @@ class _WishBoxState extends State<WishBox> {
                     height: 33,
                     decoration: BoxDecoration(
                       color: e['isActive'] ? AppColor.accent : Colors.white,
-                      border: e['isActive']
-                          ? const Border()
-                          : Border.all(color: AppColor.deep),
+                      border: e['isActive'] ? const Border() : Border.all(color: AppColor.deep),
                       shape: BoxShape.circle,
                     ),
                   ),

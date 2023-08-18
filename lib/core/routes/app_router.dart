@@ -32,14 +32,12 @@ part 'app_router.gr.dart';
 @AutoRouterConfig(replaceInRouteName: 'Route')
 class AppRouter extends _$AppRouter {
   @override
-  RouteType get defaultRouteType =>
-      const RouteType.adaptive(); //.cupertino, .adaptive ..etc
+  RouteType get defaultRouteType => const RouteType.adaptive(); //.cupertino, .adaptive ..etc
 
   // CustomRoute, AutoRoute
   @override
   List<AutoRoute> get routes => [
-        CustomRoute(
-            page: SplashScreenRoute.page, path: '/splash', initial: true),
+        CustomRoute(page: SplashScreenRoute.page, path: '/splash', initial: true),
         // Authentication
         CustomRoute(
           page: LoginEmptyRouter.page,
@@ -59,28 +57,17 @@ class AppRouter extends _$AppRouter {
               page: ActivateAccountScreenRoute.page,
               path: 'login/activate-account',
             ),
-            CustomRoute(
-                page: PrivacyPolicyScreenRoute.page,
-                path: 'login/privacy-policy'),
-            CustomRoute(
-                page: PersonalDataScreenRoute.page,
-                path: 'login/personal-data'),
+            CustomRoute(page: PrivacyPolicyScreenRoute.page, path: 'login/privacy-policy'),
+            CustomRoute(page: PersonalDataScreenRoute.page, path: 'login/personal-data'),
           ],
         ),
 
         CustomRoute(page: RuleOfAppScreenRoute.page, path: '/rules'),
         CustomRoute(page: WelcomeScreenRoute.page, path: '/welcome'),
-        CustomRoute(
-            page: StartDateSelectionScreenRoute.page,
-            path: '/planner-start-date-selection'),
-        CustomRoute(
-            page: ChoiceOfCaseScreenRoute.page,
-            path: '/planner-choice-of-case'),
-        CustomRoute(
-            page: SelectDayPeriodRoute.page,
-            path: '/planner-select-day-period'),
-        CustomRoute(
-            page: WelcomeDescriptionScreenRoute.page, path: '/welcome-desc'),
+        CustomRoute(page: StartDateSelectionScreenRoute.page, path: '/planner-start-date-selection'),
+        CustomRoute(page: ChoiceOfCaseScreenRoute.page, path: '/planner-choice-of-case'),
+        CustomRoute(page: SelectDayPeriodRoute.page, path: '/planner-select-day-period'),
+        CustomRoute(page: WelcomeDescriptionScreenRoute.page, path: '/welcome-desc'),
 
         CustomRoute(
           path: '/dashboard',
@@ -92,9 +79,14 @@ class AppRouter extends _$AppRouter {
             CustomRoute(
               page: HomesEmptyRouter.page,
               path: 'home',
+              maintainState: false,
               children: [
                 // CustomRoute(page: SplashScreenRoute.page, path: 'home/splash'),
-                CustomRoute(page: HomeScreenRoute.page, path: ''),
+                CustomRoute(
+                  page: HomeScreenRoute.page,
+                  path: '',
+                  maintainState: false,
+                ),
               ],
             ),
             CustomRoute(
@@ -107,8 +99,7 @@ class AppRouter extends _$AppRouter {
               path: 'diary',
               children: [
                 CustomRoute(page: DiaryScreenRoute.page, path: ''),
-                CustomRoute(
-                    page: DiaryItemsScreenRoute.page, path: 'diary-items'),
+                CustomRoute(page: DiaryItemsScreenRoute.page, path: 'diary-items'),
               ],
             ),
             CustomRoute(
@@ -121,10 +112,13 @@ class AppRouter extends _$AppRouter {
             ),
           ],
         ),
-        CustomRoute(page: DayResultsSaveScreenRoute.page, path: '/save-day'),
-
         CustomRoute(
-            page: ResultsStreamScreenRoute.page, path: '/results-stream'),
+          page: DayResultsSaveScreenRoute.page,
+          path: '/save-day',
+          maintainState: false,
+        ),
+
+        CustomRoute(page: ResultsStreamScreenRoute.page, path: '/results-stream'),
         CustomRoute(
           path: '/todo',
           page: TodoEmptyRouter.page,
