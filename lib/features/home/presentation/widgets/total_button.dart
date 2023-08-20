@@ -14,19 +14,36 @@ class TotalButton extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
           Map button = snapshot.data['button'];
+          ElevatedButton? bottomButton;
+
+          //
+          if (button['status'] == 'goToTotalScreen') {
+            bottomButton = ElevatedButton(
+              onPressed: () async {
+                context.router.push(const ResultsStreamScreenRoute());
+              },
+              style: AppLayout.accentBowBTNStyle,
+              child: Text(
+                'Итоги работы',
+                style: AppFont.regularSemibold,
+              ),
+            );
+          } else {
+            bottomButton = ElevatedButton(
+              onPressed: () async {
+                context.router.push(const DayResultsSaveScreenRoute());
+              },
+              style: AppLayout.accentBowBTNStyle,
+              child: Text(
+                'Внести результаты',
+                style: AppFont.regularSemibold,
+              ),
+            );
+          }
           return button['isActive']
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      context.router.push(const DayResultsSaveScreenRoute());
-                    },
-                    style: AppLayout.accentBowBTNStyle,
-                    child: Text(
-                      'Внести результаты',
-                      style: AppFont.regularSemibold,
-                    ),
-                  ),
+                  child: bottomButton,
                 )
               : const SizedBox();
         } else {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import '../../../../../core/services/db_client/isar_service.dart';
 import '../../../domain/entities/stream_entity.dart';
@@ -71,7 +72,7 @@ class StreamLocalStorage {
         final newDay = Day()
           ..id = dayData['day']['id']
           ..weekId = dayData['day']['week_id']
-          ..startAt = DateTime.parse(dayData['day']['start_at'])
+          ..startAt = DateTime.parse(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(dayData['day']['start_at'])))
           ..week.value = week;
         isar.days.putSync(newDay);
       }
@@ -135,7 +136,9 @@ class StreamLocalStorage {
         final newDay = Day()
           ..id = dayData['day']['id']
           ..weekId = dayData['day']['week_id']
-          ..startAt = dayData['day']['start_at'] != null ? DateTime.parse(dayData['day']['start_at']) : null
+          ..startAt = dayData['day']['start_at'] != null
+              ? DateTime.parse(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(dayData['day']['start_at'])))
+              : null
           ..week.value = newWeek;
         isar.days.putSync(newDay);
       }
@@ -171,13 +174,17 @@ class StreamLocalStorage {
     // print('weekDataFromServer:: $weekDataFromServer');
     // print('day 949:: ${week.dayBacklink.where((day) => day.id == 949)}');
 
+    // print('weekDataFromServer: ${weekDataFromServer['days']}');
+
     isar.writeTxnSync(() {
       // update week
       isar.weeks.putSync(week);
       // update days
       for (Map dayData in weekDataFromServer['days']) {
         final day = isar.days.getSync(dayData['day']['id']);
-        day!.startAt = DateTime.parse(dayData['day']['start_at']);
+        // приводим к нужному формату время сервера
+        day!.startAt =
+            DateTime.parse(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(dayData['day']['start_at'])));
 
         isar.days.putSync(day);
       }
@@ -217,7 +224,8 @@ class StreamLocalStorage {
       ..rejoice = data['day_result']['rejoice']
       ..day.value = day;
 
-    day!.completedAt = DateTime.parse(data['day']['completed_at']);
+    day!.completedAt =
+        DateTime.parse(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(data['day']['completed_at'])));
 
     await isar.writeTxn(() async {
       await isar.dayResults.put(dayResult);

@@ -758,7 +758,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
             // fontColor = AppColor.grey3;
             textCell = dayData['completed_at'];
           } else {
-            print('completed: $dayData');
+            // print('completed: $dayData');
             textCell = dayData['completed_at'];
             badgeColor = AppColor.grey1.withOpacity(0);
             fontColor = AppColor.red;

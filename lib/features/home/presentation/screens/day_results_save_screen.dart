@@ -414,6 +414,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                   // create on server
                                   var newDayResult = await _streamController.createDayResult(dayResultData);
 
+                                  // save on local
                                   await streamLocalStorage.saveDayResult(newDayResult);
                                   print(newDayResult);
 

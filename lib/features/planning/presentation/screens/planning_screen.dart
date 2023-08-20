@@ -217,6 +217,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                 // Ячейки созданной недели
                                                 List oldCells = jsonDecode(weekForUpdate.cells!);
 
+                                                // print('oldCells: $oldCells');
+
                                                 // Формируем новый список ячеек
                                                 // с обновленными данными
                                                 List newCells = [];
@@ -245,12 +247,13 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                 // update on server
                                                 var updateWeek = await _streamController.updateWeek(newWeekData);
 
-                                                // print('updateWeek: $updateWeek');
+                                                // print('updateWeek: ${updateWeek['days']}');
 
                                                 // update local
                                                 if (updateWeek['week'] != null) {
-                                                  streamLocalStorage.updateWeek(updateWeek);
+                                                  var days = streamLocalStorage.updateWeek(updateWeek);
 
+                                                  print('days after update: $days');
                                                   if (context.mounted) {
                                                     CircularLoading(context).stopLoading();
                                                   }

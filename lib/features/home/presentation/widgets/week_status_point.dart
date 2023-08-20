@@ -45,7 +45,7 @@ class WeekStatusPoint extends StatelessWidget {
     else if (streamStatus['status'] == 'process') {
       Week week = stream!.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
 
-      print('week: ${week.dayBacklink.first.startAt}');
+      // print('week: ${week.dayBacklink.first.startAt}');
       if (week.dayBacklink.first.startAt != null) {
         days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
       } else {
@@ -118,7 +118,7 @@ class WeekStatusPoint extends StatelessWidget {
             }
           }
 
-          print(daysStatus);
+          // print(daysStatus);
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
@@ -307,7 +307,7 @@ class WeekStatusPoint extends StatelessWidget {
                             child: const Center(
                               child: Text(
                                 '-',
-                                style: const TextStyle(fontSize: 10),
+                                style: TextStyle(fontSize: 10),
                               ),
                             ),
                           ),
