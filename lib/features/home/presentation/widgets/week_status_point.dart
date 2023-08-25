@@ -39,7 +39,14 @@ class WeekStatusPoint extends StatelessWidget {
     }
     // После завершения курса
     else if (streamStatus['status'] == 'after') {
-      // streamStatus['status'] = "after";
+      Week week = stream!.weekBacklink.last;
+
+      // print('week: ${week.dayBacklink.first.startAt}');
+      if (week.dayBacklink.first.startAt != null) {
+        days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
+      } else {
+        days = await week.dayBacklink.filter().findAll();
+      }
     }
     // Во время прохождения курса
     else if (streamStatus['status'] == 'process') {
@@ -102,13 +109,12 @@ class WeekStatusPoint extends StatelessWidget {
               else if (dayStartAt.isBefore(now)) {
                 // выполнен
                 if (day.completedAt != null) {
+                  ;
                   daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
                 }
-                // не выполнен и не воскресенье
+                // не выполнен
                 else {
-                  if (day.startAt!.weekday != 7) {
-                    daysStatus.add({'status': 'skipped', 'startAt': dayStartAtString});
-                  }
+                  daysStatus.add({'status': 'skipped', 'startAt': dayStartAtString});
                 }
               }
               // запланированный день

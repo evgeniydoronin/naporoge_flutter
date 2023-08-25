@@ -17,37 +17,6 @@ List<Map> cells = [];
 List<List> newCellsList = [];
 List<List> deleteCellsList = [];
 
-// Future getStreamStatus() async {
-//   Map streamStatus = {};
-//
-//   final storage = StreamLocalStorage();
-//   NPStream stream = await storage.getActiveStream();
-//
-//   DateTime now = DateTime.now();
-//
-//   DateTime startStream = stream.startAt!;
-//   DateTime endStream =
-//       stream.startAt!.add(Duration(days: (stream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
-//
-//   bool isBeforeStartStream = startStream.isAfter(now);
-//   bool isAfterEndStream = endStream.isBefore(now);
-//
-//   // До старта курса
-//   if (isBeforeStartStream) {
-//     streamStatus['status'] = "before";
-//   }
-//   // После завершения курса
-//   else if (isAfterEndStream) {
-//     streamStatus['status'] = "after";
-//   }
-//   // Во время прохождения курса
-//   else if (!isBeforeStartStream && !isAfterEndStream) {
-//     streamStatus['status'] = "process";
-//   }
-//
-//   return streamStatus;
-// }
-
 Future getWeeksData() async {
   await Future.delayed(const Duration(milliseconds: 500));
 
@@ -81,9 +50,12 @@ Future getWeeksData() async {
   }
   // После окончания курса
   else if (streamStatus['status'] == 'after') {
-    // открывать по умолчанию последнюю неделю курса
-    weeksData['defaultPageIndex'] = weeks - 1;
-    // print('streamStatus: $streamStatus');
+    Map _weekData = await getWeekData(stream, 'after');
+
+    // добавляем после
+    weeksData['weeksOnPage'] = _weekData['weeksOnPage'];
+    weeksData['allPages'] = _weekData['allPages'];
+    weeksData['defaultPageIndex'] = _weekData['defaultPageIndex'];
   }
   // Во время прохождения курса
   else if (streamStatus['status'] == 'process') {

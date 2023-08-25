@@ -21,20 +21,6 @@ Future getHomeStatus() async {
   // для вывода Итогов
   bool isLastWeekOnStream = false;
 
-  for (int i = 0; i < stream.weekBacklink.length; i++) {
-    int currentWeekNumber = getWeekNumber(now);
-    // текущая неделя может быть не последней
-    final curWeek = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
-
-    if (i + 1 == weeks) {
-      final lastWeek = stream.weekBacklink.elementAt(i);
-      if (curWeek.weekNumber == lastWeek.weekNumber) {
-        // текущая неделя последняя
-        isLastWeekOnStream = true;
-      }
-    }
-  }
-
   // сообщение в шапке
   Map topMessage = {'text': 'Внесите результаты дня'};
   // статус кнопки сохранения
@@ -53,10 +39,28 @@ Future getHomeStatus() async {
   }
   // После завершения курса
   else if (streamStatus['status'] == 'after') {
+    // print('Home status - После завершения курса');
     // streamStatus['status'] = "after";
+    topMessage['text'] = 'Итоги';
+    button['isActive'] = true;
+    button['status'] = 'goToTotalScreen';
   }
   // Во время прохождения курса
   else if (streamStatus['status'] == 'process') {
+    for (int i = 0; i < stream.weekBacklink.length; i++) {
+      int currentWeekNumber = getWeekNumber(now);
+      // текущая неделя может быть не последней
+      final curWeek = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
+
+      if (i + 1 == weeks) {
+        final lastWeek = stream.weekBacklink.elementAt(i);
+        if (curWeek.weekNumber == lastWeek.weekNumber) {
+          // текущая неделя последняя
+          isLastWeekOnStream = true;
+        }
+      }
+    }
+
     Week week = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
     List days = await isar.days.filter().weekIdEqualTo(week.id).findAll();
     Day? monday = await isar.days.filter().weekIdEqualTo(week.id).findFirst();
