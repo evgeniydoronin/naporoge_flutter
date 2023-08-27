@@ -118,7 +118,11 @@ class AppRouter extends _$AppRouter {
           maintainState: false,
         ),
 
-        CustomRoute(page: ResultsStreamScreenRoute.page, path: '/results-stream'),
+        CustomRoute(
+          page: ResultsStreamScreenRoute.page,
+          path: '/results-stream',
+          maintainState: false,
+        ),
         CustomRoute(
           path: '/todo',
           page: TodoEmptyRouter.page,

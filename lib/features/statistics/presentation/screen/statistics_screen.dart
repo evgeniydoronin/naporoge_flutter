@@ -3,6 +3,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_theme.dart';
+import '../../../planning/data/sources/local/stream_local_storage.dart';
+import '../../../planning/domain/entities/stream_entity.dart';
+import '../widgets/statistic_stream_title.dart';
+import '../widgets/statistic_weeks_progress.dart';
 
 @RoutePage()
 class StatisticsScreen extends StatelessWidget {
@@ -27,58 +31,28 @@ class StatisticsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              padding: const EdgeInsets.only(
-                  top: 15, bottom: 15, left: 18, right: 18),
+              padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
               decoration: BoxDecoration(
                 color: AppColor.lightBGItem,
                 borderRadius: AppLayout.primaryRadius,
               ),
-              child: Text(
-                'Йога',
-                style: TextStyle(
-                    color: AppColor.accentBOW,
-                    fontSize: AppFont.large,
-                    fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center,
-              ),
+              child: const StreamTitle(),
             ),
           ),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              padding: const EdgeInsets.only(
-                  top: 15, bottom: 15, left: 18, right: 18),
+              padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const WeeksStatisticsPageView(),
-                  const SizedBox(height: 25),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: AppLayout.accentBTNStyle,
-                          child: Text(
-                            'Отметить достижения недели',
-                            style: AppFont.regularSemibold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              child: const WeeksProgressBox(),
             ),
           ),
           const SizedBox(height: 15),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              padding: const EdgeInsets.only(
-                  top: 15, bottom: 15, left: 18, right: 18),
+              padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
               child: Column(
                 children: [
@@ -98,9 +72,7 @@ class StatisticsScreen extends StatelessWidget {
                       Container(
                         height: 18,
                         width: 18,
-                        decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: AppLayout.primaryRadius),
+                        decoration: BoxDecoration(color: Colors.black, borderRadius: AppLayout.primaryRadius),
                       ),
                       const SizedBox(width: 10),
                       const Text('Процент выполнения Дела')
@@ -112,9 +84,7 @@ class StatisticsScreen extends StatelessWidget {
                       Container(
                         height: 18,
                         width: 18,
-                        decoration: BoxDecoration(
-                            color: AppColor.red,
-                            borderRadius: AppLayout.primaryRadius),
+                        decoration: BoxDecoration(color: AppColor.red, borderRadius: AppLayout.primaryRadius),
                       ),
                       const SizedBox(width: 10),
                       Text(
@@ -129,9 +99,7 @@ class StatisticsScreen extends StatelessWidget {
                       Container(
                         height: 18,
                         width: 18,
-                        decoration: BoxDecoration(
-                            color: AppColor.accent,
-                            borderRadius: AppLayout.primaryRadius),
+                        decoration: BoxDecoration(color: AppColor.accent, borderRadius: AppLayout.primaryRadius),
                       ),
                       const SizedBox(width: 10),
                       Text(
@@ -148,8 +116,7 @@ class StatisticsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              padding: const EdgeInsets.only(
-                  top: 15, bottom: 15, left: 18, right: 18),
+              padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -248,14 +215,10 @@ class StatisticsScreen extends StatelessWidget {
                       Expanded(
                         child: RichText(
                             text: TextSpan(
-                                style: TextStyle(
-                                    color: AppColor.blk,
-                                    fontSize: AppFont.regular),
+                                style: TextStyle(color: AppColor.blk, fontSize: AppFont.regular),
                                 text: 'Всего дело выполнялось',
                                 children: [
-                              TextSpan(
-                                  text: ' 11 ',
-                                  style: TextStyle(color: AppColor.red)),
+                              TextSpan(text: ' 11 ', style: TextStyle(color: AppColor.red)),
                               TextSpan(text: 'дней'),
                             ])),
                       ),
@@ -279,240 +242,6 @@ class StatisticsScreen extends StatelessWidget {
           const SizedBox(height: 25),
         ],
       ),
-    );
-  }
-}
-
-class WeeksStatisticsPageView extends StatefulWidget {
-  const WeeksStatisticsPageView({Key? key}) : super(key: key);
-
-  @override
-  State<WeeksStatisticsPageView> createState() =>
-      _WeeksStatisticsPageViewState();
-}
-
-class _WeeksStatisticsPageViewState extends State<WeeksStatisticsPageView> {
-  final PageController pageController = PageController(initialPage: 0);
-
-  int activePage = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 390,
-      child: Stack(children: [
-        PageView.builder(
-            controller: pageController,
-            itemCount: 3,
-            onPageChanged: (int page) {
-              setState(() {
-                activePage = page;
-              });
-            },
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: [
-                  Text(
-                    'Неделя $index',
-                    style: AppFont.scaffoldTitleDark,
-                  ),
-                  const SizedBox(height: 10),
-                  Table(
-                    columnWidths: const {1: FractionColumnWidth(.9)},
-                    border: TableBorder(
-                      horizontalInside:
-                          BorderSide(width: 1, color: AppColor.grey1),
-                      verticalInside:
-                          BorderSide(width: 1, color: AppColor.grey1),
-                      bottom: BorderSide(width: 1, color: AppColor.grey1),
-                    ),
-                    children: [
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Пн',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '10 кругов',
-                              style: TextStyle(fontSize: AppFont.small),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Вт',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '10 кругов',
-                              style: TextStyle(fontSize: AppFont.small),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Ср',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '10 кругов',
-                              style: TextStyle(fontSize: AppFont.small),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Чт',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '10 кругов',
-                              style: TextStyle(fontSize: AppFont.small),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Пт',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'пропуск',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Сб',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '',
-                              style: TextStyle(fontSize: AppFont.small),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Вс',
-                              style: TextStyle(
-                                  fontSize: AppFont.small,
-                                  color: AppColor.grey2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '',
-                              style: TextStyle(fontSize: AppFont.small),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    style: TextStyle(fontSize: AppFont.small),
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: AppColor.grey1,
-                        hintText:
-                            'Например: удалось пробежать 5 км, прочитать полкниги, сбросить 2 кг',
-                        hintStyle: TextStyle(color: AppColor.grey3),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 10),
-                        isDense: true,
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: AppLayout.smallRadius,
-                            borderSide:
-                                BorderSide(width: 1, color: AppColor.grey1))),
-                  ),
-                ],
-              );
-            }),
-        Positioned(
-          bottom: 0,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width - 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List<Widget>.generate(
-                  3,
-                  (index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: CircleAvatar(
-                          maxRadius: 5,
-                          backgroundColor: activePage == index
-                              ? AppColor.accent
-                              : AppColor.grey1,
-                        ),
-                      )),
-            ),
-          ),
-        ),
-      ]),
     );
   }
 }

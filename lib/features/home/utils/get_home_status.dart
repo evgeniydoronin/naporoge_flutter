@@ -52,7 +52,9 @@ Future getHomeStatus() async {
       for (int i = 0; i < stream.weekBacklink.length; i++) {
         int currentWeekNumber = getWeekNumber(now);
         // текущая неделя может быть не последней
-        final curWeek = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
+        final curWeek = stream.weekBacklink
+            .where((week) => week.weekNumber == currentWeekNumber)
+            .first;
 
         if (i + 1 == weeks) {
           final lastWeek = stream.weekBacklink.elementAt(i);
@@ -63,7 +65,9 @@ Future getHomeStatus() async {
         }
       }
 
-      Week week = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
+      Week week = stream.weekBacklink
+          .where((week) => week.weekNumber == currentWeekNumber)
+          .first;
       List days = await isar.days.filter().weekIdEqualTo(week.id).findAll();
       Day? monday = await isar.days.filter().weekIdEqualTo(week.id).findFirst();
       // пустая неделя
@@ -92,7 +96,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysWeekCompleted.length; i++) {
                 Day day = daysWeekCompleted[i];
                 final res =
-                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   currentWeekExecutionScope.add(res);
@@ -115,7 +119,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysIdCompleted.length; i++) {
                 Day day = daysIdCompleted[i];
                 final res =
-                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   executionScope.add(res);
@@ -124,6 +128,7 @@ Future getHomeStatus() async {
             }
 
             for (Day day in days) {
+              // день завершен
               if (day.completedAt != null) {
                 DateTime dayCompletedAt = DateTime.parse(DateFormat('y-MM-dd').format(day.completedAt!));
 
@@ -153,7 +158,9 @@ Future getHomeStatus() async {
                     }
                   }
                 }
-              } else {
+              }
+              // день не завершен
+              else {
                 if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
                   topMessage['text'] = 'Итоги';
                   button['isActive'] = true;
@@ -193,7 +200,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysWeekCompleted.length; i++) {
                 Day day = daysWeekCompleted[i];
                 final res =
-                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   currentWeekExecutionScope.add(res);
@@ -216,7 +223,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysIdCompleted.length; i++) {
                 Day day = daysIdCompleted[i];
                 final res =
-                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   executionScope.add(res);
@@ -232,12 +239,19 @@ Future getHomeStatus() async {
                 print('текущий день');
                 // проверяем выполненные дни
                 if (day.completedAt != null) {
-                  if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
+                  if (now.weekday == 7) {
                     topMessage['text'] = 'Итоги';
                     button['isActive'] = true;
                     button['status'] = 'goToTotalScreen';
-                  } else {
-                    topMessage['text'] = 'Результаты сохранены';
+                  }
+                  else {
+                    if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
+                      topMessage['text'] = 'Итоги';
+                      button['isActive'] = true;
+                      button['status'] = 'goToTotalScreen';
+                    } else {
+                      topMessage['text'] = 'Результаты сохранены';
+                    }
                   }
                 }
                 // день не выполнен
@@ -305,7 +319,7 @@ Future getHomeStatus() async {
                 // проверяем объем выполнения дней текущей неделм
                 for (Day dayCompleted in daysCompleted) {
                   int i =
-                      await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
+                  await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
                   // значение выполненного объема больше 0
                   if (i != 0) {
                     executionScope.add(i);
@@ -355,7 +369,7 @@ Future getHomeStatus() async {
                 // проверяем объем выполнения дня
                 for (Day dayCompleted in daysCompleted) {
                   int i =
-                      await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
+                  await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
                   // значение выполненного объема больше 0
                   if (i != 0) {
                     executionScope.add(i);
