@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:isar/isar.dart';
+import 'package:naporoge/core/routes/app_router.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/db_client/isar_service.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
@@ -54,16 +55,13 @@ Future<Map> getTotalResultsStream() async {
   ///////////////////////////////
   // объем выполнения
   ///////////////////////////////
-  List low = [];
   List middle = [];
   List high = [];
 
   for (Week week in stream.weekBacklink) {
     for (Day day in week.dayBacklink) {
       for (DayResult result in day.dayResultBacklink) {
-        if (result.executionScope! <= 49) {
-          low.add(1);
-        } else if (result.executionScope! > 50 && result.executionScope! <= 80) {
+        if (result.executionScope! > 50 && result.executionScope! <= 80) {
           middle.add(1);
         } else if (result.executionScope! >= 81) {
           high.add(1);
@@ -72,11 +70,14 @@ Future<Map> getTotalResultsStream() async {
     }
   }
 
+  // слабо, все дни курса минус выполненные на хорошо и отлично
+  int low = days - middle.length - high.length;
+
   ///////////////////////////////
   // сообщение
   ///////////////////////////////
   TextSpan? message;
-  List margePoint = [low.length, middle.length, high.length];
+  List margePoint = [low, middle.length, high.length];
   int point = margePoint.reduce((a, b) => a > b ? a : b);
   int? maxPointIndex;
 
@@ -144,7 +145,7 @@ Future<Map> getTotalResultsStream() async {
   total['weeks'] = weeks;
   total['days'] = days;
   total['message'] = message;
-  total['low'] = low.length;
+  total['low'] = low;
   total['middle'] = middle.length;
   total['high'] = high.length;
   total['executionScope'] = executionScope.length;
@@ -311,7 +312,9 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
                           children: [
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.router.navigate(const StatisticsScreenRoute());
+                                },
                                 style: AppLayout.accentBTNStyle,
                                 child: Text(
                                   'Смотреть статистику',
