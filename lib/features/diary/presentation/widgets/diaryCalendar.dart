@@ -14,23 +14,46 @@ List<String> weekDay = [
   'вс',
 ];
 
-class AppCalendar extends StatefulWidget {
-  const AppCalendar({Key? key}) : super(key: key);
+class DiaryCalendar extends StatefulWidget {
+  const DiaryCalendar({Key? key}) : super(key: key);
 
   @override
-  State<AppCalendar> createState() => _AppCalendarState();
+  State<DiaryCalendar> createState() => _DiaryCalendarState();
 }
 
-class _AppCalendarState extends State<AppCalendar> {
+class _DiaryCalendarState extends State<DiaryCalendar> {
+  late DateTime _currentDay;
+  late int dayInMonth;
+
+  late DateTime firstDayOfMonth;
+  late DateTime firstDayOfNextMonth;
+
+  late DateTime lastDayOfMonth = DateTime(_currentDay.year, _currentDay.month + 1, 0);
+  late DateTime lastDayOfPreviousMonth = DateTime(_currentDay.year, _currentDay.month, 0);
+
+  // Начало месяца со сдвигом на нужную неделю
+  late int offsetStartMonth;
+
+  @override
+  void initState() {
+    _currentDay = DateTime.now();
+    firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
+    firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
+    offsetStartMonth = firstDayOfMonth.weekday - 1;
+    dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    final numberWeekOfStartMonth = weekNumber(firstDayOfMonth);
-    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-    final numberWeekOfEndMonth = weekNumber(lastDayOfMonth);
-    final int offset = firstDayOfMonth.weekday - 1;
-    final monthTitle = DateFormat('LLLL', 'ru').format(firstDateOfTheWeek(now));
+    // final now = DateTime.now();
+    // final firstDayOfMonth = DateTime(now.year, now.month, 1);
+    // final numberWeekOfStartMonth = weekNumber(firstDayOfMonth);
+    final lastDayOfMonth = DateTime(_currentDay.year, _currentDay.month + 1, 0);
+    // final numberWeekOfEndMonth = weekNumber(lastDayOfMonth);
+    // final int offset = firstDayOfMonth.weekday - 1;
+    final monthTitle = DateFormat('LLLL', 'ru').format(firstDateOfTheWeek(_currentDay));
 
     return Column(
       children: [
@@ -38,7 +61,9 @@ class _AppCalendarState extends State<AppCalendar> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  changeMonth(false);
+                },
                 icon: const Icon(
                   Icons.arrow_back_ios,
                   size: 15,
@@ -48,13 +73,17 @@ class _AppCalendarState extends State<AppCalendar> {
               style: AppFont.scaffoldTitleDark,
             ),
             IconButton(
-                onPressed: () {},
-                icon: RotatedBox(
-                    quarterTurns: 2,
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 15,
-                    ))),
+              onPressed: () {
+                changeMonth(true);
+              },
+              icon: const RotatedBox(
+                quarterTurns: 2,
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 15,
+                ),
+              ),
+            ),
           ],
         ),
         Row(
@@ -85,23 +114,24 @@ class _AppCalendarState extends State<AppCalendar> {
               mainAxisSpacing: 10,
               mainAxisExtent: 30,
             ),
-            itemCount: lastDayOfMonth.day + offset,
+            itemCount: lastDayOfMonth.day + offsetStartMonth,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, i) {
               final index = i + 1;
-              final day = index - offset;
+              final day = index - offsetStartMonth;
 
-              return i >= offset
+              return i >= offsetStartMonth
                   ? i > 10 && i < 20
                       ? GestureDetector(
                           onTap: () {
-                            context.router.push(const DiaryItemsScreenRoute());
+                            print(day);
+                            print(_currentDay);
+                            // context.router.push(const DiaryItemsScreenRoute());
                           },
                           child: Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColor.accent.withOpacity(0.1)),
+                              decoration:
+                                  BoxDecoration(shape: BoxShape.circle, color: AppColor.accent.withOpacity(0.1)),
                               child: Center(
                                   child: Text(
                                 day.toString(),
@@ -118,6 +148,18 @@ class _AppCalendarState extends State<AppCalendar> {
         const SizedBox(height: 10),
       ],
     );
+  }
+
+  void changeMonth(direction) {
+    setState(() {
+      _currentDay = direction
+          ? DateTime(_currentDay.year, _currentDay.month + 1)
+          : DateTime(_currentDay.year, _currentDay.month - 1);
+      firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
+      firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
+      offsetStartMonth = firstDayOfMonth.weekday - 1;
+      dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+    });
   }
 }
 

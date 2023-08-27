@@ -22,7 +22,7 @@ class _CountWeekDaysBoxState extends State<CountWeekDaysBox> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: weekDays,
+        future: countWeekDays(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Map data = snapshot.data;
@@ -99,9 +99,9 @@ class _CountWeekDaysBoxState extends State<CountWeekDaysBox> {
                               style: TextStyle(color: AppColor.blk, fontSize: AppFont.regular),
                               text: 'Всего дело выполнялось',
                               children: [
-                                TextSpan(text: ' ${data['completedDays']} ', style: TextStyle(color: AppColor.red)),
-                                TextSpan(text: 'дней'),
-                              ])),
+                            TextSpan(text: ' ${data['completedDays']} ', style: TextStyle(color: AppColor.red)),
+                            TextSpan(text: 'дней'),
+                          ])),
                     ),
                   ],
                 ),

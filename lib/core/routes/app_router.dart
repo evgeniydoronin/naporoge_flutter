@@ -6,6 +6,7 @@ import '../../features/auth/login/presentation/screens/login_screen.dart';
 import '../../features/auth/login/presentation/screens/phone_confirm_screen.dart';
 import '../../features/auth/splash/splash_screen.dart';
 import '../../features/diary/presentation/screens/dairy_items.dart';
+import '../../features/diary/presentation/screens/diary_rules_screen.dart';
 import '../../features/diary/presentation/screens/diary_screen.dart';
 import '../../features/home/presentation/screens/day_results_save_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
@@ -62,6 +63,7 @@ class AppRouter extends _$AppRouter {
           ],
         ),
 
+        CustomRoute(page: DiaryRulesScreenRoute.page, path: '/diary-rules'),
         CustomRoute(page: RuleOfAppScreenRoute.page, path: '/rules'),
         CustomRoute(page: WelcomeScreenRoute.page, path: '/welcome'),
         CustomRoute(page: StartDateSelectionScreenRoute.page, path: '/planner-start-date-selection'),
@@ -97,9 +99,18 @@ class AppRouter extends _$AppRouter {
             CustomRoute(
               page: DiaryEmptyRouter.page,
               path: 'diary',
+              maintainState: false,
               children: [
-                CustomRoute(page: DiaryScreenRoute.page, path: ''),
-                CustomRoute(page: DiaryItemsScreenRoute.page, path: 'diary-items'),
+                CustomRoute(
+                  page: DiaryScreenRoute.page,
+                  path: '',
+                  maintainState: false,
+                ),
+                CustomRoute(
+                  page: DiaryItemsScreenRoute.page,
+                  path: 'diary-items',
+                  maintainState: false,
+                ),
               ],
             ),
             CustomRoute(

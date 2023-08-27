@@ -6,8 +6,8 @@ final class DayResultState extends Equatable {
     this.completedAt,
     this.executionScope = 0,
     this.result,
-    this.desires = 'small',
-    this.reluctance = 'small',
+    this.desires,
+    this.reluctance,
     this.interference,
     this.rejoice,
   });
@@ -16,8 +16,8 @@ final class DayResultState extends Equatable {
   final String? completedAt;
   final int? executionScope;
   final String? result;
-  final String desires;
-  final String reluctance;
+  final String? desires;
+  final String? reluctance;
   final String? interference;
   final String? rejoice;
 

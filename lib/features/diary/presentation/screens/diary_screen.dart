@@ -4,7 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_theme.dart';
+import '../../../../core/routes/app_router.dart';
 import '../widgets/diaryCalendar.dart';
+import 'diary_rules_screen.dart';
 
 @RoutePage(name: 'DiaryEmptyRouter')
 class DiaryEmptyRouterPage extends AutoRouter {}
@@ -20,15 +22,33 @@ class DiaryScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColor.lightBG,
         elevation: 0,
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
           'Дневник',
           style: AppFont.scaffoldTitleDark,
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.info_outline_rounded,
+              color: AppColor.primary,
+            ),
+            color: Colors.black,
+            onPressed: () {
+              context.router.push(const DiaryRulesScreenRoute());
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: [
-          const SizedBox(height: 15),
+          Text(
+            'Сегодня: ${DateFormat('dd MMMM, EEEE', 'ru_RU').format(DateTime.now())}',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 25),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
@@ -41,8 +61,7 @@ class DiaryScreen extends StatelessWidget {
                 ),
                 child: ExpansionTile(
                   initiallyExpanded: true,
-                  tilePadding: const EdgeInsets.only(
-                      top: 7, bottom: 7, left: 18, right: 18),
+                  tilePadding: const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
                   title: Column(
                     children: [
                       Row(
@@ -62,7 +81,7 @@ class DiaryScreen extends StatelessWidget {
                         left: 5,
                         right: 5,
                       ),
-                      child: AppCalendar(),
+                      child: DiaryCalendar(),
                     )
                   ],
                 ),
@@ -79,8 +98,7 @@ class DiaryScreen extends StatelessWidget {
                   dividerColor: Colors.transparent,
                 ),
                 child: ExpansionTile(
-                  tilePadding:
-                      const EdgeInsets.symmetric(vertical: 7, horizontal: 18),
+                  tilePadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 18),
                   title: Column(
                     children: [
                       Row(
@@ -99,10 +117,7 @@ class DiaryScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    top: BorderSide(
-                                        width: 1, color: AppColor.grey1))),
+                            decoration: BoxDecoration(border: Border(top: BorderSide(width: 1, color: AppColor.grey1))),
                           ),
                         ),
                       ],
@@ -111,10 +126,7 @@ class DiaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 17),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 1, color: AppColor.grey1))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -128,10 +140,7 @@ class DiaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 17),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 1, color: AppColor.grey1))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -145,10 +154,7 @@ class DiaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 17),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 1, color: AppColor.grey1))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -159,20 +165,17 @@ class DiaryScreen extends StatelessWidget {
                             const SizedBox(height: 5),
                             TextField(
                               readOnly: true,
-                              style: TextStyle(
-                                  fontSize: AppFont.small, color: Colors.red),
+                              style: TextStyle(fontSize: AppFont.small, color: Colors.red),
                               decoration: InputDecoration(
                                   filled: true,
                                   fillColor: AppColor.grey1,
                                   hintText: '10 кругов',
                                   hintStyle: TextStyle(color: AppColor.accent),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 7, vertical: 10),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
                                   isDense: true,
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: AppLayout.smallRadius,
-                                      borderSide: BorderSide(
-                                          width: 1, color: AppColor.grey1))),
+                                      borderSide: BorderSide(width: 1, color: AppColor.grey1))),
                             ),
                           ],
                         ),
@@ -182,10 +185,7 @@ class DiaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 17),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 1, color: AppColor.grey1))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -199,10 +199,7 @@ class DiaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 17),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 1, color: AppColor.grey1))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -213,20 +210,17 @@ class DiaryScreen extends StatelessWidget {
                             const SizedBox(height: 5),
                             TextField(
                               readOnly: true,
-                              style: TextStyle(
-                                  fontSize: AppFont.small, color: Colors.red),
+                              style: TextStyle(fontSize: AppFont.small, color: Colors.red),
                               decoration: InputDecoration(
                                   filled: true,
                                   fillColor: AppColor.grey1,
                                   hintText: 'Много сахара',
                                   hintStyle: TextStyle(color: AppColor.accent),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 7, vertical: 10),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
                                   isDense: true,
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: AppLayout.smallRadius,
-                                      borderSide: BorderSide(
-                                          width: 1, color: AppColor.grey1))),
+                                      borderSide: BorderSide(width: 1, color: AppColor.grey1))),
                             ),
                           ],
                         ),
@@ -236,10 +230,7 @@ class DiaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 17),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 1, color: AppColor.grey1))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -253,10 +244,7 @@ class DiaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 17),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 1, color: AppColor.grey1))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -282,8 +270,7 @@ class DiaryScreen extends StatelessWidget {
                   dividerColor: Colors.transparent,
                 ),
                 child: ExpansionTile(
-                  tilePadding:
-                      const EdgeInsets.symmetric(vertical: 7, horizontal: 18),
+                  tilePadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 18),
                   title: Column(
                     children: [
                       Row(
@@ -302,22 +289,17 @@ class DiaryScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 18, horizontal: 18),
+                            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
                             decoration: BoxDecoration(
                                 border: Border(
-                                    top: BorderSide(
-                                        width: 1, color: AppColor.grey1),
-                                    bottom: BorderSide(
-                                        width: 1, color: AppColor.grey1))),
+                                    top: BorderSide(width: 1, color: AppColor.grey1),
+                                    bottom: BorderSide(width: 1, color: AppColor.grey1))),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   '04.01.2023 / 13:24',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: AppFont.smaller),
+                                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFont.smaller),
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
@@ -333,10 +315,7 @@ class DiaryScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       'Посмотреть все заметки',
-                      style: TextStyle(
-                          color: AppColor.primary,
-                          fontSize: AppFont.small,
-                          fontWeight: FontWeight.w600),
+                      style: TextStyle(color: AppColor.primary, fontSize: AppFont.small, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 10),
                   ],
@@ -350,21 +329,18 @@ class DiaryScreen extends StatelessWidget {
             child: Container(
               decoration: AppLayout.boxDecorationShadowBGBorderNone,
               child: TextFormField(
-                style:
-                    TextStyle(fontSize: AppFont.small, color: AppColor.grey3),
+                style: TextStyle(fontSize: AppFont.small, color: AppColor.grey3),
                 maxLines: 5,
                 autofocus: false,
                 decoration: InputDecoration(
                     filled: true,
                     fillColor: AppColor.lightBGItem,
                     hintText: 'Написать заметку',
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     isDense: true,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: AppLayout.primaryRadius,
-                      borderSide:
-                          BorderSide(width: 1, color: AppColor.lightBGItem),
+                      borderSide: BorderSide(width: 1, color: AppColor.lightBGItem),
                     )),
               ),
             ),

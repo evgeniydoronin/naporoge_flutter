@@ -16,19 +16,29 @@ Future countWeekDays() async {
   // запланировано дней
   int plannedDays = stream.weeks! * 6;
   resultData['plannedDays'] = plannedDays;
-  // выполнялось дней
-  final completedDays = await isar.days.filter().completedAtIsNotNull().findAll();
-  resultData['completedDays'] = completedDays.length;
+  // выполнялось дней на текущий момент
+  List completedCurrentDays = [];
 
   // количество выполненных дней в неделю
   for (int i = 0; i < weeks; i++) {
     Week? week = stream.weekBacklink.elementAtOrNull(i);
     // неделя создана
     if (week != null) {
-      List completedDays = await week.dayBacklink.filter().completedAtIsNotNull().findAll();
+      final completedDays = await week.dayBacklink.filter().completedAtIsNotNull().findAll();
+
+      // выполнялось дней по параметру executionScope
+      List dayResults = [];
+      for (Day day in completedDays) {
+        final res = await day.dayResultBacklink.filter().executionScopeGreaterThan(0).findFirst();
+        if (res != null) {
+          dayResults.add(res);
+          completedCurrentDays.add(1);
+        }
+      }
+      
       daysOfWeek.add({
         'weekNumber': i,
-        'completedDays': completedDays.length,
+        'completedDays': dayResults.length,
       });
     }
     // неделя НЕ создана
@@ -40,6 +50,7 @@ Future countWeekDays() async {
     }
   }
 
+  resultData['completedDays'] = completedCurrentDays.length;
   resultData['daysOfWeek'] = daysOfWeek;
 
   return resultData;

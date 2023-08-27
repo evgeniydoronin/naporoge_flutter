@@ -55,6 +55,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const DiaryItemsScreen(),
       );
     },
+    DiaryRulesScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const DiaryRulesScreen(),
+      );
+    },
     DiaryScreenRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -322,6 +328,20 @@ class DiaryItemsScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'DiaryItemsScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [DiaryRulesScreen]
+class DiaryRulesScreenRoute extends PageRouteInfo<void> {
+  const DiaryRulesScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          DiaryRulesScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'DiaryRulesScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

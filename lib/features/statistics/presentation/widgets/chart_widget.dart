@@ -15,6 +15,8 @@ class _LineChartState extends State<_LineChart> {
   double days = 0;
   List resultsOfDaysData = [];
   List<FlSpot> flSpotExecutionScope = [];
+  List<FlSpot> flSpotDesiresScope = [];
+  List<FlSpot> flSpotReluctanceScope = [];
 
   @override
   void initState() {
@@ -33,14 +35,32 @@ class _LineChartState extends State<_LineChart> {
             days = data['days'];
             resultsOfDaysData = data['resultsOfDaysData'];
             flSpotExecutionScope = [];
+            flSpotDesiresScope = [];
+            flSpotReluctanceScope = [];
 
             for (int i = 0; i < resultsOfDaysData.length; i++) {
               DayResult dayResult = resultsOfDaysData[i];
               double index = i + 1;
               // Объем выполнения дела
               flSpotExecutionScope.add(FlSpot(index, dayResult.executionScope!.toDouble()));
-              // Сила нежеланий
+
+              // -значения: левый 15%, центр 50%, правый 85%
               // Сила желаний
+              List statusWishes = [
+                {'small': 15.0},
+                {'middle': 50.0},
+                {'large': 85.0}
+              ];
+              for (Map status in statusWishes) {
+                if (status.keys.single == dayResult.desires) {
+                  flSpotDesiresScope.add(FlSpot(index, status.values.single));
+                }
+                if (status.keys.single == dayResult.reluctance) {
+                  flSpotReluctanceScope.add(FlSpot(index, status.values.single));
+                }
+              }
+              // print(dayResult.desires);
+              // Сила нежеланий
             }
 
             return LineChart(
@@ -194,18 +214,7 @@ class _LineChartState extends State<_LineChart> {
         isStrokeCapRound: true,
         dotData: FlDotData(show: false),
         belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 45),
-          FlSpot(2, 35),
-          FlSpot(3, 35),
-          FlSpot(4, 66),
-          FlSpot(5, 60),
-          FlSpot(6, 80),
-          FlSpot(7, 20),
-          FlSpot(8, 15),
-          FlSpot(9, 100),
-          FlSpot(10, 98),
-        ],
+        spots: [...flSpotDesiresScope],
       );
 
   // Сила нежеланий
@@ -219,18 +228,7 @@ class _LineChartState extends State<_LineChart> {
           show: false,
           color: AppColor.red,
         ),
-        spots: const [
-          FlSpot(1, 15),
-          FlSpot(2, 45),
-          FlSpot(3, 45),
-          FlSpot(4, 76),
-          FlSpot(5, 80),
-          FlSpot(6, 90),
-          FlSpot(7, 10),
-          FlSpot(8, 15),
-          FlSpot(9, 50),
-          FlSpot(10, 98),
-        ],
+        spots: [...flSpotReluctanceScope],
       );
 
   // Объем выполнения дела

@@ -5,12 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/utils/circular_loading.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
 import '../../../../core/utils/get_week_number.dart';
-
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/services/db_client/isar_service.dart';
@@ -30,6 +28,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
   final _streamController = getIt<StreamController>();
   final _formKey = GlobalKey<FormState>();
   final List<bool> _selections = List.generate(2, (_) => false);
+
+  bool isDesires = false;
+  bool isReluctance = false;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,10 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                           actions: <Widget>[
                                             TextButton(
                                               style: TextButton.styleFrom(
-                                                textStyle: Theme.of(context).textTheme.labelLarge,
+                                                textStyle: Theme
+                                                    .of(context)
+                                                    .textTheme
+                                                    .labelLarge,
                                               ),
                                               child: const Text('Отменить'),
                                               onPressed: () async {
@@ -131,14 +135,17 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                             ),
                                             TextButton(
                                               style: TextButton.styleFrom(
-                                                textStyle: Theme.of(context).textTheme.labelLarge,
+                                                textStyle: Theme
+                                                    .of(context)
+                                                    .textTheme
+                                                    .labelLarge,
                                               ),
                                               child: const Text('Выбрать'),
                                               onPressed: () {
                                                 DateTime now = DateTime.now();
                                                 DateTime time = DateFormat('HH:mm').parse(duration.toString());
                                                 DateTime completedTime =
-                                                    DateTime(now.year, now.month, now.day, time.hour, time.minute);
+                                                DateTime(now.year, now.month, now.day, time.hour, time.minute);
 
                                                 final formatter = DateFormat('yyyy-MM-dd HH:mm').format(completedTime);
 
@@ -155,7 +162,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     );
                                   },
                                   validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
+                                    if (value == null || value
+                                        .trim()
+                                        .isEmpty) {
                                       return 'Заполните обязательное поле!';
                                     }
                                     return null;
@@ -227,7 +236,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
                               validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
+                                if (value == null || value
+                                    .trim()
+                                    .isEmpty) {
                                   return 'Заполните обязательное поле!';
                                 }
                                 return null;
@@ -250,22 +261,26 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
-                              child: WishBox(
-                            title: 'Сила желаний',
-                            category: 'desires',
-                          )),
-                          SizedBox(width: 20),
+                            child: WishBox(
+                              title: 'Сила желаний',
+                              category: 'desires',
+                              status: isDesires,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
                           Flexible(
-                              child: WishBox(
-                            title: 'Сила нежеланий',
-                            category: 'reluctance',
-                          )),
+                            child: WishBox(
+                              title: 'Сила нежеланий',
+                              category: 'reluctance',
+                              status: isReluctance,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -345,13 +360,19 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                               isSelected: _selections,
                               children: [
                                 SizedBox(
-                                    width: (MediaQuery.of(context).size.width - 81) / 2,
+                                    width: (MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width - 81) / 2,
                                     child: RotatedBox(
                                       quarterTurns: 2,
                                       child: SvgPicture.asset('assets/icons/342.svg'),
                                     )),
                                 SizedBox(
-                                    width: (MediaQuery.of(context).size.width - 81) / 2,
+                                    width: (MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width - 81) / 2,
                                     child: SvgPicture.asset('assets/icons/342.svg')),
                               ],
                             ),
@@ -367,63 +388,104 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () async {
+                                // проверка желаний и нежеланий
+                                if (state.desires == null) {
+                                  setState(() {
+                                    isDesires = true;
+                                  });
+                                }
+                                if (state.reluctance == null) {
+                                  setState(() {
+                                    isReluctance = true;
+                                  });
+                                }
+
                                 if (_formKey.currentState!.validate()) {
-                                  DateTime now = DateTime.now();
-                                  CircularLoading(context).startLoading();
-                                  final isar = await isarService.db;
-                                  var user = await isarService.getUser();
+                                  // защита от дурака
+                                  if (state.desires == null) {
+                                    setState(() {
+                                      isDesires = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      isDesires = false;
+                                    });
+                                  }
+                                  print('state.desires: ${state.desires}');
+                                  if (state.reluctance == null) {
+                                    setState(() {
+                                      isReluctance = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      isReluctance = false;
+                                    });
+                                  }
 
-                                  String currDay = DateFormat('y-MM-dd')
-                                      .format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+                                  if (state.desires != null && state.reluctance != null) {
+                                    DateTime now = DateTime.now();
+                                    CircularLoading(context).startLoading();
+                                    final isar = await isarService.db;
+                                    var user = await isarService.getUser();
 
-                                  final weekNumber = getWeekNumber(DateTime.now());
-                                  Week? currWeekData =
-                                      await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
+                                    String currDay = DateFormat('y-MM-dd').format(
+                                        DateTime(DateTime
+                                            .now()
+                                            .year, DateTime
+                                            .now()
+                                            .month, DateTime
+                                            .now()
+                                            .day));
 
-                                  late int dayId;
+                                    final weekNumber = getWeekNumber(DateTime.now());
+                                    Week? currWeekData =
+                                    await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
-                                  // если неделя не пустая
-                                  if (currWeekData!.dayBacklink.first.startAt != null) {
-                                    for (Day day in currWeekData.dayBacklink) {
-                                      if (currDay == DateFormat('y-MM-dd').format(day.startAt!)) {
-                                        dayId = day.id!;
+                                    late int dayId;
+
+                                    // если неделя не пустая
+                                    if (currWeekData!.dayBacklink.first.startAt != null) {
+                                      for (Day day in currWeekData.dayBacklink) {
+                                        if (currDay == DateFormat('y-MM-dd').format(day.startAt!)) {
+                                          dayId = day.id!;
+                                        }
                                       }
                                     }
-                                  }
-                                  // пустая неделя
-                                  else {
-                                    List days = await isar.days.filter().weekIdEqualTo(currWeekData.id).findAll();
-                                    int freeDayIndex = now.weekday - 1;
-                                    Day freeDay = days[freeDayIndex];
-                                    dayId = freeDay.id!;
-                                  }
+                                    // пустая неделя
+                                    else {
+                                      List days = await isar.days.filter().weekIdEqualTo(currWeekData.id).findAll();
+                                      int freeDayIndex = now.weekday - 1;
+                                      Day freeDay = days[freeDayIndex];
+                                      dayId = freeDay.id!;
+                                    }
 
-                                  Map dayResultData = {
-                                    "user_id": user.first.id,
-                                    "day_id": dayId,
-                                    "completed_at": state.completedAt,
-                                    "execution_scope": state.executionScope,
-                                    "result": state.result,
-                                    "desires": state.desires,
-                                    "reluctance": state.reluctance,
-                                    "interference": state.interference,
-                                    "rejoice": state.rejoice,
-                                  };
+                                    Map dayResultData = {
+                                      "user_id": user.first.id,
+                                      "day_id": dayId,
+                                      "completed_at": state.completedAt,
+                                      "execution_scope": state.executionScope,
+                                      "result": state.result,
+                                      "desires": state.desires,
+                                      "reluctance": state.reluctance,
+                                      "interference": state.interference,
+                                      "rejoice": state.rejoice,
+                                    };
 
-                                  // print('dayResultData: $dayResultData');
-                                  // create on server
-                                  var newDayResult = await _streamController.createDayResult(dayResultData);
+                                    // print('dayResultData: $dayResultData');
+                                    // create on server
+                                    var newDayResult = await _streamController.createDayResult(dayResultData);
 
-                                  // save on local
-                                  await streamLocalStorage.saveDayResult(newDayResult);
-                                  print(newDayResult);
+                                    // save on local
+                                    await streamLocalStorage.saveDayResult(newDayResult);
+                                    print(newDayResult);
 
-                                  final stream = await streamLocalStorage.getActiveStream();
+                                    final stream = await streamLocalStorage.getActiveStream();
 
-                                  if (context.mounted) {
-                                    // context.read<HomeScreenBloc>().add(StreamProgressChanged(getStreamStatus(stream)));
-                                    CircularLoading(context).stopLoading();
-                                    context.router.replace(const HomesEmptyRouter());
+                                    if (context.mounted) {
+                                      // context.read<HomeScreenBloc>().add(StreamProgressChanged(getStreamStatus(stream)));
+                                      CircularLoading(context).stopLoading();
+                                      context.router.replace(const HomesEmptyRouter());
+                                    }
                                   }
                                 }
                               },
@@ -499,8 +561,9 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
 class WishBox extends StatefulWidget {
   final String title;
   final String category;
+  final bool status;
 
-  const WishBox({Key? key, required this.title, required this.category}) : super(key: key);
+  const WishBox({Key? key, required this.title, required this.category, required this.status}) : super(key: key);
 
   @override
   State<WishBox> createState() => _WishBoxState();
@@ -508,7 +571,7 @@ class WishBox extends StatefulWidget {
 
 class _WishBoxState extends State<WishBox> {
   List<Map> buttonStatus = [
-    {'result': 'small', 'isActive': true},
+    {'result': 'small', 'isActive': false},
     {'result': 'middle', 'isActive': false},
     {'result': 'large', 'isActive': false},
   ];
@@ -517,7 +580,18 @@ class _WishBoxState extends State<WishBox> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-      decoration: AppLayout.boxDecorationShadowBG,
+      decoration: BoxDecoration(
+        color: AppColor.lightBGItem,
+        border: Border.all(color: widget.status ? AppColor.red : const Color(0xFFE7E7E7)),
+        borderRadius: AppLayout.primaryRadius,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            spreadRadius: 0,
+          )
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
@@ -531,31 +605,32 @@ class _WishBoxState extends State<WishBox> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ...buttonStatus.map(
-                (e) => GestureDetector(
-                  onTap: () {
-                    for (Map btn in buttonStatus) {
-                      btn['isActive'] = false;
-                    }
-                    e['isActive'] = true;
+                    (e) =>
+                    GestureDetector(
+                      onTap: () {
+                        for (Map btn in buttonStatus) {
+                          btn['isActive'] = false;
+                        }
+                        e['isActive'] = true;
 
-                    if (widget.category == 'desires') {
-                      context.read<DayResultBloc>().add(DesiresChanged(e['result']));
-                    } else if (widget.category == 'reluctance') {
-                      context.read<DayResultBloc>().add(ReluctanceChanged(e['result']));
-                    }
+                        if (widget.category == 'desires') {
+                          context.read<DayResultBloc>().add(DesiresChanged(e['result']));
+                        } else if (widget.category == 'reluctance') {
+                          context.read<DayResultBloc>().add(ReluctanceChanged(e['result']));
+                        }
 
-                    setState(() {});
-                  },
-                  child: Container(
-                    width: 33,
-                    height: 33,
-                    decoration: BoxDecoration(
-                      color: e['isActive'] ? AppColor.accent : Colors.white,
-                      border: e['isActive'] ? const Border() : Border.all(color: AppColor.deep),
-                      shape: BoxShape.circle,
+                        setState(() {});
+                      },
+                      child: Container(
+                        width: 33,
+                        height: 33,
+                        decoration: BoxDecoration(
+                          color: e['isActive'] ? AppColor.accent : Colors.white,
+                          border: e['isActive'] ? const Border() : Border.all(color: AppColor.deep),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
               )
             ],
           )
