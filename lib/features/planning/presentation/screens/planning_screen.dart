@@ -173,7 +173,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                             }
                                             // Validate returns true if the form is valid, or false otherwise.
                                             if (_formKey.currentState!.validate()) {
-                                              // CircularLoading(context).startLoading();
+                                              CircularLoading(context).startLoading();
 
                                               Map newWeekData = {};
                                               Map weekData = state.editableWeekData;
@@ -194,6 +194,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
                                                 var createWeek = await _streamController.createWeek(newWeekData);
 
+                                                print('createWeek: $createWeek');
+
                                                 // update local
                                                 if (createWeek['week'] != null) {
                                                   streamLocalStorage.createWeek(createWeek);
@@ -202,7 +204,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                     CircularLoading(context).stopLoading();
                                                   }
                                                 }
-                                                // print('createWeek: $createWeek');
                                               }
                                               // /////////////////////////////
                                               // UPDATE WEEK
