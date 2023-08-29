@@ -1,7 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/core/utils/get_week_number.dart';
-import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../../../core/utils/get_week_number.dart';
+import '../../../planning/domain/entities/stream_entity.dart';
 
 import '../../../../core/services/db_client/isar_service.dart';
 

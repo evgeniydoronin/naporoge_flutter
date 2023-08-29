@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../planning/data/sources/local/stream_local_storage.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
+import '../widgets/statistic_count_week_days.dart';
 import '../widgets/statistic_stream_title.dart';
 import '../widgets/statistic_weeks_progress.dart';
 
@@ -50,7 +51,7 @@ class StatisticsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
               padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
@@ -118,125 +119,7 @@ class StatisticsScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Количество дней',
-                    style: AppFont.scaffoldTitleDark,
-                  ),
-                  Text(
-                    'выполнения дела',
-                    style: AppFont.scaffoldTitleDark,
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Номер недели',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Количество дней',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '1',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          '6 из 6',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '2',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          '4 из 6',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '3',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          '0',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RichText(
-                            text: TextSpan(
-                                style: TextStyle(color: AppColor.blk, fontSize: AppFont.regular),
-                                text: 'Всего дело выполнялось',
-                                children: [
-                              TextSpan(text: ' 11 ', style: TextStyle(color: AppColor.red)),
-                              TextSpan(text: 'дней'),
-                            ])),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Запланировано - 18 дней',
-                          style: TextStyle(fontSize: AppFont.regular),
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              child: const CountWeekDaysBox(),
             ),
           ),
           const SizedBox(height: 25),

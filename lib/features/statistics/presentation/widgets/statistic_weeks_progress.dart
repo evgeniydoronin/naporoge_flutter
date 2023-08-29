@@ -60,7 +60,7 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                           Map weekData = weeksProgress[index];
                           Week week = weekData['week'];
 
-                          print('weekData: ${week.progress}');
+                          // print('weekData: ${week.progress}');
                           List weekResult = [];
                           TextEditingController progress = TextEditingController(text: week.progress);
 
