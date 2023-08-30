@@ -11,10 +11,18 @@ class CountWeekDaysBox extends StatefulWidget {
 }
 
 class _CountWeekDaysBoxState extends State<CountWeekDaysBox> {
+  late Future weekDays;
+
+  @override
+  void initState() {
+    weekDays = countWeekDays();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: countWeekDays(),
+        future: weekDays,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Map data = snapshot.data;
@@ -22,7 +30,6 @@ class _CountWeekDaysBoxState extends State<CountWeekDaysBox> {
             List daysOfWeek = [];
 
             for (int i = 0; i < data['daysOfWeek'].length; i++) {
-              print(data['daysOfWeek'][i]);
               int weekNumber = data['daysOfWeek'][i]['weekNumber'] + 1;
               int completedDays = data['daysOfWeek'][i]['completedDays'];
               daysOfWeek.addAll([
@@ -92,9 +99,9 @@ class _CountWeekDaysBoxState extends State<CountWeekDaysBox> {
                               style: TextStyle(color: AppColor.blk, fontSize: AppFont.regular),
                               text: 'Всего дело выполнялось',
                               children: [
-                            TextSpan(text: ' ${data['completedDays']} ', style: TextStyle(color: AppColor.red)),
-                            TextSpan(text: 'дней'),
-                          ])),
+                                TextSpan(text: ' ${data['completedDays']} ', style: TextStyle(color: AppColor.red)),
+                                TextSpan(text: 'дней'),
+                              ])),
                     ),
                   ],
                 ),

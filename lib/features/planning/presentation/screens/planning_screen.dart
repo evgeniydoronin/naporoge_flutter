@@ -23,18 +23,7 @@ class PlanningScreen extends StatefulWidget {
 class _PlanningScreenState extends State<PlanningScreen> {
   final _streamController = getIt<StreamController>();
   final streamLocalStorage = StreamLocalStorage();
-
-  late final Future _getStream;
-
-  // late bool activeBtnPlanConfirm;
   final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    _getStream = getActiveStream();
-    // activeBtnPlanConfirm = false;
-    super.initState();
-  }
 
   Future getActiveStream() async {
     final storage = StreamLocalStorage();
@@ -63,7 +52,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
             ),
           ),
           body: FutureBuilder(
-            future: _getStream,
+            future: getActiveStream(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 NPStream stream = snapshot.data;

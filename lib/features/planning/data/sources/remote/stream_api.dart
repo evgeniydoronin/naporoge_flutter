@@ -60,6 +60,19 @@ class StreamApi {
     }
   }
 
+  Future<Response> updateWeekProgressApi(Map weekData) async {
+    // print('updateStreamApi: $streamData');
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.updateWeekProgress,
+        data: weekData,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> createDayResultApi(Map dayResultData) async {
     try {
       final Response response = await dioClient.post(

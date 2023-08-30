@@ -126,6 +126,18 @@ class StreamLocalStorage {
     });
   }
 
+  Future<void> updateWeekProgress(Map weekDataFromServer) async {
+    final isar = await isarService.db;
+    final week = await isar.weeks.get(weekDataFromServer['week']['id']);
+
+    week!.progress = weekDataFromServer['week']['progress'];
+
+    // update week
+    isar.writeTxnSync(() {
+      isar.weeks.putSync(week);
+    });
+  }
+
   Future<List<NPStream>> getAllStreams() async {
     final isar = await isarService.db;
 

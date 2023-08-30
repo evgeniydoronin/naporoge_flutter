@@ -37,6 +37,11 @@ class StreamController {
     return week;
   }
 
+  Future updateWeekProgress(data) async {
+    final week = await streamRepository.updateWeekProgressRequested(data);
+    return week;
+  }
+
   Future createDayResult(data) async {
     final dayResult = await streamRepository.createDayResultRequested(data);
     return dayResult;

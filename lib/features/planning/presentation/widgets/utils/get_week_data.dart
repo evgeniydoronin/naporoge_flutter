@@ -67,9 +67,7 @@ Future getWeekData(NPStream stream, String status) async {
           }
 
           // день получаем по cells[cell]['dayId']
-          final day = week.dayBacklink
-              .where((day) => day.id == cells[cell]['dayId'])
-              .first;
+          final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
           // ячейки
           cellsWeekData.addAll([
@@ -217,9 +215,7 @@ Future getWeekData(NPStream stream, String status) async {
                 // для отображения подсказок формируем lastCell
                 for (int lastCell = 0; lastCell < lastWeekCells.length; lastCell++) {
                   // день получаем по cells[cell]['dayId']
-                  final lastDay = lastWeek.dayBacklink
-                      .where((day) => day.id == lastWeekCells[lastCell]['dayId'])
-                      .first;
+                  final lastDay = lastWeek.dayBacklink.where((day) => day.id == lastWeekCells[lastCell]['dayId']).first;
 
                   if (lastWeekCells[lastCell]['cellId'][2] != 6) {
                     weekOpenedPeriod.add(lastWeekCells[lastCell]['cellId'][0]);
@@ -229,9 +225,7 @@ Future getWeekData(NPStream stream, String status) async {
 
                   // для отображения текущих ячеек
                   for (int cell = 0; cell < cells.length; cell++) {
-                    final day = week.dayBacklink
-                        .where((day) => day.id == cells[cell]['dayId'])
-                        .first;
+                    final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                     // print('cell: ${cells[cell]}');
                     // индекс ячейки текущего дня
@@ -345,9 +339,7 @@ Future getWeekData(NPStream stream, String status) async {
                   }
 
                   // день получаем по cells[cell]['dayId']
-                  final day = week.dayBacklink
-                      .where((day) => day.id == cells[cell]['dayId'])
-                      .first;
+                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                   // ячейки
                   cellsWeekData.addAll([
@@ -429,9 +421,7 @@ Future getWeekData(NPStream stream, String status) async {
               // для отображения подсказок формируем lastCell
               for (int lastCell = 0; lastCell < lastWeekCells.length; lastCell++) {
                 // день получаем по cells[cell]['dayId']
-                final lastDay = lastWeek.dayBacklink
-                    .where((day) => day.id == lastWeekCells[lastCell]['dayId'])
-                    .first;
+                final lastDay = lastWeek.dayBacklink.where((day) => day.id == lastWeekCells[lastCell]['dayId']).first;
 
                 // TODO: спустить на уровень вниз для проверки выполненных дней
                 if (lastWeekCells[lastCell]['cellId'][2] != 6) {
@@ -445,9 +435,7 @@ Future getWeekData(NPStream stream, String status) async {
                 // для отображения подсказок формируем lastCell
                 for (int lastCell = 0; lastCell < lastWeekCells.length; lastCell++) {
                   // день получаем по cells[cell]['dayId']
-                  final lastDay = lastWeek.dayBacklink
-                      .where((day) => day.id == lastWeekCells[lastCell]['dayId'])
-                      .first;
+                  final lastDay = lastWeek.dayBacklink.where((day) => day.id == lastWeekCells[lastCell]['dayId']).first;
 
                   if (lastWeekCells[lastCell]['cellId'][2] != 6) {
                     weekOpenedPeriod.add(lastWeekCells[lastCell]['cellId'][0]);
@@ -457,9 +445,7 @@ Future getWeekData(NPStream stream, String status) async {
 
                   // для отображения текущих ячеек
                   for (int cell = 0; cell < cells.length; cell++) {
-                    final day = week.dayBacklink
-                        .where((day) => day.id == cells[cell]['dayId'])
-                        .first;
+                    final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                     // print('cell: ${cells[cell]}');
                     // индекс ячейки текущего дня
@@ -578,9 +564,7 @@ Future getWeekData(NPStream stream, String status) async {
                   }
 
                   // день получаем по cells[cell]['dayId']
-                  final day = week.dayBacklink
-                      .where((day) => day.id == cells[cell]['dayId'])
-                      .first;
+                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                   ///////////////////////////////
                   // Статус дня
@@ -685,9 +669,7 @@ Future getWeekData(NPStream stream, String status) async {
                   }
 
                   // день получаем по cells[cell]['dayId']
-                  final day = week.dayBacklink
-                      .where((day) => day.id == cells[cell]['dayId'])
-                      .first;
+                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                   ///////////////////////////////
                   // Статус дня
@@ -699,16 +681,16 @@ Future getWeekData(NPStream stream, String status) async {
                     String startAtHour = DateFormat('H').format(day.startAt!);
                     // час завершения дела актуальный
                     String completedAtHour = DateFormat('H').format(day.completedAt!);
-                    print('startAtHour: $startAtHour');
-                    print('completedAtHour: $completedAtHour');
+                    // print('startAtHour: $startAtHour');
+                    // print('completedAtHour: $completedAtHour');
 
                     // TODO: продолжить тут
                     // Если час выполнения не совпадает
                     if (startAtHour != completedAtHour) {
-                      print('Если час выполнения не совпадает 33');
-                      print('day: ${day.startAt}');
-                      print('day: ${day.completedAt}');
-                      print('cell: ${cells[cell]}');
+                      // print('Если час выполнения не совпадает 33');
+                      // print('day: ${day.startAt}');
+                      // print('day: ${day.completedAt}');
+                      // print('cell: ${cells[cell]}');
                       for (Map hour in periodHoursIndexList) {
                         // час завершения дела актуальный
                         if (hour.keys.first == completedAtHour) {
@@ -752,7 +734,7 @@ Future getWeekData(NPStream stream, String status) async {
                     }
                     // Если час выполнения совпадает
                     else if (startAtHour == completedAtHour) {
-                      print('Если час выполнения совпадает');
+                      // print('Если час выполнения совпадает');
                       cellsWeekData.addAll([
                         {
                           'day_id': day.id,
@@ -851,9 +833,7 @@ Future getWeekData(NPStream stream, String status) async {
                 }
 
                 // день получаем по cells[cell]['dayId']
-                final day = week.dayBacklink
-                    .where((day) => day.id == cells[cell]['dayId'])
-                    .first;
+                final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                 ///////////////////////////////
                 // Статус дня
@@ -970,9 +950,7 @@ Future getWeekData(NPStream stream, String status) async {
                 }
 
                 // день получаем по cells[cell]['dayId']
-                final day = week.dayBacklink
-                    .where((day) => day.id == cells[cell]['dayId'])
-                    .first;
+                final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                 ///////////////////////////////
                 // Статус дня
@@ -1031,7 +1009,7 @@ Future getWeekData(NPStream stream, String status) async {
                   }
                   // Если час выполнения совпадает
                   else if (startAtHour == completedAtHour) {
-                    print('Если час выполнения совпадает');
+                    // print('Если час выполнения совпадает');
                     cellsWeekData.addAll([
                       {
                         'day_id': day.id,
@@ -1104,9 +1082,7 @@ Future getWeekData(NPStream stream, String status) async {
                 }
 
                 // день получаем по cells[cell]['dayId']
-                final day = week.dayBacklink
-                    .where((day) => day.id == cells[cell]['dayId'])
-                    .first;
+                final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
                 // ячейки
                 cellsWeekData.addAll([
@@ -1190,9 +1166,7 @@ Future getWeekData(NPStream stream, String status) async {
               }
 
               // день получаем по cells[cell]['dayId']
-              final day = week.dayBacklink
-                  .where((day) => day.id == cells[cell]['dayId'])
-                  .first;
+              final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
               ///////////////////////////////
               // Статус дня
@@ -1205,16 +1179,16 @@ Future getWeekData(NPStream stream, String status) async {
                 String startAtHour = DateFormat('H').format(day.startAt!);
                 // час завершения дела актуальный
                 String completedAtHour = DateFormat('H').format(day.completedAt!);
-                print('startAtHour: $startAtHour');
-                print('completedAtHour: $completedAtHour');
+                // print('startAtHour: $startAtHour');
+                // print('completedAtHour: $completedAtHour');
 
                 // TODO: продолжить тут
                 // Если час выполнения не совпадает
                 if (startAtHour != completedAtHour) {
-                  print('Если час выполнения не совпадает 33');
-                  print('day: ${day.startAt}');
-                  print('day: ${day.completedAt}');
-                  print('cell: ${cells[cell]}');
+                  // print('Если час выполнения не совпадает 33');
+                  // print('day: ${day.startAt}');
+                  // print('day: ${day.completedAt}');
+                  // print('cell: ${cells[cell]}');
                   for (Map hour in periodHoursIndexList) {
                     // час завершения дела актуальный
                     if (hour.keys.first == completedAtHour) {
@@ -1258,7 +1232,7 @@ Future getWeekData(NPStream stream, String status) async {
                 }
                 // Если час выполнения совпадает
                 else if (startAtHour == completedAtHour) {
-                  print('Если час выполнения совпадает');
+                  // print('Если час выполнения совпадает');
                   cellsWeekData.addAll([
                     {
                       'day_id': day.id,
@@ -1346,9 +1320,7 @@ Future getWeekData(NPStream stream, String status) async {
         }
 
         // день получаем по cells[cell]['dayId']
-        final day = week.dayBacklink
-            .where((day) => day.id == cells[cell]['dayId'])
-            .first;
+        final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
         ///////////////////////////////
         // Статус дня
@@ -1362,15 +1334,15 @@ Future getWeekData(NPStream stream, String status) async {
             String startAtHour = DateFormat('H').format(day.startAt!);
             // час завершения дела актуальный
             String completedAtHour = DateFormat('H').format(day.completedAt!);
-            print('startAtHour: $startAtHour');
-            print('completedAtHour: $completedAtHour');
+            // print('startAtHour: $startAtHour');
+            // print('completedAtHour: $completedAtHour');
 
             // Если час выполнения не совпадает
             if (startAtHour != completedAtHour) {
-              print('Если час выполнения не совпадает 33');
-              print('day: ${day.startAt}');
-              print('day: ${day.completedAt}');
-              print('cell: ${cells[cell]}');
+              // print('Если час выполнения не совпадает 33');
+              // print('day: ${day.startAt}');
+              // print('day: ${day.completedAt}');
+              // print('cell: ${cells[cell]}');
               for (Map hour in periodHoursIndexList) {
                 // час завершения дела актуальный
                 if (hour.keys.first == completedAtHour) {
@@ -1414,7 +1386,7 @@ Future getWeekData(NPStream stream, String status) async {
             }
             // Если час выполнения совпадает
             else if (startAtHour == completedAtHour) {
-              print('Если час выполнения совпадает');
+              // print('Если час выполнения совпадает');
               cellsWeekData.addAll([
                 {
                   'day_id': day.id,

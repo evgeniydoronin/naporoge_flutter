@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/constants/app_theme.dart';
+import '../../../../core/services/controllers/service_locator.dart';
+import '../../../../core/utils/circular_loading.dart';
+import '../../../planning/data/sources/local/stream_local_storage.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
+import '../../../planning/presentation/stream_controller.dart';
 import '../utils/get_weeks_process.dart';
+
+List weekDayName = [
+  'Пн',
+  'Вт',
+  'Ср',
+  'Чт',
+  'Пт',
+  'Сб',
+  'Вс',
+];
 
 class WeeksProgressBox extends StatefulWidget {
   const WeeksProgressBox({super.key});
@@ -12,28 +25,15 @@ class WeeksProgressBox extends StatefulWidget {
 }
 
 class _WeeksProgressBoxState extends State<WeeksProgressBox> {
+  int activePage = 0;
   final _formKey = GlobalKey<FormState>();
   final PageController pageController = PageController(initialPage: 0);
-  int activePage = 0;
-  late Future weeksData;
+  final _streamController = getIt<StreamController>();
+  TextEditingController progress = TextEditingController();
 
-  @override
-  void initState() {
-    weeksData = getWeeksProcess();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    List weekDayName = [
-      'Пн',
-      'Вт',
-      'Ср',
-      'Чт',
-      'Пт',
-      'Сб',
-      'Вс',
-    ];
     return FutureBuilder(
       future: getWeeksProcess(),
       builder: (context, snapshot) {
@@ -51,7 +51,7 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                     PageView.builder(
                         controller: pageController,
                         itemCount: weeksProgress.length,
-                        onPageChanged: (int page) {
+                        onPageChanged: (int page) async {
                           setState(() {
                             activePage = page;
                           });
@@ -59,11 +59,10 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                         itemBuilder: (BuildContext context, int index) {
                           Map weekData = weeksProgress[index];
                           Week week = weekData['week'];
+                          progress = TextEditingController(text: week.progress);
 
-                          // print('weekData: ${week.progress}');
+                          // add data to weekResult
                           List weekResult = [];
-                          TextEditingController progress = TextEditingController(text: week.progress);
-
                           for (int i = 0; i < weekDayName.length; i++) {
                             DayResult? dayResult = weekData['daysProgress'][i];
 
@@ -107,8 +106,8 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                               ),
                               const SizedBox(height: 20),
                               TextFormField(
-                                style: TextStyle(fontSize: AppFont.small),
                                 controller: progress,
+                                style: TextStyle(fontSize: AppFont.small),
                                 maxLines: 3,
                                 decoration: InputDecoration(
                                     filled: true,
@@ -134,12 +133,16 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                     Positioned(
                       bottom: 0,
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width - 80,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width - 80,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List<Widget>.generate(
                               weeksProgress.length,
-                              (index) => Padding(
+                                  (index) =>
+                                  Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 5),
                                     child: CircleAvatar(
                                       maxRadius: 5,
@@ -156,8 +159,32 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {}
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            CircularLoading(context).startLoading();
+                            final streamLocalStorage = StreamLocalStorage();
+
+                            Map progressData = {};
+                            int index = pageController.page!.floor().toInt();
+                            Week week = weeksProgress[index]['week'];
+
+                            progressData['week_id'] = week.id;
+                            progressData['week_progress'] = progress.text;
+
+                            // print('progressData: $progressData');
+
+                            // create on server
+                            var updateWeekProgress = await _streamController.updateWeekProgress(progressData);
+
+                            // print('updateWeekProgress: $updateWeekProgress');
+
+                            // save on local
+                            await streamLocalStorage.updateWeekProgress(updateWeekProgress);
+
+                            if (context.mounted) {
+                              CircularLoading(context).stopLoading();
+                            }
+                          }
                         },
                         style: AppLayout.accentBTNStyle,
                         child: Text(

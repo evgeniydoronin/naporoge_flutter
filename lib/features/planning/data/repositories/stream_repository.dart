@@ -10,7 +10,7 @@ class StreamRepository {
     try {
       final response = await streamApi.createStreamApi(data);
       return response.data;
-    } on DioError catch (e) {
+    } catch (e) {
       rethrow;
     }
   }
@@ -19,7 +19,7 @@ class StreamRepository {
     try {
       final response = await streamApi.updateStreamApi(data);
       return response.data;
-    } on DioError catch (e) {
+    } catch (e) {
       rethrow;
     }
   }
@@ -28,7 +28,7 @@ class StreamRepository {
     try {
       final response = await streamApi.createWeekApi(data);
       return response.data;
-    } on DioError catch (e) {
+    } catch (e) {
       rethrow;
     }
   }
@@ -37,7 +37,16 @@ class StreamRepository {
     try {
       final response = await streamApi.updateWeekApi(data);
       return response.data;
-    } on DioError catch (e) {
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateWeekProgressRequested(Map data) async {
+    try {
+      final response = await streamApi.updateWeekProgressApi(data);
+      return response.data;
+    } catch (e) {
       rethrow;
     }
   }

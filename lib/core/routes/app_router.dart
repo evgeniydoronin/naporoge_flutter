@@ -105,6 +105,7 @@ class AppRouter extends _$AppRouter {
             CustomRoute(
               page: StatisticsScreenRoute.page,
               path: 'statistics',
+              maintainState: false,
             ),
             CustomRoute(
               page: MoreScreenRoute.page,
