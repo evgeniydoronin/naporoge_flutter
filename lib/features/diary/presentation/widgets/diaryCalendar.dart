@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/utils/circular_loading.dart';
+import '../utils/get_main_diary_screen_data.dart';
 
 List<String> weekDay = [
   'пн',
@@ -28,40 +30,39 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
   late DateTime firstDayOfMonth;
   late DateTime firstDayOfNextMonth;
 
-  late DateTime lastDayOfMonth = DateTime(_currentDay.year, _currentDay.month + 1, 0);
-  late DateTime lastDayOfPreviousMonth = DateTime(_currentDay.year, _currentDay.month, 0);
+  late DateTime lastDayOfMonth;
+  late DateTime lastDayOfPreviousMonth;
 
   // Начало месяца со сдвигом на нужную неделю
   late int offsetStartMonth;
+
+  late String monthTitle;
+
+  late Future calendarData;
 
   @override
   void initState() {
     _currentDay = DateTime.now();
     firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
     firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
+    lastDayOfMonth = DateTime(_currentDay.year, _currentDay.month + 1, 0);
+    lastDayOfPreviousMonth = DateTime(_currentDay.year, _currentDay.month, 0);
     offsetStartMonth = firstDayOfMonth.weekday - 1;
     dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
-
+    monthTitle = DateFormat('LLLL', 'ru').format(_currentDay);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final now = DateTime.now();
-    // final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    // final numberWeekOfStartMonth = weekNumber(firstDayOfMonth);
-    final lastDayOfMonth = DateTime(_currentDay.year, _currentDay.month + 1, 0);
-    // final numberWeekOfEndMonth = weekNumber(lastDayOfMonth);
-    // final int offset = firstDayOfMonth.weekday - 1;
-    final monthTitle = DateFormat('LLLL', 'ru').format(firstDateOfTheWeek(_currentDay));
-
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-                onPressed: () {
+                onPressed: () async {
+                  await getMainDiaryData(DateTime.now());
                   changeMonth(false);
                 },
                 icon: const Icon(
@@ -73,7 +74,17 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
               style: AppFont.scaffoldTitleDark,
             ),
             IconButton(
-              onPressed: () {
+              onPressed: () async {
+                CircularLoading(context).startLoading();
+                final r = await getMainDiaryData(DateTime.now());
+                // print(r['calendarData']);
+                // print(r['calendarData'] != null);
+                if (r['calendarData'] != null) {
+                  print('object');
+                  if (context.mounted) {
+                    CircularLoading(context).stopLoading();
+                  }
+                }
                 changeMonth(true);
               },
               icon: const RotatedBox(
@@ -159,21 +170,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
       firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
       offsetStartMonth = firstDayOfMonth.weekday - 1;
       dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+      monthTitle = DateFormat('LLLL', 'ru').format(DateTime(_currentDay.year, _currentDay.month));
     });
   }
-}
-
-int weekNumber(date) {
-  int weeksBetween(DateTime from, DateTime to) {
-    from = DateTime.utc(from.year, from.month, from.day);
-    to = DateTime.utc(to.year, to.month, to.day);
-    return (to.difference(from).inDays / 7).ceil();
-  }
-
-  final firstJan = DateTime(date.year, 1, 1);
-  return weeksBetween(firstJan, date);
-}
-
-DateTime firstDateOfTheWeek(DateTime dateTime) {
-  return dateTime.subtract(Duration(days: dateTime.weekday - 1));
 }

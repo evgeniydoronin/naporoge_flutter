@@ -15,6 +15,8 @@ import '../../../../core/services/db_client/isar_service.dart';
 import '../../../planning/data/sources/local/stream_local_storage.dart';
 import '../../../planning/presentation/stream_controller.dart';
 import '../bloc/save_day_result/day_result_bloc.dart';
+import '../widgets/day_results_save/slider_box.dart';
+import '../widgets/day_results_save/wish_box.dart';
 
 @RoutePage()
 class DayResultsSaveScreen extends StatefulWidget {
@@ -123,10 +125,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                           actions: <Widget>[
                                             TextButton(
                                               style: TextButton.styleFrom(
-                                                textStyle: Theme
-                                                    .of(context)
-                                                    .textTheme
-                                                    .labelLarge,
+                                                textStyle: Theme.of(context).textTheme.labelLarge,
                                               ),
                                               child: const Text('Отменить'),
                                               onPressed: () async {
@@ -135,17 +134,14 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                             ),
                                             TextButton(
                                               style: TextButton.styleFrom(
-                                                textStyle: Theme
-                                                    .of(context)
-                                                    .textTheme
-                                                    .labelLarge,
+                                                textStyle: Theme.of(context).textTheme.labelLarge,
                                               ),
                                               child: const Text('Выбрать'),
                                               onPressed: () {
                                                 DateTime now = DateTime.now();
                                                 DateTime time = DateFormat('HH:mm').parse(duration.toString());
                                                 DateTime completedTime =
-                                                DateTime(now.year, now.month, now.day, time.hour, time.minute);
+                                                    DateTime(now.year, now.month, now.day, time.hour, time.minute);
 
                                                 final formatter = DateFormat('yyyy-MM-dd HH:mm').format(completedTime);
 
@@ -162,9 +158,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     );
                                   },
                                   validator: (value) {
-                                    if (value == null || value
-                                        .trim()
-                                        .isEmpty) {
+                                    if (value == null || value.trim().isEmpty) {
                                       return 'Заполните обязательное поле!';
                                     }
                                     return null;
@@ -236,9 +230,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
                               validator: (value) {
-                                if (value == null || value
-                                    .trim()
-                                    .isEmpty) {
+                                if (value == null || value.trim().isEmpty) {
                                   return 'Заполните обязательное поле!';
                                 }
                                 return null;
@@ -360,19 +352,13 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                               isSelected: _selections,
                               children: [
                                 SizedBox(
-                                    width: (MediaQuery
-                                        .of(context)
-                                        .size
-                                        .width - 81) / 2,
+                                    width: (MediaQuery.of(context).size.width - 81) / 2,
                                     child: RotatedBox(
                                       quarterTurns: 2,
                                       child: SvgPicture.asset('assets/icons/342.svg'),
                                     )),
                                 SizedBox(
-                                    width: (MediaQuery
-                                        .of(context)
-                                        .size
-                                        .width - 81) / 2,
+                                    width: (MediaQuery.of(context).size.width - 81) / 2,
                                     child: SvgPicture.asset('assets/icons/342.svg')),
                               ],
                             ),
@@ -429,17 +415,11 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     var user = await isarService.getUser();
 
                                     String currDay = DateFormat('y-MM-dd').format(
-                                        DateTime(DateTime
-                                            .now()
-                                            .year, DateTime
-                                            .now()
-                                            .month, DateTime
-                                            .now()
-                                            .day));
+                                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
 
                                     final weekNumber = getWeekNumber(DateTime.now());
                                     Week? currWeekData =
-                                    await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
+                                        await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
                                     late int dayId;
 
@@ -507,135 +487,6 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-class SliderBox extends StatefulWidget {
-  const SliderBox({Key? key}) : super(key: key);
-
-  @override
-  State<SliderBox> createState() => _SliderBoxState();
-}
-
-class _SliderBoxState extends State<SliderBox> {
-  double _currentSliderValue = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliderTheme(
-      data: SliderThemeData(
-        trackShape: CustomTrackShape(),
-      ),
-      child: Slider(
-        value: _currentSliderValue,
-        max: 100,
-        onChanged: (double value) {
-          context.read<DayResultBloc>().add(ExecutionScopeChanged(value.toInt()));
-          setState(() {
-            _currentSliderValue = value;
-          });
-        },
-      ),
-    );
-  }
-}
-
-class CustomTrackShape extends RoundedRectSliderTrackShape {
-  @override
-  Rect getPreferredRect({
-    required RenderBox parentBox,
-    Offset offset = Offset.zero,
-    required SliderThemeData sliderTheme,
-    bool isEnabled = false,
-    bool isDiscrete = false,
-  }) {
-    final double? trackHeight = sliderTheme.trackHeight;
-    final double trackLeft = offset.dx;
-    final double trackTop = offset.dy + (parentBox.size.height - trackHeight!) / 2;
-    final double trackWidth = parentBox.size.width;
-    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
-  }
-}
-
-class WishBox extends StatefulWidget {
-  final String title;
-  final String category;
-  final bool status;
-
-  const WishBox({Key? key, required this.title, required this.category, required this.status}) : super(key: key);
-
-  @override
-  State<WishBox> createState() => _WishBoxState();
-}
-
-class _WishBoxState extends State<WishBox> {
-  List<Map> buttonStatus = [
-    {'result': 'small', 'isActive': false},
-    {'result': 'middle', 'isActive': false},
-    {'result': 'large', 'isActive': false},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-      decoration: BoxDecoration(
-        color: AppColor.lightBGItem,
-        border: Border.all(color: widget.status ? AppColor.red : const Color(0xFFE7E7E7)),
-        borderRadius: AppLayout.primaryRadius,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 5,
-            spreadRadius: 0,
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Text(
-            widget.title,
-            style: AppFont.formLabel,
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ...buttonStatus.map(
-                    (e) =>
-                    GestureDetector(
-                      onTap: () {
-                        for (Map btn in buttonStatus) {
-                          btn['isActive'] = false;
-                        }
-                        e['isActive'] = true;
-
-                        if (widget.category == 'desires') {
-                          context.read<DayResultBloc>().add(DesiresChanged(e['result']));
-                        } else if (widget.category == 'reluctance') {
-                          context.read<DayResultBloc>().add(ReluctanceChanged(e['result']));
-                        }
-
-                        setState(() {});
-                      },
-                      child: Container(
-                        width: 33,
-                        height: 33,
-                        decoration: BoxDecoration(
-                          color: e['isActive'] ? AppColor.accent : Colors.white,
-                          border: e['isActive'] ? const Border() : Border.all(color: AppColor.deep),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-              )
-            ],
-          )
-        ],
-      ),
     );
   }
 }

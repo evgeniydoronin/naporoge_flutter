@@ -67,7 +67,9 @@ Future getWeekData(NPStream stream, String status) async {
           }
 
           // день получаем по cells[cell]['dayId']
-          final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+          final day = week.dayBacklink
+              .where((day) => day.id == cells[cell]['dayId'])
+              .first;
 
           // ячейки
           cellsWeekData.addAll([
@@ -159,23 +161,29 @@ Future getWeekData(NPStream stream, String status) async {
         // находим последнюю неделю с созданными днями
         // первую неделю i == 0 не проверяем
         getLastWeekWithDayData(int index) {
-          Week? week;
+          Week? lastWeek;
           int i = 0;
           int weeks = stream.weekBacklink.length;
 
           while (i < weeks) {
             int index = weeks - 1;
-            Week? lastWeek = stream.weekBacklink.elementAt(index);
-            if (lastWeek.userConfirmed != null) {
-              if (lastWeek.userConfirmed!) {
-                week = lastWeek;
+            Week? _lastWeek = stream.weekBacklink.elementAt(index);
+
+            // последняя неделя создана пользователем
+            if (_lastWeek.userConfirmed != null) {
+              if (_lastWeek.userConfirmed!) {
+                // текущая пустая неделя не раньше
+                // искомой с подсказками
+                if (week.id! > _lastWeek.id!) {
+                  lastWeek = _lastWeek;
+                }
               }
             }
 
             weeks--;
           }
 
-          return week;
+          return lastWeek;
         }
 
         // первую неделю i == 0 не проверяем
@@ -215,7 +223,9 @@ Future getWeekData(NPStream stream, String status) async {
                 // для отображения подсказок формируем lastCell
                 for (int lastCell = 0; lastCell < lastWeekCells.length; lastCell++) {
                   // день получаем по cells[cell]['dayId']
-                  final lastDay = lastWeek.dayBacklink.where((day) => day.id == lastWeekCells[lastCell]['dayId']).first;
+                  final lastDay = lastWeek.dayBacklink
+                      .where((day) => day.id == lastWeekCells[lastCell]['dayId'])
+                      .first;
 
                   if (lastWeekCells[lastCell]['cellId'][2] != 6) {
                     weekOpenedPeriod.add(lastWeekCells[lastCell]['cellId'][0]);
@@ -225,7 +235,9 @@ Future getWeekData(NPStream stream, String status) async {
 
                   // для отображения текущих ячеек
                   for (int cell = 0; cell < cells.length; cell++) {
-                    final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                    final day = week.dayBacklink
+                        .where((day) => day.id == cells[cell]['dayId'])
+                        .first;
 
                     // print('cell: ${cells[cell]}');
                     // индекс ячейки текущего дня
@@ -339,7 +351,9 @@ Future getWeekData(NPStream stream, String status) async {
                   }
 
                   // день получаем по cells[cell]['dayId']
-                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                  final day = week.dayBacklink
+                      .where((day) => day.id == cells[cell]['dayId'])
+                      .first;
 
                   // ячейки
                   cellsWeekData.addAll([
@@ -421,7 +435,9 @@ Future getWeekData(NPStream stream, String status) async {
               // для отображения подсказок формируем lastCell
               for (int lastCell = 0; lastCell < lastWeekCells.length; lastCell++) {
                 // день получаем по cells[cell]['dayId']
-                final lastDay = lastWeek.dayBacklink.where((day) => day.id == lastWeekCells[lastCell]['dayId']).first;
+                final lastDay = lastWeek.dayBacklink
+                    .where((day) => day.id == lastWeekCells[lastCell]['dayId'])
+                    .first;
 
                 // TODO: спустить на уровень вниз для проверки выполненных дней
                 if (lastWeekCells[lastCell]['cellId'][2] != 6) {
@@ -435,7 +451,9 @@ Future getWeekData(NPStream stream, String status) async {
                 // для отображения подсказок формируем lastCell
                 for (int lastCell = 0; lastCell < lastWeekCells.length; lastCell++) {
                   // день получаем по cells[cell]['dayId']
-                  final lastDay = lastWeek.dayBacklink.where((day) => day.id == lastWeekCells[lastCell]['dayId']).first;
+                  final lastDay = lastWeek.dayBacklink
+                      .where((day) => day.id == lastWeekCells[lastCell]['dayId'])
+                      .first;
 
                   if (lastWeekCells[lastCell]['cellId'][2] != 6) {
                     weekOpenedPeriod.add(lastWeekCells[lastCell]['cellId'][0]);
@@ -445,7 +463,9 @@ Future getWeekData(NPStream stream, String status) async {
 
                   // для отображения текущих ячеек
                   for (int cell = 0; cell < cells.length; cell++) {
-                    final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                    final day = week.dayBacklink
+                        .where((day) => day.id == cells[cell]['dayId'])
+                        .first;
 
                     // print('cell: ${cells[cell]}');
                     // индекс ячейки текущего дня
@@ -559,12 +579,14 @@ Future getWeekData(NPStream stream, String status) async {
                 for (int cell = 0; cell < cells.length; cell++) {
                   // добавляем индекс заполненного периода
                   // если воскресенье - НЕ добавляем
-                  if (cells[cell]['cellId'][2] != 6) {
-                    weekOpenedPeriod.add(cells[cell]['cellId'][0]);
-                  }
+                  // if (cells[cell]['cellId'][2] != 6) {
+                  //   weekOpenedPeriod.add(cells[cell]['cellId'][0]);
+                  // }
 
                   // день получаем по cells[cell]['dayId']
-                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                  final day = week.dayBacklink
+                      .where((day) => day.id == cells[cell]['dayId'])
+                      .first;
 
                   ///////////////////////////////
                   // Статус дня
@@ -606,23 +628,9 @@ Future getWeekData(NPStream stream, String status) async {
                       }
                     }
                   }
-                  // день не завершен
-                  else {
-                    print('day 335: ${day.id}');
-                    // добавляем новую ячейку с новым индексом
-                    // cellsWeekData.addAll([
-                    //   {
-                    //     'day_id': day.id,
-                    //     'cellId': cells[cell]['cellId'],
-                    //     'start_at': '',
-                    //     'completed_at': '',
-                    //     'statusCell': 'empty',
-                    //   }
-                    // ]);
-                  }
                 }
 
-                print('weekOpenedPeriod: $weekOpenedPeriod');
+                print('weekOpenedPeriod 3: $weekOpenedPeriod');
 
                 weeksOnPage.addAll([
                   {
@@ -669,7 +677,9 @@ Future getWeekData(NPStream stream, String status) async {
                   }
 
                   // день получаем по cells[cell]['dayId']
-                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                  final day = week.dayBacklink
+                      .where((day) => day.id == cells[cell]['dayId'])
+                      .first;
 
                   ///////////////////////////////
                   // Статус дня
@@ -833,7 +843,9 @@ Future getWeekData(NPStream stream, String status) async {
                 }
 
                 // день получаем по cells[cell]['dayId']
-                final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                final day = week.dayBacklink
+                    .where((day) => day.id == cells[cell]['dayId'])
+                    .first;
 
                 ///////////////////////////////
                 // Статус дня
@@ -950,7 +962,9 @@ Future getWeekData(NPStream stream, String status) async {
                 }
 
                 // день получаем по cells[cell]['dayId']
-                final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                final day = week.dayBacklink
+                    .where((day) => day.id == cells[cell]['dayId'])
+                    .first;
 
                 ///////////////////////////////
                 // Статус дня
@@ -1082,7 +1096,9 @@ Future getWeekData(NPStream stream, String status) async {
                 }
 
                 // день получаем по cells[cell]['dayId']
-                final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                final day = week.dayBacklink
+                    .where((day) => day.id == cells[cell]['dayId'])
+                    .first;
 
                 // ячейки
                 cellsWeekData.addAll([
@@ -1166,7 +1182,9 @@ Future getWeekData(NPStream stream, String status) async {
               }
 
               // день получаем по cells[cell]['dayId']
-              final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+              final day = week.dayBacklink
+                  .where((day) => day.id == cells[cell]['dayId'])
+                  .first;
 
               ///////////////////////////////
               // Статус дня
@@ -1320,7 +1338,9 @@ Future getWeekData(NPStream stream, String status) async {
         }
 
         // день получаем по cells[cell]['dayId']
-        final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+        final day = week.dayBacklink
+            .where((day) => day.id == cells[cell]['dayId'])
+            .first;
 
         ///////////////////////////////
         // Статус дня

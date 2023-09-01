@@ -116,7 +116,7 @@ List periodHoursIndexList = [
   },
 ];
 
-double defaultAllTitleHeight = 220;
+double defaultAllTitleHeight = 270;
 
 // высота периодов по умолчанию
 List<Map> weeksPeriodsHeight = [];

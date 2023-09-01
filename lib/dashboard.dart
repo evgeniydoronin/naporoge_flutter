@@ -30,9 +30,7 @@ class DashboardScreen extends StatelessWidget {
             // при переходе по вкладкам
             // необходим для сброса стейта с финальными ячейками
             // если пользователь ушёл с планнера без сохранения
-            context
-                .read<PlannerBloc>()
-                .add(const FinalCellForCreateStream(finalCellIDs: []));
+            context.read<PlannerBloc>().add(const FinalCellForCreateStream(finalCellIDs: []));
             // переход по вкладкам
             tabsRouter.setActiveIndex(val);
           },
@@ -50,35 +48,31 @@ class DashboardScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/home.svg',
-                  colorFilter:
-                      ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
                 ),
               ),
               activeIcon: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/home.svg',
-                  colorFilter: ColorFilter.mode(
-                      AppColor.activeBottomIcon, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.activeBottomIcon, BlendMode.srcIn),
                 ),
               ),
             ),
             BottomNavigationBarItem(
-              label: 'Календарь',
+              label: 'План',
               icon: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/planing.svg',
-                  colorFilter:
-                      ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
                 ),
               ),
               activeIcon: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/planing.svg',
-                  colorFilter: ColorFilter.mode(
-                      AppColor.activeBottomIcon, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.activeBottomIcon, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -88,16 +82,14 @@ class DashboardScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/diary.svg',
-                  colorFilter:
-                      ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
                 ),
               ),
               activeIcon: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/diary.svg',
-                  colorFilter: ColorFilter.mode(
-                      AppColor.activeBottomIcon, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.activeBottomIcon, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -107,16 +99,14 @@ class DashboardScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/statistic.svg',
-                  colorFilter:
-                      ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
                 ),
               ),
               activeIcon: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: SvgPicture.asset(
                   'assets/icons/statistic.svg',
-                  colorFilter: ColorFilter.mode(
-                      AppColor.activeBottomIcon, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.activeBottomIcon, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -128,8 +118,7 @@ class DashboardScreen extends StatelessWidget {
                   'assets/icons/more.svg',
                   height: 23,
                   fit: BoxFit.scaleDown,
-                  colorFilter:
-                      ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.grey3, BlendMode.srcIn),
                 ),
               ),
               activeIcon: Padding(
@@ -138,8 +127,7 @@ class DashboardScreen extends StatelessWidget {
                   'assets/icons/more.svg',
                   height: 23,
                   fit: BoxFit.scaleDown,
-                  colorFilter: ColorFilter.mode(
-                      AppColor.activeBottomIcon, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.activeBottomIcon, BlendMode.srcIn),
                 ),
               ),
             ),

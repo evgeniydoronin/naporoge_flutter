@@ -95,7 +95,7 @@ class _SplashScreenState extends State<SplashScreen> {
           // Первая неделя может создаться пустой без дней
           // проверяем и создаем дни
           if (week == null) {
-            print(activeStream);
+            // print(activeStream);
             // ни одной недели на курсе не создано
             if (activeStream.weekBacklink.isEmpty) {
               Map newWeekData = {};

@@ -7,7 +7,7 @@ import '../../../../../core/utils/get_week_number.dart';
 import '../../../domain/entities/stream_entity.dart';
 import '../core.dart';
 
-Future getWeekData(NPStream stream, String status) async {
+Future getWeekData222(NPStream stream, String status) async {
   Map data = {};
 
   // страниц планера
@@ -146,7 +146,7 @@ Future getWeekData(NPStream stream, String status) async {
       //////////////////////////////////////////
       // Подсказки
       // Текущая неделя пустая, создана системой
-      // дни текущей недели не созданы
+      // дни недели не созданы
       //////////////////////////////////////////
       if (week.dayBacklink.first.startAt == null) {
         // понедельник текущей недели
@@ -158,25 +158,30 @@ Future getWeekData(NPStream stream, String status) async {
 
         // находим последнюю неделю с созданными днями
         // первую неделю i == 0 не проверяем
-        getLastWeekWithDayData(int lastWeekIndex) {
-          int index = lastWeekIndex - 1;
-          Week? lastWeek = stream.weekBacklink.elementAt(index);
-          bool? isSystemConfirmed = lastWeek.systemConfirmed;
+        getLastWeekWithDayData(int index) {
+          Week? week;
+          int i = 0;
+          int weeks = stream.weekBacklink.length;
 
-          if (isSystemConfirmed != null && isSystemConfirmed) {
-            getLastWeekWithDayData(index--);
-            lastWeek = null;
-          } else {
-            lastWeek = stream.weekBacklink.elementAt(index);
+          while (i < weeks) {
+            int index = weeks - 1;
+            Week? lastWeek = stream.weekBacklink.elementAt(index);
+            if (lastWeek.userConfirmed != null) {
+              if (lastWeek.userConfirmed!) {
+                week = lastWeek;
+              }
+            }
+
+            weeks--;
           }
 
-          return lastWeek;
+          return week;
         }
 
         // первую неделю i == 0 не проверяем
-        if (i != 0) {
-          lastWeek = getLastWeekWithDayData(i);
-        }
+        lastWeek = getLastWeekWithDayData(i);
+
+        print('lastWeek: ${lastWeek?.id}');
 
         //////////////////////////////////////
         // Подсказки из предыдущей недели
@@ -518,7 +523,6 @@ Future getWeekData(NPStream stream, String status) async {
               ]);
             }
             // Дни НЕ созданы
-            // TODO: создать функционал
             else {
               print('Дни недели НЕ созданы 3');
 
@@ -539,44 +543,42 @@ Future getWeekData(NPStream stream, String status) async {
         // данных для подсказок нет
         else {
           print('данных для подсказок нет');
-          List weekOpenedPeriod = [];
 
           // Если требуется добавить новую неделю
           if (nextPageIndex != null) {
             print('требуется добавить новую неделю');
+            // Созданные недели
+            if (i < nextPageIndex) {
+              print('Созданные недели');
 
-            for (int cell = 0; cell < cells.length; cell++) {
-              // добавляем индекс заполненного периода
-              // если воскресенье - НЕ добавляем
-              if (cells[cell]['cellId'][2] != 6) {
-                weekOpenedPeriod.add(cells[cell]['cellId'][0]);
-              }
+              List weekOpenedPeriod = [];
+              // Дни созданы
+              if (cells.isNotEmpty) {
+                print('Неделя создана');
 
-              // день получаем по cells[cell]['dayId']
-              final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+                for (int cell = 0; cell < cells.length; cell++) {
+                  // добавляем индекс заполненного периода
+                  // если воскресенье - НЕ добавляем
+                  if (cells[cell]['cellId'][2] != 6) {
+                    weekOpenedPeriod.add(cells[cell]['cellId'][0]);
+                  }
 
-              ///////////////////////////////
-              // Статус дня
-              ///////////////////////////////
+                  // день получаем по cells[cell]['dayId']
+                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
-              // не пустая неделя
-              if (day.startAt != null) {
-                // День завершен
-                if (day.completedAt != null) {
-                  // час старта дела по плану
-                  String startAtHour = DateFormat('H').format(day.startAt!);
-                  // час завершения дела актуальный
-                  String completedAtHour = DateFormat('H').format(day.completedAt!);
-                  // print('startAtHour: $startAtHour');
-                  // print('completedAtHour: $completedAtHour');
+                  ///////////////////////////////
+                  // Статус дня
+                  ///////////////////////////////
 
-                  // Если час выполнения не совпадает
-                  if (startAtHour != completedAtHour) {
-                    // print('Если час выполнения не совпадает 33');
-                    // print('day: ${day.startAt}');
-                    // print('day: ${day.completedAt}');
-                    // print('cell: ${cells[cell]}');
+                  // День завершен
+                  if (day.completedAt != null) {
+                    // час завершения дела актуальный
+                    String completedAtHour = DateFormat('H').format(day.completedAt!);
+
+                    // print('day 33: ${day.id} : ${day.completedAt}');
+
                     for (Map hour in periodHoursIndexList) {
+                      // print('hour: $hour');
                       // час завершения дела актуальный
                       if (hour.keys.first == completedAtHour) {
                         // находим индекс дня ячейки
@@ -591,9 +593,9 @@ Future getWeekData(NPStream stream, String status) async {
                           {
                             'day_id': day.id,
                             'cellId': newHourCellId,
-                            'start_at': DateFormat('HH:mm').format(day.startAt!),
+                            'start_at': '',
                             'completed_at': DateFormat('HH:mm').format(day.completedAt!),
-                            'newCellId': true,
+                            'statusCell': 'completed',
                           }
                         ]);
 
@@ -602,55 +604,247 @@ Future getWeekData(NPStream stream, String status) async {
 
                         // print('hourIndex: $hourIndex');
                       }
-                      // час завершения дела НЕ актуальный
-                      else if (hour.keys.first == startAtHour) {
-                        // добавляем  ячейку
-                        cellsWeekData.addAll([
-                          {
-                            'day_id': day.id,
-                            'cellId': cells[cell]['cellId'],
-                            'start_at': DateFormat('HH:mm').format(day.startAt!),
-                            'completed_at': DateFormat('HH:mm').format(day.completedAt!),
-                            'oldCellId': true,
-                          }
-                        ]);
-                      }
                     }
                   }
-                  // Если час выполнения совпадает
-                  else if (startAtHour == completedAtHour) {
-                    // print('Если час выполнения совпадает');
+                  // день не завершен
+                  else {
+                    print('day 335: ${day.id}');
+                    // добавляем новую ячейку с новым индексом
+                    // cellsWeekData.addAll([
+                    //   {
+                    //     'day_id': day.id,
+                    //     'cellId': cells[cell]['cellId'],
+                    //     'start_at': '',
+                    //     'completed_at': '',
+                    //     'statusCell': 'empty',
+                    //   }
+                    // ]);
+                  }
+                }
+
+                print('weekOpenedPeriod 3: $weekOpenedPeriod');
+
+                weeksOnPage.addAll([
+                  {
+                    'pageIndex': i,
+                    'monday': weekMonday,
+                    'sunday': weekSunday,
+                    'cellsWeekData': cellsWeekData,
+                    'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
+                    'isEditable': false,
+                    'weekId': week.id,
+                  }
+                ]);
+              }
+              // Дни НЕ созданы
+              // TODO: создать функционал
+              else {
+                print('Дни недели НЕ созданы 1');
+
+                weeksOnPage.addAll([
+                  {
+                    'pageIndex': i,
+                    'monday': weekMonday,
+                    'sunday': weekSunday,
+                    'cellsWeekData': [],
+                    'weekOpenedPeriod': [0, 1, 2],
+                    'isEditable': true,
+                    'weekId': week.id,
+                  }
+                ]);
+              }
+            }
+            // Если НЕ требуется новая неделя
+            else {
+              List weekOpenedPeriod = [];
+              // Дни созданы
+              if (cells.isNotEmpty) {
+                print('Дни текущей недели и созданных. Без недели с подсказками 55');
+
+                for (int cell = 0; cell < cells.length; cell++) {
+                  // добавляем индекс заполненного периода
+                  // если воскресенье - НЕ добавляем
+                  if (cells[cell]['cellId'][2] != 6) {
+                    weekOpenedPeriod.add(cells[cell]['cellId'][0]);
+                  }
+
+                  // день получаем по cells[cell]['dayId']
+                  final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+
+                  ///////////////////////////////
+                  // Статус дня
+                  ///////////////////////////////
+
+                  // День завершен
+                  if (day.completedAt != null) {
+                    // час старта дела по плану
+                    String startAtHour = DateFormat('H').format(day.startAt!);
+                    // час завершения дела актуальный
+                    String completedAtHour = DateFormat('H').format(day.completedAt!);
+                    // print('startAtHour: $startAtHour');
+                    // print('completedAtHour: $completedAtHour');
+
+                    // TODO: продолжить тут
+                    // Если час выполнения не совпадает
+                    if (startAtHour != completedAtHour) {
+                      // print('Если час выполнения не совпадает 33');
+                      // print('day: ${day.startAt}');
+                      // print('day: ${day.completedAt}');
+                      // print('cell: ${cells[cell]}');
+                      for (Map hour in periodHoursIndexList) {
+                        // час завершения дела актуальный
+                        if (hour.keys.first == completedAtHour) {
+                          // находим индекс дня ячейки
+                          int gridIndex = cells[cell]['cellId'].last;
+                          // Создаем новый список
+                          List newHourCellId = List.from(hour.values.first);
+
+                          newHourCellId.add(gridIndex);
+
+                          // добавляем новую ячейку с новым индексом
+                          cellsWeekData.addAll([
+                            {
+                              'day_id': day.id,
+                              'cellId': newHourCellId,
+                              'start_at': DateFormat('HH:mm').format(day.startAt!),
+                              'completed_at': DateFormat('HH:mm').format(day.completedAt!),
+                              'newCellId': true,
+                            }
+                          ]);
+
+                          // добавляем индекс заполненного периода
+                          weekOpenedPeriod.add(newHourCellId[0]);
+
+                          // print('hourIndex: $hourIndex');
+                        }
+                        // час завершения дела НЕ актуальный
+                        else if (hour.keys.first == startAtHour) {
+                          // добавляем  ячейку
+                          cellsWeekData.addAll([
+                            {
+                              'day_id': day.id,
+                              'cellId': cells[cell]['cellId'],
+                              'start_at': DateFormat('HH:mm').format(day.startAt!),
+                              'completed_at': DateFormat('HH:mm').format(day.completedAt!),
+                              'oldCellId': true,
+                            }
+                          ]);
+                        }
+                      }
+                    }
+                    // Если час выполнения совпадает
+                    else if (startAtHour == completedAtHour) {
+                      // print('Если час выполнения совпадает');
+                      cellsWeekData.addAll([
+                        {
+                          'day_id': day.id,
+                          'cellId': cells[cell]['cellId'],
+                          'start_at': DateFormat('HH:mm').format(day.startAt!),
+                          'completed_at': DateFormat('HH:mm').format(day.completedAt!),
+                          'day_matches': true,
+                        }
+                      ]);
+                    }
+                  }
+                  // День НЕ завершен
+                  else {
                     cellsWeekData.addAll([
                       {
                         'day_id': day.id,
                         'cellId': cells[cell]['cellId'],
                         'start_at': DateFormat('HH:mm').format(day.startAt!),
-                        'completed_at': DateFormat('HH:mm').format(day.completedAt!),
-                        'day_matches': true,
+                        'completed_at': '',
                       }
                     ]);
                   }
                 }
-                // День НЕ завершен
-                else {
-                  cellsWeekData.addAll([
-                    {
-                      'day_id': day.id,
-                      'cellId': cells[cell]['cellId'],
-                      'start_at': DateFormat('HH:mm').format(day.startAt!),
-                      'completed_at': '',
-                    }
-                  ]);
+
+                weeksOnPage.addAll([
+                  {
+                    'pageIndex': i,
+                    'monday': weekMonday,
+                    'sunday': weekSunday,
+                    'cellsWeekData': cellsWeekData,
+                    'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
+                    'isEditable': false,
+                    'weekId': week.id,
+                  }
+                ]);
+              }
+              // Дни НЕ созданы
+              else {
+                print('Дни недели НЕ созданы 3');
+
+                weeksOnPage.addAll([
+                  {
+                    'pageIndex': i,
+                    'monday': weekMonday,
+                    'sunday': weekSunday,
+                    'cellsWeekData': [],
+                    'weekOpenedPeriod': [0, 1, 2],
+                    'isEditable': true,
+                    'weekId': week.id,
+                  }
+                ]);
+              }
+            }
+
+            ///////////////////////////////////////////////
+            // Будущая неделя
+            ///////////////////////////////////////////////
+            if (isNextWeek) {
+              print('nextPageIndex: $nextPageIndex');
+              print('defaultPageIndex: $defaultPageIndex');
+              if (defaultPageIndex + 1 == nextPageIndex) {
+                Week? nextWeek = stream.weekBacklink.elementAtOrNull(nextPageIndex);
+                // Неделя создана
+                if (nextWeek == null) {
+                  print('Будущая Неделя НЕ 55 создана');
+                  // Добавляем cледующую неделю
+                  allPages = stream.weekBacklink.length + 1;
+                  weeksOnPage.add({
+                    'pageIndex': nextPageIndex,
+                    'monday': weekMonday.add(const Duration(days: 7)),
+                    'sunday': weekSunday.add(const Duration(days: 7)),
+                    'cellsWeekData': [],
+                    'weekOpenedPeriod': [0, 1, 2],
+                    'isEditable': true,
+                    'weekId': null, // если неделя не создана - week.id НЕТ
+                    'weekOfYear': week.weekNumber! + 1,
+                  });
                 }
               }
-              // пустая неделя
-              else {
+            }
+          }
+          // Если НЕ требуется новая неделя
+          else {
+            print('НЕ требуется новая неделя');
+
+            List weekOpenedPeriod = [];
+            // Дни созданы
+            if (cells.isNotEmpty) {
+              print('Дни текущей недели и созданных. Без недели с подсказками 55');
+
+              for (int cell = 0; cell < cells.length; cell++) {
+                // добавляем индекс заполненного периода
+                // если воскресенье - НЕ добавляем
+                if (cells[cell]['cellId'][2] != 6) {
+                  weekOpenedPeriod.add(cells[cell]['cellId'][0]);
+                }
+
+                // день получаем по cells[cell]['dayId']
+                final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+
+                ///////////////////////////////
+                // Статус дня
+                ///////////////////////////////
+
                 // День завершен
                 if (day.completedAt != null) {
                   // час завершения дела актуальный
                   String completedAtHour = DateFormat('H').format(day.completedAt!);
 
-                  print('day 33: ${day.id} : ${day.completedAt}');
+                  // print('day 33: ${day.id} : ${day.completedAt}');
 
                   for (Map hour in periodHoursIndexList) {
                     // print('hour: $hour');
@@ -680,59 +874,59 @@ Future getWeekData(NPStream stream, String status) async {
                       // print('hourIndex: $hourIndex');
                     }
                   }
-                } else {}
-              }
-            }
-
-            weeksOnPage.addAll([
-              {
-                'pageIndex': i,
-                'monday': weekMonday,
-                'sunday': weekSunday,
-                'cellsWeekData': cellsWeekData,
-                'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
-                'isEditable': false,
-                'weekId': week.id,
-              }
-            ]);
-            ///////////////////////////////////////////////
-            // Будущая неделя
-            ///////////////////////////////////////////////
-            if (isNextWeek) {
-              if (defaultPageIndex + 1 == nextPageIndex) {
-                Week? nextWeek = stream.weekBacklink.elementAtOrNull(nextPageIndex);
-                // Неделя создана
-                if (nextWeek == null) {
-                  print('Будущая Неделя НЕ создана');
-                  // Добавляем cледующую неделю
-                  allPages = stream.weekBacklink.length + 1;
-                  weeksOnPage.add({
-                    'pageIndex': nextPageIndex,
-                    'monday': weekMonday.add(const Duration(days: 7)),
-                    'sunday': weekSunday.add(const Duration(days: 7)),
-                    'cellsWeekData': [],
-                    'weekOpenedPeriod': [0, 1, 2],
-                    'isEditable': true,
-                    'weekId': null, // если неделя не создана - week.id НЕТ
-                    'weekOfYear': week.weekNumber! + 1,
-                  });
+                }
+                // день не завершен
+                else {
+                  print('day 334: ${day.id}');
+                  // добавляем новую ячейку с новым индексом
+                  // cellsWeekData.addAll([
+                  //   {
+                  //     'day_id': day.id,
+                  //     'cellId': cells[cell]['cellId'],
+                  //     'start_at': '',
+                  //     'completed_at': '',
+                  //     'statusCell': 'empty',
+                  //   }
+                  // ]);
                 }
               }
+
+              weeksOnPage.addAll([
+                {
+                  'pageIndex': i,
+                  'monday': weekMonday,
+                  'sunday': weekSunday,
+                  'cellsWeekData': cellsWeekData,
+                  'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
+                  'isEditable': false,
+                  'weekId': week.id,
+                }
+              ]);
             }
-          }
-          // Если НЕ требуется новая неделя
-          else {
-            print('НЕ требуется новая неделя');
+            // Дни НЕ созданы
+            else {
+              print('Дни недели НЕ созданы 3');
+
+              weeksOnPage.addAll([
+                {
+                  'pageIndex': i,
+                  'monday': weekMonday,
+                  'sunday': weekSunday,
+                  'cellsWeekData': [],
+                  'weekOpenedPeriod': [0, 1, 2],
+                  'isEditable': true,
+                  'weekId': week.id,
+                }
+              ]);
+            }
           }
         }
       }
       //////////////////////////////////////////
-      // если дни текущей недели созданы
+      // дни недели созданы
       //////////////////////////////////////////
       else {
-        print('дни текущей недели созданы');
-        // Дни недели по порядку
-        var allWeekDays = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
+        print('дни текущей недели созданы 543');
 
         // Если требуется добавить новую неделю
         if (nextPageIndex != null) {
@@ -940,7 +1134,7 @@ Future getWeekData(NPStream stream, String status) async {
               Week? nextWeek = stream.weekBacklink.elementAtOrNull(nextPageIndex);
               // Неделя создана
               if (nextWeek == null) {
-                print('Будущая Неделя НЕ создана');
+                print('Будущая Неделя НЕ 33 создана');
                 // Добавляем cледующую неделю
                 allPages = stream.weekBacklink.length + 1;
                 weeksOnPage.add({
