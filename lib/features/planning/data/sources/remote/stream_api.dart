@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:naporoge/features/diary/domain/entities/diary_note_entity.dart';
 
 import '../../../../../../core/services/http_client/dio_client.dart';
 import '../../../../../../core/constants/endpoints.dart';
@@ -80,6 +81,45 @@ class StreamApi {
         data: dayResultData,
       );
       // print(response);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> createDiaryNoteApi(Map noteData) async {
+    // print('updateStreamApi: $streamData');
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.createDiaryNote,
+        data: noteData,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> updateDiaryNoteApi(Map data) async {
+    // print('updateDiaryNoteApi: $data');
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.updateDiaryNote,
+        data: data,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> deleteDiaryNoteApi(Map data) async {
+    // print('updateDiaryNoteApi: $data');
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.deleteDiaryNote,
+        data: data,
+      );
       return response;
     } catch (e) {
       rethrow;

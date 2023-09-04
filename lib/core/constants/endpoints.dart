@@ -5,10 +5,10 @@ class Endpoints {
   static const String baseUrl = "https://np-app.evgeniydoronin.com/api";
 
   // receiveTimeout
-  static const Duration receiveTimeout = Duration(seconds: 3);
+  static const Duration receiveTimeout = Duration(seconds: 10);
 
   // connectTimeout
-  static const Duration connectionTimeout = Duration(seconds: 5);
+  static const Duration connectionTimeout = Duration(seconds: 10);
 
   // User data
   static const String smsCode = '/code';
@@ -22,4 +22,7 @@ class Endpoints {
   static const String updateWeek = '/update-week';
   static const String updateWeekProgress = '/update-week-progress';
   static const String createDayResult = '/create-day-result';
+  static const String createDiaryNote = '/create-note';
+  static const String updateDiaryNote = '/update-note';
+  static const String deleteDiaryNote = '/delete-note';
 }

@@ -50,9 +50,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     DiaryItemsScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<DiaryItemsScreenRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const DiaryItemsScreen(),
+        child: DiaryItemsScreen(
+          key: args.key,
+          dateTime: args.dateTime,
+        ),
       );
     },
     DiaryRulesScreenRoute.name: (routeData) {
@@ -320,16 +324,40 @@ class DiaryEmptyRouter extends PageRouteInfo<void> {
 
 /// generated route for
 /// [DiaryItemsScreen]
-class DiaryItemsScreenRoute extends PageRouteInfo<void> {
-  const DiaryItemsScreenRoute({List<PageRouteInfo>? children})
-      : super(
+class DiaryItemsScreenRoute extends PageRouteInfo<DiaryItemsScreenRouteArgs> {
+  DiaryItemsScreenRoute({
+    Key? key,
+    required DateTime dateTime,
+    List<PageRouteInfo>? children,
+  }) : super(
           DiaryItemsScreenRoute.name,
+          args: DiaryItemsScreenRouteArgs(
+            key: key,
+            dateTime: dateTime,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'DiaryItemsScreenRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<DiaryItemsScreenRouteArgs> page =
+      PageInfo<DiaryItemsScreenRouteArgs>(name);
+}
+
+class DiaryItemsScreenRouteArgs {
+  const DiaryItemsScreenRouteArgs({
+    this.key,
+    required this.dateTime,
+  });
+
+  final Key? key;
+
+  final DateTime dateTime;
+
+  @override
+  String toString() {
+    return 'DiaryItemsScreenRouteArgs{key: $key, dateTime: $dateTime}';
+  }
 }
 
 /// generated route for

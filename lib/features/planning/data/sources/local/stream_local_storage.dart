@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+
 import '../../../../../core/services/db_client/isar_service.dart';
+import '../../../../diary/domain/entities/diary_note_entity.dart';
 import '../../../domain/entities/stream_entity.dart';
 
 class StreamLocalStorage {
@@ -186,5 +188,43 @@ class StreamLocalStorage {
     final day = await isar.days.get(dayId);
 
     return day;
+  }
+
+  Future createDiaryNote(Map data) async {
+    final isar = await isarService.db;
+
+    final diaryNote = DiaryNote()
+      ..id = data['note']['id']
+      ..createAt = DateTime.parse(DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(data['note']['created_at'])))
+      ..updateAt = DateTime.parse(DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(data['note']['updated_at'])))
+      ..diaryNote = data['note']['note'];
+
+    isar.writeTxnSync(() async {
+      isar.diaryNotes.putSync(diaryNote);
+    });
+
+    return diaryNote;
+  }
+
+  Future updateDiaryNote(Map data) async {
+    final isar = await isarService.db;
+    final note = await isar.diaryNotes.get(data['note']['id']);
+
+    note!.diaryNote = data['note']['note'];
+
+    isar.writeTxnSync(() async {
+      isar.diaryNotes.putSync(note);
+    });
+
+    return note;
+  }
+
+  Future deleteDiaryNote(Map data) async {
+    final isar = await isarService.db;
+
+    await isar.writeTxn(() async {
+      final success = await isar.diaryNotes.delete(data['note_id']);
+      print('Recipe deleted: $success');
+    });
   }
 }

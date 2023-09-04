@@ -47,6 +47,21 @@ class StreamController {
     return dayResult;
   }
 
+  Future createDiaryNote(data) async {
+    final note = await streamRepository.createDiaryNoteRequested(data);
+    return note;
+  }
+
+  Future updateDiaryNote(data) async {
+    final note = await streamRepository.updateDiaryNoteRequested(data);
+    return note;
+  }
+
+  Future deleteDiaryNote(data) async {
+    final note = await streamRepository.deleteDiaryNoteRequested(data);
+    return note;
+  }
+
 // Future<List<UserModel>> getUsers() async {
 //   final users = await userRepository.getUsersRequested();
 //   return users;

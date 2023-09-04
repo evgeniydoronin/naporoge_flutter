@@ -1,27 +1,40 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:naporoge/features/diary/domain/entities/diary_note_entity.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/services/db_client/isar_service.dart';
 import '../../../../core/utils/circular_loading.dart';
 import '../../../planning/data/sources/local/stream_local_storage.dart';
-import '../utils/get_main_diary_screen_data.dart';
-import '../widgets/diaryCalendar.dart';
+import '../../../planning/presentation/stream_controller.dart';
+import '../bloc/diary_bloc.dart';
+import '../utils/get_diary_last_note.dart';
+import '../widgets/diary_calendar_widget.dart';
+import '../widgets/diary_day_results_widget.dart';
+import '../widgets/diary_note_widget.dart';
 
 @RoutePage(name: 'DiaryEmptyRouter')
 class DiaryEmptyRouterPage extends AutoRouter {}
 
 @RoutePage()
-class DiaryScreen extends StatelessWidget {
+class DiaryScreen extends StatefulWidget {
   const DiaryScreen({Key? key}) : super(key: key);
 
+  @override
+  State<DiaryScreen> createState() => _DiaryScreenState();
+}
+
+class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     TextEditingController noteController = TextEditingController();
     final formKey = GlobalKey<FormState>();
     final isarService = IsarService();
+    final _streamController = getIt<StreamController>();
     final streamLocalStorage = StreamLocalStorage();
 
     return Scaffold(
@@ -48,374 +61,144 @@ class DiaryScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: FutureBuilder(
-          future: getMainDiaryData(DateTime.now()),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              // print('snapshot.data: ${snapshot.data}');
-
-              return ListView(
-                children: [
-                  Text(
-                    'Сегодня: ${DateFormat('dd MMMM, EEEE', 'ru_RU').format(DateTime.now())}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 25),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Container(
-                      // padding:
-                      //     const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
-                      decoration: AppLayout.boxDecorationShadowBG,
-                      child: Theme(
-                        data: ThemeData().copyWith(
-                          dividerColor: Colors.transparent,
-                        ),
-                        child: ExpansionTile(
-                          initiallyExpanded: true,
-                          maintainState: true,
-                          tilePadding: const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
-                          title: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Календарь',
-                                    style: AppFont.scaffoldTitleDark,
-                                  ),
-                                ],
-                              ),
-                            ],
+      body: ListView(
+        children: [
+          Text(
+            'Сегодня: ${DateFormat('dd MMMM, EEEE', 'ru_RU').format(DateTime.now())}',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 25),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              // padding:
+              //     const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
+              decoration: AppLayout.boxDecorationShadowBG,
+              child: Theme(
+                data: ThemeData().copyWith(
+                  dividerColor: Colors.transparent,
+                ),
+                child: ExpansionTile(
+                  initiallyExpanded: true,
+                  maintainState: true,
+                  tilePadding: const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
+                  title: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Календарь',
+                            style: AppFont.scaffoldTitleDark,
                           ),
-                          // Contents
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 5,
-                                right: 5,
-                              ),
-                              child: DiaryCalendarBox(),
-                            )
-                          ],
-                        ),
+                        ],
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Container(
-                      decoration: AppLayout.boxDecorationShadowBG,
-                      child: Theme(
-                        data: ThemeData().copyWith(
-                          dividerColor: Colors.transparent,
-                        ),
-                        child: ExpansionTile(
-                          tilePadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 18),
-                          title: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Учет результатов',
-                                    style: AppFont.scaffoldTitleDark,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          // Contents
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    decoration:
-                                        BoxDecoration(border: Border(top: BorderSide(width: 1, color: AppColor.grey1))),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 18),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 17),
-                                decoration:
-                                    BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Фактическое время начала дела'),
-                                    Text('16:20'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 18),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 17),
-                                decoration:
-                                    BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Объём выполнения'),
-                                    Text('90%'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 18),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 17),
-                                decoration:
-                                    BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Результат дня',
-                                      style: AppFont.formLabel,
-                                    ),
-                                    const SizedBox(height: 5),
-                                    TextField(
-                                      readOnly: true,
-                                      style: TextStyle(fontSize: AppFont.small, color: Colors.red),
-                                      decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: AppColor.grey1,
-                                          hintText: '10 кругов',
-                                          hintStyle: TextStyle(color: AppColor.accent),
-                                          contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-                                          isDense: true,
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius: AppLayout.smallRadius,
-                                              borderSide: BorderSide(width: 1, color: AppColor.grey1))),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 18),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 17),
-                                decoration:
-                                    BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Сила нежеланий'),
-                                    Text('Средняя'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 18),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 17),
-                                decoration:
-                                    BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Иные помехи и трудности',
-                                      style: AppFont.formLabel,
-                                    ),
-                                    const SizedBox(height: 5),
-                                    TextField(
-                                      readOnly: true,
-                                      style: TextStyle(fontSize: AppFont.small, color: Colors.red),
-                                      decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: AppColor.grey1,
-                                          hintText: 'Много сахара',
-                                          hintStyle: TextStyle(color: AppColor.accent),
-                                          contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-                                          isDense: true,
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius: AppLayout.smallRadius,
-                                              borderSide: BorderSide(width: 1, color: AppColor.grey1))),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 18),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 17),
-                                decoration:
-                                    BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Сила желаний'),
-                                    Text('Большая'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 18),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 17),
-                                decoration:
-                                    BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Удалось порадоваться?'),
-                                    SvgPicture.asset('assets/icons/342.svg'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 25),
-                          ],
-                        ),
+                  // Contents
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 5,
+                        right: 5,
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Container(
-                      decoration: AppLayout.boxDecorationShadowBG,
-                      child: Theme(
-                        data: ThemeData().copyWith(
-                          dividerColor: Colors.transparent,
-                        ),
-                        child: ExpansionTile(
-                          tilePadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 18),
-                          title: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Заметки',
-                                    style: AppFont.scaffoldTitleDark,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          // Contents
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            top: BorderSide(width: 1, color: AppColor.grey1),
-                                            bottom: BorderSide(width: 1, color: AppColor.grey1))),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '04.01.2023 / 13:24',
-                                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: AppFont.smaller),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          'С другой стороны сложившаяся структура организации обеспечивает широкому кругу (специалистов) участие в формировании существенных финансовых и административных условий. Разнообразный и богатый опыт начало повседневной работы по формированию н позиции',
-                                          style: TextStyle(color: AppColor.blk),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Посмотреть все заметки',
-                              style: TextStyle(
-                                  color: AppColor.primary, fontSize: AppFont.small, fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Container(
-                      decoration: AppLayout.boxDecorationShadowBGBorderNone,
-                      child: Form(
-                        key: formKey,
-                        child: TextFormField(
-                          controller: noteController,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Заполните обязательное поле!';
-                            }
-                            return null;
-                          },
-                          style: TextStyle(fontSize: AppFont.small, color: AppColor.blk),
-                          maxLines: 5,
-                          autofocus: false,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: AppColor.lightBGItem,
-                              hintText: 'Написать заметку',
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                              isDense: true,
-                              errorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(color: Colors.redAccent),
-                                  borderRadius: AppLayout.primaryRadius),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: AppLayout.primaryRadius,
-                                borderSide: BorderSide(width: 1, color: AppColor.lightBGItem),
-                              )),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          CircularLoading(context).startLoading();
+                      child: DiaryCalendarWidget(),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          const DiaryDayResultsWidget(),
+          const SizedBox(height: 15),
+          const DiaryNoteWidget(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              decoration: AppLayout.boxDecorationShadowBGBorderNone,
+              child: Form(
+                key: formKey,
+                child: TextFormField(
+                  controller: noteController,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Заполните обязательное поле!';
+                    }
+                    return null;
+                  },
+                  style: TextStyle(fontSize: AppFont.small, color: AppColor.blk),
+                  maxLines: 5,
+                  maxLength: 255,
+                  autofocus: false,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.lightBGItem,
+                      hintText: 'Написать заметку',
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      isDense: true,
+                      errorBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.redAccent), borderRadius: AppLayout.primaryRadius),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: AppLayout.primaryRadius,
+                        borderSide: BorderSide(width: 1, color: AppColor.lightBGItem),
+                      )),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 25),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  CircularLoading(context).startLoading();
+                  var user = await isarService.getUser();
 
-                          final isar = await isarService.db;
-                          var user = await isarService.getUser();
+                  Map diaryNoteData = {
+                    'user_id': user.single.id,
+                    'note': noteController.text,
+                    'created_at': DateTime.now().toString(),
+                    'updated_at': DateTime.now().toString(),
+                  };
 
-                          print('noteController: ${noteController.text}');
-                          print('user: ${user.single.id}');
+                  // print('diaryNote: $diaryNoteData');
+                  // create note on server
+                  var createNoteResults = await _streamController.createDiaryNote(diaryNoteData);
 
-                          if (context.mounted) {
-                            FocusScope.of(context).unfocus();
-                            noteController.clear();
-                            CircularLoading(context).stopAutoRouterLoading();
-                          }
-                        }
-                      },
-                      style: AppLayout.accentBTNStyle,
-                      child: Text(
-                        'Добавить заметку',
-                        style: AppFont.regularSemibold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                ],
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          }),
+                  // print('createNoteResults: $createNoteResults');
+                  // save on local
+                  var lastNote = await streamLocalStorage.createDiaryNote(createNoteResults);
+
+                  if (lastNote != null) {
+                    // print('localNote: ${localNote.id}');
+                    if (context.mounted) {
+                      DiaryNote note = lastNote;
+                      Map _lastNote = {
+                        'id': note.id,
+                        'diaryNote': note.diaryNote,
+                        'createAt': note.createAt,
+                        'updateAt': note.updateAt,
+                      };
+                      context.read<DiaryBloc>().add(DiaryLastNoteChanged(_lastNote));
+                      CircularLoading(context).stopAutoRouterLoading();
+                      // FocusScope.of(context).unfocus();
+                      noteController.clear();
+                    }
+                  }
+                }
+              },
+              style: AppLayout.accentBTNStyle,
+              child: Text(
+                'Добавить заметку',
+                style: AppFont.regularSemibold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 25),
+        ],
+      ),
     );
   }
 }

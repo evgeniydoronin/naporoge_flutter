@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:naporoge/features/diary/presentation/bloc/diary_bloc.dart';
 import 'package:naporoge/features/planning/presentation/bloc/planner_bloc.dart';
 import 'core/constants/app_theme.dart';
 
@@ -31,6 +32,12 @@ class DashboardScreen extends StatelessWidget {
             // необходим для сброса стейта с финальными ячейками
             // если пользователь ушёл с планнера без сохранения
             context.read<PlannerBloc>().add(const FinalCellForCreateStream(finalCellIDs: []));
+
+            // сброс Заметок в Дневнике для Заметок на текущий день
+            // context.read<DiaryBloc>().add(DiaryLastNoteChanged({'createAt': DateTime.now()}));
+
+            // сброс Заметок в Дневнике для Результатов дня на текущий день
+            // context.read<DiaryBloc>().add(DiaryDayResultsChanged({'createAt': DateTime.now()}));
             // переход по вкладкам
             tabsRouter.setActiveIndex(val);
           },

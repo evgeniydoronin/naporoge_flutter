@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:naporoge/features/diary/domain/entities/diary_note_entity.dart';
 import '../sources/remote/stream_api.dart';
 
 class StreamRepository {
@@ -56,6 +57,33 @@ class StreamRepository {
       final response = await streamApi.createDayResultApi(data);
       return response.data;
     } on DioError catch (e) {
+      rethrow;
+    }
+  }
+
+  Future createDiaryNoteRequested(Map data) async {
+    try {
+      final response = await streamApi.createDiaryNoteApi(data);
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateDiaryNoteRequested(Map data) async {
+    try {
+      final response = await streamApi.updateDiaryNoteApi(data);
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future deleteDiaryNoteRequested(Map data) async {
+    try {
+      final response = await streamApi.deleteDiaryNoteApi(data);
+      return response.data;
+    } catch (e) {
       rethrow;
     }
   }
