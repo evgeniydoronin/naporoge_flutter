@@ -122,11 +122,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
               listener: (context, state) {},
               builder: (context, state) {
                 double wrapHeight =
-                    defaultAllTitleHeight + context
-                        .read<PlannerBloc>()
-                        .state
-                        .wrapWeekBoxHeight
-                        .toDouble();
+                    defaultAllTitleHeight + context.read<PlannerBloc>().state.wrapWeekBoxHeight.toDouble();
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 0),
                   height: wrapHeight,
@@ -139,16 +135,23 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                         String weekSunday = DateFormat('dd.MM').format(pageData['weeksOnPage'][pageIndex]['sunday']);
                         String weekPeriod = "$weekMonday - $weekSunday";
 
+                        print(
+                            "pageData['weeksOnPage']: ${pageData['weeksOnPage'][pageIndex]['cellsWeekData'].isEmpty}");
+
                         // план не составлялся
                         Map isPlannedWeek = {};
-                        if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'][0]['start_at'] == '') {
+                        if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'].isNotEmpty) {
+                          if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'][0]['start_at'] == '') {
+                            isPlannedWeek['title'] = 'План не составлен';
+                            isPlannedWeek['color'] = AppColor.red;
+                          } else {
+                            isPlannedWeek['title'] = 'План составлен';
+                            isPlannedWeek['color'] = AppColor.primary;
+                          }
+                        } else {
                           isPlannedWeek['title'] = 'План не составлен';
                           isPlannedWeek['color'] = AppColor.red;
-                        } else {
-                          isPlannedWeek['title'] = 'План составлен';
-                          isPlannedWeek['color'] = AppColor.primary;
                         }
-
 
                         return ListView(
                           shrinkWrap: true,
@@ -228,7 +231,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                           style: TextStyle(
                                               fontSize: AppFont.smaller,
                                               color:
-                                              weekDaysNameRu[dayIndex] == 'вс' ? AppColor.grey2 : AppColor.accent),
+                                                  weekDaysNameRu[dayIndex] == 'вс' ? AppColor.grey2 : AppColor.accent),
                                         ),
                                       );
                                     },
@@ -241,7 +244,10 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                               child: Container(
                                 margin: const EdgeInsets.only(top: 20),
                                 height: 50,
-                                child: Text(isPlannedWeek['title'], style: TextStyle(color: isPlannedWeek['color']),),
+                                child: Text(
+                                  isPlannedWeek['title'],
+                                  style: TextStyle(color: isPlannedWeek['color']),
+                                ),
                               ),
                             ),
                           ],
@@ -382,10 +388,10 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     // добавляем в стейт данные по редактируемой неделе
     // если ячейки дней не созданы
     context.read<PlannerBloc>().add(EditableWeekStream(editableWeekData: {
-      'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
-      'monday': pageData['weeksOnPage'][pageIndex]['monday'],
-      'weekOfYear': pageData['weeksOnPage'][pageIndex]['weekOfYear'],
-    }));
+          'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
+          'monday': pageData['weeksOnPage'][pageIndex]['monday'],
+          'weekOfYear': pageData['weeksOnPage'][pageIndex]['weekOfYear'],
+        }));
 
     // print("ячейки дней : ${pageData['weeksOnPage'][pageIndex]['weekId']}");
     //
@@ -430,15 +436,15 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
               height: period[periodIndex].isExpanded ? (period[periodIndex].rows * 43) : 0,
               child: isEditable
                   ? EditableDayPeriodRow(
-                periodIndex: periodIndex,
-                daysData: cellsData,
-              )
+                      periodIndex: periodIndex,
+                      daysData: cellsData,
+                    )
                   : DayPeriodRow(
-                periodIndex: periodIndex,
-                daysData: cellsData,
-                weeksOnPage: pageData['weeksOnPage'][pageIndex],
-                stream: widget.stream,
-              ),
+                      periodIndex: periodIndex,
+                      daysData: cellsData,
+                      weeksOnPage: pageData['weeksOnPage'][pageIndex],
+                      stream: widget.stream,
+                    ),
             ),
           ],
         );
@@ -469,9 +475,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
     // print('weekOnPage: ${widget.weeksOnPage}');
     // print('daysData: $daysData');
 
-    Week week = widget.stream.weekBacklink
-        .where((week) => week.id == widget.weeksOnPage['weekId'])
-        .first;
+    Week week = widget.stream.weekBacklink.where((week) => week.id == widget.weeksOnPage['weekId']).first;
     // print('week: ${week}');
 
     return ListView.builder(
@@ -531,9 +535,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                           if (eq(daysData[i]['cellId'], [periodIndex, rowIndex, gridIndex])) {
                             // print('daysData[i] : ${daysData[i]}');
                             // Находим объект ДНЯ и добавляем
-                            Day day = week.dayBacklink
-                                .where((day) => day.id == daysData[i]['day_id'])
-                                .first;
+                            Day day = week.dayBacklink.where((day) => day.id == daysData[i]['day_id']).first;
                             // print("day: ${day.completedAt}");
                             dayData = {
                               ...daysData[i],
@@ -571,12 +573,13 @@ class DayPeriodExistedCell extends StatefulWidget {
   final Map weeksOnPage;
   final int periodIndex, rowIndex, gridIndex;
 
-  const DayPeriodExistedCell({super.key,
-    required this.dayData,
-    required this.periodIndex,
-    required this.rowIndex,
-    required this.gridIndex,
-    required this.weeksOnPage});
+  const DayPeriodExistedCell(
+      {super.key,
+      required this.dayData,
+      required this.periodIndex,
+      required this.rowIndex,
+      required this.gridIndex,
+      required this.weeksOnPage});
 
   @override
   State<DayPeriodExistedCell> createState() => _DayPeriodExistedCellState();

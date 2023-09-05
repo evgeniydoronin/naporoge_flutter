@@ -1,9 +1,6 @@
 Future getMainDiaryData(date) async {
+  await Future.delayed(const Duration(milliseconds: 200));
   Map data = {};
-
-  // данные для календаря за выбранный месяц
-  Map calendarData = await getDiaryCalendarData(date);
-  data['calendarData'] = calendarData;
 
   // данные для учета результатов
   Map dayResultsData = await getDiaryDayResultsData(date);
@@ -16,26 +13,18 @@ Future getMainDiaryData(date) async {
   return data;
 }
 
-Future getDiaryCalendarData(date) async {
-  await Future.delayed(const Duration(seconds: 1));
-  Map data = {};
-  data['test'] = 'qwqw';
-  print('getDiaryCalendarData');
-  return data;
-}
-
 Future getDiaryDayResultsData(date) async {
   // await Future.delayed(const Duration(seconds: 2));
   Map data = {};
-  data['test'] = 'qwqw';
-  print('getDiaryDayResultsData');
+  data['date'] = date;
+  print('getDiaryDayResultsData: $date');
   return data;
 }
 
 Future getNoteData(date) async {
-  // await Future.delayed(const Duration(seconds: 2));
   Map data = {};
-  data['test'] = 'qwqw';
-  print('getNoteData');
+  data['date'] = date;
+  print('getNoteData: $date');
+
   return data;
 }

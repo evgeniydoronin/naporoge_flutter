@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 class CircularLoading {
@@ -27,6 +28,13 @@ class CircularLoading {
 
   Future<void> stopLoading() async {
     Navigator.of(context).pop();
+  }
+
+  Future<void> stopAutoRouterLoading() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (context.mounted) {
+      context.router.pop();
+    }
   }
 
   Future<void> showError(Object? error) async {

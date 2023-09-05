@@ -41,10 +41,11 @@ class DiaryScreen extends StatelessWidget {
         ],
       ),
       body: FutureBuilder(
-          future: getMainDiaryData(DateTime.now),
+          future: getMainDiaryData(DateTime.now()),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              print('snapshot.data: ${snapshot.data}');
+              // print('snapshot.data: ${snapshot.data}');
+
               return ListView(
                 children: [
                   Text(
@@ -65,6 +66,7 @@ class DiaryScreen extends StatelessWidget {
                         ),
                         child: ExpansionTile(
                           initiallyExpanded: true,
+                          maintainState: true,
                           tilePadding: const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
                           title: Column(
                             children: [
@@ -85,7 +87,7 @@ class DiaryScreen extends StatelessWidget {
                                 left: 5,
                                 right: 5,
                               ),
-                              child: DiaryCalendar(),
+                              child: DiaryCalendarBox(),
                             )
                           ],
                         ),
