@@ -4,6 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/services/db_client/isar_service.dart';
+import '../../../../core/utils/circular_loading.dart';
+import '../../../planning/data/sources/local/stream_local_storage.dart';
 import '../utils/get_main_diary_screen_data.dart';
 import '../widgets/diaryCalendar.dart';
 
@@ -16,6 +19,11 @@ class DiaryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController noteController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    final isarService = IsarService();
+    final streamLocalStorage = StreamLocalStorage();
+
     return Scaffold(
       backgroundColor: AppColor.lightBG,
       appBar: AppBar(
@@ -343,20 +351,33 @@ class DiaryScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Container(
                       decoration: AppLayout.boxDecorationShadowBGBorderNone,
-                      child: TextFormField(
-                        style: TextStyle(fontSize: AppFont.small, color: AppColor.grey3),
-                        maxLines: 5,
-                        autofocus: false,
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: AppColor.lightBGItem,
-                            hintText: 'Написать заметку',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                            isDense: true,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: AppLayout.primaryRadius,
-                              borderSide: BorderSide(width: 1, color: AppColor.lightBGItem),
-                            )),
+                      child: Form(
+                        key: formKey,
+                        child: TextFormField(
+                          controller: noteController,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Заполните обязательное поле!';
+                            }
+                            return null;
+                          },
+                          style: TextStyle(fontSize: AppFont.small, color: AppColor.blk),
+                          maxLines: 5,
+                          autofocus: false,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: AppColor.lightBGItem,
+                              hintText: 'Написать заметку',
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                              isDense: true,
+                              errorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: Colors.redAccent),
+                                  borderRadius: AppLayout.primaryRadius),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: AppLayout.primaryRadius,
+                                borderSide: BorderSide(width: 1, color: AppColor.lightBGItem),
+                              )),
+                        ),
                       ),
                     ),
                   ),
@@ -364,7 +385,23 @@ class DiaryScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          CircularLoading(context).startLoading();
+
+                          final isar = await isarService.db;
+                          var user = await isarService.getUser();
+
+                          print('noteController: ${noteController.text}');
+                          print('user: ${user.single.id}');
+
+                          if (context.mounted) {
+                            FocusScope.of(context).unfocus();
+                            noteController.clear();
+                            CircularLoading(context).stopAutoRouterLoading();
+                          }
+                        }
+                      },
                       style: AppLayout.accentBTNStyle,
                       child: Text(
                         'Добавить заметку',
