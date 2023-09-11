@@ -222,7 +222,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
               },
               child: Container(
                 width: double.maxFinite,
-                margin: const EdgeInsets.only(bottom: 2),
+                margin: const EdgeInsets.only(bottom: 3),
                 padding: const EdgeInsets.only(top: 10, bottom: 10, left: 6, right: 10),
                 decoration: BoxDecoration(
                     color: AppColor.grey1,
@@ -263,139 +263,6 @@ class DayPeriodRow extends StatefulWidget {
 }
 
 class _DayPeriodRowState extends State<DayPeriodRow> {
-  @override
-  Widget build(BuildContext context) {
-    List newCells = [];
-    int periodIndex = widget.periodIndex;
-
-    return BlocConsumer<PlannerBloc, PlannerState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: period[periodIndex].rows,
-          itemBuilder: (BuildContext context, int rowIndex) {
-            String hourStart = (period[periodIndex].start + rowIndex).toString();
-            String hourFinished = '';
-            if (int.parse(hourStart) < 9) {
-              hourStart = '0$hourStart';
-              hourFinished = '0${(period[periodIndex].start + rowIndex + 1).toString()}';
-            } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
-              hourFinished = (period[periodIndex].start + rowIndex + 1).toString();
-            } else if (int.parse(hourStart) == 23) {
-              hourFinished = '00';
-            } else if (int.parse(hourStart) > 23) {
-              hourStart = '0${(rowIndex - 5).toString()}';
-              hourFinished = '0${(rowIndex - 4).toString()}';
-            }
-
-            return Container(
-              padding: const EdgeInsets.only(bottom: 1),
-              color: AppColor.grey1,
-              height: 43,
-              child: Row(
-                children: [
-                  Container(
-                    color: Colors.white,
-                    width: 49,
-                    margin: const EdgeInsets.only(right: 1),
-                    child: Center(
-                      child: Text(
-                        '$hourStart - $hourFinished',
-                        style: TextStyle(fontSize: AppFont.smaller, color: AppColor.grey3),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints constraints) {
-                        return GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 7,
-                            crossAxisSpacing: 1,
-                            mainAxisSpacing: 10,
-                          ),
-                          itemCount: 7,
-                          itemBuilder: (BuildContext context, gridIndex) {
-                            return gridIndex == 6
-                                ? DayPeriodCell(
-                                    periodIndex: periodIndex,
-                                    gridIndex: gridIndex,
-                                    rowIndex: rowIndex,
-                                    constraints: constraints,
-                                  )
-                                : GestureDetector(
-                                    onTapDown: null,
-                                    onTapUp: null,
-                                    onTap: () async {
-                                      // print('SelectCell');
-
-                                      newCells.add([periodIndex, rowIndex, gridIndex]);
-
-                                      context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: newCells));
-
-                                      _dialogBuilder(newCells);
-
-                                      // dialogBuilder.open();
-                                    },
-                                    onDoubleTap: () {
-                                      newCells.add([periodIndex, rowIndex, gridIndex]);
-                                      deleteFromList(newCells);
-                                      setState(() {});
-                                    },
-                                    onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
-                                      double cellWidth = (constraints.maxWidth / 7).floorToDouble();
-                                      double widthWeekPeriodRow = constraints.maxWidth - 6; // 303.0, 6 - grid gap
-                                      double xGlobalPosition = details.globalPosition.dx -
-                                          70; // (20 : padding-right) + (50 : 04-05 hours period)
-
-                                      for (int i = 0; i < 6; i++) {
-                                        double min = cellWidth * i;
-                                        double max = min + cellWidth;
-                                        if (xGlobalPosition > min && xGlobalPosition <= max) {
-                                          newCells.add([periodIndex, rowIndex, i]);
-
-                                          context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: [
-                                                [periodIndex, rowIndex, i]
-                                              ]));
-                                        }
-                                      }
-                                    },
-                                    onLongPressEnd: (details) {
-                                      var _ids = newCells.removeDuplicates();
-
-                                      _dialogBuilder(_ids);
-
-                                      context
-                                          .read<PlannerBloc>()
-                                          .add(SelectCell(selectedCellIDs: [newCells.removeDuplicates()]));
-                                      setState(() {});
-                                    },
-                                    child: DayPeriodCell(
-                                      periodIndex: periodIndex,
-                                      gridIndex: gridIndex,
-                                      rowIndex: rowIndex,
-                                      constraints: constraints,
-                                    ),
-                                  );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
   _dialogBuilder(ids) {
     return showDialog<void>(
       barrierDismissible: false,
@@ -506,6 +373,149 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
       },
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    List newCells = [];
+    int periodIndex = widget.periodIndex;
+
+    return BlocConsumer<PlannerBloc, PlannerState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: period[periodIndex].rows,
+          itemBuilder: (BuildContext context, int rowIndex) {
+            String hourStart = (period[periodIndex].start + rowIndex).toString();
+            String hourFinished = '';
+            if (int.parse(hourStart) < 9) {
+              hourStart = '0$hourStart';
+              hourFinished = '0${(period[periodIndex].start + rowIndex + 1).toString()}';
+            } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
+              hourFinished = (period[periodIndex].start + rowIndex + 1).toString();
+            } else if (int.parse(hourStart) == 23) {
+              hourFinished = '00';
+            } else if (int.parse(hourStart) > 23) {
+              hourStart = '0${(rowIndex - 5).toString()}';
+              hourFinished = '0${(rowIndex - 4).toString()}';
+            }
+
+            return Container(
+              // padding: const EdgeInsets.only(bottom: 0),
+              // color: AppColor.grey1,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1, color: AppColor.grey1),
+                ),
+              ),
+              height: 41,
+              child: Row(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      // border: Border(
+                      //   right: BorderSide(width: 1, color: AppColor.grey1),
+                      // ),
+                    ),
+                    width: 49,
+                    // margin: const EdgeInsets.only(right: 1),
+                    child: Center(
+                      child: Text(
+                        '$hourStart - $hourFinished',
+                        style: TextStyle(fontSize: AppFont.smaller, color: AppColor.grey3),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints) {
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 7,
+                            crossAxisSpacing: 0,
+                            // mainAxisSpacing: 10,
+                          ),
+                          itemCount: 7,
+                          itemBuilder: (BuildContext context, gridIndex) {
+                            return gridIndex == 6
+                                ? DayPeriodCell(
+                                    periodIndex: periodIndex,
+                                    gridIndex: gridIndex,
+                                    rowIndex: rowIndex,
+                                    constraints: constraints,
+                                  )
+                                : GestureDetector(
+                                    onTapDown: null,
+                                    onTapUp: null,
+                                    onTap: () async {
+                                      // print('SelectCell');
+
+                                      newCells.add([periodIndex, rowIndex, gridIndex]);
+
+                                      context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: newCells));
+
+                                      _dialogBuilder(newCells);
+
+                                      // dialogBuilder.open();
+                                    },
+                                    onDoubleTap: () {
+                                      newCells.add([periodIndex, rowIndex, gridIndex]);
+                                      deleteFromList(newCells);
+                                      setState(() {});
+                                    },
+                                    onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
+                                      double cellWidth = (constraints.maxWidth / 7).floorToDouble();
+                                      double widthWeekPeriodRow = constraints.maxWidth - 6; // 303.0, 6 - grid gap
+                                      double xGlobalPosition = details.globalPosition.dx -
+                                          70; // (20 : padding-right) + (50 : 04-05 hours period)
+
+                                      for (int i = 0; i < 6; i++) {
+                                        double min = cellWidth * i;
+                                        double max = min + cellWidth;
+                                        if (xGlobalPosition > min && xGlobalPosition <= max) {
+                                          newCells.add([periodIndex, rowIndex, i]);
+
+                                          context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: [
+                                                [periodIndex, rowIndex, i]
+                                              ]));
+                                        }
+                                      }
+                                    },
+                                    onLongPressEnd: (details) {
+                                      var _ids = newCells.removeDuplicates();
+
+                                      _dialogBuilder(_ids);
+
+                                      context
+                                          .read<PlannerBloc>()
+                                          .add(SelectCell(selectedCellIDs: [newCells.removeDuplicates()]));
+                                      setState(() {});
+                                    },
+                                    child: DayPeriodCell(
+                                      periodIndex: periodIndex,
+                                      gridIndex: gridIndex,
+                                      rowIndex: rowIndex,
+                                      constraints: constraints,
+                                    ),
+                                  );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class DayPeriodCell extends StatefulWidget {
@@ -567,7 +577,10 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
       listener: (context, state) {},
       builder: (context, state) {
         return Container(
-          color: cellColor,
+          decoration: BoxDecoration(
+            border: Border(left: BorderSide(width: 1, color: AppColor.grey1)),
+            color: cellColor,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

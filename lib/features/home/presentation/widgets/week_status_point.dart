@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/core/utils/get_week_number.dart';
+import '../../../../core/utils/get_week_number.dart';
 import '../../../../core/constants/week_data_constant.dart';
 import '../../../../core/services/db_client/isar_service.dart';
 import '../../../../core/utils/get_stream_status.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
-
 import '../../../../core/constants/app_theme.dart';
-import '../bloc/home_screen/home_screen_bloc.dart';
 
 class WeekStatusPoint extends StatelessWidget {
   const WeekStatusPoint({super.key});
@@ -149,14 +146,14 @@ class WeekStatusPoint extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              height: 84,
+              height: 90,
               padding: const EdgeInsets.only(top: 10, bottom: 10, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 1 / 1.7,
+                  childAspectRatio: 1 / 1.9,
                 ),
                 itemCount: 7,
                 itemBuilder: (context, gridIndex) {

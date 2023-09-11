@@ -243,15 +243,19 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
             }
 
             return Container(
-              padding: const EdgeInsets.only(bottom: 1),
-              color: AppColor.grey1,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1, color: AppColor.grey1),
+                ),
+              ),
+              height: 41,
               child: Row(
                 children: [
                   Container(
-                    color: Colors.white,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                    ),
                     width: 49,
-                    height: 42,
-                    margin: const EdgeInsets.only(right: 1),
                     child: Center(
                       child: Text(
                         '$hourStart - $hourFinished',
@@ -269,8 +273,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 7,
-                            crossAxisSpacing: 1,
-                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 0,
                           ),
                           itemCount: 7,
                           itemBuilder: (BuildContext context, gridIndex) {
@@ -429,7 +432,10 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
     }
 
     return Container(
-      color: cellColor,
+      decoration: BoxDecoration(
+        border: Border(left: BorderSide(width: 1, color: AppColor.grey1)),
+        color: cellColor,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -441,7 +447,7 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
             ),
             child: Text(
               textCell,
-              style: TextStyle(color: fontColor, fontSize: 12),
+              style: TextStyle(color: fontColor, fontSize: 11),
             ),
           ),
         ],

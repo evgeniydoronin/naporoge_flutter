@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -128,6 +126,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                   height: wrapHeight,
                   child: PageView.builder(
                       controller: pageController,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: allPages,
                       itemBuilder: (context, pageIndex) {
                         String pageTitle = "Неделя  ${pageIndex + 1}/$weeks";
@@ -145,8 +144,8 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                             isPlannedWeek['title'] = 'План не составлен';
                             isPlannedWeek['color'] = AppColor.red;
                           } else {
-                            isPlannedWeek['title'] = 'План составлен';
-                            isPlannedWeek['color'] = AppColor.primary;
+                            // isPlannedWeek['title'] = 'План составлен';
+                            // isPlannedWeek['color'] = AppColor.primary;
                           }
                         } else {
                           isPlannedWeek['title'] = 'План не составлен';
@@ -221,7 +220,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                     physics: const NeverScrollableScrollPhysics(),
                                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 7,
-                                      crossAxisSpacing: 1,
+                                      crossAxisSpacing: 0,
                                     ),
                                     itemCount: weekDaysNameRu.length,
                                     itemBuilder: (BuildContext context, dayIndex) {
@@ -240,16 +239,18 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                               ],
                             ),
                             ExpandDayPeriod(stream: stream, pageData: pageData, pageIndex: pageIndex),
-                            Center(
-                              child: Container(
-                                margin: const EdgeInsets.only(top: 20),
-                                height: 50,
-                                child: Text(
-                                  isPlannedWeek['title'],
-                                  style: TextStyle(color: isPlannedWeek['color']),
-                                ),
-                              ),
-                            ),
+                            isPlannedWeek.isNotEmpty
+                                ? Center(
+                                    child: Container(
+                                      margin: const EdgeInsets.only(top: 20),
+                                      height: 50,
+                                      child: Text(
+                                        isPlannedWeek['title'],
+                                        style: TextStyle(color: isPlannedWeek['color']),
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(),
                           ],
                         );
                       }),
@@ -498,15 +499,22 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
         }
 
         return Container(
-          padding: const EdgeInsets.only(bottom: 1),
-          color: AppColor.grey1,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(width: 1, color: AppColor.grey1),
+            ),
+          ),
+          height: 41,
           child: Row(
             children: [
               Container(
-                color: Colors.white,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  // border: Border(
+                  //   right: BorderSide(width: 1, color: AppColor.grey1),
+                  // ),
+                ),
                 width: 49,
-                height: 42,
-                margin: const EdgeInsets.only(right: 1),
                 child: Center(
                   child: Text(
                     '$hourStart - $hourFinished',
@@ -780,7 +788,10 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
     }
 
     return Container(
-      color: cellColor,
+      decoration: BoxDecoration(
+        border: Border(left: BorderSide(width: 1, color: AppColor.grey1)),
+        color: cellColor,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -792,7 +803,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
             ),
             child: Text(
               textCell,
-              style: TextStyle(color: fontColor, fontSize: 12),
+              style: TextStyle(color: fontColor, fontSize: 11),
             ),
           ),
         ],
