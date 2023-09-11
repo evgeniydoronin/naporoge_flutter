@@ -81,6 +81,10 @@ Future<Map> getTotalResultsStream() async {
   int? maxPointIndex;
 
   for (int i = 0; i < margePoint.length; i++) {
+    print('point: $point');
+    print('i: $i');
+    print('margePoint[i]: ${margePoint[i]}');
+
     if (margePoint[i] == point) {
       maxPointIndex = i;
     }
@@ -111,7 +115,7 @@ Future<Map> getTotalResultsStream() async {
     );
   }
   // отлично
-  else if (maxPointIndex == 1) {
+  else if (maxPointIndex == 2) {
     message = const TextSpan(
       text: 'Отлично. \n',
       style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),

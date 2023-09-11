@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naporoge/core/utils/get_week_number.dart';
 import '../../domain/entities/stream_entity.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
@@ -212,22 +215,31 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                             "description": state.courseDescription.isNotEmpty
                                                 ? state.courseDescription
                                                 : stream.description,
-                                            "week_id": stream.weekBacklink.first.id,
-                                            "user_confirmed": true,
-                                            "cells": state.finalCellIDs,
                                           };
 
-                                          // print('streamData: $streamData');
+                                          Map weekData = {
+                                            "streamId": stream.id,
+                                            "cells": state.finalCellIDs,
+                                            "monday": stream.startAt.toString(),
+                                            "weekOfYear": getWeekNumber(stream.startAt),
+                                          };
+
+                                          // print('weekData: ${jsonEncode(weekData)}');
 
                                           // update on server
+                                          // update stream
                                           var updatedStream = await _streamController.updateStream(streamData);
-
-                                          // print('newStream: $updatedStream');
+                                          // create week
+                                          var createWeek = await _streamController.createWeek(weekData);
+                                          // //
+                                          // print('createWeek: $createWeek');
+                                          // print('updatedStream: $updatedStream');
 
                                           // update local
                                           if (updatedStream['stream']['id'] != null) {
                                             // print('newStream: $updatedStream');
                                             streamLocalStorage.updateStream(updatedStream);
+                                            streamLocalStorage.createWeek(createWeek);
                                             if (context.mounted) {
                                               CircularLoading(context).stopLoading();
                                               context.router.replace(const DashboardScreenRoute());

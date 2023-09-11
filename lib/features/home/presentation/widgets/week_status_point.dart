@@ -50,17 +50,26 @@ class WeekStatusPoint extends StatelessWidget {
     }
     // Во время прохождения курса
     else if (streamStatus['status'] == 'process') {
-      Week week = stream!.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
-
-      // print('week: ${week.dayBacklink.first.startAt}');
-      if (week.dayBacklink.first.startAt != null) {
-        days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
-      } else {
-        days = await week.dayBacklink.filter().findAll();
+      // недели не созданы
+      // первая неделя пустая
+      if (stream!.weekBacklink.isEmpty) {
+        days = [];
+      }
+      // первая неделя на курсе создана
+      else {
+        Week week = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
+        // неделя не пустая
+        if (week.dayBacklink.first.startAt != null) {
+          days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
+        }
+        // пустая неделя
+        else {
+          days = await week.dayBacklink.filter().findAll();
+        }
       }
     }
 
-    return days;
+    return {'days': days};
   }
 
   @override
@@ -69,58 +78,70 @@ class WeekStatusPoint extends StatelessWidget {
       future: getCurrentWeekDays(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
-          List days = snapshot.data;
+          List days = snapshot.data['days'];
           DateTime now = DateTime.parse(DateFormat('y-MM-dd').format(DateTime.now()));
+
+          // print('days: $days');
 
           // список дней и статуса
           List daysStatus = [];
-          for (Day day in days) {
-            // пустая неделя
-            if (day.startAt == null) {
-              // выполнен
-              if (day.completedAt != null) {
-                // print('пустая неделя день выполнен');
-                daysStatus.add({'status': 'empty_completed', 'startAt': ''});
+
+          // первая неделя не пустая
+          if (days.isNotEmpty) {
+            for (Day day in days) {
+              // пустая неделя
+              if (day.startAt == null) {
+                // выполнен
+                if (day.completedAt != null) {
+                  // print('пустая неделя день выполнен');
+                  daysStatus.add({'status': 'empty_completed', 'startAt': ''});
+                }
+                // не выполнен
+                else {
+                  // print('пустая неделя день НЕ выполнен');
+                  daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
+                }
               }
-              // не выполнен
+              // не пустая неделя
               else {
-                // print('пустая неделя день НЕ выполнен');
-                daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
+                // print(day.startAt);
+                DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+                String dayStartAtString = DateFormat('H:mm').format(day.startAt!);
+
+                // текущий день
+                if (dayStartAt.isAtSameMomentAs(now)) {
+                  // выполнен
+                  if (day.completedAt != null) {
+                    daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
+                  }
+                  // не выполнен
+                  else {
+                    daysStatus.add({'status': 'opened', 'startAt': dayStartAtString});
+                  }
+                }
+                // день прошел
+                else if (dayStartAt.isBefore(now)) {
+                  // выполнен
+                  if (day.completedAt != null) {
+                    ;
+                    daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
+                  }
+                  // не выполнен
+                  else {
+                    daysStatus.add({'status': 'skipped', 'startAt': dayStartAtString});
+                  }
+                }
+                // запланированный день
+                else if (dayStartAt.isAfter(now)) {
+                  daysStatus.add({'status': 'future', 'startAt': dayStartAtString});
+                }
               }
             }
-            // не пустая неделя
-            else {
-              // print(day.startAt);
-              DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
-              String dayStartAtString = DateFormat('H:mm').format(day.startAt!);
-
-              // текущий день
-              if (dayStartAt.isAtSameMomentAs(now)) {
-                // выполнен
-                if (day.completedAt != null) {
-                  daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
-                }
-                // не выполнен
-                else {
-                  daysStatus.add({'status': 'opened', 'startAt': dayStartAtString});
-                }
-              }
-              // день прошел
-              else if (dayStartAt.isBefore(now)) {
-                // выполнен
-                if (day.completedAt != null) {
-                  ;
-                  daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
-                }
-                // не выполнен
-                else {
-                  daysStatus.add({'status': 'skipped', 'startAt': dayStartAtString});
-                }
-              }
-              // запланированный день
-              else if (dayStartAt.isAfter(now)) {
-                daysStatus.add({'status': 'future', 'startAt': dayStartAtString});
-              }
+          }
+          // первая неделя пустая
+          else {
+            for (int i = 0; i < 7; i++) {
+              daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
             }
           }
 

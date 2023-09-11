@@ -173,14 +173,14 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                             }
                                             // Validate returns true if the form is valid, or false otherwise.
                                             if (_formKey.currentState!.validate()) {
-                                              CircularLoading(context).startLoading();
+                                              // CircularLoading(context).startLoading();
 
                                               Map newWeekData = {};
                                               Map weekData = state.editableWeekData;
                                               List selectedCells = state.finalCellIDs;
 
-                                              // print('weekData:: ${state.editableWeekData}');
-                                              // print('selectedCells: $selectedCells');
+                                              print('weekData:: ${state.editableWeekData}');
+                                              print('selectedCells: $selectedCells');
 
                                               // /////////////////////////////
                                               // CREATE WEEK

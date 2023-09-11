@@ -100,8 +100,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                           child: Column(
                             children: <Widget>[
                               Theme(
-                                data: ThemeData()
-                                    .copyWith(dividerColor: Colors.transparent),
+                                data: ThemeData().copyWith(dividerColor: Colors.transparent),
                                 child: ExpansionTile(
                                   key: Key(index.toString()),
                                   initiallyExpanded: index == selected,
@@ -131,9 +130,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                     if (newState) {
                                       setState(() {
                                         // деактивируем все курсы
-                                        for (int i = 0;
-                                            i < _courses.length;
-                                            i++) {
+                                        for (int i = 0; i < _courses.length; i++) {
                                           _courses[i].isExpanded = false;
                                         }
                                         // setState(() {
@@ -150,9 +147,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                         selected = -1;
                                         _isActivated = false;
                                       });
-                                      context
-                                          .read<PlannerBloc>()
-                                          .add(StreamCourseTitleChanged(''));
+                                      context.read<PlannerBloc>().add(StreamCourseTitleChanged(''));
                                     }
                                   }),
                                   children: [
@@ -164,42 +159,29 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                         ),
                                         const SizedBox(height: 30),
                                         TextFormField(
-                                          controller: _shortTitleController[
-                                              _courses[index].courseId],
+                                          controller: _shortTitleController[_courses[index].courseId],
                                           onChanged: (title) {
-                                            context.read<PlannerBloc>().add(
-                                                StreamCourseIdChanged(
-                                                    _courses[index].courseId));
+                                            context
+                                                .read<PlannerBloc>()
+                                                .add(StreamCourseIdChanged(_courses[index].courseId));
                                             // print(title);
-                                            context.read<PlannerBloc>().add(
-                                                StreamCourseTitleChanged(
-                                                    title));
+                                            context.read<PlannerBloc>().add(StreamCourseTitleChanged(title));
                                           },
                                           decoration: InputDecoration(
                                             hintText: 'Краткое название дела',
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 12),
-                                            labelStyle: const TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 12),
+                                            hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                            labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                                             fillColor: AppColor.grey1,
                                             filled: true,
                                             errorBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.redAccent),
-                                                borderRadius:
-                                                    AppLayout.smallRadius),
+                                                borderSide: const BorderSide(color: Colors.redAccent),
+                                                borderRadius: AppLayout.smallRadius),
                                             enabledBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.transparent),
-                                                borderRadius:
-                                                    AppLayout.smallRadius),
+                                                borderSide: const BorderSide(color: Colors.transparent),
+                                                borderRadius: AppLayout.smallRadius),
                                             focusedBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.transparent),
-                                                borderRadius:
-                                                    AppLayout.smallRadius),
+                                                borderSide: const BorderSide(color: Colors.transparent),
+                                                borderRadius: AppLayout.smallRadius),
                                           ),
                                         ),
                                       ],
@@ -219,13 +201,11 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: AppLayout.primaryRadius)),
+                    style:
+                        ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
                     onPressed: _isActivated
                         ? () async {
-                            var _stream =
-                                await streamLocalStorage.getActiveStream();
+                            var _stream = await streamLocalStorage.getActiveStream();
                             // Если курс создавался
                             if (_stream != null) {
                               // Обновляем
@@ -244,15 +224,14 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                 "start_at": state.startDate,
                                 "title": state.courseTitle,
                                 "course_id": state.courseId,
-                                "week_id": stream.weekBacklink.first.id,
-                                "cells": [],
+                                // "week_id": stream.weekBacklink.first.id,
+                                // "cells": [],
                               };
 
                               print('streamData: $streamData');
 
                               // update on server
-                              var updatedStream = await _streamController
-                                  .updateStream(streamData);
+                              var updatedStream = await _streamController.updateStream(streamData);
 
                               // print('newStream: $updatedStream');
 
@@ -262,8 +241,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                 streamLocalStorage.updateStream(updatedStream);
                                 if (context.mounted) {
                                   CircularLoading(context).stopLoading();
-                                  context.router.push(
-                                      SelectDayPeriodRoute(isBackArrow: true));
+                                  context.router.push(SelectDayPeriodRoute(isBackArrow: true));
                                 }
                               }
                             } else {
@@ -288,20 +266,16 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                                 // print('streamData: $streamData');
 
                                 // create on server
-                                var newStream = await _streamController
-                                    .createStream(streamData);
+                                var newStream = await _streamController.createStream(streamData);
 
                                 // print('newStream: $newStream');
 
                                 // create local
                                 if (newStream['stream']['id'] != null) {
-                                  streamLocalStorage.saveStream(newStream);
+                                  streamLocalStorage.createStream(newStream);
                                   if (context.mounted) {
                                     CircularLoading(context).stopLoading();
-                                    // context.router
-                                    //     .replace(const DashboardScreenRoute());
-                                    context.router.push(SelectDayPeriodRoute(
-                                        isBackArrow: true));
+                                    context.router.push(SelectDayPeriodRoute(isBackArrow: true));
                                   }
                                 }
                               }

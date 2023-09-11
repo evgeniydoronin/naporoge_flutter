@@ -43,7 +43,7 @@ List<List> deleteCellsList = [];
 
 void deleteFromList(List deleteCellsList) {
   for (List deleteCell in deleteCellsList) {
-    cells.removeWhere((cell) => eq(cell['id'], deleteCell));
+    cells.removeWhere((cell) => eq(cell['cellId'], deleteCell));
   }
 }
 
@@ -53,13 +53,12 @@ void addOrUpdateCellList(newCellsList, cellData) {
 
   // если есть активные ячейки
   if (cells.isNotEmpty) {
-    List globalCellsIDs = cells.map((e) => e['id']).toList();
+    List globalCellsIDs = cells.map((e) => e['cellId']).toList();
 
     // print('Входящий список для обновления данными');
     // print('Входящий новый список: $newCellsList');
     for (List newCellId in newCellsList) {
-      existingCell
-          .addAll(globalCellsIDs.where((cellID) => eq(cellID, newCellId)));
+      existingCell.addAll(globalCellsIDs.where((cellID) => eq(cellID, newCellId)));
     }
 
     // print('existingCell: $existingCell');
@@ -92,7 +91,7 @@ void addOrUpdateCellList(newCellsList, cellData) {
   for (List newCellId in newCellsList) {
     List<Map> addNewMapToCell = [
       {
-        'id': newCellId,
+        'cellId': newCellId,
         'startTime': cellData['startTime'],
       },
     ];
@@ -122,8 +121,7 @@ class DayScheduleWidget extends StatelessWidget {
         DateTime startDate = DateTime.parse(startDateString);
 
         DateTime endDate = startDate.add(Duration(days: (weeks * 7) - 1));
-        String startDateInfo =
-            '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
+        String startDateInfo = '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
 
         return Column(
           children: [
@@ -152,8 +150,7 @@ class DayScheduleWidget extends StatelessWidget {
                   child: GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 7,
                       crossAxisSpacing: 1,
                     ),
@@ -164,9 +161,7 @@ class DayScheduleWidget extends StatelessWidget {
                           weekDaysNameRu[dayIndex].toString().toUpperCase(),
                           style: TextStyle(
                               fontSize: AppFont.smaller,
-                              color: weekDaysNameRu[dayIndex] == 'вс'
-                                  ? AppColor.grey2
-                                  : AppColor.accent),
+                              color: weekDaysNameRu[dayIndex] == 'вс' ? AppColor.grey2 : AppColor.accent),
                         ),
                       );
                     },
@@ -228,8 +223,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
               child: Container(
                 width: double.maxFinite,
                 margin: const EdgeInsets.only(bottom: 2),
-                padding: const EdgeInsets.only(
-                    top: 10, bottom: 10, left: 6, right: 10),
+                padding: const EdgeInsets.only(top: 10, bottom: 10, left: 6, right: 10),
                 decoration: BoxDecoration(
                     color: AppColor.grey1,
                     borderRadius: const BorderRadius.only(
@@ -249,9 +243,7 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              height: period[periodIndex].isExpanded
-                  ? (period[periodIndex].rows * 43)
-                  : 0,
+              height: period[periodIndex].isExpanded ? (period[periodIndex].rows * 43) : 0,
               child: DayPeriodRow(periodIndex: periodIndex),
             )
           ],
@@ -284,16 +276,13 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: period[periodIndex].rows,
           itemBuilder: (BuildContext context, int rowIndex) {
-            String hourStart =
-                (period[periodIndex].start + rowIndex).toString();
+            String hourStart = (period[periodIndex].start + rowIndex).toString();
             String hourFinished = '';
             if (int.parse(hourStart) < 9) {
               hourStart = '0$hourStart';
-              hourFinished =
-                  '0${(period[periodIndex].start + rowIndex + 1).toString()}';
+              hourFinished = '0${(period[periodIndex].start + rowIndex + 1).toString()}';
             } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
-              hourFinished =
-                  (period[periodIndex].start + rowIndex + 1).toString();
+              hourFinished = (period[periodIndex].start + rowIndex + 1).toString();
             } else if (int.parse(hourStart) == 23) {
               hourFinished = '00';
             } else if (int.parse(hourStart) > 23) {
@@ -314,21 +303,18 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                     child: Center(
                       child: Text(
                         '$hourStart - $hourFinished',
-                        style: TextStyle(
-                            fontSize: AppFont.smaller, color: AppColor.grey3),
+                        style: TextStyle(fontSize: AppFont.smaller, color: AppColor.grey3),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
                   Expanded(
                     child: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constraints) {
+                      builder: (BuildContext context, BoxConstraints constraints) {
                         return GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 7,
                             crossAxisSpacing: 1,
                             mainAxisSpacing: 10,
@@ -348,46 +334,32 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                                     onTap: () async {
                                       // print('SelectCell');
 
-                                      newCells.add(
-                                          [periodIndex, rowIndex, gridIndex]);
+                                      newCells.add([periodIndex, rowIndex, gridIndex]);
 
-                                      context.read<PlannerBloc>().add(
-                                          SelectCell(
-                                              selectedCellIDs: newCells));
+                                      context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: newCells));
 
                                       _dialogBuilder(newCells);
 
                                       // dialogBuilder.open();
                                     },
                                     onDoubleTap: () {
-                                      newCells.add(
-                                          [periodIndex, rowIndex, gridIndex]);
+                                      newCells.add([periodIndex, rowIndex, gridIndex]);
                                       deleteFromList(newCells);
                                       setState(() {});
                                     },
-                                    onLongPressMoveUpdate:
-                                        (LongPressMoveUpdateDetails details) {
-                                      double cellWidth =
-                                          (constraints.maxWidth / 7)
-                                              .floorToDouble();
-                                      double widthWeekPeriodRow =
-                                          constraints.maxWidth -
-                                              6; // 303.0, 6 - grid gap
-                                      double xGlobalPosition = details
-                                              .globalPosition.dx -
+                                    onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
+                                      double cellWidth = (constraints.maxWidth / 7).floorToDouble();
+                                      double widthWeekPeriodRow = constraints.maxWidth - 6; // 303.0, 6 - grid gap
+                                      double xGlobalPosition = details.globalPosition.dx -
                                           70; // (20 : padding-right) + (50 : 04-05 hours period)
 
                                       for (int i = 0; i < 6; i++) {
                                         double min = cellWidth * i;
                                         double max = min + cellWidth;
-                                        if (xGlobalPosition > min &&
-                                            xGlobalPosition <= max) {
-                                          newCells
-                                              .add([periodIndex, rowIndex, i]);
+                                        if (xGlobalPosition > min && xGlobalPosition <= max) {
+                                          newCells.add([periodIndex, rowIndex, i]);
 
-                                          context
-                                              .read<PlannerBloc>()
-                                              .add(SelectCell(selectedCellIDs: [
+                                          context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: [
                                                 [periodIndex, rowIndex, i]
                                               ]));
                                         }
@@ -398,10 +370,9 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
 
                                       _dialogBuilder(_ids);
 
-                                      context.read<PlannerBloc>().add(
-                                              SelectCell(selectedCellIDs: [
-                                            newCells.removeDuplicates()
-                                          ]));
+                                      context
+                                          .read<PlannerBloc>()
+                                          .add(SelectCell(selectedCellIDs: [newCells.removeDuplicates()]));
                                       setState(() {});
                                     },
                                     child: DayPeriodCell(
@@ -431,8 +402,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
       context: context,
       builder: (BuildContext ctx) {
         List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
-        List<Widget> defaultMinutesText =
-            List.generate(12, (index) => Text('${index * 5}'));
+        List<Widget> defaultMinutesText = List.generate(12, (index) => Text('${index * 5}'));
 
         int periodStart = period[ids[0][0]].start;
         int rowIndex = ids[0][1];
@@ -452,8 +422,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
 
         String newCellTimeString = '$hour:00';
         DateTime initialDate = DateTime.now();
-        DateTime initialHour = DateTime(
-            initialDate.year, initialDate.month, initialDate.day, hour, 00);
+        DateTime initialHour = DateTime(initialDate.year, initialDate.month, initialDate.day, hour, 00);
 
         DateTime newDate = initialHour;
 
@@ -482,11 +451,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                         onSelectedItemChanged: (index) {
                           // print(index);
                           newCellTimeString = DateFormat('Hm').format(DateTime(
-                              initialDate.year,
-                              initialDate.month,
-                              initialDate.day,
-                              hour,
-                              defaultMinutes[index]));
+                              initialDate.year, initialDate.month, initialDate.day, hour, defaultMinutes[index]));
 
                           // print(newCellTimeString);
                         },
@@ -506,9 +471,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
               child: const Text('Отменить'),
               onPressed: () async {
                 // Удаляем из стейта перекрестные значения
-                context
-                    .read<PlannerBloc>()
-                    .add(RemoveCell(selectedCellIDs: ids));
+                context.read<PlannerBloc>().add(RemoveCell(selectedCellIDs: ids));
                 setState(() {});
 
                 Navigator.pop(context);
@@ -523,9 +486,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                 Map data = {'startTime': newCellTimeString};
 
                 // Удаляем из стейта перекрестные значения
-                context
-                    .read<PlannerBloc>()
-                    .add(RemoveCell(selectedCellIDs: ids));
+                context.read<PlannerBloc>().add(RemoveCell(selectedCellIDs: ids));
 
                 // Добавляем пустое воскресенье
                 List newIds = [
@@ -552,11 +513,7 @@ class DayPeriodCell extends StatefulWidget {
   final BoxConstraints constraints;
 
   const DayPeriodCell(
-      {Key? key,
-      required this.periodIndex,
-      required this.rowIndex,
-      required this.gridIndex,
-      required this.constraints})
+      {Key? key, required this.periodIndex, required this.rowIndex, required this.gridIndex, required this.constraints})
       : super(key: key);
 
   @override
@@ -579,9 +536,7 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
 
   @override
   Widget build(BuildContext context) {
-    Color cellColor = gridIndex == 6
-        ? const Color(0xFF00A2FF).withOpacity(0.3)
-        : Colors.white;
+    Color cellColor = gridIndex == 6 ? const Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
     Color bgColor = Colors.transparent;
     Color fontColor = Colors.black;
 
@@ -600,10 +555,9 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
     if (cells.isNotEmpty) {
       for (Map cell in cells) {
         // print('cell: $cell');
-        if (eq(cell['id'], [periodIndex, rowIndex, gridIndex])) {
-          cellColor = gridIndex == 6
-              ? const Color(0xFF00A2FF).withOpacity(0.3)
-              : const Color.fromARGB(255, 82, 194, 255);
+        if (eq(cell['cellId'], [periodIndex, rowIndex, gridIndex])) {
+          cellColor =
+              gridIndex == 6 ? const Color(0xFF00A2FF).withOpacity(0.3) : const Color.fromARGB(255, 82, 194, 255);
           textCell = gridIndex == 6 ? "" : cell['startTime'] ?? '';
         }
       }

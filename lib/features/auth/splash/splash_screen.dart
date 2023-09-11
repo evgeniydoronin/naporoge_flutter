@@ -65,16 +65,16 @@ class _SplashScreenState extends State<SplashScreen> {
         // до старта
         if (streamNotStarted) {
           print('SplashScreen - до старта');
-          // дни созданы
-          if (activeStream.weekBacklink.first.dayBacklink.isNotEmpty) {
-            print('SplashScreen - дни созданы');
+          // неделя создана
+          if (activeStream.weekBacklink.isNotEmpty) {
+            print('SplashScreen - неделя создана');
             if (context.mounted) {
               AutoRouter.of(context).push(const DashboardScreenRoute());
             }
           }
-          // дни не созданы
+          // неделя не создана
           else {
-            print('SplashScreen - дни не созданы');
+            print('SplashScreen - неделя не создана');
             if (context.mounted) {
               AutoRouter.of(context).push(SelectDayPeriodRoute(isBackArrow: false));
             }
@@ -92,17 +92,15 @@ class _SplashScreenState extends State<SplashScreen> {
           print('SplashScreen weeks: $weeks');
           print('SplashScreen activeStream.weekBacklink: ${activeStream.weekBacklink.length}');
 
-          // проверяем количество созданных недель
-          // первая неделя может быть пустой, проверяем
-          // если меньше чем можно создать
-          // создаем неделю
+          // Первая неделя может создаться пустой без дней
+          // проверяем и создаем дни
           if (week == null) {
-            // если на курсе нет созданных недель
+            print(activeStream);
+            // ни одной недели на курсе не создано
             if (activeStream.weekBacklink.isEmpty) {
-              // текущая неделя НЕ создана
               Map newWeekData = {};
 
-              print('SplashScreen текущая неделя НЕ создана');
+              print('SplashScreen Понедельник, текущая неделя НЕ создана');
 
               // понедельник текущей недели
               int daysOfWeek = now.weekday - 1;
@@ -126,15 +124,14 @@ class _SplashScreenState extends State<SplashScreen> {
               // create on local
               if (createWeek['week'] != null) {
                 streamLocalStorage.createWeek(createWeek);
-
-                if (context.mounted) {
-                  AutoRouter.of(context).push(const DashboardScreenRoute());
-                }
               }
             }
-            // на курсе уже есть созданные недели
+            // есть на курсе созданные недели
             else {
-              if (weeks < activeStream.weekBacklink.length) {
+              // проверяем количество созданных недель
+              // если меньше чем можно создать
+              // создаем неделю
+              if (activeStream.weekBacklink.length < weeks) {
                 // текущая неделя НЕ создана
                 Map newWeekData = {};
 
@@ -145,9 +142,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 DateTime firstDay = DateTime(now.year, now.month, now.day - daysOfWeek);
                 DateTime lastDay = firstDay.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
-                print('firstDay: $firstDay');
-                print('lastDay: $lastDay');
-
                 // CREATE WEEK
                 newWeekData['streamId'] = activeStream.id;
                 newWeekData['cells'] = [];
@@ -157,22 +151,12 @@ class _SplashScreenState extends State<SplashScreen> {
                 // create on server
                 var createWeek = await _streamController.createWeek(newWeekData);
 
-                print('SplashScreen createWeek: $createWeek');
-
                 // create on local
                 if (createWeek['week'] != null) {
                   streamLocalStorage.createWeek(createWeek);
-
-                  if (context.mounted) {
-                    AutoRouter.of(context).push(const DashboardScreenRoute());
-                  }
                 }
               }
             }
-          }
-          // текущая неделя создана
-          else {
-            print('SplashScreen текущая неделя создана');
           }
 
           if (context.mounted) {
