@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+import '../widgets/day_results_save/rejoice_box.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/utils/circular_loading.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
@@ -104,15 +105,18 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                                   SizedBox(
                                                     width: 230,
                                                     child: CupertinoTimerPicker(
+                                                      initialTimerDuration: duration,
                                                       mode: CupertinoTimerPickerMode.hm,
                                                       minuteInterval: 5,
-                                                      initialTimerDuration: duration,
-                                                      // This is called when the user changes the timer's
-                                                      // duration.
                                                       onTimerDurationChanged: (Duration newDuration) {
-                                                        // print(DateFormat('HH:mm').parse(
-                                                        //     newDuration.toString()));
-                                                        setState(() => duration = newDuration);
+                                                        Duration minMinutes = const Duration(hours: 3, minutes: 00);
+                                                        Duration maxMinutes = const Duration(hours: 3, minutes: 59);
+                                                        if (newDuration <= maxMinutes && newDuration >= minMinutes) {
+                                                          setState(() => duration =
+                                                              const Duration(hours: 4, minutes: 00, seconds: 00));
+                                                        } else {
+                                                          setState(() => duration = newDuration);
+                                                        }
                                                       },
                                                     ),
                                                   ),
@@ -312,60 +316,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                        decoration: AppLayout.boxDecorationShadowBG,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Удалось порадоваться?',
-                              style: AppFont.formLabel,
-                            ),
-                            const SizedBox(height: 5),
-                            ToggleButtons(
-                              direction: Axis.horizontal,
-                              onPressed: (int index) {
-                                if (index == 0) {
-                                  context.read<DayResultBloc>().add(const RejoiceChanged('no'));
-                                } else {
-                                  context.read<DayResultBloc>().add(const RejoiceChanged('yes'));
-                                }
-                                setState(() {
-                                  // The button that is tapped is set to true, and the others to false.
-                                  for (int i = 0; i < _selections.length; i++) {
-                                    _selections[i] = i == index;
-                                  }
-                                });
-                              },
-                              borderWidth: 0,
-                              borderRadius: const BorderRadius.all(Radius.circular(8)),
-                              // selectedBorderColor: Colors.red[700],
-                              selectedColor: Colors.white,
-                              fillColor: AppColor.accent,
-                              constraints: const BoxConstraints(
-                                minHeight: 40.0,
-                                minWidth: double.minPositive,
-                              ),
-                              isSelected: _selections,
-                              children: [
-                                SizedBox(
-                                    width: (MediaQuery.of(context).size.width - 81) / 2,
-                                    child: RotatedBox(
-                                      quarterTurns: 2,
-                                      child: SvgPicture.asset('assets/icons/342.svg'),
-                                    )),
-                                SizedBox(
-                                    width: (MediaQuery.of(context).size.width - 81) / 2,
-                                    child: SvgPicture.asset('assets/icons/342.svg')),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    const RejoiceBox(),
                     const SizedBox(height: 25),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -469,7 +420,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                   }
                                 }
                               },
-                              // style: AppLayout.accentBowBTNStyle,
+                              style: AppLayout.accentBTNStyle,
                               child: Text(
                                 'Сохранить',
                                 style: AppFont.regularSemibold,
