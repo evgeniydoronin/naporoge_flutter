@@ -111,37 +111,6 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                             ));
                           }
 
-                          // for (int i = 0; i < weekData.length; i++) {
-                          //   DayResult? dayResult = weekData['daysProgress'][i];
-                          //   Day? day = weekData['days'][i];
-                          //
-                          //   // неделя создана
-                          //   if (day?.startAt != null) {
-                          //     // print('day startAt: ${day!.startAt}');
-                          //   }
-                          //
-                          //   weekResult.add(TableRow(
-                          //     children: [
-                          //       Padding(
-                          //         padding: const EdgeInsets.only(top: 8.0),
-                          //         child: Text(
-                          //           weekDayName[i],
-                          //           style: TextStyle(fontSize: AppFont.small, color: AppColor.grey2),
-                          //         ),
-                          //       ),
-                          //       Padding(
-                          //         padding: const EdgeInsets.all(8.0),
-                          //         child: Text(
-                          //           dayResult == null ? 'пропуск' : dayResult.result.toString(),
-                          //           style: dayResult == null
-                          //               ? TextStyle(fontSize: AppFont.small, color: AppColor.grey2)
-                          //               : TextStyle(fontSize: AppFont.small),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ));
-                          // }
-
                           return Column(
                             children: [
                               Text(
@@ -205,46 +174,48 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                   ]),
                 ),
                 const SizedBox(height: 25),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            CircularLoading(context).startLoading();
-                            final streamLocalStorage = StreamLocalStorage();
+                weeksProgress[0]['weekResultsSave'] == true
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  CircularLoading(context).startLoading();
+                                  final streamLocalStorage = StreamLocalStorage();
 
-                            Map progressData = {};
-                            int index = pageController.page!.floor().toInt();
-                            Week week = weeksProgress[index]['week'];
+                                  Map progressData = {};
+                                  int index = pageController.page!.floor().toInt();
+                                  Week week = weeksProgress[index]['week'];
 
-                            progressData['week_id'] = week.id;
-                            progressData['week_progress'] = progress.text;
+                                  progressData['week_id'] = week.id;
+                                  progressData['week_progress'] = progress.text;
 
-                            // print('progressData: $progressData');
+                                  // print('progressData: $progressData');
 
-                            // create on server
-                            var updateWeekProgress = await _streamController.updateWeekProgress(progressData);
+                                  // create on server
+                                  var updateWeekProgress = await _streamController.updateWeekProgress(progressData);
 
-                            // print('updateWeekProgress: $updateWeekProgress');
+                                  // print('updateWeekProgress: $updateWeekProgress');
 
-                            // save on local
-                            await streamLocalStorage.updateWeekProgress(updateWeekProgress);
+                                  // save on local
+                                  await streamLocalStorage.updateWeekProgress(updateWeekProgress);
 
-                            if (context.mounted) {
-                              CircularLoading(context).stopLoading();
-                            }
-                          }
-                        },
-                        style: AppLayout.accentBTNStyle,
-                        child: Text(
-                          'Отметить достижения недели',
-                          style: AppFont.regularSemibold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                                  if (context.mounted) {
+                                    CircularLoading(context).stopLoading();
+                                  }
+                                }
+                              },
+                              style: AppLayout.accentBTNStyle,
+                              child: Text(
+                                'Отметить достижения недели',
+                                style: AppFont.regularSemibold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox(),
               ],
             ),
           );

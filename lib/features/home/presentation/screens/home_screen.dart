@@ -118,10 +118,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         SvgPicture.asset('assets/icons/rules_home_screen.svg'),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: Text(
-                            'Правила',
-                            style: AppFont.regularSemibold,
-                            overflow: TextOverflow.ellipsis,
+                          child: GestureDetector(
+                            onTap: () {
+                              context.router.push(const RuleOfAppScreenRoute());
+                            },
+                            child: Text(
+                              'Правила',
+                              style: AppFont.regularSemibold,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ),
                       ],

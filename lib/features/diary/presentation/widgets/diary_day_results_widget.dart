@@ -193,20 +193,17 @@ class _DiaryDayResultsWidgetState extends State<DiaryDayResultsWidget> {
                                     style: AppFont.formLabel,
                                   ),
                                   const SizedBox(height: 5),
-                                  TextField(
-                                    readOnly: true,
-                                    style: TextStyle(fontSize: AppFont.small, color: Colors.red),
-                                    decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: AppColor.grey1,
-                                        hintText: dayResult.interference,
-                                        hintStyle: TextStyle(color: AppColor.accent),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-                                        isDense: true,
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius: AppLayout.smallRadius,
-                                            borderSide: BorderSide(width: 1, color: AppColor.grey1))),
-                                  ),
+                                  Container(
+                                      width: double.maxFinite,
+                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
+                                      decoration: BoxDecoration(
+                                          color: AppColor.grey1,
+                                          borderRadius: AppLayout.smallRadius,
+                                          border: Border.all(width: 1, color: AppColor.grey1)),
+                                      child: Text(
+                                        dayResult.interference != null ? dayResult.interference! : '',
+                                        style: TextStyle(color: AppColor.accent),
+                                      )),
                                 ],
                               ),
                             ),

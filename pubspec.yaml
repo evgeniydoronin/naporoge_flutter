@@ -59,6 +59,7 @@ dependencies:
   path_provider: ^2.0.15
   collection: ^1.17.1
   dartz: ^0.10.1
+  url_launcher: ^6.1.14
 
 dev_dependencies:
   flutter_test:
