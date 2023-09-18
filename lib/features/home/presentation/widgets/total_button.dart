@@ -16,9 +16,6 @@ class TotalButton extends StatelessWidget {
           Map button = snapshot.data['button'];
           ElevatedButton? bottomButton;
 
-          print('button: $button');
-
-          //
           if (button['status'] == 'goToTotalScreen') {
             bottomButton = ElevatedButton(
               onPressed: () async {
@@ -44,12 +41,12 @@ class TotalButton extends StatelessWidget {
           }
           return button['isActive']
               ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: bottomButton,
-          )
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: bottomButton,
+                )
               : const SizedBox();
         } else {
-          return const Text('...');
+          return const SizedBox();
         }
       },
     );

@@ -14,6 +14,7 @@ class DayResultBloc extends Bloc<DayResultEvent, DayResultState> {
     on<ReluctanceChanged>(_onReluctanceChanged);
     on<InterferenceChanged>(_onInterferenceChanged);
     on<RejoiceChanged>(_onRejoiceChanged);
+    on<UntilMinuteCanChanged>(_onUntilMinuteCanChanged);
   }
 
   void _onCompletedTimeChanged(
@@ -70,5 +71,13 @@ class DayResultBloc extends Bloc<DayResultEvent, DayResultState> {
   ) {
     final rejoice = event.rejoice;
     emit(state.copyWith(rejoice: rejoice));
+  }
+
+  void _onUntilMinuteCanChanged(
+    UntilMinuteCanChanged event,
+    Emitter<DayResultState> emit,
+  ) {
+    final untilMinuteCan = event.untilMinuteCan;
+    emit(state.copyWith(untilMinuteCan: untilMinuteCan));
   }
 }

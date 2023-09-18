@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../planning/domain/entities/stream_entity.dart';
 
 import '../../../core/services/db_client/isar_service.dart';
 import '../../../core/utils/get_stream_status.dart';
@@ -54,33 +54,35 @@ Future getCourseProgress() async {
 
     // Title
     for (int i = 0; i < weeks; i++) {
-      Week week = stream.weekBacklink.elementAt(i);
+      Week? week = stream.weekBacklink.elementAtOrNull(i);
 
-      if (week.weekNumber == currentWeekNumber) {
+      if (week != null) {
         String _currentWeek = '';
+        if (week.weekNumber == currentWeekNumber) {
+          switch (i) {
+            case 0:
+              _currentWeek = 'первой';
+            case 1:
+              _currentWeek = 'второй';
+            case 2:
+              _currentWeek = 'третьей';
+            case 3:
+              _currentWeek = 'четвертой';
+            case 4:
+              _currentWeek = 'пятой';
+            case 5:
+              _currentWeek = 'шестой';
+            case 6:
+              _currentWeek = 'седьмой';
+            case 7:
+              _currentWeek = 'восьмой';
+            case 8:
+              _currentWeek = 'девятой';
+          }
 
-        switch (i) {
-          case 0:
-            _currentWeek = 'первой';
-          case 1:
-            _currentWeek = 'второй';
-          case 2:
-            _currentWeek = 'третьей';
-          case 3:
-            _currentWeek = 'четвертой';
-          case 4:
-            _currentWeek = 'пятой';
-          case 5:
-            _currentWeek = 'шестой';
-          case 6:
-            _currentWeek = 'седьмой';
-          case 7:
-            _currentWeek = 'восьмой';
-          case 8:
-            _currentWeek = 'девятой';
+          data['title'] = 'Вы на $_currentWeek неделе';
+          print('Вы на $_currentWeek неделе');
         }
-
-        data['title'] = 'Вы на $_currentWeek неделе';
       }
     }
 
@@ -259,8 +261,6 @@ Future getCourseProgress() async {
       }
     }
   }
-
-  print(data);
 
   return data;
 }

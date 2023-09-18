@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,6 +17,7 @@ import '../../../planning/presentation/stream_controller.dart';
 import '../bloc/save_day_result/day_result_bloc.dart';
 import '../widgets/day_results_save/slider_box.dart';
 import '../widgets/day_results_save/wish_box.dart';
+import '../widgets/select_actual_execution_time.dart';
 
 @RoutePage()
 class DayResultsSaveScreen extends StatefulWidget {
@@ -30,7 +30,6 @@ class DayResultsSaveScreen extends StatefulWidget {
 class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
   final _streamController = getIt<StreamController>();
   final _formKey = GlobalKey<FormState>();
-  final List<bool> _selections = List.generate(2, (_) => false);
 
   bool isDesires = false;
   bool isReluctance = false;
@@ -39,8 +38,6 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
   Widget build(BuildContext context) {
     final isarService = IsarService();
     final streamLocalStorage = StreamLocalStorage();
-
-    Duration duration = const Duration(hours: 0, minutes: 00);
 
     return BlocConsumer<DayResultBloc, DayResultState>(
       listener: (context, state) {},
@@ -69,129 +66,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                        decoration: AppLayout.boxDecorationShadowBG,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Время начала дела', style: AppFont.formLabel),
-                            const SizedBox(height: 5),
-                            Column(
-                              children: [
-                                TextFormField(
-                                  readOnly: true,
-                                  onTap: () async {
-                                    showDialog<void>(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext ctx) {
-                                        return AlertDialog(
-                                          title: const Text('Выбрать время'),
-                                          content: SizedBox(
-                                            height: 150,
-                                            child: CupertinoTheme(
-                                              data: const CupertinoThemeData(
-                                                textTheme: CupertinoTextThemeData(
-                                                  dateTimePickerTextStyle: TextStyle(fontSize: 26),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 230,
-                                                    child: CupertinoTimerPicker(
-                                                      initialTimerDuration: duration,
-                                                      mode: CupertinoTimerPickerMode.hm,
-                                                      minuteInterval: 5,
-                                                      onTimerDurationChanged: (Duration newDuration) {
-                                                        Duration minMinutes = const Duration(hours: 3, minutes: 00);
-                                                        Duration maxMinutes = const Duration(hours: 3, minutes: 59);
-                                                        if (newDuration <= maxMinutes && newDuration >= minMinutes) {
-                                                          setState(() => duration =
-                                                              const Duration(hours: 4, minutes: 00, seconds: 00));
-                                                        } else {
-                                                          setState(() => duration = newDuration);
-                                                        }
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          contentPadding: EdgeInsets.zero,
-                                          insetPadding: EdgeInsets.zero,
-                                          actions: <Widget>[
-                                            TextButton(
-                                              style: TextButton.styleFrom(
-                                                textStyle: Theme.of(context).textTheme.labelLarge,
-                                              ),
-                                              child: const Text('Отменить'),
-                                              onPressed: () async {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                            TextButton(
-                                              style: TextButton.styleFrom(
-                                                textStyle: Theme.of(context).textTheme.labelLarge,
-                                              ),
-                                              child: const Text('Выбрать'),
-                                              onPressed: () {
-                                                DateTime now = DateTime.now();
-                                                DateTime time = DateFormat('HH:mm').parse(duration.toString());
-                                                DateTime completedTime =
-                                                    DateTime(now.year, now.month, now.day, time.hour, time.minute);
-
-                                                final formatter = DateFormat('yyyy-MM-dd HH:mm').format(completedTime);
-
-                                                context
-                                                    .read<DayResultBloc>()
-                                                    .add(CompletedTimeChanged(formatter.toString()));
-
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'Заполните обязательное поле!';
-                                    }
-                                    return null;
-                                  },
-                                  controller: TextEditingController(
-                                      text: state.completedAt != null
-                                          ? DateFormat('HH:mm').format(DateTime.parse(state.completedAt.toString()))
-                                          : null),
-                                  style: TextStyle(fontSize: AppFont.small),
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColor.grey1,
-                                    hintText: state.completedAt != null
-                                        ? DateFormat('HH:mm').format(DateTime.parse(state.completedAt.toString()))
-                                        : 'Выбрать время начала',
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-                                    isDense: true,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: AppLayout.smallRadius,
-                                      borderSide: BorderSide(width: 1, color: AppColor.grey1),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    const SelectActualExecutionTime(),
                     const SizedBox(height: 15),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -234,7 +109,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
                               validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
+                                if (value == null || value
+                                    .trim()
+                                    .isEmpty) {
                                   return 'Заполните обязательное поле!';
                                 }
                                 return null;
@@ -348,7 +225,6 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                       isDesires = false;
                                     });
                                   }
-                                  print('state.desires: ${state.desires}');
                                   if (state.reluctance == null) {
                                     setState(() {
                                       isReluctance = true;
@@ -361,16 +237,29 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
 
                                   if (state.desires != null && state.reluctance != null) {
                                     DateTime now = DateTime.now();
+
+                                    // если пользователь ввел данные с 00:00 до 02:55
+                                    // меняем день на предыдущий
+                                    // например:
+                                    // текущая дата - 2023-09-16
+                                    // текущее время 00:45 минут
+                                    // в completedTime уйдет 2023-09-15
+
+                                    if (state.completedAt != null) {
+                                      DateTime currData = DateTime.parse(state.completedAt!);
+                                      now = DateTime(currData.year, currData.month, currData.day);
+                                    }
+
                                     CircularLoading(context).startLoading();
                                     final isar = await isarService.db;
                                     var user = await isarService.getUser();
 
                                     String currDay = DateFormat('y-MM-dd').format(
-                                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+                                        DateTime(now.year, now.month, now.day));
 
-                                    final weekNumber = getWeekNumber(DateTime.now());
+                                    final weekNumber = getWeekNumber(now);
                                     Week? currWeekData =
-                                        await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
+                                    await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
                                     late int dayId;
 

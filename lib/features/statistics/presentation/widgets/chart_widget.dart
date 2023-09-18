@@ -65,7 +65,7 @@ class _LineChartState extends State<_LineChart> {
 
             return LineChart(
               streamData,
-              swapAnimationDuration: const Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 250),
             );
           } else {
             return const Center(child: CircularProgressIndicator());

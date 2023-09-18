@@ -6,12 +6,6 @@ sealed class DayResultEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
-// final int executionScope ++;
-// final String? result ++;
-// final String desires ++;
-// final String reluctance ++;
-// final String? interference ++;
-// final bool? rejoice;
 
 final class CompletedTimeChanged extends DayResultEvent {
   const CompletedTimeChanged(this.completedAt);
@@ -74,4 +68,13 @@ final class RejoiceChanged extends DayResultEvent {
 
   @override
   List<Object> get props => [rejoice];
+}
+
+final class UntilMinuteCanChanged extends DayResultEvent {
+  const UntilMinuteCanChanged(this.untilMinuteCan);
+
+  final List<String> untilMinuteCan;
+
+  @override
+  List<Object> get props => [untilMinuteCan];
 }

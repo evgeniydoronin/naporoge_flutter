@@ -13,7 +13,7 @@ class HeaderMessageWidget extends StatelessWidget {
           final message = snapshot.data['topMessage'];
           return Text(message['text']);
         } else {
-          return const Text('...');
+          return const Text('Нужно поспать!');
         }
       },
     );

@@ -46,7 +46,7 @@ dependencies:
   percent_indicator: ^4.2.3
   video_player: ^2.6.1
   chewie: ^1.4.0
-  fl_chart: ^0.62.0
+  fl_chart: ^0.63.0
   readmore: ^2.2.0
   flutter_slidable: ^3.0.0
   mask_text_input_formatter: ^2.4.0

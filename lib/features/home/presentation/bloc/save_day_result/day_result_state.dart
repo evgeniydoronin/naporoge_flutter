@@ -10,6 +10,7 @@ final class DayResultState extends Equatable {
     this.reluctance,
     this.interference,
     this.rejoice,
+    this.untilMinuteCan,
   });
 
   final int? dayId;
@@ -20,6 +21,7 @@ final class DayResultState extends Equatable {
   final String? reluctance;
   final String? interference;
   final String? rejoice;
+  final List<String>? untilMinuteCan;
 
   DayResultState copyWith({
     final int? dayId,
@@ -30,6 +32,7 @@ final class DayResultState extends Equatable {
     final String? reluctance,
     final String? interference,
     final String? rejoice,
+    final List<String>? untilMinuteCan,
   }) {
     return DayResultState(
       dayId: dayId ?? this.dayId,
@@ -40,6 +43,7 @@ final class DayResultState extends Equatable {
       result: result ?? this.result,
       interference: interference ?? this.interference,
       rejoice: rejoice ?? this.rejoice,
+      untilMinuteCan: untilMinuteCan ?? this.untilMinuteCan,
     );
   }
 
@@ -53,5 +57,6 @@ final class DayResultState extends Equatable {
         result ?? '',
         interference ?? '',
         rejoice ?? '',
+        untilMinuteCan ?? '',
       ];
 }
