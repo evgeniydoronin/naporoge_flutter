@@ -12,8 +12,7 @@ class WelcomeDescriptionScreen extends StatefulWidget {
   const WelcomeDescriptionScreen({super.key});
 
   @override
-  State<WelcomeDescriptionScreen> createState() =>
-      _WelcomeDescriptionScreenState();
+  State<WelcomeDescriptionScreen> createState() => _WelcomeDescriptionScreenState();
 }
 
 class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
@@ -24,8 +23,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
 
   @override
   void initState() {
-    videoPlayerController = VideoPlayerController.network(
-        '${AppRemoteAssets().videoAssets()}/1.mp4');
+    videoPlayerController = VideoPlayerController.network('${AppRemoteAssets().videoAssets()}/1.mp4');
 
     videoPlayerController.initialize().then((_) {
       setState(() {});
@@ -99,12 +97,10 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: 15, bottom: 15, left: 15, right: 80),
+                      padding: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 80),
                       child: Text(
                         'Посмотрите видео и получите первый ключ к навыку',
-                        style: TextStyle(
-                            color: Colors.white, fontSize: AppFont.regular),
+                        style: TextStyle(color: Colors.white, fontSize: AppFont.regular),
                       ),
                     ),
                   ],
@@ -129,7 +125,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                         borderRadius: AppLayout.primaryRadius,
                         child: Stack(
                           children: [
-                            Image.asset('assets/images/placeholder.png'),
+                            Image.asset('assets/images/placeholder_0.png'),
                             Positioned(
                               top: 0,
                               bottom: 0,
@@ -151,9 +147,8 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                                       aspectRatio: 16 / 9,
                                       autoPlay: true,
                                       showOptions: false,
-                                      videoPlayerController:
-                                          VideoPlayerController.network(
-                                              '${AppRemoteAssets().videoAssets()}/1.mp4'),
+                                      videoPlayerController: VideoPlayerController.networkUrl(
+                                          Uri.parse("${AppRemoteAssets().videoAssets()}/0.mp4")),
                                       deviceOrientationsAfterFullScreen: [
                                         DeviceOrientation.portraitUp,
                                       ],
@@ -161,8 +156,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                                     isPlay = true;
                                   });
                                 },
-                                icon: SvgPicture.asset(
-                                    'assets/icons/play_arrow.svg'),
+                                icon: SvgPicture.asset('assets/icons/play_arrow.svg'),
                               ),
                             ),
                           ],
@@ -180,12 +174,9 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                   textAlign: TextAlign.start,
                   text: TextSpan(
                     text: '1. Выберите полезное дело, которое ',
-                    style: TextStyle(
-                        color: Colors.black, fontSize: AppFont.regular),
+                    style: TextStyle(color: Colors.black, fontSize: AppFont.regular),
                     children: const [
-                      TextSpan(
-                          text: 'давно хочется сделать ',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'давно хочется сделать ', style: TextStyle(fontWeight: FontWeight.bold)),
                       TextSpan(text: ', но оно все откладывается'),
                     ],
                   ),
@@ -195,38 +186,31 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                   textAlign: TextAlign.start,
                   text: TextSpan(
                     text: '2. Три недели старайтесь делать его',
-                    style: TextStyle(
-                        color: Colors.black, fontSize: AppFont.regular),
+                    style: TextStyle(color: Colors.black, fontSize: AppFont.regular),
                   ),
                 ),
                 const SizedBox(height: 15),
                 RichText(
                   textAlign: TextAlign.start,
                   text: TextSpan(
-                    text:
-                        '3. Отмечайте появление желаний отложить дело и забросить курс',
-                    style: TextStyle(
-                        color: Colors.black, fontSize: AppFont.regular),
+                    text: '3. Отмечайте появление желаний отложить дело и забросить курс',
+                    style: TextStyle(color: Colors.black, fontSize: AppFont.regular),
                   ),
                 ),
                 const SizedBox(height: 15),
                 RichText(
                   textAlign: TextAlign.start,
                   text: TextSpan(
-                    text:
-                        '4. Смотрите видео и тренируйте способ правильно приступать к делу',
-                    style: TextStyle(
-                        color: Colors.black, fontSize: AppFont.regular),
+                    text: '4. Смотрите видео и тренируйте способ правильно приступать к делу',
+                    style: TextStyle(color: Colors.black, fontSize: AppFont.regular),
                   ),
                 ),
                 const SizedBox(height: 15),
                 RichText(
                   textAlign: TextAlign.start,
                   text: TextSpan(
-                    text:
-                        'Воля станет сильнее, а отвлекающие привычки – слабее',
-                    style: TextStyle(
-                        color: Colors.black, fontSize: AppFont.regular),
+                    text: 'Воля станет сильнее, а отвлекающие привычки – слабее',
+                    style: TextStyle(color: Colors.black, fontSize: AppFont.regular),
                   ),
                 ),
               ],
@@ -239,21 +223,12 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                 setState(() {
                   chewieController.pause();
                 });
-                // await FirebaseAuth.instance.signOut();
-                // TODO: Navigator.push
                 context.router.push(const StartDateSelectionScreenRoute());
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const StartDateSelectionScreen(),
-                //   ),
-                // );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.accent,
                 minimumSize: const Size(double.infinity, 60),
-                shape: RoundedRectangleBorder(
-                    borderRadius: AppLayout.primaryRadius),
+                shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
               ),
               child: const Text(
                 'Продолжить',

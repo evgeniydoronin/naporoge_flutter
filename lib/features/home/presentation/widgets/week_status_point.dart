@@ -146,7 +146,7 @@ class WeekStatusPoint extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              height: 90,
+              height: 98,
               padding: const EdgeInsets.only(top: 10, bottom: 10, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
               child: GridView.builder(
@@ -161,7 +161,7 @@ class WeekStatusPoint extends StatelessWidget {
                   // Будущий день
                   if (daysStatus[gridIndex]['status'] == 'future') {
                     _container = Container(
-                      height: 110,
+                      // height: 110,
                       decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,8 +178,8 @@ class WeekStatusPoint extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            height: 28,
-                            width: 34,
+                            height: 30,
+                            // width: 34,
                             decoration: const BoxDecoration(
                               // color: AppColor.primary,
                               borderRadius: BorderRadius.only(
@@ -265,12 +265,14 @@ class WeekStatusPoint extends StatelessWidget {
                   // Текущий день
                   else if (daysStatus[gridIndex]['status'] == 'opened') {
                     _container = Container(
+                      // height: 110,
                       decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
                             width: 34,
-                            height: 34,
+                            height: 33,
                             decoration: BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
                             child: Center(
                               child: Text(
@@ -280,7 +282,7 @@ class WeekStatusPoint extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            height: 24,
+                            height: 30,
                             decoration: const BoxDecoration(
                               // color: AppColor.primary,
                               borderRadius: BorderRadius.only(

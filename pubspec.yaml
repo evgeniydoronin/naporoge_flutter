@@ -52,7 +52,7 @@ dependencies:
   mask_text_input_formatter: ^2.4.0
   pin_code_text_field: ^1.8.0
   json_annotation: ^4.8.1
-  dio: ^5.1.2
+  dio: ^5.3.2
   get_it: ^7.6.0
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1

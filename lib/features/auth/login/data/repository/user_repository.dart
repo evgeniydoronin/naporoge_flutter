@@ -10,7 +10,8 @@ class UserRepository {
     try {
       final response = await userApi.getSmsConfirmCodeApi(phone);
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (dioError) {
+      print(dioError.error);
       rethrow;
     }
   }
@@ -19,7 +20,8 @@ class UserRepository {
     try {
       final response = await userApi.confirmAuthCodeApi(authCode);
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (dioError) {
+      print(dioError.error);
       rethrow;
     }
   }

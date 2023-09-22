@@ -208,6 +208,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                             var _stream = await streamLocalStorage.getActiveStream();
                             // Если курс создавался
                             if (_stream != null) {
+                              print('Если курс создавался Обновляем');
                               // Обновляем
                               final NPStream stream = _stream;
 
@@ -283,7 +284,7 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
                           }
                         : null,
                     child: const Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: EdgeInsets.all(15.0),
                       child: Row(
                         children: [
                           Expanded(

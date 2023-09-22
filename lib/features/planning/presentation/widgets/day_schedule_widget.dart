@@ -115,7 +115,6 @@ class DayScheduleWidget extends StatelessWidget {
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        // TODO: доработать входящие данные по количеству недель курса
         int weeks = stream.weeks!;
         String startDateString = stream.startAt.toString();
         DateTime startDate = DateTime.parse(startDateString);
@@ -382,6 +381,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
+        print('period[periodIndex].rows: ${period[periodIndex].rows}');
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -402,22 +402,17 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
             }
 
             return Container(
-              // padding: const EdgeInsets.only(bottom: 0),
-              // color: AppColor.grey1,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(width: 1, color: AppColor.grey1),
                 ),
               ),
-              height: 41,
+              height: 42,
               child: Row(
                 children: [
                   Container(
                     decoration: const BoxDecoration(
                       color: Colors.white,
-                      // border: Border(
-                      //   right: BorderSide(width: 1, color: AppColor.grey1),
-                      // ),
                     ),
                     width: 49,
                     // margin: const EdgeInsets.only(right: 1),
@@ -437,8 +432,6 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 7,
-                            crossAxisSpacing: 0,
-                            // mainAxisSpacing: 10,
                           ),
                           itemCount: 7,
                           itemBuilder: (BuildContext context, gridIndex) {
@@ -577,18 +570,16 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
       listener: (context, state) {},
       builder: (context, state) {
         return Container(
+          height: 21,
           decoration: BoxDecoration(
             border: Border(left: BorderSide(width: 1, color: AppColor.grey1)),
             color: cellColor,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                textCell.isNotEmpty ? textCell : "",
-                style: TextStyle(color: fontColor, fontSize: 12),
-              ),
-            ],
+          child: Center(
+            child: Text(
+              textCell.isNotEmpty ? textCell : "",
+              style: TextStyle(color: fontColor, fontSize: 12),
+            ),
           ),
         );
       },

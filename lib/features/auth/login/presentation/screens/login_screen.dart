@@ -83,8 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         TextFormField(
                           controller: _phone.phoneController,
-                          style: TextStyle(
-                              color: Colors.black, fontSize: AppFont.small),
+                          style: TextStyle(color: Colors.black, fontSize: AppFont.small),
                           decoration: InputDecoration(
                             floatingLabelStyle: TextStyle(
                               fontSize: 18.0,
@@ -92,11 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             filled: true,
                             fillColor: const Color(0xFFEEEEEF),
-                            contentPadding: const EdgeInsets.only(
-                                right: 25.0,
-                                left: 25.0,
-                                top: 20.0,
-                                bottom: 20.0),
+                            contentPadding: const EdgeInsets.only(right: 25.0, left: 25.0, top: 20.0, bottom: 20.0),
                             errorBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: AppColor.red,
@@ -113,8 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: AppLayout.primaryRadius,
-                              borderSide: const BorderSide(
-                                  color: Color(0xFFEEEEEF), width: 0),
+                              borderSide: const BorderSide(color: Color(0xFFEEEEEF), width: 0),
                             ),
                             labelText: 'Телефон',
                             labelStyle: const TextStyle(fontSize: 14.0),
@@ -128,9 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           validator: (value) {
                             // print(maskFormatter.getUnmaskedText().length);
-                            if (maskFormatter.getUnmaskedText().length < 10 ||
-                                value == null ||
-                                value.isEmpty) {
+                            if (maskFormatter.getUnmaskedText().length < 10 || value == null || value.isEmpty) {
                               return 'Введите номер телефона!';
                             }
                             return null;
@@ -148,8 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 24,
                               child: Checkbox(
                                 value: isChecked,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                                 side: const BorderSide(width: 1),
                                 onChanged: (newBool) {
                                   setState(() {
@@ -164,8 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Expanded(
                               child: RichText(
                                 text: TextSpan(
-                                  style: TextStyle(
-                                      color: AppColor.grey2, height: 1.5),
+                                  style: TextStyle(color: AppColor.grey2, height: 1.5),
                                   children: [
                                     const TextSpan(
                                       text: 'Я принимаю условия ',
@@ -174,8 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     TextSpan(
                                       text: 'политики конфидециальности',
                                       recognizer: TapGestureRecognizer()
-                                        ..onTap = () => context.router.push(
-                                            const PrivacyPolicyScreenRoute()),
+                                        ..onTap = () => context.router.push(const PrivacyPolicyScreenRoute()),
                                       style: TextStyle(color: AppColor.accent),
                                     ),
                                     const TextSpan(
@@ -186,8 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       text: 'обработку персональных данных',
                                       style: TextStyle(color: AppColor.accent),
                                       recognizer: TapGestureRecognizer()
-                                        ..onTap = () => context.router.push(
-                                            const PersonalDataScreenRoute()),
+                                        ..onTap = () => context.router.push(const PersonalDataScreenRoute()),
                                     ),
                                   ],
                                 ),
@@ -198,15 +186,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 20),
                         Text(
                           'Приложение разработано для обучающихся по Программе «Развитие воли и самоорганизации» Код активации выдается учебным заведением',
-                          style: TextStyle(
-                              color: AppColor.grey2, fontSize: AppFont.small),
+                          style: TextStyle(color: AppColor.grey2, fontSize: AppFont.small),
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(double.infinity, 60),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: AppLayout.primaryRadius),
+                            shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
                           ),
                           onPressed: errorScreen.isEmpty
                               ? _isTimerStart
@@ -214,27 +200,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                   : () async {
                                       if (_formKey.currentState!.validate()) {
                                         if (isChecked) {
-                                          var code = await _phone.getSmsCode(
-                                              maskFormatter.getUnmaskedText());
+                                          var code = await _phone.getSmsCode(maskFormatter.getUnmaskedText());
                                           print(code);
 
                                           if (context.mounted) {
                                             context.router.push(
                                               LoginPhoneConfirmScreenRoute(
-                                                phone: maskFormatter
-                                                    .getUnmaskedText(),
+                                                phone: maskFormatter.getUnmaskedText(),
                                                 code: code['code'],
                                               ),
                                             );
                                           }
 
                                           // TODO: uncomment
-                                          // startTimer();
+                                          startTimer();
                                         } else {
                                           ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                                  content: Text(
-                                                      'Вы должны принять условия')));
+                                              .showSnackBar(const SnackBar(content: Text('Вы должны принять условия')));
                                         }
                                       }
                                     }

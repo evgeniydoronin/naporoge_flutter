@@ -5,10 +5,10 @@ class Endpoints {
   static const String baseUrl = "https://np-app.evgeniydoronin.com/api";
 
   // receiveTimeout
-  static const Duration receiveTimeout = Duration(seconds: 10);
+  static const Duration receiveTimeout = Duration(seconds: 60);
 
   // connectTimeout
-  static const Duration connectionTimeout = Duration(seconds: 10);
+  static const Duration connectionTimeout = Duration(seconds: 60);
 
   // User data
   static const String smsCode = '/code';

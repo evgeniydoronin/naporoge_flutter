@@ -109,9 +109,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
                               validator: (value) {
-                                if (value == null || value
-                                    .trim()
-                                    .isEmpty) {
+                                if (value == null || value.trim().isEmpty) {
                                   return 'Заполните обязательное поле!';
                                 }
                                 return null;
@@ -251,15 +249,16 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     }
 
                                     CircularLoading(context).startLoading();
+
                                     final isar = await isarService.db;
                                     var user = await isarService.getUser();
 
-                                    String currDay = DateFormat('y-MM-dd').format(
-                                        DateTime(now.year, now.month, now.day));
+                                    String currDay =
+                                        DateFormat('y-MM-dd').format(DateTime(now.year, now.month, now.day));
 
                                     final weekNumber = getWeekNumber(now);
                                     Week? currWeekData =
-                                    await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
+                                        await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
                                     late int dayId;
 
@@ -289,17 +288,32 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                       "reluctance": state.reluctance,
                                       "interference": state.interference,
                                       "rejoice": state.rejoice,
+                                      "timeSend": DateTime.now().toLocal().toString(),
                                     };
 
                                     // print('dayResultData: $dayResultData');
                                     // create on server
                                     var newDayResult = await _streamController.createDayResult(dayResultData);
 
+                                    // проверка на антиперемотку
+                                    if (newDayResult['status'] == false) {
+                                      if (context.mounted) {
+                                        CircularLoading(context).stopLoading();
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Установите верное время'),
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                    }
+
                                     // save on local
                                     await streamLocalStorage.saveDayResult(newDayResult);
-                                    print(newDayResult);
+                                    // print(newDayResult);
 
-                                    final stream = await streamLocalStorage.getActiveStream();
+                                    // final stream = await streamLocalStorage.getActiveStream();
 
                                     if (context.mounted) {
                                       // context.read<HomeScreenBloc>().add(StreamProgressChanged(getStreamStatus(stream)));

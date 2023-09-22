@@ -156,12 +156,16 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                     Positioned(
                       bottom: 0,
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width - 80,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width - 80,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List<Widget>.generate(
                               weeksProgress.length,
-                              (index) => Padding(
+                                  (index) =>
+                                  Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 5),
                                     child: CircleAvatar(
                                       maxRadius: 5,
@@ -176,45 +180,46 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                 const SizedBox(height: 25),
                 weeksProgress[0]['weekResultsSave'] == true
                     ? Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  CircularLoading(context).startLoading();
-                                  final streamLocalStorage = StreamLocalStorage();
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            CircularLoading(context).startLoading();
 
-                                  Map progressData = {};
-                                  int index = pageController.page!.floor().toInt();
-                                  Week week = weeksProgress[index]['week'];
+                            final streamLocalStorage = StreamLocalStorage();
 
-                                  progressData['week_id'] = week.id;
-                                  progressData['week_progress'] = progress.text;
+                            Map progressData = {};
+                            int index = pageController.page!.floor().toInt();
+                            Week week = weeksProgress[index]['week'];
 
-                                  // print('progressData: $progressData');
+                            await Future.delayed(const Duration(milliseconds: 200));
 
-                                  // create on server
-                                  var updateWeekProgress = await _streamController.updateWeekProgress(progressData);
+                            progressData['week_id'] = week.id;
+                            progressData['week_progress'] = progress.text;
 
-                                  // print('updateWeekProgress: $updateWeekProgress');
+                            // create on server
+                            var updateWeekProgress = await _streamController.updateWeekProgress(progressData);
 
-                                  // save on local
-                                  await streamLocalStorage.updateWeekProgress(updateWeekProgress);
+                            // print('updateWeekProgress: $updateWeekProgress');
 
-                                  if (context.mounted) {
-                                    CircularLoading(context).stopLoading();
-                                  }
-                                }
-                              },
-                              style: AppLayout.accentBTNStyle,
-                              child: Text(
-                                'Отметить достижения недели',
-                                style: AppFont.regularSemibold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
+                            // save on local
+                            await streamLocalStorage.updateWeekProgress(updateWeekProgress);
+
+                            if (context.mounted) {
+                              CircularLoading(context).stopLoading();
+                            }
+                          }
+                        },
+                        style: AppLayout.accentBTNStyle,
+                        child: Text(
+                          'Отметить достижения недели',
+                          style: AppFont.regularSemibold,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
                     : const SizedBox(),
               ],
             ),
