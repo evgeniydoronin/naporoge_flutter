@@ -1,9 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:naporoge/features/diary/domain/entities/diary_note_entity.dart';
+import '../../domain/entities/diary_note_entity.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
@@ -12,7 +11,6 @@ import '../../../../core/utils/circular_loading.dart';
 import '../../../planning/data/sources/local/stream_local_storage.dart';
 import '../../../planning/presentation/stream_controller.dart';
 import '../bloc/diary_bloc.dart';
-import '../utils/get_diary_last_note.dart';
 import '../widgets/diary_calendar_widget.dart';
 import '../widgets/diary_day_results_widget.dart';
 import '../widgets/diary_note_widget.dart';
@@ -80,7 +78,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
                   dividerColor: Colors.transparent,
                 ),
                 child: ExpansionTile(
-                  initiallyExpanded: true,
                   maintainState: true,
                   tilePadding: const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
                   title: Column(

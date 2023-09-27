@@ -278,7 +278,6 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                           itemCount: 7,
                           itemBuilder: (BuildContext context, gridIndex) {
                             // формируем данные ячейки
-                            // TODO: неверно формируются ячеки, нет соответствия
                             for (int i = 0; i < daysData.length; i++) {
                               // print("daysData: ${daysData[i]}");
                               if (eq(daysData[i]['cellId'], [periodIndex, rowIndex, gridIndex])) {
@@ -426,7 +425,7 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
         if (dayIndex != 7) {
           badgeColor = Colors.white;
           textCell = dayData['start_at'];
-          fontColor = AppColor.grey2;
+          fontColor = AppColor.primary;
         }
       }
     }

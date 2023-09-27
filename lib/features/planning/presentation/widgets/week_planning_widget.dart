@@ -101,7 +101,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
     defaultAllTitleHeight = 270;
 
     return FutureBuilder(
-        future: weeksData,
+        future: getWeeksData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Map pageData = snapshot.data;
@@ -134,23 +134,26 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                         String weekSunday = DateFormat('dd.MM').format(pageData['weeksOnPage'][pageIndex]['sunday']);
                         String weekPeriod = "$weekMonday - $weekSunday";
 
-                        print(
-                            "pageData['weeksOnPage']: ${pageData['weeksOnPage'][pageIndex]['cellsWeekData'].isEmpty}");
-
+                        // неделя прошла
+                        // проверяем на составление плана
                         // план не составлялся
                         Map isPlannedWeek = {};
-                        if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'].isNotEmpty) {
-                          if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'][0]['start_at'] == '') {
-                            isPlannedWeek['title'] = 'План не составлен';
-                            isPlannedWeek['color'] = AppColor.red;
-                          } else {
-                            // isPlannedWeek['title'] = 'План составлен';
-                            // isPlannedWeek['color'] = AppColor.primary;
+                        DateTime now = DateTime.now();
+                        DateTime monday = pageData['weeksOnPage'][pageIndex]['monday'];
+
+                        // неделя прошла
+                        if (now.isAfter(monday)) {
+                          // ячейка statusCell существует
+                          if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'][0]['statusCell'] != null) {
+                            // ячейка имеет статус helper
+                            if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'][0]['statusCell'] == 'helper') {
+                              isPlannedWeek['title'] = 'План не составлен';
+                              isPlannedWeek['color'] = AppColor.red;
+                            }
                           }
-                        } else {
-                          isPlannedWeek['title'] = 'План не составлен';
-                          isPlannedWeek['color'] = AppColor.red;
                         }
+
+                        print('allPages: ${allPages}');
 
                         return ListView(
                           shrinkWrap: true,
@@ -168,37 +171,42 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          // сброс раздела Планирование
-                                          // при переходе по вкладкам
-                                          // необходим для сброса стейта с финальными ячейками
-                                          // если пользователь ушёл с планнера без сохранения
-                                          context
-                                              .read<PlannerBloc>()
-                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
+                                      pageIndex != 0
+                                          ? GestureDetector(
+                                              onTap: () async {
+                                                // сброс раздела Планирование
+                                                // при переходе по вкладкам
+                                                // необходим для сброса стейта с финальными ячейками
+                                                // если пользователь ушёл с планнера без сохранения
+                                                context
+                                                    .read<PlannerBloc>()
+                                                    .add(const FinalCellForCreateStream(finalCellIDs: []));
 
-                                          pageController.previousPage(
-                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
-                                        },
-                                        child: const Icon(Icons.arrow_back_ios_new),
-                                      ),
+                                                pageController.previousPage(
+                                                    duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
+                                              },
+                                              child: const Icon(Icons.arrow_back_ios_new),
+                                            )
+                                          : const Icon(Icons.arrow_back_ios_new),
                                       Text(weekPeriod),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          // сброс раздела Планирование
-                                          // при переходе по вкладкам
-                                          // необходим для сброса стейта с финальными ячейками
-                                          // если пользователь ушёл с планнера без сохранения
-                                          context
-                                              .read<PlannerBloc>()
-                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
+                                      pageIndex + 1 < allPages
+                                          ? GestureDetector(
+                                              onTap: () async {
+                                                // сброс раздела Планирование
+                                                // при переходе по вкладкам
+                                                // необходим для сброса стейта с финальными ячейками
+                                                // если пользователь ушёл с планнера без сохранения
+                                                context
+                                                    .read<PlannerBloc>()
+                                                    .add(const FinalCellForCreateStream(finalCellIDs: []));
 
-                                          pageController.nextPage(
-                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
-                                        },
-                                        child: const RotatedBox(quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
-                                      ),
+                                                pageController.nextPage(
+                                                    duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
+                                              },
+                                              child: const RotatedBox(
+                                                  quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
+                                            )
+                                          : const RotatedBox(quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
                                     ],
                                   ),
                                 ],

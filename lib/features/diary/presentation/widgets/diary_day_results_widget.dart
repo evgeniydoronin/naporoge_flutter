@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
-
+import 'dart:math' as math;
 import '../../../../core/constants/app_theme.dart';
 import '../bloc/diary_bloc.dart';
 import '../utils/get_diary_day_results.dart';
@@ -238,7 +238,11 @@ class _DiaryDayResultsWidgetState extends State<DiaryDayResultsWidget> {
                                       children: [
                                         const Text('Удалось порадоваться?'),
                                         rejoiceResults
-                                            ? SvgPicture.asset('assets/icons/342.svg')
+                                            ? Transform(
+                                                alignment: Alignment.center,
+                                                transform: Matrix4.rotationY(math.pi),
+                                                child: SvgPicture.asset('assets/icons/342.svg'),
+                                              )
                                             : RotatedBox(
                                                 quarterTurns: 2, child: SvgPicture.asset('assets/icons/342.svg')),
                                       ],

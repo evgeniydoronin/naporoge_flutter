@@ -177,7 +177,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     fillColor: AppColor.grey1,
                                     hintText: state.completedAt != null
                                         ? DateFormat('HH:mm').format(DateTime.parse(state.completedAt.toString()))
-                                        : 'Выбрать время начала дня',
+                                        : 'Выбрать время начала',
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
                                     isDense: true,
                                     enabledBorder: OutlineInputBorder(

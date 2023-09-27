@@ -28,10 +28,14 @@ Future getWeeksProcess() async {
       }
 
       List daysProgress = [];
+      List days = [];
 
       for (Day day in weekDays) {
         DayResult? dayResult = await isar.dayResults.filter().dayIdEqualTo(day.id).resultIsNotNull().findFirst();
-        daysProgress.addAll([dayResult]);
+        daysProgress.addAll([
+          {'day': day, 'dayResult': dayResult}
+        ]);
+        // print('dayResult: $dayResult, day: ${day.startAt}');
       }
 
       weeksData.addAll([

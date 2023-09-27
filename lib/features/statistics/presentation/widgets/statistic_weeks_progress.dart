@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naporoge/core/utils/get_week_number.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/utils/circular_loading.dart';
@@ -31,7 +32,6 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
   final _streamController = getIt<StreamController>();
   TextEditingController progress = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -59,12 +59,35 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                         itemBuilder: (BuildContext context, int index) {
                           Map weekData = weeksProgress[index];
                           Week week = weekData['week'];
+                          List daysProgress = weekData['daysProgress'];
                           progress = TextEditingController(text: week.progress);
+
+                          DateTime now = DateTime.now();
+
+                          int currentWeek = getWeekNumber(now);
 
                           // add data to weekResult
                           List weekResult = [];
-                          for (int i = 0; i < weekDayName.length; i++) {
-                            DayResult? dayResult = weekData['daysProgress'][i];
+                          for (int i = 0; i < daysProgress.length; i++) {
+                            String dayResult = '';
+                            // есть результат дня
+                            if (daysProgress[i]['dayResult'] != null) {
+                              DayResult res = daysProgress[i]['dayResult'];
+                              dayResult = res.result ?? '';
+                            }
+                            // нет результата
+                            else {
+                              // неделя прошла
+                              if (currentWeek > week.weekNumber!) {
+                                dayResult = 'пропуск';
+                              }
+                              // текущая неделя
+                              else if (currentWeek == week.weekNumber) {
+                                if (now.weekday > i + 1) {
+                                  dayResult = 'пропуск';
+                                }
+                              }
+                            }
 
                             weekResult.add(TableRow(
                               children: [
@@ -78,8 +101,8 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    dayResult == null ? 'пропуск' : dayResult.result.toString(),
-                                    style: dayResult == null
+                                    dayResult,
+                                    style: dayResult == 'пропуск'
                                         ? TextStyle(fontSize: AppFont.small, color: AppColor.grey2)
                                         : TextStyle(fontSize: AppFont.small),
                                   ),
@@ -87,6 +110,37 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                               ],
                             ));
                           }
+
+                          // for (int i = 0; i < weekData.length; i++) {
+                          //   DayResult? dayResult = weekData['daysProgress'][i];
+                          //   Day? day = weekData['days'][i];
+                          //
+                          //   // неделя создана
+                          //   if (day?.startAt != null) {
+                          //     // print('day startAt: ${day!.startAt}');
+                          //   }
+                          //
+                          //   weekResult.add(TableRow(
+                          //     children: [
+                          //       Padding(
+                          //         padding: const EdgeInsets.only(top: 8.0),
+                          //         child: Text(
+                          //           weekDayName[i],
+                          //           style: TextStyle(fontSize: AppFont.small, color: AppColor.grey2),
+                          //         ),
+                          //       ),
+                          //       Padding(
+                          //         padding: const EdgeInsets.all(8.0),
+                          //         child: Text(
+                          //           dayResult == null ? 'пропуск' : dayResult.result.toString(),
+                          //           style: dayResult == null
+                          //               ? TextStyle(fontSize: AppFont.small, color: AppColor.grey2)
+                          //               : TextStyle(fontSize: AppFont.small),
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ));
+                          // }
 
                           return Column(
                             children: [
@@ -133,16 +187,12 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                     Positioned(
                       bottom: 0,
                       child: SizedBox(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width - 80,
+                        width: MediaQuery.of(context).size.width - 80,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List<Widget>.generate(
                               weeksProgress.length,
-                                  (index) =>
-                                  Padding(
+                              (index) => Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 5),
                                     child: CircleAvatar(
                                       maxRadius: 5,

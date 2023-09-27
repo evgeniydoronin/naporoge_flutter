@@ -7,7 +7,7 @@ import '../../../../core/routes/app_router.dart';
 import '../widgets/header_messages.dart';
 import '../widgets/total_button.dart';
 import '../widgets/video_box.dart';
-import '../widgets/week_progress.dart';
+import '../widgets/course_progress.dart';
 import '../widgets/week_status_point.dart';
 
 @RoutePage(name: 'HomesEmptyRouter')
@@ -72,39 +72,39 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 10),
           const WeekStatusPoint(),
           const SizedBox(height: 10),
-          const WeekProgress(),
+          const CourseProgress(),
           const SizedBox(height: 25),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
-                  flex: 4,
-                  fit: FlexFit.tight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.router.push(const TodoEmptyRouter());
-                    },
-                    style: AppLayout.primaryBTNStyle,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset('assets/icons/todo_home_screen.svg'),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Перечень дел',
-                            style: AppFont.regularSemibold,
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
+                // Flexible(
+                //   flex: 4,
+                //   fit: FlexFit.tight,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       context.router.push(const TodoEmptyRouter());
+                //     },
+                //     style: AppLayout.primaryBTNStyle,
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         SvgPicture.asset('assets/icons/todo_home_screen.svg'),
+                //         const SizedBox(width: 10),
+                //         Expanded(
+                //           child: Text(
+                //             'Перечень дел',
+                //             style: AppFont.regularSemibold,
+                //             overflow: TextOverflow.fade,
+                //             softWrap: false,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(width: 20),
                 Flexible(
                   flex: 3,
                   child: ElevatedButton(

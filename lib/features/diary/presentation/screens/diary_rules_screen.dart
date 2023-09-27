@@ -60,6 +60,16 @@ class DiaryRulesScreen extends StatelessWidget {
                 // style: TextStyle(fontSize: 14),
               ),
             ),
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(borderRadius: AppLayout.primaryRadius, color: Colors.white),
+              child: const Text(
+                'Новая заметка сохраняется в текущий день. Создавать заметки на другие дни невозможно.',
+                // style: TextStyle(fontSize: 14),
+              ),
+            ),
           ],
         ),
       ),
