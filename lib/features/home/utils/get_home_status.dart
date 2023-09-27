@@ -50,31 +50,25 @@ Future getHomeStatus() async {
   else if (streamStatus['status'] == 'process') {
     // скрываем статусы и кнопку внесения результатов
     // в 3 часа ночи
-    if (DateTime
-        .now()
-        .hour == 3) return;
+    if (DateTime.now().hour == 3) return;
 
     // недели НЕ пустые
     if (stream.weekBacklink.isNotEmpty) {
+      print('stream.weekBacklink: ${stream.weekBacklink}');
       for (int i = 0; i < stream.weekBacklink.length; i++) {
         int currentWeekNumber = getWeekNumber(now);
         // текущая неделя может быть не последней
-        final curWeek = stream.weekBacklink
-            .where((week) => week.weekNumber == currentWeekNumber)
-            .first;
+        Week? lastWeek = stream.weekBacklink.elementAtOrNull(weeks - 1);
 
-        if (i + 1 == weeks) {
-          final lastWeek = stream.weekBacklink.elementAt(i);
-          if (curWeek.weekNumber == lastWeek.weekNumber) {
+        if (lastWeek != null) {
+          if (currentWeekNumber == lastWeek.weekNumber) {
             // текущая неделя последняя
             isLastWeekOnStream = true;
           }
         }
       }
 
-      Week week = stream.weekBacklink
-          .where((week) => week.weekNumber == currentWeekNumber)
-          .first;
+      Week week = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
       List days = await isar.days.filter().weekIdEqualTo(week.id).findAll();
       Day? monday = await isar.days.filter().weekIdEqualTo(week.id).findFirst();
       // пустая неделя
@@ -89,8 +83,10 @@ Future getHomeStatus() async {
         // пустая неделя
         if (weekIsEmpty) {
           print('пустая последняя неделя');
+          print('now: $now');
           // суббота или воскресенье
-          if (now.weekday == 6 || now.weekday == 7) {
+          if (now.weekday == 6) {
+            print('суббота пустая последняя неделя');
             // завершенные дни текущей недели
             List daysWeekCompleted = await isar.days.filter().weekIdEqualTo(week.id).completedAtIsNotNull().findAll();
 
@@ -103,7 +99,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysWeekCompleted.length; i++) {
                 Day day = daysWeekCompleted[i];
                 final res =
-                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   currentWeekExecutionScope.add(res);
@@ -126,7 +122,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysIdCompleted.length; i++) {
                 Day day = daysIdCompleted[i];
                 final res =
-                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   executionScope.add(res);
@@ -137,18 +133,7 @@ Future getHomeStatus() async {
             for (Day day in days) {
               // DateTime dayCompletedAt = DateTime.parse(DateFormat('y-MM-dd').format(day.completedAt!));
 
-              if (now.weekday == 7) {
-                // воскресенье выполнено
-                if (days[6].completedAt != null) {
-                  topMessage['text'] = 'Итоги';
-                  button['isActive'] = true;
-                  button['status'] = 'goToTotalScreen';
-                }
-                // воскресенье НЕ выполнено
-                else {
-                  button['isActive'] = true;
-                }
-              } else if (now.weekday == 6) {
+              if (now.weekday == 6) {
                 // суботта выполнена
                 if (days[5].completedAt != null) {
                   if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
@@ -164,6 +149,17 @@ Future getHomeStatus() async {
                   button['isActive'] = true;
                 }
               }
+            }
+          } else if (now.weekday == 7) {
+            // воскресенье выполнено
+            if (days[6].completedAt != null) {
+              topMessage['text'] = 'Итоги';
+              button['isActive'] = true;
+              button['status'] = 'goToTotalScreen';
+            }
+            // воскресенье НЕ выполнено
+            else {
+              button['isActive'] = true;
             }
           }
           // проверки в будни
@@ -195,7 +191,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysWeekCompleted.length; i++) {
                 Day day = daysWeekCompleted[i];
                 final res =
-                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   currentWeekExecutionScope.add(res);
@@ -218,7 +214,7 @@ Future getHomeStatus() async {
               for (int i = 0; i < daysIdCompleted.length; i++) {
                 Day day = daysIdCompleted[i];
                 final res =
-                await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
+                    await isar.dayResults.filter().executionScopeGreaterThan(0).dayIdEqualTo(day.id).findFirst();
 
                 if (res != null) {
                   executionScope.add(res);
@@ -276,18 +272,6 @@ Future getHomeStatus() async {
                   button['isActive'] = true;
                 }
               }
-
-              // если пустая неделя
-              // else {
-              //   int freeDayIndex = now.weekday - 1;
-              //   Day freeDay = days[freeDayIndex];
-              //   // проверяем выполненные дни
-              //   if (freeDay.completedAt != null) {
-              //     topMessage['text'] = 'Результаты сохранены';
-              //   } else if (freeDay.completedAt == null) {
-              //     button['isActive'] = true;
-              //   }
-              // }
             }
           }
         }
@@ -300,20 +284,26 @@ Future getHomeStatus() async {
           print('пустая неделя');
           // проверки в воскресенье
           if (now.weekday == 7) {
+            print('воскресенье пустая неделя');
             // завершенные дни текущей недели
             List daysCompleted = await isar.days.filter().weekIdEqualTo(week.id).completedAtIsNotNull().findAll();
             // завершенные дни текущей недели не пустые
-            if (daysCompleted.isNotEmpty) {
-              // текущее воскресенье
-              final sunday = await isar.days.get(days[6].id);
+            // текущее воскресенье
+            Day? sunday = await isar.days.get(days[6].id);
 
-              // воскресенье не сохранялось
-              if (sunday!.completedAt == null) {
+            if (sunday != null) {
+              print('sunday: ${sunday.completedAt}');
+              // воскресенье сохранялось
+              if (sunday.completedAt != null) {
+                topMessage['text'] = 'Результаты сохранены';
+              }
+              // воскресенье НЕ сохранялось
+              else {
                 List executionScope = [];
-                // проверяем объем выполнения дней текущей неделм
+                // проверяем объем выполнения дней текущей недели
                 for (Day dayCompleted in daysCompleted) {
                   int i =
-                  await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
+                      await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
                   // значение выполненного объема больше 0
                   if (i != 0) {
                     executionScope.add(i);
@@ -328,11 +318,35 @@ Future getHomeStatus() async {
                   topMessage['text'] = 'Выходной';
                 }
               }
-              // воскресенье сохранялось
-              else {
-                topMessage['text'] = 'Результаты сохранены';
-              }
             }
+
+            // if (daysCompleted.isNotEmpty) {
+            //   // воскресенье не сохранялось
+            //   if (sunday!.completedAt == null) {
+            //     List executionScope = [];
+            //     // проверяем объем выполнения дней текущей недели
+            //     for (Day dayCompleted in daysCompleted) {
+            //       int i =
+            //       await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
+            //       // значение выполненного объема больше 0
+            //       if (i != 0) {
+            //         executionScope.add(i);
+            //       }
+            //     }
+            //
+            //     // количество выполненных дней
+            //     if (executionScope.length < 6) {
+            //       // активируем кнопку сохранения
+            //       button['isActive'] = true;
+            //     } else {
+            //       topMessage['text'] = 'Выходной';
+            //     }
+            //   }
+            //   // воскресенье сохранялось
+            //   else {
+            //     topMessage['text'] = 'Результаты сохранены';
+            //   }
+            // }
           }
           // проверки в будни + суббота
           else {
@@ -363,7 +377,7 @@ Future getHomeStatus() async {
                 // проверяем объем выполнения дня
                 for (Day dayCompleted in daysCompleted) {
                   int i =
-                  await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
+                      await isar.dayResults.filter().dayIdEqualTo(dayCompleted.id).executionScopeGreaterThan(0).count();
                   // значение выполненного объема больше 0
                   if (i != 0) {
                     executionScope.add(i);

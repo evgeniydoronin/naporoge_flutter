@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:naporoge/features/home/presentation/bloc/save_day_result/day_result_bloc.dart';
+import '../bloc/save_day_result/day_result_bloc.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../utils/get_home_status.dart';

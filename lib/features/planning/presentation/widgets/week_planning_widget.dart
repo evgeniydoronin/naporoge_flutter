@@ -139,22 +139,18 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                         // проверяем на составление плана
                         // план не составлялся
                         Map isPlannedWeek = {};
-                        DateTime now = DateTime.now();
+                        DateTime now = getActualStudentDay();
                         DateTime monday = pageData['weeksOnPage'][pageIndex]['monday'];
+                        Week week = pageData['weeksOnPage'][pageIndex]['week'];
 
+                        // План на неделю не составлен
                         // неделя прошла
-                        if (now.isAfter(monday)) {
-                          // ячейка statusCell существует
-                          if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'][0]['statusCell'] != null) {
-                            // ячейка имеет статус helper
-                            if (pageData['weeksOnPage'][pageIndex]['cellsWeekData'][0]['statusCell'] == 'helper') {
-                              isPlannedWeek['title'] = 'План не составлен';
-                              isPlannedWeek['color'] = AppColor.red;
-                            }
+                        if (now.isAfter(monday) || now.isAtSameMomentAs(monday)) {
+                          if (week.systemConfirmed != null) {
+                            isPlannedWeek['title'] = 'План не составлен';
+                            isPlannedWeek['color'] = AppColor.red;
                           }
                         }
-
-                        print('allPages: ${allPages}');
 
                         return ListView(
                           shrinkWrap: true,

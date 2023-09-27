@@ -313,6 +313,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
                     'isEditable': false,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -329,6 +330,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': [0, 1, 2],
                     'isEditable': true,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -371,6 +373,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': weekOpenedPeriodFutureWeek.toSet().toList(),
                     'isEditable': true,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -388,6 +391,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': [0, 1, 2],
                     'isEditable': true,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -413,6 +417,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'isEditable': true,
                     'weekId': null, // если неделя не создана - week.id НЕТ
                     'weekOfYear': week.weekNumber! + 1,
+                    'week': week,
                   });
                 }
               }
@@ -529,6 +534,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
                   'isEditable': false,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -545,6 +551,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': [0, 1, 2],
                   'isEditable': true,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -629,6 +636,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
                     'isEditable': false,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -646,6 +654,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': [0, 1, 2],
                     'isEditable': true,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -764,6 +773,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
                     'isEditable': false,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -780,6 +790,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'weekOpenedPeriod': [0, 1, 2],
                     'isEditable': true,
                     'weekId': week.id,
+                    'week': week,
                   }
                 ]);
               }
@@ -807,6 +818,7 @@ Future getWeekData(NPStream stream, String status) async {
                     'isEditable': true,
                     'weekId': null, // если неделя не создана - week.id НЕТ
                     'weekOfYear': week.weekNumber! + 1,
+                    'week': week,
                   });
                 }
               }
@@ -866,14 +878,14 @@ Future getWeekData(NPStream stream, String status) async {
 
                       // добавляем индекс заполненного периода
                       weekOpenedPeriod.add(newHourCellId[0]);
-
-                      // print('hourIndex: $hourIndex');
                     }
                   }
                 }
                 // день не завершен
                 else {
-                  print('day 334: ${day.id}');
+                  // print('day 334: ${day.id}');
+                  // добавляем индекс заполненного периода
+                  // weekOpenedPeriod.add();
                   // добавляем новую ячейку с новым индексом
                   // cellsWeekData.addAll([
                   //   {
@@ -896,6 +908,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
                   'isEditable': false,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -912,6 +925,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': [0, 1, 2],
                   'isEditable': true,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -1041,6 +1055,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
                   'isEditable': false,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -1058,6 +1073,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': [0, 1, 2],
                   'isEditable': true,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -1100,6 +1116,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': weekOpenedPeriodFutureWeek.toSet().toList(),
                   'isEditable': true,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -1117,6 +1134,7 @@ Future getWeekData(NPStream stream, String status) async {
                   'weekOpenedPeriod': [0, 1, 2],
                   'isEditable': true,
                   'weekId': week.id,
+                  'week': week,
                 }
               ]);
             }
@@ -1262,6 +1280,7 @@ Future getWeekData(NPStream stream, String status) async {
                 'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
                 'isEditable': false,
                 'weekId': week.id,
+                'week': week,
               }
             ]);
           }
@@ -1278,6 +1297,7 @@ Future getWeekData(NPStream stream, String status) async {
                 'weekOpenedPeriod': [0, 1, 2],
                 'isEditable': true,
                 'weekId': week.id,
+                'week': week,
               }
             ]);
           }
@@ -1454,6 +1474,7 @@ Future getWeekData(NPStream stream, String status) async {
           'weekOpenedPeriod': weekOpenedPeriod.toSet().toList(),
           'isEditable': false,
           'weekId': week.id,
+          'week': week,
         }
       ]);
     }

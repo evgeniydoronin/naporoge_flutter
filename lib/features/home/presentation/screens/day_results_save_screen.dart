@@ -111,9 +111,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
                               validator: (value) {
-                                if (value == null || value
-                                    .trim()
-                                    .isEmpty) {
+                                if (value == null || value.trim().isEmpty) {
                                   return 'Заполните обязательное поле!';
                                 }
                                 return null;
@@ -245,6 +243,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     setState(() {
                                       isDesires = true;
                                     });
+                                    return;
                                   } else {
                                     setState(() {
                                       isDesires = false;
@@ -254,6 +253,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     setState(() {
                                       isReluctance = true;
                                     });
+                                    return;
                                   } else {
                                     setState(() {
                                       isReluctance = false;
@@ -297,7 +297,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
 
                                     final weekNumber = getWeekNumber(actualStudentDay);
                                     Week? currWeekData =
-                                    await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
+                                        await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
                                     late int dayId;
 

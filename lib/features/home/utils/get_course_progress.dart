@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+import 'package:naporoge/core/utils/get_actual_student_day.dart';
 import '../../planning/domain/entities/stream_entity.dart';
 
 import '../../../core/services/db_client/isar_service.dart';
@@ -14,7 +15,7 @@ Future getCourseProgress() async {
   int weeks = stream.weeks!;
   int days = weeks * 7;
 
-  DateTime now = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  DateTime now = DateTime.parse(DateFormat('yyyy-MM-dd').format(getActualStudentDay()));
 
   // статус курса (before, after, process)
   Map streamStatus = await getStreamStatus();
@@ -50,7 +51,8 @@ Future getCourseProgress() async {
   else if (streamStatus['status'] == 'process') {
     // + 1: прибавляем текущий день, он сразу считается как прошедший
     int passedDays = startStreamAt.difference(now).inDays.abs() + 1;
-    Week lastWeek = stream.weekBacklink.last;
+    // последняя неделя курса
+    Week? lastWeek = stream.weekBacklink.elementAtOrNull(weeks - 1);
 
     // Title
     for (int i = 0; i < weeks; i++) {
@@ -90,8 +92,9 @@ Future getCourseProgress() async {
     data['percent'] = (passedDays * 100 / days).ceil();
     data['description'] = '$leftPercent% осталось до полного выполнения дела';
 
-    if (currentWeekNumber == lastWeek.weekNumber) {
-      print('текущая неделя последняя');
+    // последняя неделя
+    if (lastWeek != null && currentWeekNumber == lastWeek.weekNumber) {
+      print('getCourseProgress: текущая неделя последняя');
       List lastWeekdays = await isar.days.filter().weekIdEqualTo(lastWeek.id).findAll();
       Day? monday = await isar.days.filter().weekIdEqualTo(lastWeek.id).findFirst();
       // пустая неделя
@@ -102,8 +105,8 @@ Future getCourseProgress() async {
       // пустая неделя
       if (weekIsEmpty) {
         print('пустая последняя неделя 33');
-        // суббота или воскресенье
-        if (now.weekday == 6 || now.weekday == 7) {
+        // суббота
+        if (now.weekday == 6) {
           // завершенные дни текущей недели
           List daysWeekCompleted = await isar.days.filter().weekIdEqualTo(lastWeek.id).completedAtIsNotNull().findAll();
 
@@ -146,24 +149,8 @@ Future getCourseProgress() async {
           }
 
           for (Day day in lastWeekdays) {
-            // sunday
-            if (now.weekday == 7) {
-              // воскресенье выполнено
-              if (lastWeekdays[6].completedAt != null) {
-                int leftPercent = 0;
-                data['percent'] = 100;
-                data['description'] = '$leftPercent% осталось до полного выполнения дела';
-                data['colored'] = true;
-              }
-              // воскресенье НЕ выполнено
-              else {
-                int leftPercent = 100 - (passedDays * 100 / (days + 1)).ceil();
-                data['percent'] = (passedDays * 100 / (days + 1)).ceil();
-                data['description'] = '$leftPercent% осталось до полного выполнения дела';
-              }
-            }
             // saturday
-            else if (now.weekday == 6) {
+            if (now.weekday == 6) {
               // суботта выполнена
               if (lastWeekdays[5].completedAt != null) {
                 if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
@@ -175,6 +162,12 @@ Future getCourseProgress() async {
               }
             }
           }
+        }
+        // воскресенье
+        else if (now.weekday == 7) {
+          data['percent'] = 100;
+          data['description'] = '$leftPercent% осталось до полного выполнения дела';
+          data['colored'] = true;
         }
       }
       // НЕ пустая неделя
@@ -229,30 +222,27 @@ Future getCourseProgress() async {
             // текущий день
             if (dayStartAt.isAtSameMomentAs(DateTime.parse(DateFormat('y-MM-dd').format(now)))) {
               print('текущий день');
+              print('day.completedAt : ${day.completedAt}');
               // проверяем выполненные дни
               if (day.completedAt != null) {
                 if (now.weekday == 7) {
-                  // topMessage['text'] = 'Итоги';
-                  // button['isActive'] = true;
-                  // button['status'] = 'goToTotalScreen';
+                  data['percent'] = 100;
+                  data['description'] = '$leftPercent% осталось до полного выполнения дела';
+                  data['colored'] = true;
                 } else {
                   if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
-                    // topMessage['text'] = 'Итоги';
-                    // button['isActive'] = true;
-                    // button['status'] = 'goToTotalScreen';
-                  } else {
-                    // topMessage['text'] = 'Результаты сохранены';
+                    data['percent'] = 100;
+                    data['description'] = '0% осталось до полного выполнения дела';
+                    data['colored'] = true;
                   }
                 }
               }
               // день не выполнен
               else {
-                if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
-                  // topMessage['text'] = 'Итоги';
-                  // button['isActive'] = true;
-                  // button['status'] = 'goToTotalScreen';
-                } else {
-                  // button['isActive'] = true;
+                if (now.weekday == 7) {
+                  data['percent'] = 100;
+                  data['description'] = '$leftPercent% осталось до полного выполнения дела';
+                  data['colored'] = true;
                 }
               }
             }

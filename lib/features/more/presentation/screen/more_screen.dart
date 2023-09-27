@@ -7,10 +7,31 @@ import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 
 final Uri _knizhka = Uri.parse('http://naporoge.ru/knizhka');
+final Uri _vk = Uri.parse('https://vk.com/razvitievoly');
+final Uri _tg = Uri.parse('https://t.me/np42vn');
+final Uri _web = Uri.parse('https://www.xn--80aealihac0a3ao2a.xn--p1ai');
 
 Future<void> _launchKnizhka() async {
   if (!await launchUrl(_knizhka)) {
     throw Exception('Could not launch $_knizhka');
+  }
+}
+
+Future<void> _launchVk() async {
+  if (!await launchUrl(_vk)) {
+    throw Exception('Could not launch $_vk');
+  }
+}
+
+Future<void> _launchTg() async {
+  if (!await launchUrl(_tg)) {
+    throw Exception('Could not launch $_tg');
+  }
+}
+
+Future<void> _launchWeb() async {
+  if (!await launchUrl(_web)) {
+    throw Exception('Could not launch $_web');
   }
 }
 
@@ -396,70 +417,79 @@ class MoreScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColor.lightBGItem,
-                  border: Border.all(
-                    width: 1,
-                    color: Colors.black.withOpacity(0.08),
+              GestureDetector(
+                onTap: _launchVk,
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.lightBGItem,
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.black.withOpacity(0.08),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        spreadRadius: 0,
+                      )
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/vk-fill.svg',
-                  colorFilter: ColorFilter.mode(AppColor.accent, BlendMode.srcIn),
+                  child: SvgPicture.asset(
+                    'assets/icons/vk-fill.svg',
+                    colorFilter: ColorFilter.mode(AppColor.accent, BlendMode.srcIn),
+                  ),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColor.lightBGItem,
-                  border: Border.all(
-                    width: 1,
-                    color: Colors.black.withOpacity(0.08),
+              GestureDetector(
+                onTap: _launchTg,
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.lightBGItem,
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.black.withOpacity(0.08),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        spreadRadius: 0,
+                      )
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/telegram.svg',
-                  colorFilter: ColorFilter.mode(AppColor.accent, BlendMode.srcIn),
+                  child: SvgPicture.asset(
+                    'assets/icons/telegram.svg',
+                    colorFilter: ColorFilter.mode(AppColor.accent, BlendMode.srcIn),
+                  ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColor.lightBGItem,
-                  border: Border.all(
-                    width: 1,
-                    color: Colors.black.withOpacity(0.08),
+              GestureDetector(
+                onTap: _launchWeb,
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.lightBGItem,
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.black.withOpacity(0.08),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        spreadRadius: 0,
+                      )
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/web.svg',
-                  colorFilter: ColorFilter.mode(AppColor.accent, BlendMode.srcIn),
+                  child: SvgPicture.asset(
+                    'assets/icons/web.svg',
+                    colorFilter: ColorFilter.mode(AppColor.accent, BlendMode.srcIn),
+                  ),
                 ),
               ),
             ],
