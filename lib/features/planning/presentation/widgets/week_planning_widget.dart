@@ -121,7 +121,11 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
               listener: (context, state) {},
               builder: (context, state) {
                 double wrapHeight =
-                    defaultAllTitleHeight + context.read<PlannerBloc>().state.wrapWeekBoxHeight.toDouble();
+                    defaultAllTitleHeight + context
+                        .read<PlannerBloc>()
+                        .state
+                        .wrapWeekBoxHeight
+                        .toDouble();
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 0),
                   height: wrapHeight,
@@ -141,14 +145,16 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                         Map isPlannedWeek = {};
                         DateTime now = getActualStudentDay();
                         DateTime monday = pageData['weeksOnPage'][pageIndex]['monday'];
-                        Week week = pageData['weeksOnPage'][pageIndex]['week'];
+                        Week? week = pageData['weeksOnPage'][pageIndex]['week'];
 
                         // План на неделю не составлен
                         // неделя прошла
-                        if (now.isAfter(monday) || now.isAtSameMomentAs(monday)) {
-                          if (week.systemConfirmed != null) {
-                            isPlannedWeek['title'] = 'План не составлен';
-                            isPlannedWeek['color'] = AppColor.red;
+                        if (week != null) {
+                          if (now.isAfter(monday) || now.isAtSameMomentAs(monday)) {
+                            if (week.systemConfirmed != null) {
+                              isPlannedWeek['title'] = 'План не составлен';
+                              isPlannedWeek['color'] = AppColor.red;
+                            }
                           }
                         }
 
@@ -170,39 +176,39 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                     children: [
                                       pageIndex != 0
                                           ? GestureDetector(
-                                              onTap: () async {
-                                                // сброс раздела Планирование
-                                                // при переходе по вкладкам
-                                                // необходим для сброса стейта с финальными ячейками
-                                                // если пользователь ушёл с планнера без сохранения
-                                                context
-                                                    .read<PlannerBloc>()
-                                                    .add(const FinalCellForCreateStream(finalCellIDs: []));
+                                        onTap: () async {
+                                          // сброс раздела Планирование
+                                          // при переходе по вкладкам
+                                          // необходим для сброса стейта с финальными ячейками
+                                          // если пользователь ушёл с планнера без сохранения
+                                          context
+                                              .read<PlannerBloc>()
+                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
 
-                                                pageController.previousPage(
-                                                    duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
-                                              },
-                                              child: const Icon(Icons.arrow_back_ios_new),
-                                            )
+                                          pageController.previousPage(
+                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
+                                        },
+                                        child: const Icon(Icons.arrow_back_ios_new),
+                                      )
                                           : const Icon(Icons.arrow_back_ios_new),
                                       Text(weekPeriod),
                                       pageIndex + 1 < allPages
                                           ? GestureDetector(
-                                              onTap: () async {
-                                                // сброс раздела Планирование
-                                                // при переходе по вкладкам
-                                                // необходим для сброса стейта с финальными ячейками
-                                                // если пользователь ушёл с планнера без сохранения
-                                                context
-                                                    .read<PlannerBloc>()
-                                                    .add(const FinalCellForCreateStream(finalCellIDs: []));
+                                        onTap: () async {
+                                          // сброс раздела Планирование
+                                          // при переходе по вкладкам
+                                          // необходим для сброса стейта с финальными ячейками
+                                          // если пользователь ушёл с планнера без сохранения
+                                          context
+                                              .read<PlannerBloc>()
+                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
 
-                                                pageController.nextPage(
-                                                    duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
-                                              },
-                                              child: const RotatedBox(
-                                                  quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
-                                            )
+                                          pageController.nextPage(
+                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
+                                        },
+                                        child: const RotatedBox(
+                                            quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
+                                      )
                                           : const RotatedBox(quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
                                     ],
                                   ),
@@ -235,7 +241,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                                           style: TextStyle(
                                               fontSize: AppFont.smaller,
                                               color:
-                                                  weekDaysNameRu[dayIndex] == 'вс' ? AppColor.grey2 : AppColor.accent),
+                                              weekDaysNameRu[dayIndex] == 'вс' ? AppColor.grey2 : AppColor.accent),
                                         ),
                                       );
                                     },
@@ -246,15 +252,15 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                             ExpandDayPeriod(stream: stream, pageData: pageData, pageIndex: pageIndex),
                             isPlannedWeek.isNotEmpty
                                 ? Center(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(top: 20),
-                                      height: 50,
-                                      child: Text(
-                                        isPlannedWeek['title'],
-                                        style: TextStyle(color: isPlannedWeek['color']),
-                                      ),
-                                    ),
-                                  )
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                height: 50,
+                                child: Text(
+                                  isPlannedWeek['title'],
+                                  style: TextStyle(color: isPlannedWeek['color']),
+                                ),
+                              ),
+                            )
                                 : const SizedBox(),
                           ],
                         );
@@ -394,10 +400,10 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     // добавляем в стейт данные по редактируемой неделе
     // если ячейки дней не созданы
     context.read<PlannerBloc>().add(EditableWeekStream(editableWeekData: {
-          'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
-          'monday': pageData['weeksOnPage'][pageIndex]['monday'],
-          'weekOfYear': pageData['weeksOnPage'][pageIndex]['weekOfYear'],
-        }));
+      'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
+      'monday': pageData['weeksOnPage'][pageIndex]['monday'],
+      'weekOfYear': pageData['weeksOnPage'][pageIndex]['weekOfYear'],
+    }));
 
     // print("ячейки дней : ${pageData['weeksOnPage'][pageIndex]['weekId']}");
     //
@@ -442,15 +448,15 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
               height: period[periodIndex].isExpanded ? (period[periodIndex].rows * 43) : 0,
               child: isEditable
                   ? EditableDayPeriodRow(
-                      periodIndex: periodIndex,
-                      daysData: cellsData,
-                    )
+                periodIndex: periodIndex,
+                daysData: cellsData,
+              )
                   : DayPeriodRow(
-                      periodIndex: periodIndex,
-                      daysData: cellsData,
-                      weeksOnPage: pageData['weeksOnPage'][pageIndex],
-                      stream: widget.stream,
-                    ),
+                periodIndex: periodIndex,
+                daysData: cellsData,
+                weeksOnPage: pageData['weeksOnPage'][pageIndex],
+                stream: widget.stream,
+              ),
             ),
           ],
         );
@@ -481,7 +487,9 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
     // print('weekOnPage: ${widget.weeksOnPage}');
     // print('daysData: $daysData');
 
-    Week week = widget.stream.weekBacklink.where((week) => week.id == widget.weeksOnPage['weekId']).first;
+    Week week = widget.stream.weekBacklink
+        .where((week) => week.id == widget.weeksOnPage['weekId'])
+        .first;
     // print('week: ${week}');
 
     return ListView.builder(
@@ -548,7 +556,9 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                           if (eq(daysData[i]['cellId'], [periodIndex, rowIndex, gridIndex])) {
                             // print('daysData[i] : ${daysData[i]}');
                             // Находим объект ДНЯ и добавляем
-                            Day day = week.dayBacklink.where((day) => day.id == daysData[i]['day_id']).first;
+                            Day day = week.dayBacklink
+                                .where((day) => day.id == daysData[i]['day_id'])
+                                .first;
                             // print("day: ${day.completedAt}");
                             dayData = {
                               ...daysData[i],
@@ -586,13 +596,12 @@ class DayPeriodExistedCell extends StatefulWidget {
   final Map weeksOnPage;
   final int periodIndex, rowIndex, gridIndex;
 
-  const DayPeriodExistedCell(
-      {super.key,
-      required this.dayData,
-      required this.periodIndex,
-      required this.rowIndex,
-      required this.gridIndex,
-      required this.weeksOnPage});
+  const DayPeriodExistedCell({super.key,
+    required this.dayData,
+    required this.periodIndex,
+    required this.rowIndex,
+    required this.gridIndex,
+    required this.weeksOnPage});
 
   @override
   State<DayPeriodExistedCell> createState() => _DayPeriodExistedCellState();

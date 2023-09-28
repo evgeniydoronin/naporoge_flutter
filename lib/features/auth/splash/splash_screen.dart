@@ -69,14 +69,14 @@ class _SplashScreenState extends State<SplashScreen> {
           if (activeStream.weekBacklink.isNotEmpty) {
             print('SplashScreen - неделя создана');
             if (context.mounted) {
-              AutoRouter.of(context).push(const DashboardScreenRoute());
+              context.router.replace(const DashboardScreenRoute());
             }
           }
           // неделя не создана
           else {
             print('SplashScreen - неделя не создана');
             if (context.mounted) {
-              AutoRouter.of(context).push(SelectDayPeriodRoute(isBackArrow: false));
+              context.router.replace(SelectDayPeriodRoute(isBackArrow: false));
             }
           }
         }
@@ -160,7 +160,7 @@ class _SplashScreenState extends State<SplashScreen> {
           }
 
           if (context.mounted) {
-            AutoRouter.of(context).push(const DashboardScreenRoute());
+            context.router.replace(const DashboardScreenRoute());
           }
         }
       }
@@ -169,7 +169,7 @@ class _SplashScreenState extends State<SplashScreen> {
     else if (userExists == 0) {
       print('SplashScreen - нет пользователя');
       if (context.mounted) {
-        AutoRouter.of(context).push(const LoginEmptyRouter());
+        AutoRouter.of(context).navigate(const LoginEmptyRouter());
       }
     }
 

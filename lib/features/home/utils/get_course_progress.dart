@@ -106,7 +106,7 @@ Future getCourseProgress() async {
       if (weekIsEmpty) {
         print('пустая последняя неделя 33');
         // суббота
-        if (now.weekday == 6) {
+        if (now.weekday == 6 || now.weekday == 7) {
           // завершенные дни текущей недели
           List daysWeekCompleted = await isar.days.filter().weekIdEqualTo(lastWeek.id).completedAtIsNotNull().findAll();
 
@@ -161,13 +161,16 @@ Future getCourseProgress() async {
                 }
               }
             }
+            // воскресенье
+            else if (now.weekday == 7) {
+              if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
+                int leftPercent = 0;
+                data['percent'] = 100;
+                data['description'] = '$leftPercent% осталось до полного выполнения дела';
+                data['colored'] = true;
+              }
+            }
           }
-        }
-        // воскресенье
-        else if (now.weekday == 7) {
-          data['percent'] = 100;
-          data['description'] = '$leftPercent% осталось до полного выполнения дела';
-          data['colored'] = true;
         }
       }
       // НЕ пустая неделя

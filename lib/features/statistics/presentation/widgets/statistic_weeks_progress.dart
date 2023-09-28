@@ -31,7 +31,8 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
   final _streamController = getIt<StreamController>();
 
   final List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
-  List<FocusNode> focusList = [FocusNode(), FocusNode(), FocusNode()];
+
+  // List<FocusNode> focusList = [FocusNode(), FocusNode(), FocusNode()];
   List<TextEditingController> progress = [TextEditingController(), TextEditingController(), TextEditingController()];
 
   @override
@@ -55,7 +56,7 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                         setState(() {
                           activePage = page;
                         });
-                        FocusScope.of(context).requestFocus(focusList[page]);
+                        // FocusScope.of(context).requestFocus(focusList[page]);
                       },
                       itemBuilder: (BuildContext context, int index) {
                         Map weekData = weeksProgress[index];
@@ -139,8 +140,8 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                               key: formKeys[index],
                               child: TextFormField(
                                 controller: progress[index],
-                                focusNode: focusList[index],
-                                autofocus: true,
+                                // focusNode: focusList[index],
+                                // autofocus: true,
                                 style: TextStyle(fontSize: AppFont.small),
                                 maxLines: 3,
                                 decoration: InputDecoration(

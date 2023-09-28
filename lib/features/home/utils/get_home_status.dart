@@ -82,11 +82,8 @@ Future getHomeStatus() async {
         print('текущая неделя последняя');
         // пустая неделя
         if (weekIsEmpty) {
-          print('пустая последняя неделя');
-          print('now: $now');
           // суббота или воскресенье
-          if (now.weekday == 6) {
-            print('суббота пустая последняя неделя');
+          if (now.weekday == 6 || now.weekday == 7) {
             // завершенные дни текущей недели
             List daysWeekCompleted = await isar.days.filter().weekIdEqualTo(week.id).completedAtIsNotNull().findAll();
 
@@ -133,8 +130,9 @@ Future getHomeStatus() async {
             for (Day day in days) {
               // DateTime dayCompletedAt = DateTime.parse(DateFormat('y-MM-dd').format(day.completedAt!));
 
+              // суббота
               if (now.weekday == 6) {
-                // суботта выполнена
+                // суббота выполнена
                 if (days[5].completedAt != null) {
                   if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
                     topMessage['text'] = 'Итоги';
@@ -144,22 +142,23 @@ Future getHomeStatus() async {
                     topMessage['text'] = 'Результаты сохранены';
                   }
                 }
-                // суботта НЕ выполнена
+                // суббота НЕ выполнена
                 else {
                   button['isActive'] = true;
                 }
               }
-            }
-          } else if (now.weekday == 7) {
-            // воскресенье выполнено
-            if (days[6].completedAt != null) {
-              topMessage['text'] = 'Итоги';
-              button['isActive'] = true;
-              button['status'] = 'goToTotalScreen';
-            }
-            // воскресенье НЕ выполнено
-            else {
-              button['isActive'] = true;
+              // воскресенье
+              else if (now.weekday == 7) {
+                if (executionScope.length >= needForTotal || currentWeekExecutionScope.length >= 6) {
+                  topMessage['text'] = 'Итоги';
+                  button['isActive'] = true;
+                  button['status'] = 'goToTotalScreen';
+                }
+                // воскресенье НЕ выполнено
+                else {
+                  button['isActive'] = true;
+                }
+              }
             }
           }
           // проверки в будни
