@@ -1,89 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:isar/isar.dart';
-import '../../../../core/utils/get_week_number.dart';
 import '../../../../core/constants/week_data_constant.dart';
-import '../../../../core/services/db_client/isar_service.dart';
-import '../../../../core/utils/get_stream_status.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
 import '../../../../core/constants/app_theme.dart';
+import '../../utils/get_current_week_days_point.dart';
 
 class WeekStatusPoint extends StatelessWidget {
   const WeekStatusPoint({super.key});
 
-  Future getCurrentWeekDays() async {
-    final isarService = IsarService();
-    final isar = await isarService.db;
-    final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
-
-    DateTime now = DateTime.now();
-
-    // статус курса (before, after, process)
-    Map streamStatus = await getStreamStatus();
-
-    // текущая неделя
-    int currentWeekNumber = getWeekNumber(DateTime.now());
-
-    List days = [];
-
-    // До старта курса
-    if (streamStatus['status'] == 'before') {
-      // Первая неделя курса
-      Week week = stream!.weekBacklink.first;
-
-      days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
-    }
-    // После завершения курса
-    else if (streamStatus['status'] == 'after') {
-      Week week = stream!.weekBacklink.last;
-
-      // print('week: ${week.dayBacklink.first.startAt}');
-      if (week.dayBacklink.first.startAt != null) {
-        days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
-      } else {
-        days = await week.dayBacklink.filter().findAll();
-      }
-    }
-    // Во время прохождения курса
-    else if (streamStatus['status'] == 'process') {
-      // недели не созданы
-      // первая неделя пустая
-      if (stream!.weekBacklink.isEmpty) {
-        days = [];
-      }
-      // первая неделя на курсе создана
-      else {
-        Week week = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
-        // неделя не пустая
-        if (week.dayBacklink.first.startAt != null) {
-          days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
-        }
-        // пустая неделя
-        else {
-          days = await week.dayBacklink.filter().findAll();
-        }
-      }
-    }
-
-    return {'days': days};
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getCurrentWeekDays(),
+      future: getCurrentWeekDaysPoint(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
           List days = snapshot.data['days'];
-          DateTime now = DateTime.parse(DateFormat('y-MM-dd').format(DateTime.now()));
+          DateTime now = DateTime.now();
 
-          // print('days: $days');
+          // адаптация текущего дня до 3 ночи
+          DateTime actualUserDay = snapshot.data['actualUserDay'];
 
           // список дней и статуса
           List daysStatus = [];
 
-          // первая неделя не пустая
+          // неделя не пустая
           if (days.isNotEmpty) {
             for (Day day in days) {
               // пустая неделя
@@ -102,11 +43,17 @@ class WeekStatusPoint extends StatelessWidget {
               // не пустая неделя
               else {
                 // print(day.startAt);
-                DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+                DateTime _dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
+                DateTime dayStartAt = DateTime(_dayStartAt.year, _dayStartAt.month, _dayStartAt.day);
                 String dayStartAtString = DateFormat('H:mm').format(day.startAt!);
 
+                // print('actualUserDay: $actualUserDay');
+                // print('dayStartAt: $dayStartAt');
+
                 // текущий день
-                if (dayStartAt.isAtSameMomentAs(now)) {
+                if (dayStartAt.isAtSameMomentAs(actualUserDay)) {
+                  // print('dayStartAt: $dayStartAt');
+                  // print('actualUserDay: $actualUserDay');
                   // выполнен
                   if (day.completedAt != null) {
                     daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
@@ -117,10 +64,9 @@ class WeekStatusPoint extends StatelessWidget {
                   }
                 }
                 // день прошел
-                else if (dayStartAt.isBefore(now)) {
+                else if (dayStartAt.isBefore(actualUserDay)) {
                   // выполнен
                   if (day.completedAt != null) {
-                    ;
                     daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
                   }
                   // не выполнен
@@ -129,13 +75,13 @@ class WeekStatusPoint extends StatelessWidget {
                   }
                 }
                 // запланированный день
-                else if (dayStartAt.isAfter(now)) {
+                else if (dayStartAt.isAfter(actualUserDay)) {
                   daysStatus.add({'status': 'future', 'startAt': dayStartAtString});
                 }
               }
             }
           }
-          // первая неделя пустая
+          // неделя пустая
           else {
             for (int i = 0; i < 7; i++) {
               daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});

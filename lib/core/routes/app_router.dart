@@ -14,6 +14,8 @@ import '../../features/home/presentation/screens/results_stream_screen.dart';
 import '../../features/more/presentation/screen/more_screen.dart';
 import '../../features/planning/domain/entities/stream_entity.dart';
 import '../../features/planning/presentation/screens/choice_of_course.dart';
+import '../../features/planning/presentation/screens/explanations_for_the_planning.dart';
+import '../../features/planning/presentation/screens/explanations_for_the_stream.dart';
 import '../../features/planning/presentation/screens/planning_screen.dart';
 import '../../features/planning/presentation/screens/select_day_period.dart';
 import '../../features/planning/presentation/screens/start_date_selection_screen.dart';
@@ -65,6 +67,8 @@ class AppRouter extends _$AppRouter {
 
         CustomRoute(page: DiaryRulesScreenRoute.page, path: '/diary-rules'),
         CustomRoute(page: RuleOfAppScreenRoute.page, path: '/rules'),
+        CustomRoute(page: ExplanationsForThePlanningRoute.page, path: '/planning-rules'),
+        CustomRoute(page: ExplanationsForTheStreamRoute.page, path: '/stream-rules'),
         CustomRoute(page: WelcomeScreenRoute.page, path: '/welcome'),
         CustomRoute(page: StartDateSelectionScreenRoute.page, path: '/planner-start-date-selection'),
         CustomRoute(page: ChoiceOfCaseScreenRoute.page, path: '/planner-choice-of-case'),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 
+import '../../../../../core/utils/get_actual_student_day.dart';
 import '../../../../../core/utils/get_week_number.dart';
 import '../../../domain/entities/stream_entity.dart';
 import '../core.dart';
@@ -17,7 +18,8 @@ Future getWeekData(NPStream stream, String status) async {
   // количество недель на курсе
   int weeks = stream.weeks!;
 
-  DateTime now = DateTime.now();
+  // актуальный день студента
+  DateTime actualStudentDay = getActualStudentDay();
 
   // индекс недели по умолчанию
   int defaultPageIndex = 0;
@@ -135,9 +137,9 @@ Future getWeekData(NPStream stream, String status) async {
       //////////////////////////////////////////
       // PageIndex текущей недели
       //////////////////////////////////////////
-      if (getWeekNumber(DateTime.now()) == week.weekNumber) {
+      if (getWeekNumber(actualStudentDay) == week.weekNumber) {
         defaultPageIndex = i;
-      } else if (getWeekNumber(DateTime.now()) < week.weekNumber!) {
+      } else if (getWeekNumber(actualStudentDay) < week.weekNumber!) {
         nextPageIndex = i;
       }
 

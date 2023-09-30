@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_theme.dart';
+import '../../../../core/utils/get_actual_student_day.dart';
 import '../bloc/save_day_result/day_result_bloc.dart';
 
 class SelectActualExecutionTime extends StatefulWidget {
@@ -231,33 +232,22 @@ class _SelectActualExecutionTimeState extends State<SelectActualExecutionTime> {
                                         textStyle: Theme.of(context).textTheme.labelLarge,
                                       ),
                                       child: const Text('Выбрать'),
-                                      onPressed: () {
-                                        DateTime? completedTime;
+                                      onPressed: () async {
+                                        DateTime actualStudentDay = getActualStudentDay();
                                         // print('_hour: $_hour');
                                         // print('_minute: $_minute');
 
-                                        // если пользователь ввел данные с 00:00 до 02:55
-                                        // меняем день на предыдущий
-                                        // например:
-                                        // текущая дата - 2023-09-16
-                                        // текущее время 00:45 минут
-                                        // в completedTime уйдет 2023-09-15
-                                        if (int.parse(_hour) >= 0 && int.parse(_hour) <= 2) {
-                                          DateTime currDayData = now.subtract(const Duration(days: 1));
-                                          completedTime = DateTime(now.year, now.month, currDayData.day,
-                                              int.parse(_hour), int.parse(_minute));
-                                        } else {
-                                          completedTime = DateTime(
-                                              now.year, now.month, now.day, int.parse(_hour), int.parse(_minute));
-                                        }
+                                        DateTime completedTime = DateTime(actualStudentDay.year, actualStudentDay.month,
+                                            actualStudentDay.day, int.parse(_hour), int.parse(_minute));
 
-                                        // print("completedTime: $completedTime");
+                                        print("completedTime: $completedTime");
                                         final formatter = DateFormat('yyyy-MM-dd HH:mm').format(completedTime);
                                         // print("formatter: $formatter");
 
-                                        context.read<DayResultBloc>().add(CompletedTimeChanged(formatter.toString()));
-
-                                        Navigator.pop(context);
+                                        if (context.mounted) {
+                                          context.read<DayResultBloc>().add(CompletedTimeChanged(formatter.toString()));
+                                          Navigator.pop(context);
+                                        }
                                       },
                                     ),
                                   ],

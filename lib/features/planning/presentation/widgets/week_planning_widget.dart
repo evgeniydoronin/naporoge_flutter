@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_theme.dart';
+import '../../../../core/utils/get_actual_student_day.dart';
 import '../../../../core/utils/get_stream_status.dart';
 import '../../domain/entities/stream_entity.dart';
 import '../../data/sources/local/stream_local_storage.dart';
@@ -609,8 +610,6 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
     int rowIndex = widget.rowIndex;
     int gridIndex = widget.gridIndex;
 
-    // print('dayData: $dayData');
-
     Color cellColor = gridIndex == 6 ? const Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
 
     Color fontColor = AppColor.blk;
@@ -625,8 +624,9 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
       // {day_id: 1029, cellId: [0, 4, 2], start_at: 08:00, completed_at: 10:00, oldCellId: true}
       // {day_id: 1026, cellId: [0, 5, 0], start_at: 09:00, completed_at: 09:55, day_matches: true}
       if (eq(dayData['cellId'], [periodIndex, rowIndex, gridIndex])) {
+        DateTime actualStudentDay = getActualStudentDay();
         int dayIndex = gridIndex + 1;
-        DateTime now = DateTime.parse(DateFormat('y-MM-dd').format(DateTime.now()));
+        DateTime now = DateTime.parse(DateFormat('y-MM-dd').format(actualStudentDay));
         Day day = dayData['day'];
 
         // print('dayData[statusCell] : ${dayData['statusCell']}');

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+import '../../../../core/utils/get_actual_student_day.dart';
 import '../widgets/day_results_save/rejoice_box.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/utils/circular_loading.dart';
@@ -234,29 +235,20 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                   }
 
                                   if (state.desires != null && state.reluctance != null) {
-                                    DateTime now = DateTime.now();
+                                    // актуальный день студента
+                                    DateTime actualStudentDay = getActualStudentDay();
 
-                                    // если пользователь ввел данные с 00:00 до 02:55
-                                    // меняем день на предыдущий
-                                    // например:
-                                    // текущая дата - 2023-09-16
-                                    // текущее время 00:45 минут
-                                    // в completedTime уйдет 2023-09-15
-
-                                    if (state.completedAt != null) {
-                                      DateTime currData = DateTime.parse(state.completedAt!);
-                                      now = DateTime(currData.year, currData.month, currData.day);
+                                    if (context.mounted) {
+                                      CircularLoading(context).startLoading();
                                     }
-
-                                    CircularLoading(context).startLoading();
 
                                     final isar = await isarService.db;
                                     var user = await isarService.getUser();
 
-                                    String currDay =
-                                        DateFormat('y-MM-dd').format(DateTime(now.year, now.month, now.day));
+                                    String currDay = DateFormat('y-MM-dd').format(
+                                        DateTime(actualStudentDay.year, actualStudentDay.month, actualStudentDay.day));
 
-                                    final weekNumber = getWeekNumber(now);
+                                    final weekNumber = getWeekNumber(actualStudentDay);
                                     Week? currWeekData =
                                         await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
@@ -273,7 +265,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     // пустая неделя
                                     else {
                                       List days = await isar.days.filter().weekIdEqualTo(currWeekData.id).findAll();
-                                      int freeDayIndex = now.weekday - 1;
+                                      int freeDayIndex = actualStudentDay.weekday - 1;
                                       Day freeDay = days[freeDayIndex];
                                       dayId = freeDay.id!;
                                     }
@@ -292,6 +284,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     };
 
                                     // print('dayResultData: $dayResultData');
+
                                     // create on server
                                     var newDayResult = await _streamController.createDayResult(dayResultData);
 
@@ -313,10 +306,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     await streamLocalStorage.saveDayResult(newDayResult);
                                     // print(newDayResult);
 
-                                    // final stream = await streamLocalStorage.getActiveStream();
-
                                     if (context.mounted) {
-                                      // context.read<HomeScreenBloc>().add(StreamProgressChanged(getStreamStatus(stream)));
                                       CircularLoading(context).stopLoading();
                                       context.router.replace(const HomesEmptyRouter());
                                     }

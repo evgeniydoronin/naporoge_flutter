@@ -77,6 +77,18 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const EmptyRouterPage(),
       );
     },
+    ExplanationsForThePlanningRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ExplanationsForThePlanning(),
+      );
+    },
+    ExplanationsForTheStreamRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ExplanationsForTheStream(),
+      );
+    },
     HomeScreenRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -398,6 +410,34 @@ class EmptyRouter extends PageRouteInfo<void> {
         );
 
   static const String name = 'EmptyRouter';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ExplanationsForThePlanning]
+class ExplanationsForThePlanningRoute extends PageRouteInfo<void> {
+  const ExplanationsForThePlanningRoute({List<PageRouteInfo>? children})
+      : super(
+          ExplanationsForThePlanningRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ExplanationsForThePlanningRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ExplanationsForTheStream]
+class ExplanationsForTheStreamRoute extends PageRouteInfo<void> {
+  const ExplanationsForTheStreamRoute({List<PageRouteInfo>? children})
+      : super(
+          ExplanationsForTheStreamRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ExplanationsForTheStreamRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

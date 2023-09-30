@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/utils/circular_loading.dart';
 import '../stream_controller.dart';
@@ -50,6 +51,16 @@ class _PlanningScreenState extends State<PlanningScreen> {
               'Планирование',
               style: AppFont.scaffoldTitleDark,
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.info_outline_rounded),
+                color: Colors.black,
+                onPressed: () {
+                  // _scaffoldKey.currentState!.openEndDrawer();
+                  context.router.push(const ExplanationsForThePlanningRoute());
+                },
+              ),
+            ],
           ),
           body: FutureBuilder(
             future: getActiveStream(),

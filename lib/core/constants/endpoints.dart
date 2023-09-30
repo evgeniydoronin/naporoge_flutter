@@ -2,7 +2,8 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "https://np-app.evgeniydoronin.com/api";
+  // static const String baseUrl = "https://np-app.evgeniydoronin.com/api";
+  static const String baseUrl = "https://umadmin.naporoge.ru/api";
 
   // receiveTimeout
   static const Duration receiveTimeout = Duration(seconds: 60);

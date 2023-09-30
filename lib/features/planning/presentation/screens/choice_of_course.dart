@@ -70,12 +70,23 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
-              // automaticallyImplyLeading: false,
-              centerTitle: true,
-              elevation: 0,
-              foregroundColor: Colors.black,
-              backgroundColor: AppColor.lightBG,
-              title: const Text('Выбрать дело')),
+            // automaticallyImplyLeading: false,
+            centerTitle: true,
+            elevation: 0,
+            foregroundColor: Colors.black,
+            backgroundColor: AppColor.lightBG,
+            title: const Text('Выбрать дело'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.info_outline_rounded),
+                color: Colors.black,
+                onPressed: () {
+                  // _scaffoldKey.currentState!.openEndDrawer();
+                  context.router.push(const ExplanationsForTheStreamRoute());
+                },
+              ),
+            ],
+          ),
           body: SingleChildScrollView(
             child: Column(
               children: [

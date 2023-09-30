@@ -71,6 +71,16 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
               'Планирование',
               style: AppFont.scaffoldTitleDark,
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.info_outline_rounded),
+                color: Colors.black,
+                onPressed: () {
+                  // _scaffoldKey.currentState!.openEndDrawer();
+                  context.router.push(const ExplanationsForThePlanningRoute());
+                },
+              ),
+            ],
           ),
           body: FutureBuilder(
             future: _getStream,

@@ -262,17 +262,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-// _registrationStudent(phone) async {
-//   try {
-//     var formData = FormData.fromMap({
-//       'phone': phone,
-//     });
-//     var response = await Dio()
-//         .post('https://np-app.evgeniydoronin.com/api/code', data: formData);
-//
-//     return response.data;
-//   } catch (e) {
-//     debugPrint('_registrationStudent error: $e');
-//   }
-// }
