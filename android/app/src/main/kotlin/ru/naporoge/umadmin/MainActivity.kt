@@ -1,4 +1,4 @@
-package com.example.naporoge
+package ru.naporoge.umadmin
 
 import io.flutter.embedding.android.FlutterActivity
 

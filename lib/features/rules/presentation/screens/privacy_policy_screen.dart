@@ -63,7 +63,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               const Text(
-                'Максим Киктенко built the "Развитие воли и самоорганизации" app. This SERVICE is provided by Максим Киктенко and is intended for use as is. This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.',
+                'Максим Киктенко built the "Развитие воли и самоорганизации. Вуз" app. This SERVICE is provided by Максим Киктенко and is intended for use as is. This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
               ),
               const SizedBox(height: 15),
@@ -73,7 +73,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               const Text(
-                'The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which are accessible at "Развитие воли и самоорганизации" unless otherwise defined in this Privacy Policy.',
+                'The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which are accessible at "Развитие воли и самоорганизации. Вуз" unless otherwise defined in this Privacy Policy.',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
               ),
               const SizedBox(height: 15),

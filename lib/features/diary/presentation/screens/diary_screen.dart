@@ -29,6 +29,8 @@ class DiaryScreen extends StatefulWidget {
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
+  bool isSaving = true;
+
   @override
   Widget build(BuildContext context) {
     TextEditingController noteController = TextEditingController();
@@ -40,7 +42,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
     return WillPopScope(
       onWillPop: () async {
         final closeApp = await showCloseAppDialog(context);
-
         return closeApp ?? false;
       },
       child: Scaffold(
@@ -127,7 +128,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
                   child: TextFormField(
                     controller: noteController,
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
+                      if (value == null || value
+                          .trim()
+                          .isEmpty) {
                         return 'Заполните обязательное поле!';
                       }
                       return null;
@@ -156,10 +159,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
             const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ElevatedButton(
+              child: isSaving ? ElevatedButton(
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    CircularLoading(context).startLoading();
+                    // CircularLoading(context).startLoading();
+                    setState(() {
+                      isSaving = false;
+                    });
                     var user = await isarService.getUser();
 
                     Map diaryNoteData = {
@@ -188,9 +194,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           'updateAt': note.updateAt,
                         };
                         context.read<DiaryBloc>().add(DiaryLastNoteChanged(_lastNote));
-                        CircularLoading(context).stopAutoRouterLoading();
-                        // FocusScope.of(context).unfocus();
                         noteController.clear();
+
+                        setState(() {
+                          isSaving = true;
+                        });
+
+                        // CircularLoading(context).stopAutoRouterLoading();
+                        // FocusScope.of(context).unfocus();
                       }
                     }
                   }
@@ -200,7 +211,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                   'Добавить заметку',
                   style: AppFont.regularSemibold,
                 ),
-              ),
+              ) : const Center(child: CircularProgressIndicator()),
             ),
             const SizedBox(height: 25),
           ],

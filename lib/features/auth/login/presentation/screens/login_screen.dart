@@ -200,16 +200,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                   : () async {
                                       if (_formKey.currentState!.validate()) {
                                         if (isChecked) {
-                                          var code = await _phone.getSmsCode(maskFormatter.getUnmaskedText());
-                                          print(code);
+                                          print("maskFormatter.getUnmaskedText(): ${maskFormatter.getUnmaskedText()}");
+                                          // для теста модератора
+                                          if (maskFormatter.getUnmaskedText() == "0000000099" ||
+                                              maskFormatter.getUnmaskedText() == "0000000999") {
+                                            if (context.mounted) {
+                                              // print('0099');
+                                              context.router.push(
+                                                LoginPhoneConfirmScreenRoute(
+                                                  phone: maskFormatter.getUnmaskedText(),
+                                                  code: 0099,
+                                                ),
+                                              );
+                                            }
+                                          }
+                                          // пользовательский сценарий
+                                          else {
+                                            var code = await _phone.getSmsCode(maskFormatter.getUnmaskedText());
+                                            print(code);
 
-                                          if (context.mounted) {
-                                            context.router.push(
-                                              LoginPhoneConfirmScreenRoute(
-                                                phone: maskFormatter.getUnmaskedText(),
-                                                code: code['code'],
-                                              ),
-                                            );
+                                            if (context.mounted) {
+                                              context.router.push(
+                                                LoginPhoneConfirmScreenRoute(
+                                                  phone: maskFormatter.getUnmaskedText(),
+                                                  code: code['code'],
+                                                ),
+                                              );
+                                            }
                                           }
 
                                           // TODO: uncomment

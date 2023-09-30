@@ -12,13 +12,10 @@ class LoginPhoneConfirmScreen extends StatefulWidget {
   final String phone;
   final int code;
 
-  const LoginPhoneConfirmScreen(
-      {Key? key, required this.phone, required this.code})
-      : super(key: key);
+  const LoginPhoneConfirmScreen({Key? key, required this.phone, required this.code}) : super(key: key);
 
   @override
-  State<LoginPhoneConfirmScreen> createState() =>
-      _LoginPhoneConfirmScreenState();
+  State<LoginPhoneConfirmScreen> createState() => _LoginPhoneConfirmScreenState();
 }
 
 class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
@@ -67,7 +64,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(widget.code.toString()),
+                      // Text(widget.code.toString()),
                       Text(
                         '+7${widget.phone}',
                         style: TextStyle(
@@ -93,19 +90,14 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                             print('_smsCode.smsCodeController');
                             print(_authController.smsCodeController.text);
 
-                            if (int.parse(
-                                    _authController.smsCodeController.text) ==
-                                widget.code) {
+                            if (int.parse(_authController.smsCodeController.text) == widget.code) {
                               // confirmAuthCode
                               print('code success');
-                              context.router.replace(ActivateAccountScreenRoute(
-                                  phone: widget.phone));
+                              context.router.replace(ActivateAccountScreenRoute(phone: widget.phone));
                             } else {
                               print('code error');
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Неверный код'),
-                                      duration: Duration(seconds: 2)));
+                                  const SnackBar(content: Text('Неверный код'), duration: Duration(seconds: 2)));
                             }
                           },
                           defaultBorderColor: AppColor.grey2,
