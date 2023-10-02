@@ -67,251 +67,256 @@ class _ChoiceOfCaseScreenState extends State<ChoiceOfCaseScreen> {
         } else {
           _isActivated = false;
         }
-        return Scaffold(
-          backgroundColor: AppColor.lightBG,
-          appBar: AppBar(
-            // automaticallyImplyLeading: false,
-            centerTitle: true,
-            elevation: 0,
-            foregroundColor: Colors.black,
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
             backgroundColor: AppColor.lightBG,
-            title: const Text('Выбрать дело'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.info_outline_rounded),
-                color: Colors.black,
-                onPressed: () {
-                  // _scaffoldKey.currentState!.openEndDrawer();
-                  context.router.push(const ExplanationsForTheStreamRoute());
-                },
-              ),
-            ],
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                const StepperIcons(step: 1),
-                const SizedBox(height: 20),
-                Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: ListView.builder(
-                      key: Key(selected.toString()),
-                      //attention
+            appBar: AppBar(
+              // automaticallyImplyLeading: false,
+              centerTitle: true,
+              elevation: 0,
+              foregroundColor: Colors.black,
+              backgroundColor: AppColor.lightBG,
+              title: const Text('Выбрать дело'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.info_outline_rounded),
+                  color: Colors.black,
+                  onPressed: () {
+                    // _scaffoldKey.currentState!.openEndDrawer();
+                    context.router.push(const ExplanationsForTheStreamRoute());
+                  },
+                ),
+              ],
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const StepperIcons(step: 1),
+                  const SizedBox(height: 20),
+                  Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ListView.builder(
+                        key: Key(selected.toString()),
+                        //attention
 
-                      padding: const EdgeInsets.only(bottom: 25.0),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _courses.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          decoration: AppLayout.boxDecorationShadowBG,
-                          margin: const EdgeInsets.only(bottom: 15),
-                          child: Column(
-                            children: <Widget>[
-                              Theme(
-                                data: ThemeData().copyWith(dividerColor: Colors.transparent),
-                                child: ExpansionTile(
-                                  key: Key(index.toString()),
-                                  initiallyExpanded: index == selected,
-                                  title: Text(
-                                    _courses[index].title,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
+                        padding: const EdgeInsets.only(bottom: 25.0),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _courses.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            decoration: AppLayout.boxDecorationShadowBG,
+                            margin: const EdgeInsets.only(bottom: 15),
+                            child: Column(
+                              children: <Widget>[
+                                Theme(
+                                  data: ThemeData().copyWith(dividerColor: Colors.transparent),
+                                  child: ExpansionTile(
+                                    key: Key(index.toString()),
+                                    initiallyExpanded: index == selected,
+                                    title: Text(
+                                      _courses[index].title,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  tilePadding: const EdgeInsets.all(5),
-                                  childrenPadding: const EdgeInsets.all(20),
-                                  leading: Container(
-                                    width: 50,
-                                    padding: const EdgeInsets.only(left: 15),
-                                    child: SvgPicture.asset(
-                                      _courses[index].iconUrl,
+                                    tilePadding: const EdgeInsets.all(5),
+                                    childrenPadding: const EdgeInsets.all(20),
+                                    leading: Container(
+                                      width: 50,
+                                      padding: const EdgeInsets.only(left: 15),
+                                      child: SvgPicture.asset(
+                                        _courses[index].iconUrl,
+                                      ),
                                     ),
-                                  ),
-                                  trailing: Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: SvgPicture.asset(
-                                      'assets/icons/arrow_deal_down.svg',
+                                    trailing: Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/arrow_deal_down.svg',
+                                      ),
                                     ),
-                                  ),
-                                  onExpansionChanged: ((newState) {
-                                    if (newState) {
-                                      setState(() {
-                                        // деактивируем все курсы
-                                        for (int i = 0; i < _courses.length; i++) {
-                                          _courses[i].isExpanded = false;
-                                        }
-                                        // setState(() {
-                                        //   _isActivated = false;
-                                        // });
-                                        // print('_isActivated: $_isActivated');
-                                        // активируем выбранный
-                                        selected = index;
-                                        _courses[index].isExpanded = newState;
-                                        // _isActivated = false;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        selected = -1;
-                                        _isActivated = false;
-                                      });
-                                      context.read<PlannerBloc>().add(StreamCourseTitleChanged(''));
-                                    }
-                                  }),
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Text(
-                                          _courses[index].description,
-                                          style: const TextStyle(height: 1.5),
-                                        ),
-                                        const SizedBox(height: 30),
-                                        TextFormField(
-                                          controller: _shortTitleController[_courses[index].courseId],
-                                          onChanged: (title) {
-                                            context
-                                                .read<PlannerBloc>()
-                                                .add(StreamCourseIdChanged(_courses[index].courseId));
-                                            // print(title);
-                                            context.read<PlannerBloc>().add(StreamCourseTitleChanged(title));
-                                          },
-                                          decoration: InputDecoration(
-                                            hintText: 'Краткое название дела',
-                                            hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-                                            labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-                                            fillColor: AppColor.grey1,
-                                            filled: true,
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(color: Colors.redAccent),
-                                                borderRadius: AppLayout.smallRadius),
-                                            enabledBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(color: Colors.transparent),
-                                                borderRadius: AppLayout.smallRadius),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(color: Colors.transparent),
-                                                borderRadius: AppLayout.smallRadius),
+                                    onExpansionChanged: ((newState) {
+                                      if (newState) {
+                                        setState(() {
+                                          // деактивируем все курсы
+                                          for (int i = 0; i < _courses.length; i++) {
+                                            _courses[i].isExpanded = false;
+                                          }
+                                          // setState(() {
+                                          //   _isActivated = false;
+                                          // });
+                                          // print('_isActivated: $_isActivated');
+                                          // активируем выбранный
+                                          selected = index;
+                                          _courses[index].isExpanded = newState;
+                                          // _isActivated = false;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          selected = -1;
+                                          _isActivated = false;
+                                        });
+                                        context.read<PlannerBloc>().add(StreamCourseTitleChanged(''));
+                                      }
+                                    }),
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            _courses[index].description,
+                                            style: const TextStyle(height: 1.5),
                                           ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                          const SizedBox(height: 30),
+                                          TextFormField(
+                                            controller: _shortTitleController[_courses[index].courseId],
+                                            onChanged: (title) {
+                                              context
+                                                  .read<PlannerBloc>()
+                                                  .add(StreamCourseIdChanged(_courses[index].courseId));
+                                              // print(title);
+                                              context.read<PlannerBloc>().add(StreamCourseTitleChanged(title));
+                                            },
+                                            decoration: InputDecoration(
+                                              hintText: 'Краткое название дела',
+                                              hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                              labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                              fillColor: AppColor.grey1,
+                                              filled: true,
+                                              errorBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(color: Colors.redAccent),
+                                                  borderRadius: AppLayout.smallRadius),
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(color: Colors.transparent),
+                                                  borderRadius: AppLayout.smallRadius),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(color: Colors.transparent),
+                                                  borderRadius: AppLayout.smallRadius),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
-                    onPressed: _isActivated
-                        ? () async {
-                            var _stream = await streamLocalStorage.getActiveStream();
-                            // Если курс создавался
-                            if (_stream != null) {
-                              print('Если курс создавался Обновляем');
-                              // Обновляем
-                              final NPStream stream = _stream;
+                  const SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
+                      onPressed: _isActivated
+                          ? () async {
+                              var _stream = await streamLocalStorage.getActiveStream();
+                              // Если курс создавался
+                              if (_stream != null) {
+                                print('Если курс создавался Обновляем');
+                                // Обновляем
+                                final NPStream stream = _stream;
 
-                              // print(state.courseTitle);
-                              // print(state.startDate);
-                              // print(state.courseId);
+                                // print(state.courseTitle);
+                                // print(state.startDate);
+                                // print(state.courseId);
 
-                              if (context.mounted) {
-                                CircularLoading(context).startLoading();
-                              }
-                              // обновляем первую неделю курса
-                              Map streamData = {
-                                "stream_id": stream.id,
-                                "start_at": state.startDate,
-                                "title": state.courseTitle,
-                                "course_id": state.courseId,
-                                // "week_id": stream.weekBacklink.first.id,
-                                // "cells": [],
-                              };
-
-                              print('streamData: $streamData');
-
-                              // update on server
-                              var updatedStream = await _streamController.updateStream(streamData);
-
-                              // print('newStream: $updatedStream');
-
-                              // update local
-                              if (updatedStream['stream']['id'] != null) {
-                                print('newStream: $updatedStream');
-                                streamLocalStorage.updateStream(updatedStream);
                                 if (context.mounted) {
-                                  CircularLoading(context).stopLoading();
-                                  context.router.push(SelectDayPeriodRoute(isBackArrow: true));
+                                  CircularLoading(context).startLoading();
                                 }
-                              }
-                            } else {
-                              // Сохраняем
-                              // Сохранение дела без подробного описания
-                              // после сохранения переход на следующий шаг
-                              if (context.mounted) {
-                                CircularLoading(context).startLoading();
-                                var user = await isarService.getUser();
-
+                                // обновляем первую неделю курса
                                 Map streamData = {
-                                  "user_id": user.first.id,
+                                  "stream_id": stream.id,
                                   "start_at": state.startDate,
-                                  "weeks": 3,
-                                  "is_active": true,
-                                  "course_id": state.courseId,
                                   "title": state.courseTitle,
-                                  "description": '',
-                                  "cells": [],
+                                  "course_id": state.courseId,
+                                  // "week_id": stream.weekBacklink.first.id,
+                                  // "cells": [],
                                 };
 
-                                // print('streamData: $streamData');
+                                print('streamData: $streamData');
 
-                                // create on server
-                                var newStream = await _streamController.createStream(streamData);
+                                // update on server
+                                var updatedStream = await _streamController.updateStream(streamData);
 
-                                // print('newStream: $newStream');
+                                // print('newStream: $updatedStream');
 
-                                // create local
-                                if (newStream['stream']['id'] != null) {
-                                  streamLocalStorage.createStream(newStream);
+                                // update local
+                                if (updatedStream['stream']['id'] != null) {
+                                  print('newStream: $updatedStream');
+                                  streamLocalStorage.updateStream(updatedStream);
                                   if (context.mounted) {
                                     CircularLoading(context).stopLoading();
                                     context.router.push(SelectDayPeriodRoute(isBackArrow: true));
                                   }
                                 }
+                              } else {
+                                // Сохраняем
+                                // Сохранение дела без подробного описания
+                                // после сохранения переход на следующий шаг
+                                if (context.mounted) {
+                                  CircularLoading(context).startLoading();
+                                  var user = await isarService.getUser();
+
+                                  Map streamData = {
+                                    "user_id": user.first.id,
+                                    "start_at": state.startDate,
+                                    "weeks": 3,
+                                    "is_active": true,
+                                    "course_id": state.courseId,
+                                    "title": state.courseTitle,
+                                    "description": '',
+                                    "cells": [],
+                                  };
+
+                                  // print('streamData: $streamData');
+
+                                  // create on server
+                                  var newStream = await _streamController.createStream(streamData);
+
+                                  // print('newStream: $newStream');
+
+                                  // create local
+                                  if (newStream['stream']['id'] != null) {
+                                    streamLocalStorage.createStream(newStream);
+                                    if (context.mounted) {
+                                      CircularLoading(context).stopLoading();
+                                      context.router.push(SelectDayPeriodRoute(isBackArrow: true));
+                                    }
+                                  }
+                                }
                               }
                             }
-                          }
-                        : null,
-                    child: const Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Выбрать',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 18),
+                          : null,
+                      child: const Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Выбрать',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 50),
-              ],
+                  const SizedBox(height: 50),
+                ],
+              ),
             ),
           ),
         );

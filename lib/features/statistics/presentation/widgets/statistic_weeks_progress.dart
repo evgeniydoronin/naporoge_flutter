@@ -142,6 +142,7 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                                 controller: progress[index],
                                 // focusNode: focusList[index],
                                 // autofocus: true,
+                                readOnly: weeksProgress[0]['weekResultsSave'] == true ? false : true,
                                 style: TextStyle(fontSize: AppFont.small),
                                 maxLines: 3,
                                 decoration: InputDecoration(
@@ -218,6 +219,7 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
 
                                 if (context.mounted) {
                                   CircularLoading(context).stopLoading();
+                                  FocusManager.instance.primaryFocus?.unfocus();
                                 }
                               }
                             },

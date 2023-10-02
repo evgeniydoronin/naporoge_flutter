@@ -77,10 +77,8 @@ class _NPCalendarState extends State<NPCalendar> {
   late DateTime firstDayOfMonth;
   late DateTime firstDayOfNextMonth;
 
-  late DateTime lastDayOfMonth =
-      DateTime(_currentDay.year, _currentDay.month + 1, 0);
-  late DateTime lastDayOfPreviousMonth =
-      DateTime(_currentDay.year, _currentDay.month, 0);
+  late DateTime lastDayOfMonth = DateTime(_currentDay.year, _currentDay.month + 1, 0);
+  late DateTime lastDayOfPreviousMonth = DateTime(_currentDay.year, _currentDay.month, 0);
 
   // Начало месяца со сдвигом на нужную неделю
   late int offsetStartMonth;
@@ -110,34 +108,29 @@ class _NPCalendarState extends State<NPCalendar> {
     bool isActiveCellDay = false;
 
     // понедельник текущей недели
-    DateTime mondayCurrentWeek =
-        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    DateTime mondayCurrentWeek = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
     // понедельник следующей недели
     DateTime mondayNextWeek = mondayCurrentWeek.add(const Duration(days: 7));
 
     int lastWeekNumberOfCurrentMonth = weekNumber(lastDayOfMonth);
 
-    DateTime lastMondayOfMonth =
-        lastDayOfMonth.subtract(Duration(days: lastDayOfMonth.weekday - 1));
+    DateTime lastMondayOfMonth = lastDayOfMonth.subtract(Duration(days: lastDayOfMonth.weekday - 1));
 
     // если дата в рамках последней недели месяца
     // выводим следующий месяц
-    if (DateTime.now().isBefore(lastDayOfMonth
-            .add(const Duration(hours: 23, minutes: 59, seconds: 59))) &&
-        DateTime.now().isAfter(lastMondayOfMonth)) {
-      // print(lastDayOfMonth.add(const Duration(days: 1)));
-      setState(() {
-        _currentDay = lastDayOfMonth.add(const Duration(days: 1));
-        firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
-        firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
-        offsetStartMonth = firstDayOfMonth.weekday - 1;
-        dayInMonth =
-            (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
-      });
-    }
+    // if (DateTime.now().isBefore(lastDayOfMonth.add(const Duration(hours: 23, minutes: 59, seconds: 59))) &&
+    //     DateTime.now().isAfter(lastMondayOfMonth)) {
+    //   // print(lastDayOfMonth.add(const Duration(days: 1)));
+    //   setState(() {
+    //     _currentDay = lastDayOfMonth.add(const Duration(days: 1));
+    //     firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
+    //     firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
+    //     offsetStartMonth = firstDayOfMonth.weekday - 1;
+    //     dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+    //   });
+    // }
 
-    String month = DateFormat.MMMM('ru')
-        .format(DateTime.parse(firstDayOfMonth.toString()));
+    String month = DateFormat.MMMM('ru').format(DateTime.parse(firstDayOfMonth.toString()));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -155,14 +148,14 @@ class _NPCalendarState extends State<NPCalendar> {
                 IconButton(
                     onPressed: () {
                       if (DateTime.now().compareTo(_currentDay) < 0) {
+                        print('prev month');
                         changeMonth(false);
                       }
                     },
-                    icon: RotatedBox(
-                        quarterTurns: 2,
-                        child: SvgPicture.asset('assets/icons/arrow.svg'))),
+                    icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg'))),
                 IconButton(
                     onPressed: () {
+                      print('next month');
                       changeMonth(true);
                     },
                     icon: SvgPicture.asset(
@@ -182,15 +175,12 @@ class _NPCalendarState extends State<NPCalendar> {
           height: 25,
           child: GridView.builder(
               shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
               itemCount: weekDaysNameRu.length,
               itemBuilder: (BuildContext context, weekDayIndex) {
                 return Text(
                   weekDaysNameRu[weekDayIndex].toUpperCase(),
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: weekDayIndex != 0 ? Colors.grey : Colors.black),
+                  style: TextStyle(fontSize: 12, color: weekDayIndex != 0 ? Colors.grey : Colors.black),
                   textAlign: TextAlign.center,
                 );
               }),
@@ -204,13 +194,11 @@ class _NPCalendarState extends State<NPCalendar> {
           itemCount: dayInMonth + offsetStartMonth,
           itemBuilder: (BuildContext context, cellIndex) {
             // Дата в ячейке
-            DateTime cellDate = firstDayOfMonth
-                .add(Duration(days: cellIndex - offsetStartMonth));
+            DateTime cellDate = firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth));
             // Если следующая неделя и не последняя неделя месяца
             // делаем ячейки активные для выбора
             // Если последняя неделя месяца - выводим следующий месяц для выбора
-            if (cellDate
-                .isAfter(mondayNextWeek.subtract(const Duration(days: 1)))) {
+            if (cellDate.isAfter(mondayNextWeek.subtract(const Duration(days: 1)))) {
               isActiveCellDay = true;
             }
             return cellIndex < offsetStartMonth
@@ -219,10 +207,7 @@ class _NPCalendarState extends State<NPCalendar> {
                     ? cellBuilder(cellIndex, offsetStartMonth)
                     : Center(
                         child: Text(
-                          firstDayOfMonth
-                              .add(Duration(days: cellIndex - offsetStartMonth))
-                              .day
-                              .toString(),
+                          firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth)).day.toString(),
                           style: TextStyle(color: AppColor.grey2, fontSize: 20),
                         ),
                       );
@@ -233,6 +218,7 @@ class _NPCalendarState extends State<NPCalendar> {
   }
 
   void changeMonth(direction) {
+    print('_currentDay 1: $_currentDay');
     setState(() {
       _currentDay = direction
           ? DateTime(_currentDay.year, _currentDay.month + 1)
@@ -240,24 +226,22 @@ class _NPCalendarState extends State<NPCalendar> {
       firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
       firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
       offsetStartMonth = firstDayOfMonth.weekday - 1;
-      dayInMonth =
-          (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+      dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
     });
+
+    print('_currentDay 2: $_currentDay');
   }
 
   Widget cellBuilder(cellIndex, offsetStartMonth) {
-    DateTime cellDate =
-        firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth));
+    DateTime cellDate = firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth));
 
     return GestureDetector(
       onTap: () {
-        DateTime selectCell = firstDayOfMonth.add(Duration(
-            days: cellIndex - offsetStartMonth)); // 2022-10-14 00:00:00.000
-        DateTime mondayStartRange =
-            selectCell.subtract(Duration(days: selectCell.weekday - 1));
+        DateTime selectCell =
+            firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth)); // 2022-10-14 00:00:00.000
+        DateTime mondayStartRange = selectCell.subtract(Duration(days: selectCell.weekday - 1));
 
-        context.read<PlannerBloc>().add(StreamStartDateChanged(
-            DateFormat('yyyy-MM-dd').format(mondayStartRange)));
+        context.read<PlannerBloc>().add(StreamStartDateChanged(DateFormat('yyyy-MM-dd').format(mondayStartRange)));
       },
       child: cellContainer(cellDate),
     );
