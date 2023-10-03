@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:naporoge/core/constants/app_theme.dart';
+import '../../../../core/constants/app_theme.dart';
 import 'package:collection/collection.dart';
-import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../domain/entities/stream_entity.dart';
 
 import '../bloc/planner_bloc.dart';
 
@@ -557,8 +557,8 @@ class _DayPeriodCellState extends State<DayPeriodCell> {
 
     if (cells.isNotEmpty) {
       for (Map cell in cells) {
-        // print('cell: $cell');
         if (eq(cell['cellId'], [periodIndex, rowIndex, gridIndex])) {
+          // print('cell: $cell');
           cellColor =
               gridIndex == 6 ? const Color(0xFF00A2FF).withOpacity(0.3) : const Color.fromARGB(255, 82, 194, 255);
           textCell = gridIndex == 6 ? "" : cell['startTime'] ?? '';

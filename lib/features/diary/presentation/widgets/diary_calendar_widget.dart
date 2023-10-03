@@ -48,6 +48,8 @@ class _DiaryCalendarWidgetState extends State<DiaryCalendarWidget> {
               if (snapshot.hasData) {
                 monthData = snapshot.data;
 
+                // print('monthData: $monthData');
+
                 if (state.currentMonth.isNotEmpty) {
                   monthData = state.currentMonth;
                 }
@@ -59,7 +61,7 @@ class _DiaryCalendarWidgetState extends State<DiaryCalendarWidget> {
                       children: [
                         IconButton(
                             onPressed: () async {
-                              CircularLoading(context).startLoading();
+                              // CircularLoading(context).startLoading();
                               monthData = await getMonthData(monthData!['currentDay'], false);
                               if (monthData != null) {
                                 if (context.mounted) {
@@ -69,7 +71,7 @@ class _DiaryCalendarWidgetState extends State<DiaryCalendarWidget> {
                                   currentDay = monthData!['currentDay'];
                                 });
                                 if (context.mounted) {
-                                  CircularLoading(context).stopAutoRouterLoading();
+                                  // CircularLoading(context).stopAutoRouterLoading();
                                 }
                               }
                             },
@@ -83,7 +85,7 @@ class _DiaryCalendarWidgetState extends State<DiaryCalendarWidget> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            CircularLoading(context).startLoading();
+                            // CircularLoading(context).startLoading();
 
                             monthData = await getMonthData(monthData!['currentDay'], true);
 
@@ -94,7 +96,7 @@ class _DiaryCalendarWidgetState extends State<DiaryCalendarWidget> {
                               currentDay = monthData!['currentDay'];
                             });
                             if (context.mounted) {
-                              CircularLoading(context).stopAutoRouterLoading();
+                              // CircularLoading(context).stopAutoRouterLoading();
                             }
                           },
                           icon: const RotatedBox(
@@ -164,6 +166,8 @@ class _DiaryCalendarGridState extends State<DiaryCalendarGrid> {
 
   @override
   Widget build(BuildContext context) {
+    // print('isActiveDay: $isActiveDay');
+    // print('widget.monthData: ${widget.monthData}');
     return FutureBuilder(
         future: getAllNotesInMonth(widget.monthData),
         builder: (context, snapshot) {
@@ -199,7 +203,9 @@ class _DiaryCalendarGridState extends State<DiaryCalendarGrid> {
                   if (widget.monthData['offsetStartMonth'] <= cellIndex) {
                     return GestureDetector(
                       onTap: () async {
-                        CircularLoading(context).startLoading();
+                        // await Future.delayed(const Duration(seconds: 1));
+                        // CircularLoading(context).startLoading();
+                        // print('day: $day');
 
                         setState(() {
                           isActiveDay = day;
@@ -246,7 +252,7 @@ class _DiaryCalendarGridState extends State<DiaryCalendarGrid> {
                             context.read<DiaryBloc>().add(DiaryMonthChanged(monthResults));
                           }
 
-                          CircularLoading(context).stopAutoRouterLoading();
+                          // CircularLoading(context).stopAutoRouterLoading();
                         }
                       },
                       child: Container(

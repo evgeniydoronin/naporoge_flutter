@@ -250,14 +250,22 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                             // print('createWeek: $createWeek');
                                             // print('updatedStream: $updatedStream');
 
+                                            print('++++++++++++++++++++');
+                                            print('++++++++++++++++++++');
+                                            print('++++++++++++++++++++');
+
                                             // update local
                                             if (updatedStream['stream']['id'] != null) {
                                               // print('newStream: $updatedStream');
+                                              print('context.router.replaceRoute(const DashboardScreenRoute())');
                                               streamLocalStorage.updateStream(updatedStream);
                                               streamLocalStorage.createWeek(createWeek);
                                               if (context.mounted) {
                                                 CircularLoading(context).stopLoading();
-                                                context.router.replace(const DashboardScreenRoute());
+                                                context.replaceRoute(const DashboardScreenRoute());
+                                                // переводит на экран Выбор даты старта
+                                                // context.router.removeLast();
+                                                context.router.popUntilRoot();
                                               }
                                             }
                                           }

@@ -43,6 +43,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       onWillPop: () async {
         final closeApp = await showCloseAppDialog(context);
         return closeApp ?? false;
+        return true;
       },
       child: GestureDetector(
         onTap: () {

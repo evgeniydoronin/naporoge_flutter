@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:naporoge/core/routes/app_router.dart';
+import '../../../../core/routes/app_router.dart';
 
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/db_client/isar_service.dart';
@@ -18,23 +18,25 @@ class DiaryNoteWidget extends StatefulWidget {
 }
 
 class _DiaryNoteWidgetState extends State<DiaryNoteWidget> {
-  DateTime? currentDay;
+  DateTime? firstDayOfCurrentMonth;
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<DiaryBloc, DiaryState>(
       listener: (context, state) {},
       builder: (context, state) {
-        currentDay = state.lastNote['createAt'];
+        firstDayOfCurrentMonth = state.lastNote['createAt'];
 
         if (state.currentMonth.isNotEmpty) {
-          currentDay = state.currentMonth['currentDay'];
+          firstDayOfCurrentMonth = state.currentMonth['currentDay'];
+          print('state.currentMonth.isNotEmpty: $firstDayOfCurrentMonth');
         } else {
-          currentDay = DateTime.now();
+          firstDayOfCurrentMonth = DateTime.now();
+          print('state.currentMonth.isEmpty: $firstDayOfCurrentMonth');
         }
 
         return FutureBuilder(
-          future: getDiaryLastNote(currentDay),
+          future: getDiaryLastNote(firstDayOfCurrentMonth),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               DiaryNote note = snapshot.data;
