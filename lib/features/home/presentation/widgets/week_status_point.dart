@@ -16,7 +16,6 @@ class WeekStatusPoint extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
           List days = snapshot.data['days'];
-          DateTime now = DateTime.now();
 
           // адаптация текущего дня до 3 ночи
           DateTime actualUserDay = snapshot.data['actualUserDay'];

@@ -118,8 +118,11 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 80),
                                       child: Text(
-                                        'Старт курса – с понедельника. Выберите, с какого начнете',
-                                        style: TextStyle(color: Colors.white, fontSize: AppFont.regular),
+                                        'Не забудьте определить объем выполнения и цель дела',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: AppFont.regular,
+                                            fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                   ],

@@ -49,7 +49,7 @@ Future getCourseProgress() async {
   // Во время прохождения курса
   else if (streamStatus['status'] == 'process') {
     // + 1: прибавляем текущий день, он сразу считается как прошедший
-    int passedDays = startStreamAt.difference(now).inDays.abs(); // + 1;
+    int passedDays = startStreamAt.difference(now).inDays.abs() + 1;
     Week lastWeek = stream.weekBacklink.last;
 
     // Title

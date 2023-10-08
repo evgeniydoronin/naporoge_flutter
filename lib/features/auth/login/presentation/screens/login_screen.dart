@@ -185,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Приложение разработано для обучающихся по Программе «Развитие воли и самоорганизации» Код активации выдается учебным заведением',
+                          'Приложение разработано для обучающихся по Программе «Развитие воли и самоорганизации». Код активации выдается учебным заведением',
                           style: TextStyle(color: AppColor.grey2, fontSize: AppFont.small),
                         ),
                         const SizedBox(height: 20),

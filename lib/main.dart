@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<DiaryBloc>(create: (context) => DiaryBloc()),
       ],
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,

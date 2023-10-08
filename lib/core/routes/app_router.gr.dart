@@ -77,6 +77,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const EmptyRouterPage(),
       );
     },
+    ExperienceOfOthersScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ExperienceOfOthersScreen(),
+      );
+    },
     ExplanationsForThePlanningRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -128,6 +134,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const MoreScreen(),
+      );
+    },
+    OurMissionScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const OurMissionScreen(),
       );
     },
     PersonalDataScreenRoute.name: (routeData) {
@@ -415,6 +427,20 @@ class EmptyRouter extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ExperienceOfOthersScreen]
+class ExperienceOfOthersScreenRoute extends PageRouteInfo<void> {
+  const ExperienceOfOthersScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          ExperienceOfOthersScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ExperienceOfOthersScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [ExplanationsForThePlanning]
 class ExplanationsForThePlanningRoute extends PageRouteInfo<void> {
   const ExplanationsForThePlanningRoute({List<PageRouteInfo>? children})
@@ -552,6 +578,20 @@ class MoreScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'MoreScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [OurMissionScreen]
+class OurMissionScreenRoute extends PageRouteInfo<void> {
+  const OurMissionScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          OurMissionScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'OurMissionScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

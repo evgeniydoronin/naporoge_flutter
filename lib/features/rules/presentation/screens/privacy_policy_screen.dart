@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_theme.dart';
@@ -40,6 +41,12 @@ class PrivacyPolicyScreen extends StatelessWidget {
         title: const Text(
           'Политики конфидециальности',
           overflow: TextOverflow.ellipsis,
+        ),
+        leading: IconButton(
+          onPressed: () {
+            context.router.pop();
+          },
+          icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
         ),
       ),
       body: SingleChildScrollView(

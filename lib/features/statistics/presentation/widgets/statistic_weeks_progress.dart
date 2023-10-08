@@ -27,10 +27,12 @@ class WeeksProgressBox extends StatefulWidget {
 
 class _WeeksProgressBoxState extends State<WeeksProgressBox> {
   int activePage = 0;
-  final _formKey = GlobalKey<FormState>();
   final PageController pageController = PageController(initialPage: 0);
   final _streamController = getIt<StreamController>();
-  TextEditingController progress = TextEditingController();
+
+  final List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
+  List<FocusNode> focusList = [FocusNode(), FocusNode(), FocusNode()];
+  List<TextEditingController> progress = [TextEditingController(), TextEditingController(), TextEditingController()];
 
   @override
   Widget build(BuildContext context) {
@@ -40,96 +42,105 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
         if (snapshot.hasData) {
           List weeksProgress = snapshot.data;
 
-          return Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 390,
-                  child: Stack(children: [
-                    PageView.builder(
-                        controller: pageController,
-                        itemCount: weeksProgress.length,
-                        onPageChanged: (int page) async {
-                          setState(() {
-                            activePage = page;
-                          });
-                        },
-                        itemBuilder: (BuildContext context, int index) {
-                          Map weekData = weeksProgress[index];
-                          Week week = weekData['week'];
-                          List daysProgress = weekData['daysProgress'];
-                          progress = TextEditingController(text: week.progress);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 390,
+                child: Stack(children: [
+                  PageView.builder(
+                      controller: pageController,
+                      itemCount: weeksProgress.length,
+                      onPageChanged: (int page) async {
+                        setState(() {
+                          activePage = page;
+                        });
+                        FocusScope.of(context).requestFocus(focusList[page]);
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        Map weekData = weeksProgress[index];
+                        Week week = weekData['week'];
+                        List daysProgress = weekData['daysProgress'];
+                        // progress[index] = TextEditingController(text: week.progress);
 
-                          DateTime now = DateTime.now();
+                        DateTime now = DateTime.now();
+                        int currentWeek = getWeekNumber(now);
 
-                          int currentWeek = getWeekNumber(now);
-
-                          // add data to weekResult
-                          List weekResult = [];
-                          for (int i = 0; i < daysProgress.length; i++) {
-                            String dayResult = '';
-                            // есть результат дня
-                            if (daysProgress[i]['dayResult'] != null) {
-                              DayResult res = daysProgress[i]['dayResult'];
-                              dayResult = res.result ?? '';
+                        // add data to weekResult
+                        List weekResult = [];
+                        for (int i = 0; i < daysProgress.length; i++) {
+                          String dayResult = '';
+                          // есть результат дня
+                          if (daysProgress[i]['dayResult'] != null) {
+                            DayResult res = daysProgress[i]['dayResult'];
+                            dayResult = res.result ?? '';
+                          }
+                          // нет результата
+                          else {
+                            // неделя прошла
+                            if (currentWeek > week.weekNumber!) {
+                              dayResult = 'пропуск';
                             }
-                            // нет результата
-                            else {
-                              // неделя прошла
-                              if (currentWeek > week.weekNumber!) {
+                            // текущая неделя
+                            else if (currentWeek == week.weekNumber) {
+                              if (now.weekday > i + 1) {
                                 dayResult = 'пропуск';
                               }
-                              // текущая неделя
-                              else if (currentWeek == week.weekNumber) {
-                                if (now.weekday > i + 1) {
-                                  dayResult = 'пропуск';
-                                }
-                              }
                             }
-
-                            weekResult.add(TableRow(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                    weekDayName[i],
-                                    style: TextStyle(fontSize: AppFont.small, color: AppColor.grey2),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    dayResult,
-                                    style: dayResult == 'пропуск'
-                                        ? TextStyle(fontSize: AppFont.small, color: AppColor.grey2)
-                                        : TextStyle(fontSize: AppFont.small),
-                                  ),
-                                ),
-                              ],
-                            ));
                           }
 
-                          return Column(
+                          weekResult.add(TableRow(
                             children: [
-                              Text(
-                                'Неделя ${index + 1}',
-                                style: AppFont.scaffoldTitleDark,
-                              ),
-                              const SizedBox(height: 10),
-                              Table(
-                                columnWidths: const {1: FractionColumnWidth(.9)},
-                                border: TableBorder(
-                                  horizontalInside: BorderSide(width: 1, color: AppColor.grey1),
-                                  verticalInside: BorderSide(width: 1, color: AppColor.grey1),
-                                  bottom: BorderSide(width: 1, color: AppColor.grey1),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  weekDayName[i],
+                                  style: TextStyle(fontSize: AppFont.small, color: AppColor.grey2),
                                 ),
-                                children: [...weekResult],
                               ),
-                              const SizedBox(height: 20),
-                              TextFormField(
-                                controller: progress,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  dayResult,
+                                  style: dayResult == 'пропуск'
+                                      ? TextStyle(fontSize: AppFont.small, color: AppColor.grey2)
+                                      : TextStyle(fontSize: AppFont.small),
+                                ),
+                              ),
+                            ],
+                          ));
+                        }
+
+                        // TextEditingController(text: week.progress);
+                        // print('progress[index]: ${progress[index].text}');
+                        if (progress[index].text.isEmpty) {
+                          progress[index] = TextEditingController(text: week.progress);
+                        }
+
+                        return Column(
+                          children: [
+                            Text(
+                              'Неделя ${index + 1}',
+                              style: AppFont.scaffoldTitleDark,
+                            ),
+                            const SizedBox(height: 10),
+                            Table(
+                              columnWidths: const {1: FractionColumnWidth(.9)},
+                              border: TableBorder(
+                                horizontalInside: BorderSide(width: 1, color: AppColor.grey1),
+                                verticalInside: BorderSide(width: 1, color: AppColor.grey1),
+                                bottom: BorderSide(width: 1, color: AppColor.grey1),
+                              ),
+                              children: [...weekResult],
+                            ),
+                            const SizedBox(height: 20),
+                            Form(
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              key: formKeys[index],
+                              child: TextFormField(
+                                controller: progress[index],
+                                focusNode: focusList[index],
+                                autofocus: true,
                                 style: TextStyle(fontSize: AppFont.small),
                                 maxLines: 3,
                                 decoration: InputDecoration(
@@ -150,79 +161,76 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                                   return null;
                                 },
                               ),
-                            ],
-                          );
-                        }),
-                    Positioned(
-                      bottom: 0,
-                      child: SizedBox(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width - 80,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List<Widget>.generate(
-                              weeksProgress.length,
-                                  (index) =>
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                                    child: CircleAvatar(
-                                      maxRadius: 5,
-                                      backgroundColor: activePage == index ? AppColor.accent : AppColor.grey1,
-                                    ),
-                                  )),
-                        ),
+                            ),
+                          ],
+                        );
+                      }),
+                  Positioned(
+                    bottom: 0,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width - 80,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List<Widget>.generate(
+                            weeksProgress.length,
+                            (index) => Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                                  child: CircleAvatar(
+                                    maxRadius: 5,
+                                    backgroundColor: activePage == index ? AppColor.accent : AppColor.grey1,
+                                  ),
+                                )),
                       ),
                     ),
-                  ]),
-                ),
-                const SizedBox(height: 25),
-                weeksProgress[0]['weekResultsSave'] == true
-                    ? Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            CircularLoading(context).startLoading();
+                  ),
+                ]),
+              ),
+              const SizedBox(height: 25),
+              weeksProgress[0]['weekResultsSave'] == true
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              // print('pageController: ${pageController.page?.toInt()}');
+                              if (formKeys[pageController.page!.floor().toInt()].currentState!.validate()) {
+                                CircularLoading(context).startLoading();
 
-                            final streamLocalStorage = StreamLocalStorage();
+                                final streamLocalStorage = StreamLocalStorage();
 
-                            Map progressData = {};
-                            int index = pageController.page!.floor().toInt();
-                            Week week = weeksProgress[index]['week'];
+                                Map progressData = {};
+                                int index = pageController.page!.floor().toInt();
+                                Week week = weeksProgress[index]['week'];
 
-                            await Future.delayed(const Duration(milliseconds: 200));
+                                await Future.delayed(const Duration(milliseconds: 200));
 
-                            progressData['week_id'] = week.id;
-                            progressData['week_progress'] = progress.text;
+                                progressData['week_id'] = week.id;
+                                progressData['week_progress'] = progress[index].text;
 
-                            // create on server
-                            var updateWeekProgress = await _streamController.updateWeekProgress(progressData);
+                                // create on server
+                                var updateWeekProgress = await _streamController.updateWeekProgress(progressData);
 
-                            // print('updateWeekProgress: $updateWeekProgress');
+                                // print('updateWeekProgress: $updateWeekProgress');
 
-                            // save on local
-                            await streamLocalStorage.updateWeekProgress(updateWeekProgress);
+                                // save on local
+                                await streamLocalStorage.updateWeekProgress(updateWeekProgress);
 
-                            if (context.mounted) {
-                              CircularLoading(context).stopLoading();
-                            }
-                          }
-                        },
-                        style: AppLayout.accentBTNStyle,
-                        child: Text(
-                          'Отметить достижения недели',
-                          style: AppFont.regularSemibold,
+                                if (context.mounted) {
+                                  CircularLoading(context).stopLoading();
+                                }
+                              }
+                            },
+                            style: AppLayout.accentBTNStyle,
+                            child: Text(
+                              'Отметить достижения недели',
+                              style: AppFont.regularSemibold,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                )
-                    : const SizedBox(),
-              ],
-            ),
+                      ],
+                    )
+                  : const SizedBox(),
+            ],
           );
         } else {
           return const Center(child: CircularProgressIndicator());

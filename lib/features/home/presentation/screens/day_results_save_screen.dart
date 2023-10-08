@@ -34,6 +34,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
 
   bool isDesires = false;
   bool isReluctance = false;
+  bool isRejoice = false;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +111,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                 context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
                               validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
+                                if (value == null || value
+                                    .trim()
+                                    .isEmpty) {
                                   return 'Заполните обязательное поле!';
                                 }
                                 return null;
@@ -192,7 +195,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    const RejoiceBox(),
+                    RejoiceBox(status: isRejoice),
                     const SizedBox(height: 25),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -201,21 +204,44 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () async {
+                                // проверка удалось порадоваться
+                                Map rejoiceData = await getRejoiceBox();
+                                if (rejoiceData['required']) {
+                                  if (state.rejoice == null || state.rejoice!.isEmpty) {
+                                    setState(() {
+                                      isRejoice = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      isRejoice = false;
+                                    });
+                                  }
+                                }
+
                                 // проверка желаний и нежеланий
-                                if (state.desires == null) {
+                                if (state.desires == null || state.desires!.isEmpty) {
                                   setState(() {
                                     isDesires = true;
                                   });
+                                } else {
+                                  setState(() {
+                                    isDesires = false;
+                                  });
                                 }
-                                if (state.reluctance == null) {
+
+                                if (state.reluctance == null || state.reluctance!.isEmpty) {
                                   setState(() {
                                     isReluctance = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    isReluctance = false;
                                   });
                                 }
 
                                 if (_formKey.currentState!.validate()) {
                                   // защита от дурака
-                                  if (state.desires == null) {
+                                  if (state.desires == null || state.desires!.isEmpty) {
                                     setState(() {
                                       isDesires = true;
                                     });
@@ -224,7 +250,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                       isDesires = false;
                                     });
                                   }
-                                  if (state.reluctance == null) {
+                                  if (state.reluctance == null || state.reluctance!.isEmpty) {
                                     setState(() {
                                       isReluctance = true;
                                     });
@@ -233,8 +259,29 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                       isReluctance = false;
                                     });
                                   }
+                                  if (rejoiceData['required']) {
+                                    if (state.rejoice == null || state.rejoice!.isEmpty) {
+                                      setState(() {
+                                        isRejoice = true;
+                                      });
+                                      return;
+                                    } else {
+                                      setState(() {
+                                        isRejoice = false;
+                                      });
+                                    }
+                                  }
 
-                                  if (state.desires != null && state.reluctance != null) {
+                                  if (state.desires != null ||
+                                      state.desires!.isNotEmpty && state.reluctance != null ||
+                                      state.reluctance!.isNotEmpty) {
+                                    // удалось порадоваться
+                                    if (rejoiceData['required']) {
+                                      if (state.rejoice == null || state.rejoice!.isEmpty) {
+                                        return;
+                                      }
+                                    }
+
                                     // актуальный день студента
                                     DateTime actualStudentDay = getActualStudentDay();
 
@@ -250,7 +297,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
 
                                     final weekNumber = getWeekNumber(actualStudentDay);
                                     Week? currWeekData =
-                                        await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
+                                    await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
 
                                     late int dayId;
 

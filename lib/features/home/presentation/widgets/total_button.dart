@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naporoge/features/home/presentation/bloc/save_day_result/day_result_bloc.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../utils/get_home_status.dart';
@@ -31,6 +33,11 @@ class TotalButton extends StatelessWidget {
             bottomButton = ElevatedButton(
               onPressed: () async {
                 context.router.push(const DayResultsSaveScreenRoute());
+                // сброс данных стейта предыдущих значений
+                context.read<DayResultBloc>().add(const DesiresChanged(''));
+                context.read<DayResultBloc>().add(const ReluctanceChanged(''));
+                print(context.read<DayResultBloc>().state);
+                // context.read<DayResultBloc>().add()
               },
               style: AppLayout.accentBowBTNStyle,
               child: Text(

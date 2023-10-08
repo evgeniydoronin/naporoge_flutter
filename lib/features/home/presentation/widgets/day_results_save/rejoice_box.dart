@@ -7,10 +7,13 @@ import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
 
 import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/services/db_client/isar_service.dart';
+import '../../../../../core/utils/get_actual_student_day.dart';
 import '../../bloc/save_day_result/day_result_bloc.dart';
 
 class RejoiceBox extends StatefulWidget {
-  const RejoiceBox({super.key});
+  final bool status;
+
+  const RejoiceBox({super.key, required this.status});
 
   @override
   State<RejoiceBox> createState() => _RejoiceBoxState();
@@ -32,12 +35,26 @@ class _RejoiceBoxState extends State<RejoiceBox> {
         future: _getRejoiceBox,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print(snapshot.data);
+            Map data = snapshot.data;
+
+            // скрываем виджет до субботы второй недели
+            if (!data['preview']) return const SizedBox();
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                decoration: AppLayout.boxDecorationShadowBG,
+                decoration: BoxDecoration(
+                  color: AppColor.lightBGItem,
+                  border: Border.all(color: widget.status ? AppColor.red : const Color(0xFFE7E7E7)),
+                  borderRadius: AppLayout.primaryRadius,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 5,
+                      spreadRadius: 0,
+                    )
+                  ],
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -73,19 +90,13 @@ class _RejoiceBoxState extends State<RejoiceBox> {
                       isSelected: _selections,
                       children: [
                         SizedBox(
-                            width: (MediaQuery
-                                .of(context)
-                                .size
-                                .width - 81) / 2,
+                            width: (MediaQuery.of(context).size.width - 81) / 2,
                             child: RotatedBox(
                               quarterTurns: 2,
                               child: SvgPicture.asset('assets/icons/342.svg'),
                             )),
                         SizedBox(
-                            width: (MediaQuery
-                                .of(context)
-                                .size
-                                .width - 81) / 2,
+                            width: (MediaQuery.of(context).size.width - 81) / 2,
                             child: SvgPicture.asset('assets/icons/342.svg')),
                       ],
                     ),
@@ -101,7 +112,7 @@ class _RejoiceBoxState extends State<RejoiceBox> {
 }
 
 Future getRejoiceBox() async {
-  bool? preview;
+  Map data = {'preview': false, 'required': false};
 
   final isarService = IsarService();
   final isar = await isarService.db;
@@ -111,18 +122,25 @@ Future getRejoiceBox() async {
 
   // активируем сразу на втором курсе
   if (allStreams.length > 1) {
-    preview = true;
+    data['preview'] = true;
   }
   // если первый курс - выводим в субботу
   else {
-    DateTime now = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    DateTime now = DateTime.parse(DateFormat('yyyy-MM-dd').format(getActualStudentDay()));
     DateTime streamStartAt = DateTime.parse(DateFormat('yyyy-MM-dd').format(stream!.startAt!));
-    DateTime firstSaturday = streamStartAt.add(const Duration(days: 5));
+    // DateTime firstSaturday = streamStartAt.add(const Duration(days: 5));
+    DateTime secondSaturday = streamStartAt.add(const Duration(days: 12));
+    DateTime thirdSaturday = streamStartAt.add(const Duration(days: 14));
 
-    if (now.isAfter(firstSaturday) || now.isAtSameMomentAs(firstSaturday)) {
-      preview = true;
+    // print('secondSaturday: $secondSaturday');
+    // print('thirdSaturday: $thirdSaturday');
+    if (now.isAfter(secondSaturday) || now.isAtSameMomentAs(secondSaturday)) {
+      data['preview'] = true;
+    }
+    if (now.isAfter(thirdSaturday) || now.isAtSameMomentAs(thirdSaturday)) {
+      data['required'] = true;
     }
   }
 
-  return preview;
+  return data;
 }

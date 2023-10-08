@@ -1,5 +1,8 @@
 import 'package:intl/intl.dart';
 
+/// Получаем текущую дату пользователя,
+/// до 3 ночи считается предыдущий день
+
 DateTime getActualStudentDay() {
   DateTime now = DateTime.now();
   DateTime? actualUserDay;
