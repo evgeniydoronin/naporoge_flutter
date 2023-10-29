@@ -107,7 +107,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
           if (snapshot.hasData) {
             Map pageData = snapshot.data;
             // print('pageData 333: $pageData');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][0]}');
+            // print('weeksOnPage: ${pageData['weeksOnPage'][0]['cellsWeekData']}');
 
             _pageIndex = pageData['defaultPageIndex'];
             NPStream stream = pageData['stream'];
@@ -320,21 +320,6 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
           "height": [],
           "periodIndex": page['weekOpenedPeriod'], // [0, 2, 1]
         });
-        // // если есть заполненные ячейки
-        // if (page['weekOpenedPeriod'].isNotEmpty) {
-        //   // print('page weekOpenedPeriod: ${page['weekOpenedPeriod']}');
-        //   weeksPeriodsHeight.add({
-        //     "pageIndex": page['pageIndex'],
-        //     "height": [],
-        //     "periodIndex": page['weekOpenedPeriod'], // [0, 2, 1]
-        //   });
-        // } else {
-        //   weeksPeriodsHeight.add({
-        //     "pageIndex": page['pageIndex'],
-        //     "height": [],
-        //     "periodIndex": page['weekOpenedPeriod'], // [0, 2, 1]
-        //   });
-        // }
       }
     }
 
@@ -517,9 +502,6 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
               Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  // border: Border(
-                  //   right: BorderSide(width: 1, color: AppColor.grey1),
-                  // ),
                 ),
                 width: 49,
                 child: Center(
@@ -547,11 +529,19 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                         Map dayData = {};
 
                         for (int i = 0; i < daysData.length; i++) {
+                          // print('daysData : ${daysData[i]}');
                           if (eq(daysData[i]['cellId'], [periodIndex, rowIndex, gridIndex])) {
+                            // if (daysData[i]['day_id'] == 2452) {
+                            //   print('${daysData[i]}');
+                            // }
                             // print('daysData[i] : ${daysData[i]}');
                             // Находим объект ДНЯ и добавляем
                             Day day = week.dayBacklink.where((day) => day.id == daysData[i]['day_id']).first;
                             // print("day: ${day.completedAt}");
+
+                            // if (daysData[i]['day_id'] == 2452) {
+                            //   print('day: $day}');
+                            // }
                             dayData = {
                               ...daysData[i],
                               ...{'day': day}
@@ -616,11 +606,17 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
 
     // print('dayData: $dayData');
     if (dayData.isNotEmpty) {
-      // print('day: ${day}');
-
+      // {day_id: 2452, cellId: [0, 0, 6], start_at: 05:00, completed_at: 04:05, oldCellId: true, day: Instance of 'Day'}
+      if (dayData['day_id'] == 2452) {
+        // print('dayData: $dayData');
+      }
+      // if (dayData['cellId'] == [0, 0, 6]) {
+      //   print('dayData: $dayData');
+      // }
       // {day_id: 1029, cellId: [0, 6, 2], start_at: 08:00, completed_at: 10:00, newCellId: true}
       // {day_id: 1029, cellId: [0, 4, 2], start_at: 08:00, completed_at: 10:00, oldCellId: true}
       // {day_id: 1026, cellId: [0, 5, 0], start_at: 09:00, completed_at: 09:55, day_matches: true}
+      // {day_id: 2452, cellId: [0, 0, 6], start_at: 05:00, completed_at: 04:05, newCellId: true}
       if (eq(dayData['cellId'], [periodIndex, rowIndex, gridIndex])) {
         DateTime actualStudentDay = getActualStudentDay();
         int dayIndex = gridIndex + 1;
@@ -631,7 +627,6 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
         // если дни недели созданы и ячейка не подсказка
         if (dayData['statusCell'] == null) {
           DateTime dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
-
           // String? completedAt = DateFormat('Y-mm-dd').format(day.completedAt);
 
           // print('dayStartAt: $dayStartAt, ${dayStartAt.isAtSameMomentAs(now)}');
@@ -674,8 +669,8 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
               // выполнен
               else {
                 if (dayData['oldCellId'] != null) {
-                  // скрываем значение по умолчанию ячейки
-                  textCell = '';
+                  textCell = dayData['completed_at'];
+                  fontColor = AppColor.red;
                 } else if (dayData['newCellId'] != null) {
                   textCell = dayData['completed_at'];
                   fontColor = AppColor.red;
