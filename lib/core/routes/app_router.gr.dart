@@ -136,6 +136,23 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const MoreScreen(),
       );
     },
+    NextStreamChoiceOfCaseScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const NextStreamChoiceOfCaseScreen(),
+      );
+    },
+    NextStreamStartDateSelectionScreenRoute.name: (routeData) {
+      final args =
+          routeData.argsAs<NextStreamStartDateSelectionScreenRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: NextStreamStartDateSelectionScreen(
+          key: args.key,
+          nextStreamWeeks: args.nextStreamWeeks,
+        ),
+      );
+    },
     OurMissionScreenRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -173,13 +190,9 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     SelectDayPeriodRoute.name: (routeData) {
-      final args = routeData.argsAs<SelectDayPeriodRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: SelectDayPeriod(
-          key: args.key,
-          isBackArrow: args.isBackArrow,
-        ),
+        child: const SelectDayPeriod(),
       );
     },
     SplashScreenRoute.name: (routeData) {
@@ -212,6 +225,29 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const TestScreen(),
       );
     },
+    TheoriesRouter.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: TheoriesRouterScreen(),
+      );
+    },
+    TheoriesScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TheoriesScreen(),
+      );
+    },
+    TheoryPostScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<TheoryPostScreenRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: TheoryPostScreen(
+          key: args.key,
+          data: args.data,
+          postId: args.postId,
+        ),
+      );
+    },
     TodoEmptyRouter.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -234,6 +270,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const TodoScreen(),
+      );
+    },
+    TwoTargetScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TwoTargetScreen(),
       );
     },
     WelcomeDescriptionScreenRoute.name: (routeData) {
@@ -583,6 +625,59 @@ class MoreScreenRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [NextStreamChoiceOfCaseScreen]
+class NextStreamChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
+  const NextStreamChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          NextStreamChoiceOfCaseScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'NextStreamChoiceOfCaseScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [NextStreamStartDateSelectionScreen]
+class NextStreamStartDateSelectionScreenRoute
+    extends PageRouteInfo<NextStreamStartDateSelectionScreenRouteArgs> {
+  NextStreamStartDateSelectionScreenRoute({
+    Key? key,
+    required int nextStreamWeeks,
+    List<PageRouteInfo>? children,
+  }) : super(
+          NextStreamStartDateSelectionScreenRoute.name,
+          args: NextStreamStartDateSelectionScreenRouteArgs(
+            key: key,
+            nextStreamWeeks: nextStreamWeeks,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'NextStreamStartDateSelectionScreenRoute';
+
+  static const PageInfo<NextStreamStartDateSelectionScreenRouteArgs> page =
+      PageInfo<NextStreamStartDateSelectionScreenRouteArgs>(name);
+}
+
+class NextStreamStartDateSelectionScreenRouteArgs {
+  const NextStreamStartDateSelectionScreenRouteArgs({
+    this.key,
+    required this.nextStreamWeeks,
+  });
+
+  final Key? key;
+
+  final int nextStreamWeeks;
+
+  @override
+  String toString() {
+    return 'NextStreamStartDateSelectionScreenRouteArgs{key: $key, nextStreamWeeks: $nextStreamWeeks}';
+  }
+}
+
+/// generated route for
 /// [OurMissionScreen]
 class OurMissionScreenRoute extends PageRouteInfo<void> {
   const OurMissionScreenRoute({List<PageRouteInfo>? children})
@@ -668,40 +763,16 @@ class RuleOfAppScreenRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [SelectDayPeriod]
-class SelectDayPeriodRoute extends PageRouteInfo<SelectDayPeriodRouteArgs> {
-  SelectDayPeriodRoute({
-    Key? key,
-    required bool isBackArrow,
-    List<PageRouteInfo>? children,
-  }) : super(
+class SelectDayPeriodRoute extends PageRouteInfo<void> {
+  const SelectDayPeriodRoute({List<PageRouteInfo>? children})
+      : super(
           SelectDayPeriodRoute.name,
-          args: SelectDayPeriodRouteArgs(
-            key: key,
-            isBackArrow: isBackArrow,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'SelectDayPeriodRoute';
 
-  static const PageInfo<SelectDayPeriodRouteArgs> page =
-      PageInfo<SelectDayPeriodRouteArgs>(name);
-}
-
-class SelectDayPeriodRouteArgs {
-  const SelectDayPeriodRouteArgs({
-    this.key,
-    required this.isBackArrow,
-  });
-
-  final Key? key;
-
-  final bool isBackArrow;
-
-  @override
-  String toString() {
-    return 'SelectDayPeriodRouteArgs{key: $key, isBackArrow: $isBackArrow}';
-  }
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -775,6 +846,78 @@ class TestScreenRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [TheoriesRouterScreen]
+class TheoriesRouter extends PageRouteInfo<void> {
+  const TheoriesRouter({List<PageRouteInfo>? children})
+      : super(
+          TheoriesRouter.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TheoriesRouter';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TheoriesScreen]
+class TheoriesScreenRoute extends PageRouteInfo<void> {
+  const TheoriesScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          TheoriesScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TheoriesScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TheoryPostScreen]
+class TheoryPostScreenRoute extends PageRouteInfo<TheoryPostScreenRouteArgs> {
+  TheoryPostScreenRoute({
+    Key? key,
+    required Map<dynamic, dynamic> data,
+    required int postId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          TheoryPostScreenRoute.name,
+          args: TheoryPostScreenRouteArgs(
+            key: key,
+            data: data,
+            postId: postId,
+          ),
+          rawPathParams: {'postId': postId},
+          initialChildren: children,
+        );
+
+  static const String name = 'TheoryPostScreenRoute';
+
+  static const PageInfo<TheoryPostScreenRouteArgs> page =
+      PageInfo<TheoryPostScreenRouteArgs>(name);
+}
+
+class TheoryPostScreenRouteArgs {
+  const TheoryPostScreenRouteArgs({
+    this.key,
+    required this.data,
+    required this.postId,
+  });
+
+  final Key? key;
+
+  final Map<dynamic, dynamic> data;
+
+  final int postId;
+
+  @override
+  String toString() {
+    return 'TheoryPostScreenRouteArgs{key: $key, data: $data, postId: $postId}';
+  }
+}
+
+/// generated route for
 /// [TodoEmptyRouterPage]
 class TodoEmptyRouter extends PageRouteInfo<void> {
   const TodoEmptyRouter({List<PageRouteInfo>? children})
@@ -837,6 +980,20 @@ class TodoScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'TodoScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TwoTargetScreen]
+class TwoTargetScreenRoute extends PageRouteInfo<void> {
+  const TwoTargetScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          TwoTargetScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TwoTargetScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

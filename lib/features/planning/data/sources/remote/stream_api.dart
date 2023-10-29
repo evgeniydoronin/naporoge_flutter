@@ -22,6 +22,19 @@ class StreamApi {
     }
   }
 
+  Future<Response> createNextStreamApi(Map streamData) async {
+    // print('createStreamApi: $streamData');
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.createNextStream,
+        data: streamData,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> updateStreamApi(Map streamData) async {
     // print('updateStreamApi: $streamData');
     try {
@@ -120,6 +133,19 @@ class StreamApi {
         Endpoints.deleteDiaryNote,
         data: data,
       );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> deleteDuplicatesResultApi(Map duplicates) async {
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.deleteDuplicatesResult,
+        data: duplicates,
+      );
+      // print(response);
       return response;
     } catch (e) {
       rethrow;

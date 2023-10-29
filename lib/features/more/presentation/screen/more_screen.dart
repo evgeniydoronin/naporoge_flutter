@@ -144,85 +144,87 @@ class MoreScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // InkWell(
-                      //   onTap: () {},
-                      //   child: Row(
-                      //     children: [
-                      //       Expanded(
-                      //         child: Container(
-                      //           padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                      //           decoration: AppLayout.boxDecorationShadowBG,
-                      //           child: Row(
-                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //             children: [
-                      //               const Expanded(
-                      //                 child: Text(
-                      //                   'Теория к курсу и формы документов',
-                      //                   style: TextStyle(fontSize: 16),
-                      //                 ),
-                      //               ),
-                      //               Container(
-                      //                 width: 25,
-                      //                 height: 25,
-                      //                 decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
-                      //                 child: Center(
-                      //                   child: SvgPicture.asset(
-                      //                     'assets/icons/arrow.svg',
-                      //                     colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
+                      InkWell(
+                        onTap: () => context.router.push(const TheoriesScreenRoute()),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                                decoration: AppLayout.boxDecorationShadowBG,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Expanded(
+                                      child: Text(
+                                        'Теория к курсу и формы документов',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 25,
+                                      height: 25,
+                                      decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icons/arrow.svg',
+                                          colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 )
               ],
             ),
-            // const SizedBox(height: 15),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 20),
-            //   child: InkWell(
-            //     onTap: () {},
-            //     child: Row(
-            //       children: [
-            //         Expanded(
-            //           child: Container(
-            //             padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-            //             decoration: AppLayout.boxDecorationShadowBG,
-            //             child: Row(
-            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //               children: [
-            //                 const Expanded(
-            //                   child: Text(
-            //                     'Две цели дела',
-            //                     style: TextStyle(fontSize: 16),
-            //                   ),
-            //                 ),
-            //                 Container(
-            //                   width: 25,
-            //                   height: 25,
-            //                   decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
-            //                   child: Center(
-            //                     child: SvgPicture.asset(
-            //                       'assets/icons/arrow.svg',
-            //                       colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: InkWell(
+                onTap: () {
+                  context.router.push(const TwoTargetScreenRoute());
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                        decoration: AppLayout.boxDecorationShadowBG,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                'Две цели дела',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icons/arrow.svg',
+                                  colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 15),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

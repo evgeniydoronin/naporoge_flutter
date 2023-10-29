@@ -16,16 +16,24 @@ List<String> weekDaysNameRu = [
   'вс',
 ];
 
-class SelectWeekWidget extends StatelessWidget {
-  const SelectWeekWidget({Key? key}) : super(key: key);
+class NextSelectWeekWidget extends StatelessWidget {
+  final int nextStreamWeeks;
+
+  const NextSelectWeekWidget({Key? key, required this.nextStreamWeeks}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return NPCalendar(currentDay: DateTime.now());
+    return NPCalendar(
+      currentDay: DateTime.now(),
+      nextStreamWeeks: nextStreamWeeks,
+    );
   }
 }
 
 class NPCalendar extends StatefulWidget {
+  // Количество недель нового дела
+  final int nextStreamWeeks;
+
   /// The start of the selected day range.
   final DateTime? rangeStartDay;
 
@@ -64,7 +72,8 @@ class NPCalendar extends StatefulWidget {
       this.firstDay,
       this.lastDay,
       required this.currentDay,
-      this.weekendDays});
+      this.weekendDays,
+      required this.nextStreamWeeks});
 
   @override
   State<NPCalendar> createState() => _NPCalendarState();
@@ -174,6 +183,7 @@ class _NPCalendarState extends State<NPCalendar> {
           ),
           height: 25,
           child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
               itemCount: weekDaysNameRu.length,
@@ -201,12 +211,14 @@ class _NPCalendarState extends State<NPCalendar> {
             if (cellDate.isAfter(mondayNextWeek.subtract(const Duration(days: 1)))) {
               isActiveCellDay = true;
             }
+
             return cellIndex < offsetStartMonth
                 ? const SizedBox()
                 : isActiveCellDay
                     ? cellBuilder(cellIndex, offsetStartMonth)
                     : Center(
                         child: Text(
+                          // cellIndex.toString(),
                           firstDayOfMonth.add(Duration(days: cellIndex - offsetStartMonth)).day.toString(),
                           style: TextStyle(color: AppColor.grey2, fontSize: 20),
                         ),
@@ -218,7 +230,6 @@ class _NPCalendarState extends State<NPCalendar> {
   }
 
   void changeMonth(direction) {
-    print('_currentDay 1: $_currentDay');
     setState(() {
       _currentDay = direction
           ? DateTime(_currentDay.year, _currentDay.month + 1)
@@ -228,8 +239,6 @@ class _NPCalendarState extends State<NPCalendar> {
       offsetStartMonth = firstDayOfMonth.weekday - 1;
       dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
     });
-
-    print('_currentDay 2: $_currentDay');
   }
 
   Widget cellBuilder(cellIndex, offsetStartMonth) {
@@ -255,7 +264,6 @@ class _NPCalendarState extends State<NPCalendar> {
     TextStyle style = const TextStyle(fontSize: 20);
 
     String startDateString = state.startDate;
-    int courseWeeks = state.courseWeeks;
 
     DateTime startDate = DateTime.now();
 
@@ -263,9 +271,9 @@ class _NPCalendarState extends State<NPCalendar> {
       startDate = DateTime.parse(startDateString);
     }
 
-    for (int i = 0; i < courseWeeks * 7; i++) {
+    for (int i = 0; i < widget.nextStreamWeeks * 7; i++) {
+      // print(startDate.add(Duration(days: i)));
       if (cellDate.compareTo(startDate.add(Duration(days: i))) == 0) {
-        // print(startDate.add(Duration(days: i)));
         colorCell = AppColor.accent;
         if (i == 0) {
           decoration = BoxDecoration(
@@ -281,7 +289,9 @@ class _NPCalendarState extends State<NPCalendar> {
             color: AppColor.accent.withOpacity(0.1),
           );
           style = const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
-        } else if (i == courseWeeks * 7 - 1) {
+        }
+        // последний день
+        else if (i == widget.nextStreamWeeks * 7 - 1) {
           decoration = BoxDecoration(
             shape: BoxShape.circle,
             color: AppColor.accent.withOpacity(0.3),

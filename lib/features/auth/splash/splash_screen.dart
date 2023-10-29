@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
@@ -12,6 +13,7 @@ import '../../../core/constants/app_theme.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../core/services/db_client/isar_service.dart';
 import '../../../core/utils/get_week_number.dart';
+import '../../planning/presentation/bloc/active_course/active_stream_bloc.dart';
 import '../login/domain/user_model.dart';
 import '../../planning/presentation/stream_controller.dart';
 
@@ -76,7 +78,9 @@ class _SplashScreenState extends State<SplashScreen> {
           else {
             print('SplashScreen - неделя не создана');
             if (context.mounted) {
-              context.router.replace(SelectDayPeriodRoute(isBackArrow: false));
+              /// активное дело
+              context.read<ActiveStreamBloc>().add(ActiveStreamChanged(npStream: activeStream));
+              context.router.replace(const SelectDayPeriodRoute());
             }
           }
         }
@@ -89,8 +93,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
           Week? week = activeStream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).firstOrNull;
 
-          print('SplashScreen weeks: $weeks');
-          print('SplashScreen activeStream.weekBacklink: ${activeStream.weekBacklink.length}');
+          // print('SplashScreen weeks: $weeks');
+          // print('SplashScreen activeStream.weekBacklink: ${activeStream.weekBacklink.length}');
 
           // Первая неделя может создаться пустой без дней
           // проверяем и создаем дни
@@ -100,15 +104,15 @@ class _SplashScreenState extends State<SplashScreen> {
             if (activeStream.weekBacklink.isEmpty) {
               Map newWeekData = {};
 
-              print('SplashScreen Понедельник, текущая неделя НЕ создана');
+              // print('SplashScreen Понедельник, текущая неделя НЕ создана');
 
               // понедельник текущей недели
               int daysOfWeek = now.weekday - 1;
               DateTime firstDay = DateTime(now.year, now.month, now.day - daysOfWeek);
               DateTime lastDay = firstDay.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
-              print('firstDay: $firstDay');
-              print('lastDay: $lastDay');
+              // print('firstDay: $firstDay');
+              // print('lastDay: $lastDay');
 
               // CREATE WEEK
               newWeekData['streamId'] = activeStream.id;
@@ -156,6 +160,57 @@ class _SplashScreenState extends State<SplashScreen> {
                   streamLocalStorage.createWeek(createWeek);
                 }
               }
+            }
+          }
+
+          // найти текущую неделю
+          // если вторая или третья
+          // проверить на количество созданных
+          // если вторая, третья неделя имеет дубликаты
+          // отправить запрос на удаление дубликатов на сервер
+          // удалить дубликаты в локальной БД
+          // ID дубликатов недель
+          List weeksIdForDelete = [];
+          List daysIdForDelete = [];
+
+          if (week != null) {
+            print('activeStream 1: ${activeStream.weekBacklink.length}');
+            if (currentWeekNumber == week.weekNumber) {
+              List allCurrentWeeks =
+                  await activeStream.weekBacklink.filter().weekNumberEqualTo(currentWeekNumber).findAll();
+              // print('currentWeekNumber: $currentWeekNumber');
+              Week neededWeek = allCurrentWeeks.first;
+
+              for (Week week in allCurrentWeeks) {
+                if (week != neededWeek) {
+                  weeksIdForDelete.add(week.id);
+
+                  List daysOfWeek = await week.dayBacklink.filter().findAll();
+
+                  for (Day day in daysOfWeek) {
+                    daysIdForDelete.add(day.id);
+                  }
+                }
+              }
+            }
+          }
+
+          // отправляем запрос на удаление дубликатов на сервер
+          // удаляем дубликаты в локальной БД
+          if (weeksIdForDelete.isNotEmpty) {
+            Map deleteDuplicates = {
+              'weeksIdForDelete': weeksIdForDelete,
+              'daysIdForDelete': daysIdForDelete,
+            };
+            // print('deleteDuplicates: $deleteDuplicates');
+            // delete duplicates on server
+            var resDeleteDuplicates = await _streamController.deleteDuplicatesResult(deleteDuplicates);
+
+            // если успешное удаление
+            if (resDeleteDuplicates['status'] == 'success') {
+              print(resDeleteDuplicates['data']);
+              // удаляем локальные дубли
+              await streamLocalStorage.deleteDuplicatesResult(resDeleteDuplicates['data']);
             }
           }
 

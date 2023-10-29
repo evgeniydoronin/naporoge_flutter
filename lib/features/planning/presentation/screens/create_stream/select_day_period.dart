@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/utils/get_week_number.dart';
-import '../../domain/entities/stream_entity.dart';
-import '../../../../core/routes/app_router.dart';
-import '../../../../core/services/controllers/service_locator.dart';
-import '../../../../core/services/db_client/isar_service.dart';
-import '../../../../core/utils/circular_loading.dart';
-import '../../data/sources/local/stream_local_storage.dart';
-import '../bloc/planner_bloc.dart';
-import '../stream_controller.dart';
-import '../widgets/day_schedule_widget.dart';
-import '../../../../core/constants/app_theme.dart';
-import '../widgets/stepper_widget.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../../core/utils/get_week_number.dart';
+import '../../../domain/entities/stream_entity.dart';
+import '../../../../../core/routes/app_router.dart';
+import '../../../../../core/services/controllers/service_locator.dart';
+import '../../../../../core/services/db_client/isar_service.dart';
+import '../../../../../core/utils/circular_loading.dart';
+import '../../../data/sources/local/stream_local_storage.dart';
+import '../../bloc/active_course/active_stream_bloc.dart';
+import '../../bloc/planner_bloc.dart';
+import '../../stream_controller.dart';
+import '../../widgets/day_schedule_widget.dart';
+import '../../../../../core/constants/app_theme.dart';
+import '../../widgets/stepper_widget.dart';
 
 @RoutePage()
 class SelectDayPeriod extends StatefulWidget {
-  final bool isBackArrow;
-
-  const SelectDayPeriod({Key? key, required this.isBackArrow}) : super(key: key);
+  const SelectDayPeriod({Key? key}) : super(key: key);
 
   @override
   State<SelectDayPeriod> createState() => _SelectDayPeriodState();
@@ -52,11 +52,11 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
     final isarService = IsarService();
     final streamLocalStorage = StreamLocalStorage();
     final _formKey = GlobalKey<FormState>();
+    TextEditingController _courseDescription = TextEditingController();
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        // print(state);
         context.read<PlannerBloc>().add(FinalCellForCreateStream(finalCellIDs: cells));
 
         return GestureDetector(
@@ -66,11 +66,16 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
           child: Scaffold(
             backgroundColor: AppColor.lightBG,
             appBar: AppBar(
-              automaticallyImplyLeading: widget.isBackArrow,
               foregroundColor: Colors.black,
               backgroundColor: AppColor.lightBG,
               elevation: 0,
               centerTitle: true,
+              leading: IconButton(
+                onPressed: () {
+                  context.router.navigate(const ChoiceOfCaseScreenRoute());
+                },
+                icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
+              ),
               title: Text(
                 'Планирование',
                 style: AppFont.scaffoldTitleDark,
@@ -91,6 +96,10 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   NPStream stream = snapshot.data;
+
+                  // print('stream description: ${stream.description}');
+
+                  // _courseDescription = TextEditingController(text: stream.description);
 
                   return ListView(
                     shrinkWrap: true,

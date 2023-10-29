@@ -43,6 +43,15 @@ final class StreamCourseDescriptionChanged extends PlannerEvent {
   List<Object> get props => [courseDescription];
 }
 
+final class StreamCourseWeeksChanged extends PlannerEvent {
+  const StreamCourseWeeksChanged(this.courseWeeks);
+
+  final int courseWeeks;
+
+  @override
+  List<Object> get props => [courseWeeks];
+}
+
 final class SelectCell extends PlannerEvent {
   final List selectedCellIDs;
 
@@ -77,6 +86,15 @@ final class WrapWeekBoxHeightStream extends PlannerEvent {
 
   @override
   List<Object> get props => [wrapWeekBoxHeight];
+}
+
+final class NextStreamWeeksStreamChanged extends PlannerEvent {
+  final int nextStreamWeeks;
+
+  const NextStreamWeeksStreamChanged({required this.nextStreamWeeks});
+
+  @override
+  List<Object> get props => [nextStreamWeeks];
 }
 
 final class PlanningConfirmBtnStream extends PlannerEvent {

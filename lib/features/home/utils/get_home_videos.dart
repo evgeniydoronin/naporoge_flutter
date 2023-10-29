@@ -11,8 +11,9 @@ Future getHomeVideos() async {
 
   final isarService = IsarService();
   final isar = await isarService.db;
-  List streams = await isar.nPStreams.filter().isActiveEqualTo(true).findAll();
+  List streams = await isar.nPStreams.where().findAll();
   DateTime now = DateTime.now();
+
   // первый курс
   if (streams.length == 1) {
     print('first stream');
@@ -38,7 +39,9 @@ Future getHomeVideos() async {
   }
   // не первый курс
   else {
-    final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
+    previewVideoIndex[1] = 1;
+    previewVideoIndex[2] = 1;
+    previewVideoIndex[3] = 1;
   }
 
   return previewVideoIndex;

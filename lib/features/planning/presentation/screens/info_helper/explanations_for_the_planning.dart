@@ -1,7 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_theme.dart';
+import '../../../../../core/constants/app_theme.dart';
 
 @RoutePage()
 class ExplanationsForThePlanning extends StatelessWidget {

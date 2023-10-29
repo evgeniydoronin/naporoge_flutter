@@ -1,21 +1,24 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/routes/app_router.dart';
+import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../../../../core/routes/app_router.dart';
 
-import '../../../../core/constants/app_theme.dart';
-import '../bloc/planner_bloc.dart';
-import '../widgets/select_week_widget.dart';
-import '../widgets/stepper_widget.dart';
+import '../../../../../core/constants/app_theme.dart';
+import '../../bloc/active_course/active_stream_bloc.dart';
+import '../../bloc/choice_of_course/choice_of_course_bloc.dart';
+import '../../bloc/planner_bloc.dart';
+import '../../widgets/select_week_widget.dart';
+import '../../widgets/stepper_widget.dart';
 
 @RoutePage()
 class StartDateSelectionScreen extends StatefulWidget {
   const StartDateSelectionScreen({super.key});
 
   @override
-  State<StartDateSelectionScreen> createState() =>
-      _StartDateSelectionScreenState();
+  State<StartDateSelectionScreen> createState() => _StartDateSelectionScreenState();
 }
 
 class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
@@ -23,27 +26,42 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NPStream? npStream = context.read<ActiveStreamBloc>().state.npStream;
+    int studentsStreams = context.read<ActiveStreamBloc>().state.studentsStreams;
+    print('StartDateSelectionScreen - ActiveStreamBloc');
+    print('$npStream');
+    print('$studentsStreams');
+    print('StartDateSelectionScreen - ActiveStreamBloc');
+
     String buttonDate = 'Выбрать';
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {
-        // print(state.startDate);
+        print('state.startDate: ${state.startDate}');
         _isActivated = true;
         String startDateString = state.startDate;
         DateTime startDate = DateTime.parse(startDateString);
         DateTime endDate = startDate.add(const Duration(days: 20));
-        buttonDate =
-            'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
+        buttonDate = 'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
       },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
-              // automaticallyImplyLeading: false,
-              centerTitle: true,
-              elevation: 0,
-              foregroundColor: Colors.black,
-              backgroundColor: AppColor.lightBG,
-              title: const Text('Выбор даты старта')),
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            elevation: 0,
+            foregroundColor: Colors.black,
+            backgroundColor: AppColor.lightBG,
+            title: const Text('Выбор даты старта'),
+            leading: studentsStreams <= 1
+                ? IconButton(
+                    onPressed: () {
+                      context.router.navigate(const WelcomeDescriptionScreenRoute());
+                    },
+                    icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
+                  )
+                : const SizedBox(),
+          ),
           body: Theme(
             data: Theme.of(context).copyWith(
               canvasColor: Colors.white,
@@ -72,13 +90,10 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(
-                                top: 15, bottom: 15, left: 15, right: 80),
+                            padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 80),
                             child: Text(
                               'Старт курса – с понедельника. Выберите, с какого начнете',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: AppFont.regular),
+                              style: TextStyle(color: Colors.white, fontSize: AppFont.regular),
                             ),
                           ),
                         ],
@@ -110,13 +125,13 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: AppLayout.primaryRadius)),
+                    style:
+                        ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
                     onPressed: _isActivated
                         ? () {
-                            context.router
-                                .push(const ChoiceOfCaseScreenRoute());
+                            // закрываем все дела по умолчанию
+                            context.read<ChoiceOfCourseBloc>().add(const CourseItemChanged(selectedIndex: -1));
+                            context.router.push(const ChoiceOfCaseScreenRoute());
                           }
                         : null,
                     child: Padding(

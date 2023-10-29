@@ -6,9 +6,11 @@ final class PlannerState extends Equatable {
     this.courseId = '',
     this.courseTitle = '',
     this.courseDescription = '',
+    this.courseWeeks = 3,
     this.selectedCellIDs = const [],
     this.finalCellIDs = const [],
     this.wrapWeekBoxHeight = 0,
+    this.nextStreamWeeks = 0,
     this.isPlanningConfirmBtn = false,
     this.editableWeekData = const {},
   });
@@ -17,9 +19,11 @@ final class PlannerState extends Equatable {
   final String courseId;
   final String courseTitle;
   final String courseDescription;
+  final int courseWeeks;
   final List selectedCellIDs;
   final List finalCellIDs;
   final int wrapWeekBoxHeight;
+  final int nextStreamWeeks;
   final bool isPlanningConfirmBtn;
   final Map editableWeekData;
 
@@ -28,9 +32,11 @@ final class PlannerState extends Equatable {
     String? courseId,
     String? courseTitle,
     String? courseDescription,
+    int? courseWeeks,
     List? selectedCellIDs,
     List? finalCellIDs,
     int? wrapWeekBoxHeight,
+    int? nextStreamWeeks,
     bool? isPlanningConfirmBtn,
     Map? editableWeekData,
   }) {
@@ -39,9 +45,11 @@ final class PlannerState extends Equatable {
       courseId: courseId ?? this.courseId,
       courseTitle: courseTitle ?? this.courseTitle,
       courseDescription: courseDescription ?? this.courseDescription,
+      courseWeeks: courseWeeks ?? this.courseWeeks,
       selectedCellIDs: selectedCellIDs ?? this.selectedCellIDs,
       finalCellIDs: finalCellIDs ?? this.finalCellIDs,
       wrapWeekBoxHeight: wrapWeekBoxHeight ?? this.wrapWeekBoxHeight,
+      nextStreamWeeks: nextStreamWeeks ?? this.nextStreamWeeks,
       isPlanningConfirmBtn: isPlanningConfirmBtn ?? this.isPlanningConfirmBtn,
       editableWeekData: editableWeekData ?? this.editableWeekData,
     );
@@ -53,9 +61,11 @@ final class PlannerState extends Equatable {
         courseId,
         courseTitle,
         courseDescription,
+        courseWeeks,
         selectedCellIDs,
         finalCellIDs,
         wrapWeekBoxHeight,
+        nextStreamWeeks,
         isPlanningConfirmBtn,
         editableWeekData,
       ];

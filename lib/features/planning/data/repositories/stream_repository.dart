@@ -16,6 +16,15 @@ class StreamRepository {
     }
   }
 
+  Future createNextStreamRequested(Map data) async {
+    try {
+      final response = await streamApi.createNextStreamApi(data);
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future updateStreamRequested(Map data) async {
     try {
       final response = await streamApi.updateStreamApi(data);
@@ -84,6 +93,15 @@ class StreamRepository {
       final response = await streamApi.deleteDiaryNoteApi(data);
       return response.data;
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future deleteDuplicatesRequested(Map data) async {
+    try {
+      final response = await streamApi.deleteDuplicatesResultApi(data);
+      return response.data;
+    } on DioError catch (e) {
       rethrow;
     }
   }

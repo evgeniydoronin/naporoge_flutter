@@ -110,7 +110,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                         ),
                       ),
                       Text(
-                        'Если долго не приходит код - проверьте правильно ли указан номер телефона',
+                        'Если код долго не приходит - проверьте правильно ли указан номер телефона',
                         style: TextStyle(fontSize: 12, color: AppColor.grey2),
                       ),
                     ],

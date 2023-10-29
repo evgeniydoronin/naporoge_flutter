@@ -47,6 +47,33 @@ class StreamLocalStorage {
     });
   }
 
+  Future<void> createNextStream(Map streamDataFromServer) async {
+    final isar = await isarService.db;
+
+    Map streamData = streamDataFromServer['stream'];
+    int oldStreamId = streamDataFromServer['old_stream'];
+
+    // деактивируем старый курс
+    final oldStream = await isar.nPStreams.get(oldStreamId);
+    oldStream!.isActive = false;
+
+    final newStream = NPStream()
+      ..id = streamData['id']
+      ..courseId = streamData['course_id']
+      ..isActive = streamData['is_active']
+      ..title = streamData['title']
+      ..weeks = streamData['weeks']
+      ..description = streamData['description']
+      ..startAt = DateTime.parse(streamData['start_at']);
+
+    isar.writeTxnSync(() async {
+      // деактивируем старый курс
+      isar.nPStreams.putSync(oldStream);
+      // создаем новый курс
+      isar.nPStreams.putSync(newStream);
+    });
+  }
+
   Future<void> updateStream(Map streamDataFromServer) async {
     final isar = await isarService.db;
 
@@ -225,6 +252,19 @@ class StreamLocalStorage {
     await isar.writeTxn(() async {
       final success = await isar.diaryNotes.delete(data['note_id']);
       print('Recipe deleted: $success');
+    });
+  }
+
+  Future deleteDuplicatesResult(Map data) async {
+    final isar = await isarService.db;
+    List _weeks = data['weeksIdForDelete'];
+    List _days = data['daysIdForDelete'];
+
+    await isar.writeTxn(() async {
+      final weeks = await isar.weeks.deleteAll(_weeks.cast<int>());
+      final days = await isar.days.deleteAll(_days.cast<int>());
+      print('We deleted $weeks weeks');
+      print('We deleted $days days');
     });
   }
 }

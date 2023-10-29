@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:naporoge/features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
-import 'package:naporoge/features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
+import 'features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
 import 'features/diary/presentation/bloc/diary_bloc.dart';
 import 'features/home/presentation/bloc/save_day_result/day_result_bloc.dart';
 
 import 'core/routes/app_router.dart';
 import 'core/services/controllers/service_locator.dart';
+import 'features/planning/presentation/bloc/active_course/active_stream_bloc.dart';
+import 'features/planning/presentation/bloc/choice_of_course/choice_of_course_bloc.dart';
 import 'features/planning/presentation/bloc/planner_bloc.dart';
 
 void main() async {
@@ -32,6 +33,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<DayResultBloc>(create: (context) => DayResultBloc()),
         BlocProvider<HomeScreenBloc>(create: (context) => HomeScreenBloc()),
         BlocProvider<DiaryBloc>(create: (context) => DiaryBloc()),
+        BlocProvider<ChoiceOfCourseBloc>(create: (context) => ChoiceOfCourseBloc()),
+        BlocProvider<ActiveStreamBloc>(create: (context) => ActiveStreamBloc()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

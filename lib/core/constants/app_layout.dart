@@ -3,8 +3,7 @@ part of 'app_theme.dart';
 class AppLayout {
   static Border primaryBorder = Border.all(color: const Color(0xFFE7E7E7));
   static BorderRadius smallRadius = const BorderRadius.all(Radius.circular(8));
-  static BorderRadius primaryRadius =
-      const BorderRadius.all(Radius.circular(15));
+  static BorderRadius primaryRadius = const BorderRadius.all(Radius.circular(15));
 
   static ButtonStyle primaryBTNStyle = ElevatedButton.styleFrom(
       elevation: 0,
@@ -59,4 +58,9 @@ class AppLayout {
       )
     ],
   );
+
+  static EdgeInsets dialogTitlePadding = const EdgeInsets.all(15);
+  static EdgeInsets dialogContentPadding = const EdgeInsets.all(15);
+  static TextStyle dialogTitleTextStyle = TextStyle(fontSize: 20, color: AppColor.blk, fontWeight: FontWeight.w700);
+  static RoundedRectangleBorder dialogShape = RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius);
 }

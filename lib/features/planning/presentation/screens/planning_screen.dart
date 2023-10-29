@@ -27,6 +27,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
   final streamLocalStorage = StreamLocalStorage();
   final _formKey = GlobalKey<FormState>();
 
+  bool isActiveAfterSave = true;
+
   Future getActiveStream() async {
     final storage = StreamLocalStorage();
     return await storage.getActiveStream();
@@ -169,7 +171,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      child: isPlanningConfirmBtn
+                                      child: isPlanningConfirmBtn && isActiveAfterSave
                                           ? ElevatedButton(
                                               onPressed: () async {
                                                 // print(
@@ -190,14 +192,18 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                   Map weekData = state.editableWeekData;
                                                   List selectedCells = state.finalCellIDs;
 
-                                                  print('weekData:: ${state.editableWeekData}');
-                                                  print('selectedCells: $selectedCells');
+                                                  // print('weekData:: ${state.editableWeekData}');
+                                                  // print('selectedCells: $selectedCells');
 
-                                                  // /////////////////////////////
+                                                  /////////////////////////////
                                                   // CREATE WEEK
                                                   // /////////////////////////////
                                                   if (state.editableWeekData['weekId'] == null) {
                                                     print('CREATE WEEK');
+                                                    // скрываем кнопку от повторного создания недели
+                                                    setState(() {
+                                                      isActiveAfterSave = false;
+                                                    });
                                                     newWeekData['streamId'] = stream.id;
                                                     newWeekData['cells'] = selectedCells;
                                                     newWeekData['monday'] = state.editableWeekData['monday'].toString();
@@ -205,15 +211,11 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
                                                     var createWeek = await _streamController.createWeek(newWeekData);
 
-                                                    print('createWeek: $createWeek');
+                                                    // print('createWeek: $createWeek');
 
                                                     // update local
                                                     if (createWeek['week'] != null) {
                                                       streamLocalStorage.createWeek(createWeek);
-
-                                                      if (context.mounted) {
-                                                        CircularLoading(context).stopLoading();
-                                                      }
                                                     }
                                                   }
                                                   // /////////////////////////////
@@ -265,11 +267,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                     if (updateWeek['week'] != null) {
                                                       var days = streamLocalStorage.updateWeek(updateWeek);
 
-                                                      print('days after update: $days');
-                                                      if (context.mounted) {
-                                                        CircularLoading(context).stopLoading();
-                                                      }
+                                                      // print('days after update: $days');
                                                     }
+                                                  }
+
+                                                  if (context.mounted) {
+                                                    CircularLoading(context).stopLoading();
                                                   }
                                                 }
                                               },

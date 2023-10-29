@@ -381,7 +381,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {},
       builder: (context, state) {
-        print('period[periodIndex].rows: ${period[periodIndex].rows}');
+        // print('period[periodIndex].rows: ${period[periodIndex].rows}');
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

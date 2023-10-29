@@ -1,7 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:isar/isar.dart';
+import 'package:naporoge/features/planning/presentation/bloc/planner_bloc.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/db_client/isar_service.dart';
@@ -82,9 +85,9 @@ Future<Map> getTotalResultsStream() async {
   int? maxPointIndex;
 
   for (int i = 0; i < margePoint.length; i++) {
-    print('point: $point');
-    print('i: $i');
-    print('margePoint[i]: ${margePoint[i]}');
+    // print('point: $point');
+    // print('i: $i');
+    // print('margePoint[i]: ${margePoint[i]}');
 
     if (margePoint[i] == point) {
       maxPointIndex = i;
@@ -342,86 +345,88 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
                             bottom: 50, left: 80, child: Image(image: AssetImage('assets/images/flower.png'))),
                         Column(
                           children: [
-                            // IntrinsicHeight(
-                            //   child: Row(
-                            //     children: [
-                            //       Expanded(
-                            //         child: Container(
-                            //           padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                            //           decoration: AppLayout.boxDecorationOpacityShadowBG,
-                            //           child: Column(
-                            //             crossAxisAlignment: CrossAxisAlignment.start,
-                            //             children: [
-                            //               Text(
-                            //                 'Продлить Дело на 6 недель?',
-                            //                 style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
-                            //               ),
-                            //               const SizedBox(height: 5),
-                            //               Text(
-                            //                 'Закрепите полезные привычки',
-                            //                 style: TextStyle(fontSize: AppFont.smaller, fontWeight: FontWeight.normal),
-                            //               ),
-                            //               const SizedBox(height: 20),
-                            //               Row(
-                            //                 children: [
-                            //                   Expanded(
-                            //                     child: ElevatedButton(
-                            //                       onPressed: () {},
-                            //                       style: AppLayout.accentBTNStyle,
-                            //                       child: Text(
-                            //                         'Продлить',
-                            //                         style: AppFont.regularSemibold,
-                            //                         overflow: TextOverflow.ellipsis,
-                            //                       ),
-                            //                     ),
-                            //                   ),
-                            //                 ],
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         ),
-                            //       ),
-                            //       const SizedBox(width: 20),
-                            //       Expanded(
-                            //         child: Container(
-                            //           padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                            //           decoration: AppLayout.boxDecorationOpacityShadowBG,
-                            //           child: Column(
-                            //             crossAxisAlignment: CrossAxisAlignment.start,
-                            //             children: [
-                            //               Text(
-                            //                 'Выбрать новое дело',
-                            //                 style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
-                            //               ),
-                            //               const SizedBox(height: 5),
-                            //               Text(
-                            //                 'Вперед, к новым достижениям!',
-                            //                 style: TextStyle(fontSize: AppFont.smaller, fontWeight: FontWeight.normal),
-                            //               ),
-                            //               const SizedBox(height: 20),
-                            //               const Spacer(),
-                            //               Row(
-                            //                 children: [
-                            //                   Expanded(
-                            //                     child: ElevatedButton(
-                            //                       onPressed: () {},
-                            //                       style: AppLayout.accentBTNStyle,
-                            //                       child: Text(
-                            //                         'Выбрать',
-                            //                         style: AppFont.regularSemibold,
-                            //                       ),
-                            //                     ),
-                            //                   ),
-                            //                 ],
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 20),
+                            IntrinsicHeight(
+                              child: Row(
+                                children: [
+                                  // Expanded(
+                                  //   child: Container(
+                                  //     padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                                  //     decoration: AppLayout.boxDecorationOpacityShadowBG,
+                                  //     child: Column(
+                                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                                  //       children: [
+                                  //         Text(
+                                  //           'Продлить Дело на 6 недель?',
+                                  //           style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
+                                  //         ),
+                                  //         const SizedBox(height: 5),
+                                  //         Text(
+                                  //           'Закрепите полезные привычки',
+                                  //           style: TextStyle(fontSize: AppFont.smaller, fontWeight: FontWeight.normal),
+                                  //         ),
+                                  //         const SizedBox(height: 20),
+                                  //         Row(
+                                  //           children: [
+                                  //             Expanded(
+                                  //               child: ElevatedButton(
+                                  //                 onPressed: () {},
+                                  //                 style: AppLayout.accentBTNStyle,
+                                  //                 child: Text(
+                                  //                   'Продлить',
+                                  //                   style: AppFont.regularSemibold,
+                                  //                   overflow: TextOverflow.ellipsis,
+                                  //                 ),
+                                  //               ),
+                                  //             ),
+                                  //           ],
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  // const SizedBox(width: 20),
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                                      decoration: AppLayout.boxDecorationOpacityShadowBG,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Выбрать новое дело',
+                                            style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            'Это было классно, давай продолжим?',
+                                            style: TextStyle(fontSize: AppFont.smaller, fontWeight: FontWeight.normal),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          const Spacer(),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: ElevatedButton(
+                                                  // onPressed: () => context.router
+                                                  //     .navigate(const NextStreamStartDateSelectionScreenRoute()),
+                                                  onPressed: () => selectWeeks(context),
+                                                  style: AppLayout.accentBTNStyle,
+                                                  child: Text(
+                                                    'Выбрать',
+                                                    style: AppFont.regularSemibold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
                             Row(
                               children: [
                                 Expanded(
@@ -461,4 +466,75 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
       ),
     );
   }
+}
+
+Future selectWeeks(context) async {
+  int _selectedWeek = 0;
+
+  const List<String> _weeks = <String>[
+    '1 неделя',
+    '2 недели',
+    '3 недели',
+    '4 недели',
+    '5 недель',
+    '6 недель',
+    '7 недель',
+    '8 недель',
+    '9 недель',
+  ];
+  return showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) => AlertDialog(
+            title: const Text(
+              'Продолжительность нового дела',
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                        style: AppLayout.accentBTNStyle,
+                        onPressed: () async {
+                          context
+                              .read<PlannerBloc>()
+                              .add(NextStreamWeeksStreamChanged(nextStreamWeeks: _selectedWeek + 1));
+                          context.router
+                              .navigate(NextStreamStartDateSelectionScreenRoute(nextStreamWeeks: _selectedWeek + 1));
+
+                          print(_selectedWeek + 1);
+                        },
+                        child: Text(
+                          'Выбрать',
+                          style: AppFont.largeSemibold,
+                        )),
+                  ),
+                ],
+              ),
+            ],
+            content: SizedBox(
+              height: 100,
+              child: CupertinoPicker(
+                magnification: 1.12,
+                squeeze: 1,
+                useMagnifier: true,
+                itemExtent: 32.0,
+                onSelectedItemChanged: (int value) {
+                  _selectedWeek = value;
+                },
+                scrollController: FixedExtentScrollController(
+                  initialItem: _selectedWeek,
+                ),
+                children: List<Widget>.generate(_weeks.length, (int index) {
+                  return Center(child: Text(_weeks[index]));
+                }),
+              ),
+            ),
+            titlePadding: AppLayout.dialogTitlePadding,
+            actionsPadding: AppLayout.dialogTitlePadding,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            titleTextStyle: AppLayout.dialogTitleTextStyle,
+            shape: AppLayout.dialogShape,
+          ));
 }

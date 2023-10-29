@@ -22,6 +22,11 @@ class StreamController {
     return stream;
   }
 
+  Future createNextStream(data) async {
+    final stream = await streamRepository.createNextStreamRequested(data);
+    return stream;
+  }
+
   Future updateStream(data) async {
     final stream = await streamRepository.updateStreamRequested(data);
     return stream;
@@ -60,6 +65,11 @@ class StreamController {
   Future deleteDiaryNote(data) async {
     final note = await streamRepository.deleteDiaryNoteRequested(data);
     return note;
+  }
+
+  Future deleteDuplicatesResult(data) async {
+    final result = await streamRepository.deleteDuplicatesRequested(data);
+    return result;
   }
 
 // Future<List<UserModel>> getUsers() async {

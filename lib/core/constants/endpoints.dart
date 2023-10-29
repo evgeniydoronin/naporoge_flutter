@@ -4,8 +4,10 @@ class Endpoints {
   // base url
   // static const String baseUrl = "https://np-new.evgeniydoronin.com/api";
 
-  // static const String baseUrl = "https://np-app.evgeniydoronin.com/api";
-  static const String baseUrl = "https://umadmin.naporoge.ru/api";
+  static const String baseUrl = "https://np-app.evgeniydoronin.com/api";
+  static const String fileUrl = "https://np-app.evgeniydoronin.com/storage";
+
+  // static const String baseUrl = "https://umadmin.naporoge.ru/api";
 
   // receiveTimeout
   static const Duration receiveTimeout = Duration(seconds: 60);
@@ -20,6 +22,7 @@ class Endpoints {
 
   // Stream data
   static const String createStream = '/create-stream';
+  static const String createNextStream = '/create-next-stream';
   static const String updateStream = '/update-stream';
   static const String createWeek = '/create-week';
   static const String updateWeek = '/update-week';
@@ -28,4 +31,8 @@ class Endpoints {
   static const String createDiaryNote = '/create-note';
   static const String updateDiaryNote = '/update-note';
   static const String deleteDiaryNote = '/delete-note';
+  static const String allTheoryPosts = '/theories';
+
+  //
+  static const String deleteDuplicatesResult = '/delete-duplicates';
 }
