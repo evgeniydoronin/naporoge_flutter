@@ -174,7 +174,7 @@ class _SplashScreenState extends State<SplashScreen> {
           List daysIdForDelete = [];
 
           if (week != null) {
-            print('activeStream 1: ${activeStream.weekBacklink.length}');
+            // print('activeStream 1: ${activeStream.weekBacklink.length}');
             if (currentWeekNumber == week.weekNumber) {
               List allCurrentWeeks =
                   await activeStream.weekBacklink.filter().weekNumberEqualTo(currentWeekNumber).findAll();

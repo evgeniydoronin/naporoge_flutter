@@ -17,6 +17,9 @@ class WeekStatusPoint extends StatelessWidget {
         if (snapshot.hasData) {
           List days = snapshot.data['days'];
 
+          /// snapshot.data
+          /// {days: [Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day'], actualUserDay: 2023-10-31 00:00:00.000}
+
           // адаптация текущего дня до 3 ночи
           DateTime actualUserDay = snapshot.data['actualUserDay'];
 
@@ -26,6 +29,10 @@ class WeekStatusPoint extends StatelessWidget {
           // неделя не пустая
           if (days.isNotEmpty) {
             for (Day day in days) {
+              // print('dayStartAt: $dayStartAt');
+              // print('dayStartAtString: $dayStartAtString');
+              // print('actualUserDay: $actualUserDay');
+              
               // пустая неделя
               if (day.startAt == null) {
                 // выполнен
@@ -41,7 +48,6 @@ class WeekStatusPoint extends StatelessWidget {
               }
               // не пустая неделя
               else {
-                // print(day.startAt);
                 DateTime _dayStartAt = DateTime.parse(DateFormat('y-MM-dd').format(day.startAt!));
                 DateTime dayStartAt = DateTime(_dayStartAt.year, _dayStartAt.month, _dayStartAt.day);
                 String dayStartAtString = DateFormat('H:mm').format(day.startAt!);
@@ -51,8 +57,6 @@ class WeekStatusPoint extends StatelessWidget {
 
                 // текущий день
                 if (dayStartAt.isAtSameMomentAs(actualUserDay)) {
-                  // print('dayStartAt: $dayStartAt');
-                  // print('actualUserDay: $actualUserDay');
                   // выполнен
                   if (day.completedAt != null) {
                     daysStatus.add({'status': 'completed', 'startAt': dayStartAtString});
