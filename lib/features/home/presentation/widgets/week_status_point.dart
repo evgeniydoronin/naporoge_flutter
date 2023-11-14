@@ -26,24 +26,27 @@ class WeekStatusPoint extends StatelessWidget {
           // список дней и статуса
           List daysStatus = [];
 
-          // неделя не пустая
           if (days.isNotEmpty) {
-            for (Day day in days) {
-              // print('dayStartAt: $dayStartAt');
-              // print('dayStartAtString: $dayStartAtString');
+            for (final (int index, Day day) in days.indexed) {
               // print('actualUserDay: $actualUserDay');
-              
+
               // пустая неделя
               if (day.startAt == null) {
                 // выполнен
                 if (day.completedAt != null) {
+                  // print('пустая неделя выполнен: ${day.completedAt}');
                   // print('пустая неделя день выполнен');
                   daysStatus.add({'status': 'empty_completed', 'startAt': ''});
                 }
                 // не выполнен
                 else {
-                  // print('пустая неделя день НЕ выполнен');
-                  daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
+                  bool dayHasPassed = false;
+                  if (index + 1 < DateTime
+                      .now()
+                      .weekday) {
+                    dayHasPassed = true;
+                  }
+                  daysStatus.add({'status': 'empty_not_completed', 'startAt': '', 'dayHasPassed': dayHasPassed});
                 }
               }
               // не пустая неделя
@@ -252,43 +255,81 @@ class WeekStatusPoint extends StatelessWidget {
                   }
                   // Пустая неделя день не выполнен
                   else if (daysStatus[gridIndex]['status'] == 'empty_not_completed') {
-                    _container = Container(
-                      height: 110,
-                      decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 34,
-                            height: 33,
-                            decoration: BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
-                            child: Center(
-                              child: Text(
-                                weekDay[gridIndex].toUpperCase(),
-                                style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                    // прошел день
+                    if (daysStatus[gridIndex]['dayHasPassed']) {
+                      _container = Container(
+                        decoration: BoxDecoration(color: AppColor.blk, borderRadius: BorderRadius.circular(34)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 34,
+                              height: 34,
+                              decoration: BoxDecoration(color: AppColor.blk, borderRadius: BorderRadius.circular(34)),
+                              child: Center(
+                                child: Text(
+                                  weekDay[gridIndex].toUpperCase(),
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            height: 28,
-                            width: 34,
-                            decoration: const BoxDecoration(
-                              // color: AppColor.primary,
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(34),
-                                bottomRight: Radius.circular(34),
+                            Container(
+                              height: 24,
+                              padding: const EdgeInsets.only(bottom: 3),
+                              decoration: BoxDecoration(color: AppColor.blk, borderRadius: AppLayout.primaryRadius),
+                              child: SvgPicture.asset(
+                                'assets/icons/missed_day.svg',
+                                height: 24,
+                                clipBehavior: Clip.none,
                               ),
                             ),
-                            child: const Center(
-                              child: Text(
-                                '-',
-                                style: TextStyle(fontSize: 10),
+                          ],
+                        ),
+                      );
+                    }
+                    // не прошел день
+                    else {
+                      _container = Container(
+                        height: 110,
+                        decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 34,
+                              height: 33,
+                              decoration: BoxDecoration(
+                                  color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
+                              child: Center(
+                                child: Text(
+                                  weekDay[gridIndex].toUpperCase(),
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
+                            Container(
+                              height: 28,
+                              width: 34,
+                              decoration: const BoxDecoration(
+                                // color: AppColor.primary,
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(34),
+                                  bottomRight: Radius.circular(34),
+                                ),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  '-',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   }
                   // Пустая неделя день выполнен
                   else if (daysStatus[gridIndex]['status'] == 'empty_completed') {

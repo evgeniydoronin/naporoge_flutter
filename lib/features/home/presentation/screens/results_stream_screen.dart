@@ -410,7 +410,13 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
                                                 child: ElevatedButton(
                                                   // onPressed: () => context.router
                                                   //     .navigate(const NextStreamStartDateSelectionScreenRoute()),
-                                                  onPressed: () => selectWeeks(context),
+                                                  onPressed: () async {
+                                                    await selectWeeks(context);
+                                                    if (context.mounted) {
+                                                      context.router.push(StartDateSelectionScreenRoute(
+                                                          isBackLeading: true, isShowWeeksSelect: false));
+                                                    }
+                                                  },
                                                   style: AppLayout.accentBTNStyle,
                                                   child: Text(
                                                     'Выбрать',

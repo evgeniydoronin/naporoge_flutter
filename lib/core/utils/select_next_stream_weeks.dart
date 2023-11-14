@@ -22,7 +22,7 @@ Future selectWeeks(context) async {
     '9 недель',
   ];
   return showDialog(
-      barrierDismissible: true,
+      barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
             title: const Text(
@@ -37,8 +37,9 @@ Future selectWeeks(context) async {
                         style: AppLayout.accentBTNStyle,
                         onPressed: () async {
                           // новое количество недель: _selectedWeek + 1
+                          print('selectWeeks Dialog selectedWeek: ${selectedWeek + 1}');
                           context.read<PlannerBloc>().add(StreamCourseWeeksChanged(selectedWeek + 1, true));
-                          context.router.push(const StartDateSelectionScreenRoute());
+                          Navigator.pop(context, false);
                         },
                         child: Text(
                           'Выбрать',

@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:isar/isar.dart';
+import '../../../../../core/services/db_client/isar_service.dart';
+import '../../../../../core/utils/early_termination_stream_dialog.dart';
+import '../../../../../core/utils/select_next_stream_weeks.dart';
 import '../../../domain/entities/stream_entity.dart';
 import '../../../../../core/routes/app_router.dart';
 import '../../../../../core/constants/app_theme.dart';
@@ -14,32 +18,69 @@ import '../../widgets/stepper_widget.dart';
 
 @RoutePage()
 class StartDateSelectionScreen extends StatefulWidget {
-  const StartDateSelectionScreen({super.key});
+  const StartDateSelectionScreen({super.key, required this.isBackLeading, required this.isShowWeeksSelect});
+
+  final bool isBackLeading;
+  final bool isShowWeeksSelect;
 
   @override
   State<StartDateSelectionScreen> createState() => _StartDateSelectionScreenState();
 }
 
 class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
+  final isarService = IsarService();
   bool _isActivated = false;
 
   @override
+  void initState() {
+    getScreenStart();
+    super.initState();
+  }
+
+  // show selectWeeks dialog
+  void getScreenStart() async {
+    final isar = await isarService.db;
+    final List streams = await isar.nPStreams.where().findAll();
+    if (streams.isNotEmpty && streams.length != 1) {
+      if (context.mounted) {
+        await selectWeeks(context);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // print('widget.isShowWeeksSelect 22: ${widget.isShowWeeksSelect}');
+    // if (widget.isShowWeeksSelect) {
+    //   Future.delayed(Duration.zero, () async {
+    //     print('selectWeeks 11');
+    //     final isar = await isarService.db;
+    //
+    //     var streams = await isar.nPStreams.where().findAll();
+    //     await selectWeeks(context);
+    //     print('selectWeeks 22');
+    //   });
+    // }
     String buttonDate = 'Выбрать';
+    bool isBackLeading = widget.isBackLeading;
+
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {
         print('state.startDate: ${state.startDate}');
         _isActivated = true;
-        String startDateString = state.startDate;
-        DateTime startDate = DateTime.parse(startDateString);
-        DateTime endDate = startDate.add(const Duration(days: 20));
-        buttonDate = 'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
+        if (state.startDate.isNotEmpty) {
+          String startDateString = state.startDate;
+          DateTime startDate = DateTime.parse(startDateString);
+          DateTime endDate = startDate.add(const Duration(days: 20));
+          buttonDate = 'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
+        }
       },
       builder: (context, state) {
         NPStream? npStream = context.watch<ActiveStreamBloc>().state.activeNpStream;
         int studentsStreams = context.watch<ActiveStreamBloc>().state.studentsStreams;
 
         print('studentsStreams 33: $studentsStreams');
+        print('isBackLeading: $isBackLeading');
 
         return Scaffold(
           backgroundColor: AppColor.lightBG,
@@ -50,7 +91,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
             foregroundColor: Colors.black,
             backgroundColor: AppColor.lightBG,
             title: const Text('Выбор даты старта'),
-            leading: studentsStreams <= 1
+            leading: isBackLeading
                 ? IconButton(
                     onPressed: () {
                       // первое дело
@@ -68,6 +109,24 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                     icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
                   )
                 : const SizedBox(),
+            // leading: studentsStreams <= 1
+            //     ? IconButton(
+            //         onPressed: () {
+            //           // первое дело
+            //           if (!context.read<PlannerBloc>().state.isNextStreamCreate) {
+            //             print('object 11: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
+            //             context.router.navigate(const WelcomeDescriptionScreenRoute());
+            //           }
+            //           // следующее дело не создано
+            //           // возврат на Итоги
+            //           else if (studentsStreams == 0) {
+            //             print('object 22: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
+            //             context.router.navigate(const ResultsStreamScreenRoute());
+            //           }
+            //         },
+            //         icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
+            //       )
+            //     : const SizedBox(),
           ),
           body: Theme(
             data: Theme.of(context).copyWith(

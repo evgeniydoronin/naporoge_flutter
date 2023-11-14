@@ -176,6 +176,7 @@ class _NPCalendarState extends State<NPCalendar> {
           ),
           height: 25,
           child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
               itemCount: weekDaysNameRu.length,
@@ -260,10 +261,10 @@ class _NPCalendarState extends State<NPCalendar> {
 
     /// TODO: настроить 3 недели по умолчанию
     int courseWeeks = state.courseWeeks;
-    NPStream? activeNPStream = context.read<ActiveStreamBloc>().state.npStream;
-    if (activeNPStream != null) {
-      courseWeeks = activeNPStream.weeks!;
-    }
+    // NPStream? activeNPStream = context.read<ActiveStreamBloc>().state.npStream;
+    // if (activeNPStream != null) {
+    //   courseWeeks = activeNPStream.weeks!;
+    // }
 
     DateTime startDate = DateTime.now();
 

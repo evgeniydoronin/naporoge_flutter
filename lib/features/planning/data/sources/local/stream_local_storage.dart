@@ -84,6 +84,9 @@ class StreamLocalStorage {
     if (streamData['title'] != null) {
       stream!.title = streamData['title'];
     }
+    if (streamData['weeks'] != null) {
+      stream!.weeks = streamData['weeks'];
+    }
     if (streamData['description'] != null) {
       stream!.description = streamData['description'];
     }

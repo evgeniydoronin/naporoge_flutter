@@ -313,16 +313,19 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
       Map streamData = {
         "stream_id": stream.id,
         "start_at": state.startDate,
+        "weeks": state.courseWeeks,
         "title": state.courseTitle,
         "course_id": state.courseId,
       };
+
+      // print('update streamData: $streamData');
 
       // update on server
       var updatedStream = await _streamController.updateStream(streamData);
 
       // update local
       if (updatedStream['stream']['id'] != null) {
-        var _stream = await streamLocalStorage.updateStream(updatedStream);
+        await streamLocalStorage.updateStream(updatedStream);
       }
 
       final isar = await isarService.db;

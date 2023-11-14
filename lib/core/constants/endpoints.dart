@@ -4,8 +4,11 @@ class Endpoints {
   // base url
   // static const String baseUrl = "https://np-new.evgeniydoronin.com/api";
 
-  static const String baseUrl = "https://np-app.evgeniydoronin.com/api";
-  static const String fileUrl = "https://np-app.evgeniydoronin.com/storage";
+  // static const String site = "https://umadmin.naporoge.ru";
+  static const String site = "https://naporoge-vuz-app.flutteria.dev";
+
+  static const String baseUrl = "$site/api";
+  static const String fileUrl = "$site/storage";
 
   // static const String baseUrl = "https://umadmin.naporoge.ru/api";
 

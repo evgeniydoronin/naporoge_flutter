@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../planning/domain/entities/stream_entity.dart';
 
 import '../../../core/services/db_client/isar_service.dart';
 import '../../../core/utils/get_actual_student_day.dart';

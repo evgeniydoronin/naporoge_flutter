@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/utils/early_termination_stream_dialog.dart';
 import '../../../../core/utils/show_closeApp_dialog.dart';
 
 final Uri _knizhka = Uri.parse('http://naporoge.ru/knizhka');
@@ -376,7 +377,9 @@ class MoreScreen extends StatelessWidget {
                                   ],
                                 ),
                                 child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      earlyTerminationStreamDialog(context);
+                                    },
                                     child: Text(
                                       'Досрочное завершение дела ',
                                       style: TextStyle(fontSize: AppFont.large, color: AppColor.accentBOW),

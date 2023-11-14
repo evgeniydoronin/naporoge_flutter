@@ -223,7 +223,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                 setState(() {
                   chewieController.pause();
                 });
-                context.router.push(const StartDateSelectionScreenRoute());
+                context.router.push(StartDateSelectionScreenRoute(isBackLeading: true, isShowWeeksSelect: false));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.accent,
