@@ -266,7 +266,11 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                               "cells": state.finalCellIDs,
                                               "monday": stream.startAt.toString(),
                                               "weekOfYear": wNum,
+                                              "year": year,
                                             };
+
+                                            // print('weekData: $weekData');
+
                                             var createWeek = await _streamController.createWeek(weekData);
                                             // //
                                             // print('createWeek: $createWeek');
@@ -277,7 +281,6 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                               // print('newStream: $updatedStream');
 
                                               streamLocalStorage.updateStream(updatedStream);
-                                              createWeek['week']['weekYear'] = year;
 
                                               streamLocalStorage.createWeek(createWeek);
                                               if (context.mounted) {

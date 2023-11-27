@@ -91,14 +91,14 @@ class StreamLocalStorage {
       }
     }
 
-    print('stream!.id : ${stream!.id}');
-    print('weekIds: $weekIds');
-    print('daysIds: $daysIds');
-    print('dayResultsIds: $dayResultsIds');
+    // print('stream!.id : ${stream!.id}');
+    // print('weekIds: $weekIds');
+    // print('daysIds: $daysIds');
+    // print('dayResultsIds: $dayResultsIds');
 
     // удаление
     await isar.writeTxn(() async {
-      await isar.nPStreams.delete(stream.id!);
+      await isar.nPStreams.delete(stream!.id!);
       await isar.weeks.deleteAll(weekIds);
       await isar.days.deleteAll(daysIds);
       await isar.dayResults.deleteAll(dayResultsIds);
@@ -186,7 +186,8 @@ class StreamLocalStorage {
     final newWeek = Week()
       ..id = weekDataFromServer['week']['id']
       ..weekNumber = weekDataFromServer['week']['number']
-      ..weekYear = weekDataFromServer['week']['weekYear']
+      ..weekYear = weekDataFromServer['week']['year']
+      ..monday = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(weekDataFromServer['week']['monday'])))
       ..streamId = weekDataFromServer['week']['stream_id']
       ..userConfirmed = weekDataFromServer['week']['user_confirmed']
       ..systemConfirmed = weekDataFromServer['week']['system_confirmed']
@@ -202,6 +203,9 @@ class StreamLocalStorage {
           ..weekId = dayData['day']['week_id']
           ..startAt = dayData['day']['start_at'] != null
               ? DateTime.parse(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(dayData['day']['start_at'])))
+              : null
+          ..dateAt = dayData['day']['date_at'] != null
+              ? DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(dayData['day']['date_at'])))
               : null
           ..week.value = newWeek;
         isar.days.putSync(newDay);

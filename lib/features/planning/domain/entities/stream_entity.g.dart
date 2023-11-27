@@ -2289,33 +2289,38 @@ const WeekSchema = CollectionSchema(
       name: r'cells',
       type: IsarType.string,
     ),
-    r'progress': PropertySchema(
+    r'monday': PropertySchema(
       id: 1,
+      name: r'monday',
+      type: IsarType.dateTime,
+    ),
+    r'progress': PropertySchema(
+      id: 2,
       name: r'progress',
       type: IsarType.string,
     ),
     r'streamId': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'streamId',
       type: IsarType.long,
     ),
     r'systemConfirmed': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'systemConfirmed',
       type: IsarType.bool,
     ),
     r'userConfirmed': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'userConfirmed',
       type: IsarType.bool,
     ),
     r'weekNumber': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'weekNumber',
       type: IsarType.long,
     ),
     r'weekYear': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'weekYear',
       type: IsarType.long,
     )
@@ -2376,12 +2381,13 @@ void _weekSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.cells);
-  writer.writeString(offsets[1], object.progress);
-  writer.writeLong(offsets[2], object.streamId);
-  writer.writeBool(offsets[3], object.systemConfirmed);
-  writer.writeBool(offsets[4], object.userConfirmed);
-  writer.writeLong(offsets[5], object.weekNumber);
-  writer.writeLong(offsets[6], object.weekYear);
+  writer.writeDateTime(offsets[1], object.monday);
+  writer.writeString(offsets[2], object.progress);
+  writer.writeLong(offsets[3], object.streamId);
+  writer.writeBool(offsets[4], object.systemConfirmed);
+  writer.writeBool(offsets[5], object.userConfirmed);
+  writer.writeLong(offsets[6], object.weekNumber);
+  writer.writeLong(offsets[7], object.weekYear);
 }
 
 Week _weekDeserialize(
@@ -2393,12 +2399,13 @@ Week _weekDeserialize(
   final object = Week();
   object.cells = reader.readStringOrNull(offsets[0]);
   object.id = id;
-  object.progress = reader.readStringOrNull(offsets[1]);
-  object.streamId = reader.readLongOrNull(offsets[2]);
-  object.systemConfirmed = reader.readBoolOrNull(offsets[3]);
-  object.userConfirmed = reader.readBoolOrNull(offsets[4]);
-  object.weekNumber = reader.readLongOrNull(offsets[5]);
-  object.weekYear = reader.readLongOrNull(offsets[6]);
+  object.monday = reader.readDateTimeOrNull(offsets[1]);
+  object.progress = reader.readStringOrNull(offsets[2]);
+  object.streamId = reader.readLongOrNull(offsets[3]);
+  object.systemConfirmed = reader.readBoolOrNull(offsets[4]);
+  object.userConfirmed = reader.readBoolOrNull(offsets[5]);
+  object.weekNumber = reader.readLongOrNull(offsets[6]);
+  object.weekYear = reader.readLongOrNull(offsets[7]);
   return object;
 }
 
@@ -2412,16 +2419,18 @@ P _weekDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 4:
       return (reader.readBoolOrNull(offset)) as P;
     case 5:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 6:
+      return (reader.readLongOrNull(offset)) as P;
+    case 7:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2723,6 +2732,75 @@ extension WeekQueryFilter on QueryBuilder<Week, Week, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> mondayIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'monday',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> mondayIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'monday',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> mondayEqualTo(
+      DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'monday',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> mondayGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'monday',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> mondayLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'monday',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> mondayBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'monday',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -3220,6 +3298,18 @@ extension WeekQuerySortBy on QueryBuilder<Week, Week, QSortBy> {
     });
   }
 
+  QueryBuilder<Week, Week, QAfterSortBy> sortByMonday() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'monday', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortByMondayDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'monday', Sort.desc);
+    });
+  }
+
   QueryBuilder<Week, Week, QAfterSortBy> sortByProgress() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progress', Sort.asc);
@@ -3318,6 +3408,18 @@ extension WeekQuerySortThenBy on QueryBuilder<Week, Week, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Week, Week, QAfterSortBy> thenByMonday() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'monday', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenByMondayDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'monday', Sort.desc);
+    });
+  }
+
   QueryBuilder<Week, Week, QAfterSortBy> thenByProgress() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progress', Sort.asc);
@@ -3399,6 +3501,12 @@ extension WeekQueryWhereDistinct on QueryBuilder<Week, Week, QDistinct> {
     });
   }
 
+  QueryBuilder<Week, Week, QDistinct> distinctByMonday() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'monday');
+    });
+  }
+
   QueryBuilder<Week, Week, QDistinct> distinctByProgress(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3447,6 +3555,12 @@ extension WeekQueryProperty on QueryBuilder<Week, Week, QQueryProperty> {
   QueryBuilder<Week, String?, QQueryOperations> cellsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cells');
+    });
+  }
+
+  QueryBuilder<Week, DateTime?, QQueryOperations> mondayProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'monday');
     });
   }
 
@@ -3503,13 +3617,18 @@ const DaySchema = CollectionSchema(
       name: r'completedAt',
       type: IsarType.dateTime,
     ),
-    r'startAt': PropertySchema(
+    r'dateAt': PropertySchema(
       id: 1,
+      name: r'dateAt',
+      type: IsarType.dateTime,
+    ),
+    r'startAt': PropertySchema(
+      id: 2,
       name: r'startAt',
       type: IsarType.dateTime,
     ),
     r'weekId': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'weekId',
       type: IsarType.long,
     )
@@ -3558,8 +3677,9 @@ void _daySerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDateTime(offsets[0], object.completedAt);
-  writer.writeDateTime(offsets[1], object.startAt);
-  writer.writeLong(offsets[2], object.weekId);
+  writer.writeDateTime(offsets[1], object.dateAt);
+  writer.writeDateTime(offsets[2], object.startAt);
+  writer.writeLong(offsets[3], object.weekId);
 }
 
 Day _dayDeserialize(
@@ -3570,9 +3690,10 @@ Day _dayDeserialize(
 ) {
   final object = Day();
   object.completedAt = reader.readDateTimeOrNull(offsets[0]);
+  object.dateAt = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
-  object.startAt = reader.readDateTimeOrNull(offsets[1]);
-  object.weekId = reader.readLongOrNull(offsets[2]);
+  object.startAt = reader.readDateTimeOrNull(offsets[2]);
+  object.weekId = reader.readLongOrNull(offsets[3]);
   return object;
 }
 
@@ -3588,6 +3709,8 @@ P _dayDeserializeProp<P>(
     case 1:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 3:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3746,6 +3869,74 @@ extension DayQueryFilter on QueryBuilder<Day, Day, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'completedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterFilterCondition> dateAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'dateAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterFilterCondition> dateAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'dateAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterFilterCondition> dateAtEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dateAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterFilterCondition> dateAtGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dateAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterFilterCondition> dateAtLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dateAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterFilterCondition> dateAtBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dateAt',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -4047,6 +4238,18 @@ extension DayQuerySortBy on QueryBuilder<Day, Day, QSortBy> {
     });
   }
 
+  QueryBuilder<Day, Day, QAfterSortBy> sortByDateAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterSortBy> sortByDateAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Day, Day, QAfterSortBy> sortByStartAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startAt', Sort.asc);
@@ -4082,6 +4285,18 @@ extension DayQuerySortThenBy on QueryBuilder<Day, Day, QSortThenBy> {
   QueryBuilder<Day, Day, QAfterSortBy> thenByCompletedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'completedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterSortBy> thenByDateAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Day, Day, QAfterSortBy> thenByDateAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateAt', Sort.desc);
     });
   }
 
@@ -4129,6 +4344,12 @@ extension DayQueryWhereDistinct on QueryBuilder<Day, Day, QDistinct> {
     });
   }
 
+  QueryBuilder<Day, Day, QDistinct> distinctByDateAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dateAt');
+    });
+  }
+
   QueryBuilder<Day, Day, QDistinct> distinctByStartAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'startAt');
@@ -4152,6 +4373,12 @@ extension DayQueryProperty on QueryBuilder<Day, Day, QQueryProperty> {
   QueryBuilder<Day, DateTime?, QQueryOperations> completedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'completedAt');
+    });
+  }
+
+  QueryBuilder<Day, DateTime?, QQueryOperations> dateAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dateAt');
     });
   }
 

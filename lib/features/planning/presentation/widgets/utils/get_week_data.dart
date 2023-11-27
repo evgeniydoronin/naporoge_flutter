@@ -121,6 +121,9 @@ Future getWeekData(NPStream stream, String status) async {
     // по умолчанию нельзя создать следующую неделю
     bool isNextWeek = false;
 
+    print('stream.weekBacklink.length:: ${stream.weekBacklink.length}');
+    print('weeks :: $weeks');
+
     // если на курсе не создана следующая неделя
     if (stream.weekBacklink.length < weeks) {
       isNextWeek = true;
@@ -138,9 +141,37 @@ Future getWeekData(NPStream stream, String status) async {
       //////////////////////////////////////////
       // PageIndex текущей недели
       //////////////////////////////////////////
-      if (getWeekNumber(actualStudentDay) == week.weekNumber) {
+
+      // Рабочий сценарий
+
+      // Сейчас 4-я неделя
+      // flutter: getWeekNumber(actualStudentDay): 51
+      // flutter: week.weekNumber: 51
+      // flutter: nextPageIndex: 4
+
+      // Сейчас 5-я неделя
+      // 6я неделя следующего года не создана
+      // flutter: getWeekNumber(actualStudentDay): 52
+      // flutter: week.weekNumber: 52
+      // flutter: nextPageIndex: 5
+
+      // После создания 6й недели на 5й
+      // flutter: getWeekNumber(actualStudentDay): 52
+      // flutter: week.weekNumber: 1
+      // flutter: nextPageIndex: 6
+      int actualWeek = getWeekNumber(actualStudentDay);
+
+      // if (actualWeek == 52) {
+      //   actualWeek = 1;
+      // }
+
+      print('getWeekNumber(actualStudentDay): $actualWeek');
+      print('week.weekNumber: ${week.weekNumber}');
+      print('nextPageIndex: $nextPageIndex');
+
+      if (actualWeek == week.weekNumber) {
         defaultPageIndex = i;
-      } else if (getWeekNumber(actualStudentDay) < week.weekNumber!) {
+      } else if (actualWeek < week.weekNumber!) {
         nextPageIndex = i;
       }
 
@@ -152,46 +183,7 @@ Future getWeekData(NPStream stream, String status) async {
       // дни недели не созданы
       //////////////////////////////////////////
       if (week.dayBacklink.first.startAt == null) {
-        // понедельник текущей недели
-        // int daysOfWeek = now.weekday - 1;
-        // DateTime firstDay = DateTime(now.year, now.month, now.day - daysOfWeek);
-        // DateTime lastDay = firstDay.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
-
-        // находим последнюю неделю с созданными днями
-        // первую неделю i == 0 не проверяем
-        // getLastWeekWithDayData(int index) {
-        //   Week? lastWeek;
-        //   int i = 0;
-        //   int weeks = stream.weekBacklink.length;
-        //
-        //   // print('weeks 55: $weeks');
-        //   // print('streamFirstWeek 55: $streamFirstWeek');
-        //
-        //   while (i < weeks) {
-        //     int index = weeks - 1;
-        //     Week? _lastWeek = stream.weekBacklink.elementAt(index);
-        //
-        //     // последняя неделя создана пользователем
-        //     if (_lastWeek.userConfirmed != null) {
-        //       if (_lastWeek.userConfirmed!) {
-        //         // текущая пустая неделя не раньше
-        //         // искомой с подсказками
-        //         if (week.id! > _lastWeek.id!) {
-        //           lastWeek = _lastWeek;
-        //           // возвращаем созданную пользователем неделю
-        //           return _lastWeek;
-        //         }
-        //       }
-        //     }
-        //
-        //     weeks--;
-        //   }
-        //
-        //   return lastWeek;
-        // }
-
-        // // первую неделю i == 0 не проверяем
-        // lastWeek = getLastWeekWithDayData(i);
+        print('дни текущей недели созданы 5533');
 
         Week? lastWeek;
         List<Week>? confirmedWeeks = await stream.weekBacklink.filter().userConfirmedEqualTo(true).findAll();
@@ -341,7 +333,7 @@ Future getWeekData(NPStream stream, String status) async {
             }
             // Созданная БУДУЩАЯ неделя
             else {
-              print('Созданная БУДУЩАЯ неделя');
+              print('Созданная БУДУЩАЯ неделя 2');
               // Дни созданы
               if (cells.isNotEmpty) {
                 print('Дни БУДУЩЕЙ недели созданы');
@@ -356,6 +348,12 @@ Future getWeekData(NPStream stream, String status) async {
 
                   // день получаем по cells[cell]['dayId']
                   final day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+
+                  print('Если требуется добавить новую неделю');
+                  print('nextPageIndex: $nextPageIndex');
+                  print('i: $i');
+                  print('day: $day');
+                  print('Если требуется добавить новую неделю');
 
                   // ячейки
                   cellsWeekData.addAll([
@@ -1084,7 +1082,7 @@ Future getWeekData(NPStream stream, String status) async {
           }
           // Созданная БУДУЩАЯ неделя
           else {
-            print('Созданная БУДУЩАЯ неделя');
+            print('Созданная БУДУЩАЯ неделя 3');
             // Дни созданы
             if (cells.isNotEmpty) {
               print('Дни БУДУЩЕЙ недели созданы 2');

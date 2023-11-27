@@ -27,6 +27,7 @@ class Week {
   int? streamId;
   int? weekNumber;
   int? weekYear;
+  DateTime? monday;
   bool? systemConfirmed;
   bool? userConfirmed;
   String? progress;
@@ -42,6 +43,7 @@ class Week {
 class Day {
   Id? id;
   int? weekId;
+  DateTime? dateAt;
   DateTime? startAt;
   DateTime? completedAt;
 

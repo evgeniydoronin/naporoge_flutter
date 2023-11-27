@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:naporoge/features/planning/presentation/widgets/utils/new_get_week_data.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/utils/get_actual_student_day.dart';
 import '../../../../core/utils/get_stream_status.dart';
@@ -80,198 +82,58 @@ class WeekPlanningWidget extends StatefulWidget {
 }
 
 class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
-  late Future weeksData;
-  late PageController pageController;
-  late int _pageIndex;
-
-  @override
-  void initState() {
-    weeksData = getWeeksData();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  final pageController = PageController();
+  int? pageIndex;
 
   @override
   Widget build(BuildContext context) {
-    // сброс высоты периодов для
-    // корректного рассчета при переходах между экранами
-    defaultAllTitleHeight = 270;
-
-    return FutureBuilder(
-        future: getWeeksData(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            Map pageData = snapshot.data;
-            // print('pageData 333: $pageData');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][3]['monday']}');
-
-            _pageIndex = pageData['defaultPageIndex'];
-            NPStream stream = pageData['stream'];
-            int weeks = pageData['weeks'];
-            int allPages = pageData['allPages'];
-
-            // страница по умолчанию
-            pageController = PageController(initialPage: _pageIndex);
-
-            return BlocConsumer<PlannerBloc, PlannerState>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                double wrapHeight =
-                    defaultAllTitleHeight + context
-                        .read<PlannerBloc>()
-                        .state
-                        .wrapWeekBoxHeight
-                        .toDouble();
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 0),
-                  height: wrapHeight,
-                  child: PageView.builder(
-                      controller: pageController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: allPages,
-                      itemBuilder: (context, pageIndex) {
-                        String pageTitle = "Неделя  ${pageIndex + 1}/$weeks";
-                        String weekMonday = DateFormat('dd.MM').format(pageData['weeksOnPage'][pageIndex]['monday']);
-                        String weekSunday = DateFormat('dd.MM').format(pageData['weeksOnPage'][pageIndex]['sunday']);
-                        String weekPeriod = "$weekMonday - $weekSunday";
-
-                        // неделя прошла
-                        // проверяем на составление плана
-                        // план не составлялся
-                        Map isPlannedWeek = {};
-                        DateTime now = getActualStudentDay();
-                        DateTime monday = pageData['weeksOnPage'][pageIndex]['monday'];
-                        Week? week = pageData['weeksOnPage'][pageIndex]['week'];
-
-                        // План на неделю не составлен
-                        // неделя прошла
-                        if (week != null) {
-                          if (now.isAfter(monday) || now.isAtSameMomentAs(monday)) {
-                            if (week.systemConfirmed != null) {
-                              isPlannedWeek['title'] = 'План не составлен';
-                              isPlannedWeek['color'] = AppColor.red;
-                            }
-                          }
-                        }
-
-                        return ListView(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: [
-                            // Навигация по неделям и период недели
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    pageTitle,
-                                    style: const TextStyle(fontWeight: FontWeight.w500),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      pageIndex != 0
-                                          ? GestureDetector(
-                                        onTap: () async {
-                                          // сброс раздела Планирование
-                                          // при переходе по вкладкам
-                                          // необходим для сброса стейта с финальными ячейками
-                                          // если пользователь ушёл с планнера без сохранения
-                                          context
-                                              .read<PlannerBloc>()
-                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
-
-                                          pageController.previousPage(
-                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
-                                        },
-                                        child: const Icon(Icons.arrow_back_ios_new),
-                                      )
-                                          : const Icon(Icons.arrow_back_ios_new),
-                                      Text(weekPeriod),
-                                      pageIndex + 1 < allPages
-                                          ? GestureDetector(
-                                        onTap: () async {
-                                          // сброс раздела Планирование
-                                          // при переходе по вкладкам
-                                          // необходим для сброса стейта с финальными ячейками
-                                          // если пользователь ушёл с планнера без сохранения
-                                          context
-                                              .read<PlannerBloc>()
-                                              .add(const FinalCellForCreateStream(finalCellIDs: []));
-
-                                          pageController.nextPage(
-                                              duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
-                                        },
-                                        child: const RotatedBox(
-                                            quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
-                                      )
-                                          : const RotatedBox(quarterTurns: 2, child: Icon(Icons.arrow_back_ios_new)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Дни недели
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.only(left: 7),
-                                  alignment: Alignment.centerLeft,
-                                  width: 50,
-                                  child: SvgPicture.asset('assets/icons/time.svg'),
-                                ),
-                                Expanded(
-                                  child: GridView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 7,
-                                      crossAxisSpacing: 0,
-                                    ),
-                                    itemCount: weekDaysNameRu.length,
-                                    itemBuilder: (BuildContext context, dayIndex) {
-                                      return Center(
-                                        child: Text(
-                                          weekDaysNameRu[dayIndex].toString().toUpperCase(),
-                                          style: TextStyle(
-                                              fontSize: AppFont.smaller,
-                                              color:
-                                              weekDaysNameRu[dayIndex] == 'вс' ? AppColor.grey2 : AppColor.accent),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            ExpandDayPeriod(stream: stream, pageData: pageData, pageIndex: pageIndex),
-                            isPlannedWeek.isNotEmpty
-                                ? Center(
-                              child: Container(
-                                margin: const EdgeInsets.only(top: 20),
-                                height: 50,
-                                child: Text(
-                                  isPlannedWeek['title'],
-                                  style: TextStyle(color: isPlannedWeek['color']),
-                                ),
-                              ),
-                            )
-                                : const SizedBox(),
-                          ],
-                        );
-                      }),
-                );
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  pageIndex = (pageController.page)!.toInt() - 1;
+                });
+                pageController.previousPage(duration: const Duration(milliseconds: 200), curve: Curves.easeInSine);
+                print(pageController.page);
+                print(pageIndex);
               },
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+              child: Icon(Icons.arrow_back),
+            ),
+            GestureDetector(
+              onTap: () {
+                print(pageController.page);
+                setState(() {
+                  pageIndex = (pageController.page)!.toInt() + 1;
+                });
+                pageController.nextPage(duration: const Duration(milliseconds: 200), curve: Curves.easeInSine);
+                print(pageController.page);
+                print(pageIndex);
+              },
+              child: Icon(Icons.arrow_forward),
+            ),
+          ],
+        ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 0),
+          height: 200,
+          child: PageView.builder(
+            controller: pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 5,
+            itemBuilder: (context, pageIndex) {
+              return Text('data $pageIndex');
+            },
+            onPageChanged: (val) {
+              print('val: $val');
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -373,9 +235,9 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
 
   @override
   Widget build(BuildContext context) {
+    // print('isEditable: ${pageData['weeksOnPage'][pageIndex]}');
     bool isEditable = pageData['weeksOnPage'][pageIndex]['isEditable'] ?? false;
     List cellsData = pageData['weeksOnPage'][pageIndex]['cellsWeekData'];
-
 
     // выводим кнопку План мне подходит
     // если неделя редактируемая
@@ -384,11 +246,11 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
     // добавляем в стейт данные по редактируемой неделе
     // если ячейки дней не созданы
     context.read<PlannerBloc>().add(EditableWeekStream(editableWeekData: {
-      'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
-      'monday': pageData['weeksOnPage'][pageIndex]['monday'],
-      'weekOfYear': pageData['weeksOnPage'][pageIndex]['weekOfYear'],
-      'weekYear': int.parse(DateFormat('y').format(pageData['weeksOnPage'][pageIndex]['monday'])),
-    }));
+          'weekId': pageData['weeksOnPage'][pageIndex]['weekId'],
+          'monday': pageData['weeksOnPage'][pageIndex]['monday'],
+          'weekOfYear': pageData['weeksOnPage'][pageIndex]['weekOfYear'],
+          'weekYear': int.parse(DateFormat('y').format(pageData['weeksOnPage'][pageIndex]['monday'])),
+        }));
 
     // print("ячейки дней : ${pageData['weeksOnPage'][pageIndex]['weekId']}");
     //
@@ -433,15 +295,15 @@ class _ExpandDayPeriodState extends State<ExpandDayPeriod> {
               height: period[periodIndex].isExpanded ? (period[periodIndex].rows * 43) : 0,
               child: isEditable
                   ? EditableDayPeriodRow(
-                periodIndex: periodIndex,
-                daysData: cellsData,
-              )
+                      periodIndex: periodIndex,
+                      daysData: cellsData,
+                    )
                   : DayPeriodRow(
-                periodIndex: periodIndex,
-                daysData: cellsData,
-                weeksOnPage: pageData['weeksOnPage'][pageIndex],
-                stream: widget.stream,
-              ),
+                      periodIndex: periodIndex,
+                      daysData: cellsData,
+                      weeksOnPage: pageData['weeksOnPage'][pageIndex],
+                      stream: widget.stream,
+                    ),
             ),
           ],
         );
@@ -472,9 +334,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
     // print('weekOnPage: ${widget.weeksOnPage}');
     // print('daysData: $daysData');
 
-    Week week = widget.stream.weekBacklink
-        .where((week) => week.id == widget.weeksOnPage['weekId'])
-        .first;
+    Week week = widget.stream.weekBacklink.where((week) => week.id == widget.weeksOnPage['weekId']).first;
     // print('week: ${week}');
 
     return ListView.builder(
@@ -542,9 +402,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
                             // }
                             // print('daysData[i] : ${daysData[i]}');
                             // Находим объект ДНЯ и добавляем
-                            Day day = week.dayBacklink
-                                .where((day) => day.id == daysData[i]['day_id'])
-                                .first;
+                            Day day = week.dayBacklink.where((day) => day.id == daysData[i]['day_id']).first;
                             // print("day: ${day.completedAt}");
 
                             // if (daysData[i]['day_id'] == 2452) {
@@ -586,12 +444,13 @@ class DayPeriodExistedCell extends StatefulWidget {
   final Map weeksOnPage;
   final int periodIndex, rowIndex, gridIndex;
 
-  const DayPeriodExistedCell({super.key,
-    required this.dayData,
-    required this.periodIndex,
-    required this.rowIndex,
-    required this.gridIndex,
-    required this.weeksOnPage});
+  const DayPeriodExistedCell(
+      {super.key,
+      required this.dayData,
+      required this.periodIndex,
+      required this.rowIndex,
+      required this.gridIndex,
+      required this.weeksOnPage});
 
   @override
   State<DayPeriodExistedCell> createState() => _DayPeriodExistedCellState();
