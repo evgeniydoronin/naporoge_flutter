@@ -50,10 +50,7 @@ Future getCourseProgress() async {
   // Во время прохождения курса
   else if (streamStatus['status'] == 'process') {
     // + 1: прибавляем текущий день, он сразу считается как прошедший
-    int passedDays = startStreamAt
-        .difference(now)
-        .inDays
-        .abs() + 1;
+    int passedDays = startStreamAt.difference(now).inDays.abs() + 1;
     // последняя неделя курса
     Week? lastWeek = stream.weekBacklink.elementAtOrNull(weeks - 1);
 
@@ -168,8 +165,7 @@ Future getCourseProgress() async {
             else if (now.weekday == 7) {
               if (executionScope.length >= needForTotal ||
                   currentWeekExecutionScope.length >= 6 ||
-                  lastWeekdays[6].completedAt != null
-              ) {
+                  lastWeekdays[6].completedAt != null) {
                 int leftPercent = 0;
                 data['percent'] = 100;
                 data['description'] = '$leftPercent% осталось до полного выполнения дела';
@@ -249,9 +245,14 @@ Future getCourseProgress() async {
               // день не выполнен
               else {
                 if (now.weekday == 7) {
-                  data['percent'] = 100;
-                  data['description'] = '$leftPercent% осталось до полного выполнения дела';
-                  data['colored'] = true;
+                  if (executionScope.length < needForTotal) {
+                    data['percent'] = 100;
+                    data['description'] = '$leftPercent% осталось до полного выполнения дела';
+                  } else {
+                    data['percent'] = 100;
+                    data['description'] = '$leftPercent% осталось до полного выполнения дела';
+                    data['colored'] = true;
+                  }
                 }
               }
             }

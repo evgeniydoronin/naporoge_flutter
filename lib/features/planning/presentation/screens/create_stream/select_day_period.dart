@@ -277,9 +277,6 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                               if (context.mounted) {
                                                 CircularLoading(context).stopLoading();
                                                 context.replaceRoute(const DashboardScreenRoute());
-                                                // переводит на экран Выбор даты старта
-                                                // context.router.removeLast();
-                                                context.router.popUntilRoot();
                                               }
                                             }
                                           }
