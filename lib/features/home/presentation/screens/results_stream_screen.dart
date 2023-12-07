@@ -8,6 +8,7 @@ import 'package:naporoge/features/planning/presentation/bloc/planner_bloc.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/db_client/isar_service.dart';
+import '../../../../core/utils/select_next_stream_weeks.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
 
 @RoutePage()
@@ -466,75 +467,4 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
       ),
     );
   }
-}
-
-Future selectWeeks(context) async {
-  int _selectedWeek = 0;
-
-  const List<String> _weeks = <String>[
-    '1 неделя',
-    '2 недели',
-    '3 недели',
-    '4 недели',
-    '5 недель',
-    '6 недель',
-    '7 недель',
-    '8 недель',
-    '9 недель',
-  ];
-  return showDialog(
-      barrierDismissible: true,
-      context: context,
-      builder: (context) => AlertDialog(
-            title: const Text(
-              'Продолжительность нового дела',
-              textAlign: TextAlign.center,
-            ),
-            actions: [
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                        style: AppLayout.accentBTNStyle,
-                        onPressed: () async {
-                          context
-                              .read<PlannerBloc>()
-                              .add(NextStreamWeeksStreamChanged(nextStreamWeeks: _selectedWeek + 1));
-                          context.router
-                              .navigate(NextStreamStartDateSelectionScreenRoute(nextStreamWeeks: _selectedWeek + 1));
-
-                          print(_selectedWeek + 1);
-                        },
-                        child: Text(
-                          'Выбрать',
-                          style: AppFont.largeSemibold,
-                        )),
-                  ),
-                ],
-              ),
-            ],
-            content: SizedBox(
-              height: 100,
-              child: CupertinoPicker(
-                magnification: 1.12,
-                squeeze: 1,
-                useMagnifier: true,
-                itemExtent: 32.0,
-                onSelectedItemChanged: (int value) {
-                  _selectedWeek = value;
-                },
-                scrollController: FixedExtentScrollController(
-                  initialItem: _selectedWeek,
-                ),
-                children: List<Widget>.generate(_weeks.length, (int index) {
-                  return Center(child: Text(_weeks[index]));
-                }),
-              ),
-            ),
-            titlePadding: AppLayout.dialogTitlePadding,
-            actionsPadding: AppLayout.dialogTitlePadding,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-            titleTextStyle: AppLayout.dialogTitleTextStyle,
-            shape: AppLayout.dialogShape,
-          ));
 }

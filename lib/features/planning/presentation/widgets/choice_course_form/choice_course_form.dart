@@ -35,7 +35,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
   @override
   Widget build(BuildContext context) {
     /// получаем активный стрим
-    NPStream? npStream = context.read<ActiveStreamBloc>().state.npStream;
+    NPStream? npStream = context.watch<ActiveStreamBloc>().state.activeNpStream;
 
     return BlocConsumer<ChoiceOfCourseBloc, ChoiceOfCourseState>(
       listener: (context, state) {},
@@ -107,6 +107,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
 
                                     // добавляем заголовок дела, если оно создано
                                     if (npStream != null) {
+                                      print('npStream: $npStream');
                                       if (_courses[index].courseId == npStream.courseId) {
                                         _textEditingControllers[index].text = npStream.title;
 
@@ -179,144 +180,57 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
                       ? () async {
                           // print('state 22: $state');
                           // print('state 33: ${context.read<PlannerBloc>().state}');
-                          // Find all courses
-                          var allStream = await streamLocalStorage.getAllStreams();
+                          NPStream? activeStream = await streamLocalStorage.getActiveStream();
+                          NPStream? previousStream;
+                          NPStream? currentStream;
 
-                          /// создаем первый курс курс
-                          if (allStream.isEmpty) {
+                          if (activeStream != null) {
+                            if (activeStream.startAt!.isBefore(DateTime.now())) {
+                              previousStream = activeStream;
+                            } else if (activeStream.startAt!.isAfter(DateTime.now())) {
+                              currentStream = activeStream;
+                            }
+                          }
+
+                          /// CREATE STREAM
+                          if (activeStream == null || activeStream.startAt!.isBefore(DateTime.now())) {
+                            print('CREATE STREAM');
                             if (context.mounted) {
                               var plannerBlocState = context.read<PlannerBloc>().state;
 
                               /// create stream
-                              await createStream(plannerBlocState);
+                              await createStream(plannerBlocState, previousStream);
 
                               /// add stream to state
                               final isar = await isarService.db;
                               final NPStream? stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
                               if (context.mounted) {
                                 if (stream != null) {
-                                  context.read<ActiveStreamBloc>().add(ActiveStreamChanged(npStream: stream));
+                                  context.read<ActiveStreamBloc>().add(const GetActiveStream());
                                 }
                               }
                             }
                           }
 
-                          /// Если курсы созданы
-                          else {
-                            print('Если курс создан');
-                            List allStreams = await streamLocalStorage.getAllStreams();
-                            NPStream? activeStream = await streamLocalStorage.getActiveStream();
+                          /// UPDATE STREAM
+                          else if (activeStream.startAt!.isAfter(DateTime.now())) {
+                            print('UPDATE STREAM');
+                            if (context.mounted) {
+                              var plannerBlocState = context.read<PlannerBloc>().state;
 
-                            /// Когда дело прекращено Досрочно и нет активного курса
-                            if (activeStream == null) {
+                              /// update stream
+                              await updateStream(plannerBlocState, currentStream!);
+
+                              /// add stream to state
+                              final isar = await isarService.db;
+                              final NPStream? stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
                               if (context.mounted) {
-                                var plannerBlocState = context.read<PlannerBloc>().state;
-
-                                /// create stream
-                                await createStream(plannerBlocState);
-                              }
-                            }
-
-                            /// Обновление или создание дела
-                            /// Когда у старого дела дата старта уже прошла
-                            else {
-                              /// Создание
-                              if (activeStream.startAt!.isBefore(DateTime.now())) {
-                                print('Создание нового дела, Когда у старого дела дата старта уже прошла');
-                                if (context.mounted) {
-                                  var plannerBlocState = context.read<PlannerBloc>().state;
-
-                                  /// create stream
-                                  await createStream(plannerBlocState);
-                                }
-                              }
-
-                              /// Обновление
-                              else if (activeStream.startAt!.isAfter(DateTime.now())) {
-                                print('Обновление текущего дела');
-                                if (context.mounted) {
-                                  var plannerBlocState = context.read<PlannerBloc>().state;
-
-                                  /// update stream
-                                  await updateStream(plannerBlocState, activeStream);
+                                if (stream != null) {
+                                  context.read<ActiveStreamBloc>().add(const GetActiveStream());
                                 }
                               }
                             }
                           }
-
-                          // // Если курс создавался
-                          // if (_stream != null) {
-                          //   print('Если курс создавался Обновляем');
-                          //   // Обновляем
-                          //   final NPStream stream = _stream;
-                          //
-                          //   // print(state.courseTitle);
-                          //   // print(state.startDate);
-                          //   // print(state.courseId);
-                          //
-                          //   if (context.mounted) {
-                          //     CircularLoading(context).startLoading();
-                          //   }
-                          //   // обновляем первую неделю курса
-                          //   Map streamData = {
-                          //     "stream_id": stream.id,
-                          //     "start_at": state.startDate,
-                          //     "title": state.courseTitle,
-                          //     "course_id": state.courseId,
-                          //   };
-                          //
-                          //   print('streamData: $streamData');
-                          //
-                          //   // update on server
-                          //   var updatedStream = await _streamController.updateStream(streamData);
-                          //
-                          //   // print('newStream: $updatedStream');
-                          //
-                          //   // update local
-                          //   if (updatedStream['stream']['id'] != null) {
-                          //     print('newStream: $updatedStream');
-                          //     streamLocalStorage.updateStream(updatedStream);
-                          //     if (context.mounted) {
-                          //       CircularLoading(context).stopLoading();
-                          //       context.router.push(const SelectDayPeriodRoute());
-                          //     }
-                          //   }
-                          // } else {
-                          //   // Сохраняем
-                          //   // Сохранение дела без подробного описания
-                          //   // после сохранения переход на следующий шаг
-                          //   if (context.mounted) {
-                          //     CircularLoading(context).startLoading();
-                          //     var user = await isarService.getUser();
-                          //
-                          //     Map streamData = {
-                          //       "user_id": user.first.id,
-                          //       "start_at": state.startDate,
-                          //       "weeks": 3,
-                          //       "is_active": true,
-                          //       "course_id": state.courseId,
-                          //       "title": state.courseTitle,
-                          //       "description": '',
-                          //       "cells": [],
-                          //     };
-                          //
-                          //     // print('streamData: $streamData');
-                          //
-                          //     // create on server
-                          //     var newStream = await _streamController.createStream(streamData);
-                          //
-                          //     // print('newStream: $newStream');
-                          //
-                          //     // create local
-                          //     if (newStream['stream']['id'] != null) {
-                          //       streamLocalStorage.createStream(newStream);
-                          //       if (context.mounted) {
-                          //         CircularLoading(context).stopLoading();
-                          //         context.router.push(const SelectDayPeriodRoute());
-                          //       }
-                          //     }
-                          //   }
-                          // }
                         }
                       : null,
                   child: const Padding(
@@ -343,7 +257,9 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
   }
 
   /// Create stream
-  Future createStream(state) async {
+  Future createStream(state, NPStream? stream) async {
+    NPStream? previousStream = stream;
+
     if (context.mounted) {
       CircularLoading(context).startLoading();
       var user = await isarService.getUser();
@@ -359,27 +275,36 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
         "cells": [],
       };
 
-      // print('streamData: $streamData');
+      // деактивируем предыдущий курс
+      if (previousStream != null) {
+        streamData["old_stream_id"] = previousStream.id;
+      }
+
+      print('streamData: $streamData');
 
       // create on server
       var newStream = await _streamController.createStream(streamData);
 
-      // print('newStream: $newStream');
+      print('newStream: $newStream');
 
       // create local
       if (newStream['stream']['id'] != null) {
-        streamLocalStorage.createStream(newStream);
+        await streamLocalStorage.createStream(newStream);
       }
+
+      final isar = await isarService.db;
+      final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
       if (context.mounted) {
         CircularLoading(context).stopLoading();
+        context.read<ActiveStreamBloc>().add(ActiveStreamChanged(npStream: activeStream));
         context.router.push(const SelectDayPeriodRoute());
       }
     }
   }
 
   /// Update stream
-  Future updateStream(state, stream) async {
+  Future updateStream(state, NPStream stream) async {
     if (context.mounted) {
       CircularLoading(context).startLoading();
       var user = await isarService.getUser();
@@ -397,11 +322,15 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
 
       // update local
       if (updatedStream['stream']['id'] != null) {
-        streamLocalStorage.updateStream(updatedStream);
+        var _stream = await streamLocalStorage.updateStream(updatedStream);
       }
+
+      final isar = await isarService.db;
+      final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
       if (context.mounted) {
         CircularLoading(context).stopLoading();
+        context.read<ActiveStreamBloc>().add(ActiveStreamChanged(npStream: activeStream));
         context.router.push(const SelectDayPeriodRoute());
       }
     }

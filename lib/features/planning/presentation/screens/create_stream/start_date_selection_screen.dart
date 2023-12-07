@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../../domain/entities/stream_entity.dart';
 import '../../../../../core/routes/app_router.dart';
-
 import '../../../../../core/constants/app_theme.dart';
 import '../../bloc/active_course/active_stream_bloc.dart';
 import '../../bloc/choice_of_course/choice_of_course_bloc.dart';
@@ -26,13 +25,6 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    NPStream? npStream = context.read<ActiveStreamBloc>().state.npStream;
-    int studentsStreams = context.read<ActiveStreamBloc>().state.studentsStreams;
-    print('StartDateSelectionScreen - ActiveStreamBloc');
-    print('$npStream');
-    print('$studentsStreams');
-    print('StartDateSelectionScreen - ActiveStreamBloc');
-
     String buttonDate = 'Выбрать';
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {
@@ -44,6 +36,11 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
         buttonDate = 'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
       },
       builder: (context, state) {
+        NPStream? npStream = context.watch<ActiveStreamBloc>().state.activeNpStream;
+        int studentsStreams = context.watch<ActiveStreamBloc>().state.studentsStreams;
+
+        print('studentsStreams 33: $studentsStreams');
+
         return Scaffold(
           backgroundColor: AppColor.lightBG,
           appBar: AppBar(
@@ -56,7 +53,17 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
             leading: studentsStreams <= 1
                 ? IconButton(
                     onPressed: () {
-                      context.router.navigate(const WelcomeDescriptionScreenRoute());
+                      // первое дело
+                      if (!context.read<PlannerBloc>().state.isNextStreamCreate) {
+                        print('object 11: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
+                        context.router.navigate(const WelcomeDescriptionScreenRoute());
+                      }
+                      // следующее дело не создано
+                      // возврат на Итоги
+                      else if (studentsStreams == 0) {
+                        print('object 22: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
+                        context.router.navigate(const ResultsStreamScreenRoute());
+                      }
                     },
                     icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
                   )

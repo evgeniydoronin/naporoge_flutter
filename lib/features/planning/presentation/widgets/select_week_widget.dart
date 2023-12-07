@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
 
 import '../../../../core/constants/app_theme.dart';
+import '../bloc/active_course/active_stream_bloc.dart';
 import '../bloc/planner_bloc.dart';
 
 List<String> weekDaysNameRu = [
@@ -255,7 +257,13 @@ class _NPCalendarState extends State<NPCalendar> {
     TextStyle style = const TextStyle(fontSize: 20);
 
     String startDateString = state.startDate;
+
+    /// TODO: настроить 3 недели по умолчанию
     int courseWeeks = state.courseWeeks;
+    NPStream? activeNPStream = context.read<ActiveStreamBloc>().state.npStream;
+    if (activeNPStream != null) {
+      courseWeeks = activeNPStream.weeks!;
+    }
 
     DateTime startDate = DateTime.now();
 

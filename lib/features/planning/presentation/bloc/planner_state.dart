@@ -7,6 +7,7 @@ final class PlannerState extends Equatable {
     this.courseTitle = '',
     this.courseDescription = '',
     this.courseWeeks = 3,
+    this.isNextStreamCreate = false,
     this.selectedCellIDs = const [],
     this.finalCellIDs = const [],
     this.wrapWeekBoxHeight = 0,
@@ -20,6 +21,7 @@ final class PlannerState extends Equatable {
   final String courseTitle;
   final String courseDescription;
   final int courseWeeks;
+  final bool isNextStreamCreate;
   final List selectedCellIDs;
   final List finalCellIDs;
   final int wrapWeekBoxHeight;
@@ -33,6 +35,7 @@ final class PlannerState extends Equatable {
     String? courseTitle,
     String? courseDescription,
     int? courseWeeks,
+    bool? isNextStreamCreate,
     List? selectedCellIDs,
     List? finalCellIDs,
     int? wrapWeekBoxHeight,
@@ -46,6 +49,7 @@ final class PlannerState extends Equatable {
       courseTitle: courseTitle ?? this.courseTitle,
       courseDescription: courseDescription ?? this.courseDescription,
       courseWeeks: courseWeeks ?? this.courseWeeks,
+      isNextStreamCreate: isNextStreamCreate ?? this.isNextStreamCreate,
       selectedCellIDs: selectedCellIDs ?? this.selectedCellIDs,
       finalCellIDs: finalCellIDs ?? this.finalCellIDs,
       wrapWeekBoxHeight: wrapWeekBoxHeight ?? this.wrapWeekBoxHeight,
@@ -62,6 +66,7 @@ final class PlannerState extends Equatable {
         courseTitle,
         courseDescription,
         courseWeeks,
+        isNextStreamCreate,
         selectedCellIDs,
         finalCellIDs,
         wrapWeekBoxHeight,

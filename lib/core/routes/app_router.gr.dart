@@ -136,23 +136,6 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const MoreScreen(),
       );
     },
-    NextStreamChoiceOfCaseScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const NextStreamChoiceOfCaseScreen(),
-      );
-    },
-    NextStreamStartDateSelectionScreenRoute.name: (routeData) {
-      final args =
-          routeData.argsAs<NextStreamStartDateSelectionScreenRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: NextStreamStartDateSelectionScreen(
-          key: args.key,
-          nextStreamWeeks: args.nextStreamWeeks,
-        ),
-      );
-    },
     OurMissionScreenRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -622,59 +605,6 @@ class MoreScreenRoute extends PageRouteInfo<void> {
   static const String name = 'MoreScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [NextStreamChoiceOfCaseScreen]
-class NextStreamChoiceOfCaseScreenRoute extends PageRouteInfo<void> {
-  const NextStreamChoiceOfCaseScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          NextStreamChoiceOfCaseScreenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'NextStreamChoiceOfCaseScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [NextStreamStartDateSelectionScreen]
-class NextStreamStartDateSelectionScreenRoute
-    extends PageRouteInfo<NextStreamStartDateSelectionScreenRouteArgs> {
-  NextStreamStartDateSelectionScreenRoute({
-    Key? key,
-    required int nextStreamWeeks,
-    List<PageRouteInfo>? children,
-  }) : super(
-          NextStreamStartDateSelectionScreenRoute.name,
-          args: NextStreamStartDateSelectionScreenRouteArgs(
-            key: key,
-            nextStreamWeeks: nextStreamWeeks,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'NextStreamStartDateSelectionScreenRoute';
-
-  static const PageInfo<NextStreamStartDateSelectionScreenRouteArgs> page =
-      PageInfo<NextStreamStartDateSelectionScreenRouteArgs>(name);
-}
-
-class NextStreamStartDateSelectionScreenRouteArgs {
-  const NextStreamStartDateSelectionScreenRouteArgs({
-    this.key,
-    required this.nextStreamWeeks,
-  });
-
-  final Key? key;
-
-  final int nextStreamWeeks;
-
-  @override
-  String toString() {
-    return 'NextStreamStartDateSelectionScreenRouteArgs{key: $key, nextStreamWeeks: $nextStreamWeeks}';
-  }
 }
 
 /// generated route for

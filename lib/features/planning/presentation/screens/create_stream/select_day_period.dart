@@ -10,6 +10,7 @@ import '../../../../../core/services/db_client/isar_service.dart';
 import '../../../../../core/utils/circular_loading.dart';
 import '../../../data/sources/local/stream_local_storage.dart';
 import '../../bloc/active_course/active_stream_bloc.dart';
+import '../../bloc/choice_of_course/choice_of_course_bloc.dart';
 import '../../bloc/planner_bloc.dart';
 import '../../stream_controller.dart';
 import '../../widgets/day_schedule_widget.dart';
@@ -72,6 +73,10 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
               centerTitle: true,
               leading: IconButton(
                 onPressed: () {
+                  context.read<ActiveStreamBloc>().add(const GetActiveStream());
+
+                  /// скрываем дела по умолчанию
+                  context.read<ChoiceOfCourseBloc>().add(const CourseItemChanged(selectedIndex: -1));
                   context.router.navigate(const ChoiceOfCaseScreenRoute());
                 },
                 icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),

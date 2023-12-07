@@ -17,12 +17,9 @@ import '../../features/more/presentation/screen/our_mission.dart';
 import '../../features/more/presentation/screen/theories/theory_post_screen.dart';
 import '../../features/more/presentation/screen/theories/theories_screen.dart';
 import '../../features/more/presentation/screen/two_targets_screen.dart';
-import '../../features/planning/domain/entities/stream_entity.dart';
 import '../../features/planning/presentation/screens/create_stream/choice_of_course.dart';
 import '../../features/planning/presentation/screens/info_helper/explanations_for_the_planning.dart';
 import '../../features/planning/presentation/screens/info_helper/explanations_for_the_stream.dart';
-import '../../features/planning/presentation/screens/create_next_stream/next_stream_choice_of_course.dart';
-import '../../features/planning/presentation/screens/create_next_stream/next_stream_start_date_selection_screen.dart';
 import '../../features/planning/presentation/screens/planning_screen.dart';
 import '../../features/planning/presentation/screens/create_stream/select_day_period.dart';
 import '../../features/planning/presentation/screens/create_stream/start_date_selection_screen.dart';
@@ -79,12 +76,10 @@ class AppRouter extends _$AppRouter {
         CustomRoute(page: OurMissionScreenRoute.page, path: '/our-mission'),
         CustomRoute(page: ExperienceOfOthersScreenRoute.page, path: '/experience-other'),
         CustomRoute(page: WelcomeScreenRoute.page, path: '/welcome'),
-        CustomRoute(page: StartDateSelectionScreenRoute.page, path: '/planner-start-date-selection'),
         CustomRoute(
-            page: NextStreamStartDateSelectionScreenRoute.page, path: '/planner-next-stream-start-date-selection'),
-        CustomRoute(page: NextStreamChoiceOfCaseScreenRoute.page, path: '/planner-next-stream-choice-of-case'),
-        CustomRoute(page: ChoiceOfCaseScreenRoute.page, path: '/planner-choice-of-case'),
-        CustomRoute(page: SelectDayPeriodRoute.page, path: '/planner-select-day-period'),
+            page: StartDateSelectionScreenRoute.page, path: '/planner-start-date-selection', maintainState: false),
+        CustomRoute(page: ChoiceOfCaseScreenRoute.page, path: '/planner-choice-of-case', maintainState: false),
+        CustomRoute(page: SelectDayPeriodRoute.page, path: '/planner-select-day-period', maintainState: false),
         CustomRoute(page: WelcomeDescriptionScreenRoute.page, path: '/welcome-desc'),
         CustomRoute(page: TwoTargetScreenRoute.page, path: '/two-targets'),
 

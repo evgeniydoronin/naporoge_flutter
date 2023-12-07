@@ -9,10 +9,20 @@ sealed class ActiveStreamEvent extends Equatable {
 
 final class ActiveStreamChanged extends ActiveStreamEvent {
   final NPStream? npStream;
+  final NPStream? activeNpStream;
   final int? studentsStreams;
 
-  const ActiveStreamChanged({this.npStream, this.studentsStreams});
+  const ActiveStreamChanged({this.npStream, this.activeNpStream, this.studentsStreams});
 
   @override
-  List<Object?> get props => [npStream ?? '', studentsStreams];
+  List<Object?> get props => [npStream, activeNpStream, studentsStreams];
+}
+
+final class GetActiveStream extends ActiveStreamEvent {
+  final NPStream? activeNpStream;
+
+  const GetActiveStream({this.activeNpStream});
+
+  @override
+  List<Object?> get props => [activeNpStream];
 }

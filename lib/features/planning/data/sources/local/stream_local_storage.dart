@@ -14,7 +14,14 @@ class StreamLocalStorage {
     final isar = await isarService.db;
 
     Map streamData = streamDataFromServer['stream'];
-    // Map weekData = streamDataFromServer['week'];
+
+    // деактивируем предыдущий курс, если есть
+    NPStream? previousStream;
+    int? previousStreamId = streamDataFromServer['old_stream'];
+    if (previousStreamId != null) {
+      previousStream = await isar.nPStreams.get(previousStreamId);
+      previousStream?.isActive = false;
+    }
 
     final newStream = NPStream()
       ..id = streamData['id']
@@ -25,25 +32,12 @@ class StreamLocalStorage {
       ..description = streamData['description']
       ..startAt = DateTime.parse(streamData['start_at']);
 
-    // final newWeek = Week()
-    //   ..id = weekData['id']
-    //   ..weekNumber = weekData['number']
-    //   ..streamId = weekData['stream_id']
-    //   ..cells = json.encode(weekData['cells'])
-    //   ..nPStream.value = newStream;
-
     isar.writeTxnSync(() async {
+      // деактивируем предыдущий курс
+      if (previousStream != null) {
+        isar.nPStreams.putSync(previousStream);
+      }
       isar.nPStreams.putSync(newStream);
-      // isar.weeks.putSync(newWeek);
-
-      // for (Map dayData in streamDataFromServer['days']) {
-      //   final newDay = Day()
-      //     ..id = dayData['day']['id']
-      //     ..weekId = dayData['day']['week_id']
-      //     ..startAt = DateTime.parse(dayData['day']['start_at'])
-      //     ..week.value = newWeek;
-      //   isar.days.putSync(newDay);
-      // }
     });
   }
 
@@ -80,7 +74,7 @@ class StreamLocalStorage {
     Map streamData = streamDataFromServer['stream'];
     // Map weekData = streamDataFromServer['week'];
 
-    print('streamDataFromServer: $streamDataFromServer');
+    // print('streamDataFromServer: $streamDataFromServer');
 
     NPStream? stream = await isar.nPStreams.get(streamData['id']);
 

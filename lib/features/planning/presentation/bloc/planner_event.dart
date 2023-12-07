@@ -44,12 +44,13 @@ final class StreamCourseDescriptionChanged extends PlannerEvent {
 }
 
 final class StreamCourseWeeksChanged extends PlannerEvent {
-  const StreamCourseWeeksChanged(this.courseWeeks);
+  const StreamCourseWeeksChanged(this.courseWeeks, this.isNextStreamCreate);
 
   final int courseWeeks;
+  final bool isNextStreamCreate;
 
   @override
-  List<Object> get props => [courseWeeks];
+  List<Object> get props => [courseWeeks, isNextStreamCreate];
 }
 
 final class SelectCell extends PlannerEvent {

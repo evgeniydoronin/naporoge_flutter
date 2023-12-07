@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../bloc/active_course/active_stream_bloc.dart';
 import '../../widgets/choice_course_form/choice_course_form.dart';
 import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
@@ -27,6 +29,8 @@ class ChoiceOfCaseScreen extends StatelessWidget {
           title: const Text('Выбрать дело'),
           leading: IconButton(
             onPressed: () {
+              int studentsStreams = context.read<ActiveStreamBloc>().state.studentsStreams;
+              // print('ChoiceOfCaseScreen studentsStreams: $studentsStreams');
               context.router.navigate(const StartDateSelectionScreenRoute());
             },
             icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),

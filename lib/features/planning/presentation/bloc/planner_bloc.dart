@@ -21,44 +21,59 @@ class PlannerBloc extends Bloc<PlannerEvent, PlannerState> {
     on<EditableWeekStream>(_onEditableWeekStream);
   }
 
-  void _onStreamStartDateChanged(StreamStartDateChanged event,
-      Emitter<PlannerState> emit,) {
+  void _onStreamStartDateChanged(
+    StreamStartDateChanged event,
+    Emitter<PlannerState> emit,
+  ) {
     final startDate = event.startDate;
     emit(state.copyWith(startDate: startDate));
   }
 
-  void _onCourseIdChanged(StreamCourseIdChanged event,
-      Emitter<PlannerState> emit,) {
+  void _onCourseIdChanged(
+    StreamCourseIdChanged event,
+    Emitter<PlannerState> emit,
+  ) {
     final courseId = event.courseId;
     emit(state.copyWith(courseId: courseId));
   }
 
-  void _onCourseTitleChanged(StreamCourseTitleChanged event,
-      Emitter<PlannerState> emit,) {
+  void _onCourseTitleChanged(
+    StreamCourseTitleChanged event,
+    Emitter<PlannerState> emit,
+  ) {
     final courseTitle = event.courseTitle;
     emit(state.copyWith(courseTitle: courseTitle));
   }
 
-  void _onCourseWeeksChanged(StreamCourseWeeksChanged event,
-      Emitter<PlannerState> emit,) {
+  void _onCourseWeeksChanged(
+    StreamCourseWeeksChanged event,
+    Emitter<PlannerState> emit,
+  ) {
     final courseWeeks = event.courseWeeks;
-    emit(state.copyWith(courseWeeks: courseWeeks));
+    final isNextStreamCreate = event.isNextStreamCreate;
+    emit(state.copyWith(courseWeeks: courseWeeks, isNextStreamCreate: isNextStreamCreate));
   }
 
-  void _onWrapWeekBoxHeight(WrapWeekBoxHeightStream event,
-      Emitter<PlannerState> emit,) {
+  void _onWrapWeekBoxHeight(
+    WrapWeekBoxHeightStream event,
+    Emitter<PlannerState> emit,
+  ) {
     final wrapWeekBoxHeight = event.wrapWeekBoxHeight;
     emit(state.copyWith(wrapWeekBoxHeight: wrapWeekBoxHeight));
   }
 
-  void _onNextStreamWeeks(NextStreamWeeksStreamChanged event,
-      Emitter<PlannerState> emit,) {
+  void _onNextStreamWeeks(
+    NextStreamWeeksStreamChanged event,
+    Emitter<PlannerState> emit,
+  ) {
     final nextStreamWeeks = event.nextStreamWeeks;
     emit(state.copyWith(nextStreamWeeks: nextStreamWeeks));
   }
 
-  void _onCourseDescriptionChanged(StreamCourseDescriptionChanged event,
-      Emitter<PlannerState> emit,) {
+  void _onCourseDescriptionChanged(
+    StreamCourseDescriptionChanged event,
+    Emitter<PlannerState> emit,
+  ) {
     final courseDescription = event.courseDescription;
     emit(state.copyWith(courseDescription: courseDescription));
   }
