@@ -33,7 +33,9 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
 
   @override
   void initState() {
-    getScreenStart();
+    if (widget.isShowWeeksSelect) {
+      getScreenStart();
+    }
     super.initState();
   }
 

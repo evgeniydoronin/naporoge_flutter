@@ -41,6 +41,8 @@ Future<Map> getTotalResultsStream() async {
     daysIdCompleted.addAll(daysInWeek);
   }
 
+  print('daysIdCompleted: $daysIdCompleted');
+
   ///////////////////////////////
   // Результат выполнения дня
   ///////////////////////////////
@@ -77,6 +79,8 @@ Future<Map> getTotalResultsStream() async {
   // слабо, все дни курса минус выполненные на хорошо и отлично
   int low = days - middle.length - high.length;
 
+  print('low: $low');
+
   ///////////////////////////////
   // сообщение
   ///////////////////////////////
@@ -94,6 +98,7 @@ Future<Map> getTotalResultsStream() async {
       maxPointIndex = i;
     }
   }
+
   // слабо
   if (maxPointIndex == 0) {
     message = const TextSpan(

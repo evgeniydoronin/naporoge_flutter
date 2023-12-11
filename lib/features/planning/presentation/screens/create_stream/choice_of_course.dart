@@ -29,10 +29,18 @@ class ChoiceOfCaseScreen extends StatelessWidget {
           title: const Text('Выбрать дело'),
           leading: IconButton(
             onPressed: () {
-              int studentsStreams = context.read<ActiveStreamBloc>().state.studentsStreams;
+              int studentsStreams = context
+                  .read<ActiveStreamBloc>()
+                  .state
+                  .studentsStreams;
               print('ChoiceOfCaseScreen studentsStreams: $studentsStreams');
-              context.router.navigate(StartDateSelectionScreenRoute(
-                  isBackLeading: studentsStreams == 0 ? true : false, isShowWeeksSelect: true));
+              if (studentsStreams == 0) {
+                context.router.navigate(StartDateSelectionScreenRoute(
+                    isBackLeading: studentsStreams == 0 ? true : false, isShowWeeksSelect: false));
+              } else {
+                context.router.navigate(StartDateSelectionScreenRoute(
+                    isBackLeading: studentsStreams == 0 ? true : false, isShowWeeksSelect: true));
+              }
             },
             icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
           ),

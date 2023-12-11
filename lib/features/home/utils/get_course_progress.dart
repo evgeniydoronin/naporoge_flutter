@@ -226,8 +226,8 @@ Future getCourseProgress() async {
 
             // текущий день
             if (dayStartAt.isAtSameMomentAs(DateTime.parse(DateFormat('y-MM-dd').format(now)))) {
-              print('текущий день');
-              print('day.completedAt : ${day.completedAt}');
+              // print('текущий день');
+              // print('day.completedAt : ${day.completedAt}');
               // проверяем выполненные дни
               if (day.completedAt != null) {
                 if (now.weekday == 7) {
