@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import '../../../../core/utils/get_actual_student_day.dart';
+import '../../../../core/utils/get_actual_week_day.dart';
 import '../widgets/day_results_save/rejoice_box.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/utils/circular_loading.dart';
@@ -282,9 +283,6 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                       }
                                     }
 
-                                    // актуальный день студента
-                                    DateTime actualStudentDay = getActualStudentDay();
-
                                     if (context.mounted) {
                                       CircularLoading(context).startLoading();
                                     }
@@ -292,12 +290,17 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     final isar = await isarService.db;
                                     var user = await isarService.getUser();
 
+                                    /// актуальный день студента
+                                    final DateTime actualStudentDay = getActualStudentDay();
+
+                                    /// понедельник текущей недели
+                                    final currentMonday = findFirstDateOfTheWeek(actualStudentDay);
+
                                     String currDay = DateFormat('y-MM-dd').format(
                                         DateTime(actualStudentDay.year, actualStudentDay.month, actualStudentDay.day));
 
-                                    final weekNumber = getWeekNumber(actualStudentDay);
                                     Week? currWeekData =
-                                        await isar.weeks.filter().weekNumberEqualTo(weekNumber).findFirst();
+                                        await isar.weeks.filter().mondayEqualTo(currentMonday).findFirst();
 
                                     late int dayId;
 
@@ -311,10 +314,9 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     }
                                     // пустая неделя
                                     else {
-                                      List days = await isar.days.filter().weekIdEqualTo(currWeekData.id).findAll();
-                                      int freeDayIndex = actualStudentDay.weekday - 1;
-                                      Day freeDay = days[freeDayIndex];
-                                      dayId = freeDay.id!;
+                                      final currDay =
+                                          await isar.days.filter().dateAtEqualTo(actualStudentDay).findFirst();
+                                      dayId = currDay!.id!;
                                     }
 
                                     Map dayResultData = {

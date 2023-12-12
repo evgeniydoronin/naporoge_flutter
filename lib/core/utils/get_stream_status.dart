@@ -1,6 +1,9 @@
 import '../../features/planning/data/sources/local/stream_local_storage.dart';
 import '../../features/planning/domain/entities/stream_entity.dart';
 
+/// Get Stream status
+///
+/// return: 'status' = "before | after | process";
 Future getStreamStatus() async {
   Map streamStatus = {};
 

@@ -16,7 +16,7 @@ Future getHomeVideos() async {
 
   // первый курс
   if (streams.length == 1) {
-    print('first stream');
+    // print('first stream');
     DateTime startStreamAt = streams[0]!.startAt!;
     DateTime firstSaturday =
         DateTime(startStreamAt.year, startStreamAt.month, startStreamAt.day, 9, 0, 0).add(const Duration(days: 5));
@@ -28,12 +28,12 @@ Future getHomeVideos() async {
     // print('secondSaturday: $secondSaturday');
     // print('now: $now');
     if (now.isAfter(firstSaturday)) {
-      print('Появилось 2 новых видео!');
+      // print('Появилось 2 новых видео!');
       previewVideoIndex[1] = 1;
       previewVideoIndex[2] = 1;
     }
     if (now.isAfter(secondSaturday)) {
-      print('Появилось последнее видео!');
+      // print('Появилось последнее видео!');
       previewVideoIndex[3] = 1;
     }
   }

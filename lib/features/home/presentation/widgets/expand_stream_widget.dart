@@ -77,9 +77,10 @@ Future countStreams() async {
   bool isExpandStream = false;
   final isarService = IsarService();
   final isar = await isarService.db;
+  final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
   List streams = await isar.nPStreams.where().findAll();
 
-  if (streams.length == 1) {
+  if (streams.length == 1 && stream!.weeks! == 3) {
     isExpandStream = true;
   }
   return isExpandStream;

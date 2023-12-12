@@ -181,12 +181,19 @@ class StreamLocalStorage {
     final isar = await isarService.db;
     final stream = await isar.nPStreams.get(weekDataFromServer['week']['stream_id']);
 
+    int year;
+    if (weekDataFromServer['week']['year'] is String) {
+      year = int.parse(weekDataFromServer['week']['year']);
+    } else {
+      year = weekDataFromServer['week']['year'];
+    }
+
     // получить stream
     // создать неделю
     final newWeek = Week()
       ..id = weekDataFromServer['week']['id']
       ..weekNumber = weekDataFromServer['week']['number']
-      ..weekYear = int.parse(weekDataFromServer['week']['year'])
+      ..weekYear = year
       ..monday = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(weekDataFromServer['week']['monday'])))
       ..streamId = weekDataFromServer['week']['stream_id']
       ..userConfirmed = weekDataFromServer['week']['user_confirmed']

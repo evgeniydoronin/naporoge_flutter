@@ -1,11 +1,10 @@
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/core/utils/get_actual_student_day.dart';
+import '../../../core/utils/get_actual_student_day.dart';
+import '../../../core/utils/get_current_week_data.dart';
 import '../../planning/domain/entities/stream_entity.dart';
-
 import '../../../core/services/db_client/isar_service.dart';
 import '../../../core/utils/get_stream_status.dart';
-import '../../../core/utils/get_week_number.dart';
 
 Future getCourseProgress() async {
   final isarService = IsarService();
@@ -20,16 +19,7 @@ Future getCourseProgress() async {
   // статус курса (before, after, process)
   Map streamStatus = await getStreamStatus();
 
-  // Проверка в предпоследний и последний день курса
-  // для вывода Итогов
-  bool isLastWeekOnStream = false;
-
-  // текущая неделя
-  int currentWeekNumber = getWeekNumber(DateTime.now());
-
   Map data = {};
-
-  // print('currentWeekNumber: $currentWeekNumber');
 
   // До старта курса
   if (streamStatus['status'] == 'before') {
@@ -52,58 +42,50 @@ Future getCourseProgress() async {
     // + 1: прибавляем текущий день, он сразу считается как прошедший
     int passedDays = startStreamAt.difference(now).inDays.abs() + 1;
     // последняя неделя курса
-    Week? lastWeek = stream.weekBacklink.elementAtOrNull(weeks - 1);
+    Map currentWeekData = await getCurrentWeekData();
+    print('passedDays: $passedDays');
+
+    Week? lastWeek = currentWeekData['isLast'] ? currentWeekData['week'] : null;
+    bool isEmpty = currentWeekData['isEmpty'];
+    int weekIndex = currentWeekData['weekIndex'];
+    String currentWeekTitle = '';
 
     // Title
     for (int i = 0; i < weeks; i++) {
-      Week? week = stream.weekBacklink.elementAtOrNull(i);
-
-      if (week != null) {
-        String _currentWeek = '';
-        if (week.weekNumber == currentWeekNumber) {
-          switch (i) {
-            case 0:
-              _currentWeek = 'первой';
-            case 1:
-              _currentWeek = 'второй';
-            case 2:
-              _currentWeek = 'третьей';
-            case 3:
-              _currentWeek = 'четвертой';
-            case 4:
-              _currentWeek = 'пятой';
-            case 5:
-              _currentWeek = 'шестой';
-            case 6:
-              _currentWeek = 'седьмой';
-            case 7:
-              _currentWeek = 'восьмой';
-            case 8:
-              _currentWeek = 'девятой';
-          }
-
-          data['title'] = 'Вы на $_currentWeek неделе';
-          print('Вы на $_currentWeek неделе');
-        }
+      switch (weekIndex) {
+        case 0:
+          currentWeekTitle = 'первой';
+        case 1:
+          currentWeekTitle = 'второй';
+        case 2:
+          currentWeekTitle = 'третьей';
+        case 3:
+          currentWeekTitle = 'четвертой';
+        case 4:
+          currentWeekTitle = 'пятой';
+        case 5:
+          currentWeekTitle = 'шестой';
+        case 6:
+          currentWeekTitle = 'седьмой';
+        case 7:
+          currentWeekTitle = 'восьмой';
+        case 8:
+          currentWeekTitle = 'девятой';
       }
     }
+    data['title'] = 'Вы на $currentWeekTitle неделе';
 
     int leftPercent = 100 - (passedDays * 100 / days).ceil();
     data['percent'] = (passedDays * 100 / days).ceil();
     data['description'] = '$leftPercent% осталось до полного выполнения дела';
 
     // последняя неделя
-    if (lastWeek != null && currentWeekNumber == lastWeek.weekNumber) {
-      print('getCourseProgress: текущая неделя последняя');
+    if (lastWeek != null) {
       List lastWeekdays = await isar.days.filter().weekIdEqualTo(lastWeek.id).findAll();
       Day? monday = await isar.days.filter().weekIdEqualTo(lastWeek.id).findFirst();
+
       // пустая неделя
-      bool weekIsEmpty = true;
-      if (monday?.startAt != null) {
-        weekIsEmpty = false;
-      }
-      // пустая неделя
-      if (weekIsEmpty) {
+      if (isEmpty) {
         print('пустая последняя неделя 33');
         // суббота
         if (now.weekday == 6 || now.weekday == 7) {
@@ -177,7 +159,6 @@ Future getCourseProgress() async {
       }
       // НЕ пустая неделя
       else {
-        print('НЕ пустая последняя неделя');
         // суббота или воскресенье
         if (now.weekday == 6 || now.weekday == 7) {
           // завершенные дни текущей недели

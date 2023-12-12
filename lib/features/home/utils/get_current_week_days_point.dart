@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import '../../../core/utils/get_actual_week_day.dart';
 import '../../planning/domain/entities/stream_entity.dart';
 
 import '../../../core/services/db_client/isar_service.dart';
@@ -17,20 +18,29 @@ Future getCurrentWeekDaysPoint() async {
   Map streamStatus = await getStreamStatus();
 
   // текущая неделя
-  int currentWeekNumber = getWeekNumber(actualUserDay);
+  // int currentWeekNumber = getWeekNumber(actualUserDay);
+
+  /// всего недель с индексом
+  List allWeeksIndexed = stream!.weekBacklink.indexed.toList();
+
+  /// актуальный день студента
+  DateTime actualStudentDay = getActualStudentDay();
+
+  /// понедельник текущей недели
+  final currMonday = findFirstDateOfTheWeek(actualStudentDay);
 
   List days = [];
 
   // До старта курса
   if (streamStatus['status'] == 'before') {
     // Первая неделя курса
-    Week week = stream!.weekBacklink.first;
+    Week week = allWeeksIndexed.first.$2;
 
     days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
   }
   // После завершения курса
   else if (streamStatus['status'] == 'after') {
-    Week week = stream!.weekBacklink.last;
+    Week week = allWeeksIndexed.last.$2;
 
     // print('week: ${week.dayBacklink.first.startAt}');
     if (week.dayBacklink.first.startAt != null) {
@@ -41,22 +51,9 @@ Future getCurrentWeekDaysPoint() async {
   }
   // Во время прохождения курса
   else if (streamStatus['status'] == 'process') {
-    // недели не созданы
-    // первая неделя пустая
-    if (stream!.weekBacklink.isEmpty) {
-      days = [];
-    }
-    // первая неделя на курсе создана
-    else {
-      Week week = stream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).first;
-      // неделя не пустая
-      if (week.dayBacklink.first.startAt != null) {
-        days = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
-      }
-      // пустая неделя
-      else {
-        days = await week.dayBacklink.filter().findAll();
-      }
+    for (int i = 0; i < allWeeksIndexed.length; i++) {
+      Week week = allWeeksIndexed[i].$2;
+      days = await week.dayBacklink.filter().findAll();
     }
   }
 

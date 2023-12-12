@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/core/routes/app_router.dart';
+import '../routes/app_router.dart';
 import '../../features/planning/data/sources/local/stream_local_storage.dart';
 import '../../features/planning/domain/entities/stream_entity.dart';
 import '../../features/planning/presentation/stream_controller.dart';
@@ -61,6 +61,7 @@ Future extendStreamDialog(context) async {
   );
 }
 
+/// Продление дела
 Future expandFirstStream(context) async {
   final streamController = getIt<StreamController>();
   final streamLocalStorage = StreamLocalStorage();

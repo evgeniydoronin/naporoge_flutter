@@ -40,8 +40,6 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
 
   @override
   Widget build(BuildContext context) {
-    // List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
-    // List<TextEditingController> progress = [TextEditingController(), TextEditingController(), TextEditingController()];
     List<GlobalKey<FormState>> formKeys = List.generate(weeks, (index) => GlobalKey<FormState>());
     List<TextEditingController> progress = List.generate(weeks, (index) => TextEditingController());
 
@@ -73,8 +71,8 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                         List daysProgress = weekData['daysProgress'];
                         // progress[index] = TextEditingController(text: week.progress);
 
-                        print('weeksProgress index: $index');
-                        print('weeksProgress: ${weeksProgress[index]}');
+                        // print('weeksProgress index: $index');
+                        // print('weeksProgress: ${weeksProgress[index]}');
                         DateTime now = DateTime.now();
                         int currentWeek = getWeekNumber(now);
 

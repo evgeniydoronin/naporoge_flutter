@@ -36,7 +36,7 @@ class TotalButton extends StatelessWidget {
                 // сброс данных стейта предыдущих значений
                 context.read<DayResultBloc>().add(const DesiresChanged(''));
                 context.read<DayResultBloc>().add(const ReluctanceChanged(''));
-                print(context.read<DayResultBloc>().state);
+                print('state345: ${context.read<DayResultBloc>().state}');
                 // context.read<DayResultBloc>().add()
               },
               style: AppLayout.accentBowBTNStyle,
