@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:naporoge/features/planning/presentation/widgets/stream_description_form_widget.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/utils/circular_loading.dart';
@@ -82,84 +83,39 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   if (snapshot.hasData) {
                     NPStream stream = snapshot.data;
 
-                    // описание курса из БД по умолчанию
-                    TextEditingController descriptionEditingController =
-                        TextEditingController(text: stream.description ?? '');
-
-                    // если были изменения описания курса - меняем данные
-                    descriptionEditingController.text = state.courseDescription.isEmpty
-                        ? stream.description ?? ''
-                        : context.read<PlannerBloc>().state.courseDescription;
+                    // // описание курса из БД по умолчанию
+                    // TextEditingController descriptionEditingController =
+                    //     TextEditingController(text: stream.description ?? '');
+                    //
+                    // // если были изменения описания курса - меняем данные
+                    // descriptionEditingController.text = state.courseDescription.isEmpty
+                    //     ? stream.description ?? ''
+                    //     : context.read<PlannerBloc>().state.courseDescription;
 
                     return ListView(
                       shrinkWrap: true,
                       children: [
+                        const SizedBox(height: 15),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Container(
+                            width: double.maxFinite,
+                            padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                            decoration: AppLayout.boxDecorationShadowBG,
+                            child: Text(
+                              stream.title!,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: AppFont.large, fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        const StreamDescriptionForm(),
                         Form(
                           key: _formKey,
                           child: Column(
                             children: [
-                              const SizedBox(height: 15),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: Container(
-                                  width: double.maxFinite,
-                                  padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                                  decoration: AppLayout.boxDecorationShadowBG,
-                                  child: Text(
-                                    stream.title!,
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: AppFont.large, fontWeight: FontWeight.w500),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Моя задача:'),
-                                    const SizedBox(height: 5),
-                                    TextFormField(
-                                      readOnly: true,
-                                      controller: descriptionEditingController,
-                                      // validator: (value) {
-                                      //   if (value == null || value.trim().isEmpty) {
-                                      //     return 'Заполните обязательное поле!';
-                                      //   }
-                                      //   return null;
-                                      // },
-                                      onChanged: (description) {
-                                        _description = description;
-                                      },
-                                      onTapOutside: (val) {
-                                        context.read<PlannerBloc>().add(StreamCourseDescriptionChanged(_description));
-                                      },
-                                      maxLines: 2,
-                                      maxLength: 200,
-                                      decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.all(10),
-                                        hintText: 'Укажите объем выполнения и цель дела',
-                                        hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-                                        labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        errorBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(color: Colors.redAccent),
-                                            borderRadius: AppLayout.primaryRadius),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(color: Colors.transparent),
-                                            borderRadius: AppLayout.primaryRadius),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(color: Colors.transparent),
-                                            borderRadius: AppLayout.primaryRadius),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 15),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
                                 child: Container(

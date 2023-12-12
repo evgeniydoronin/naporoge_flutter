@@ -43,7 +43,7 @@ Future getCourseProgress() async {
     int passedDays = startStreamAt.difference(now).inDays.abs() + 1;
     // последняя неделя курса
     Map currentWeekData = await getCurrentWeekData();
-    print('passedDays: $passedDays');
+    // print('passedDays: $passedDays');
 
     Week? lastWeek = currentWeekData['isLast'] ? currentWeekData['week'] : null;
     bool isEmpty = currentWeekData['isEmpty'];

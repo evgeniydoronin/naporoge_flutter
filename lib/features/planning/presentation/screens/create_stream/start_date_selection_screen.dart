@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import '../../../../../core/services/db_client/isar_service.dart';
-import '../../../../../core/utils/early_termination_stream_dialog.dart';
 import '../../../../../core/utils/select_next_stream_weeks.dart';
 import '../../../domain/entities/stream_entity.dart';
 import '../../../../../core/routes/app_router.dart';

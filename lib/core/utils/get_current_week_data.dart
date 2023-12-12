@@ -40,7 +40,7 @@ Future<Map> getCurrentWeekData() async {
 
   for (int i = 0; i < allWeeksIndexed.length; i++) {
     Week week = allWeeksIndexed[i].$2;
-    print('week: ${week.monday}');
+    // print('week: ${week.monday}');
 
     if (currentMonday.isAtSameMomentAs(week.monday!)) {
       weekIndex = allWeeksIndexed[i].$1;

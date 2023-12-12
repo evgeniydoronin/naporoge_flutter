@@ -288,7 +288,8 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     }
 
                                     final isar = await isarService.db;
-                                    var user = await isarService.getUser();
+                                    final user = await isarService.getUser();
+                                    final npStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
                                     /// актуальный день студента
                                     final DateTime actualStudentDay = getActualStudentDay();
@@ -299,8 +300,13 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                     String currDay = DateFormat('y-MM-dd').format(
                                         DateTime(actualStudentDay.year, actualStudentDay.month, actualStudentDay.day));
 
-                                    Week? currWeekData =
-                                        await isar.weeks.filter().mondayEqualTo(currentMonday).findFirst();
+                                    Week? currWeekData = await isar.weeks
+                                        .filter()
+                                        .streamIdEqualTo(npStream!.id)
+                                        .mondayEqualTo(currentMonday)
+                                        .findFirst();
+
+                                    print('currWeekData: ${currWeekData!.id}');
 
                                     late int dayId;
 
@@ -332,7 +338,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                       "timeSend": DateTime.now().toLocal().toString(),
                                     };
 
-                                    // print('dayResultData: $dayResultData');
+                                    print('dayResultData: $dayResultData');
 
                                     // create on server
                                     var newDayResult = await _streamController.createDayResult(dayResultData);

@@ -38,9 +38,8 @@ class _SplashScreenState extends State<SplashScreen> {
     final isar = await isarService.db;
     final userExists = await isar.users.count();
     final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
-
-    final _streamController = getIt<StreamController>();
-    final streamLocalStorage = StreamLocalStorage();
+    final createdStreams = await isar.nPStreams.where().findAll();
+    bool isCreatedStreams = createdStreams.isNotEmpty ? true : false;
 
     DateTime now = DateTime.now();
     // пользователь зарегистрирован
@@ -49,22 +48,26 @@ class _SplashScreenState extends State<SplashScreen> {
       // курс не создан
       if (activeStream == null) {
         print('SplashScreen - курс не создан');
-        if (context.mounted) {
-          AutoRouter.of(context).push(const WelcomeScreenRoute());
+
+        /// если первый курс не создан
+        /// перенаправляем на экран приветствия
+        /// иначе на шаги создания дела
+        if (isCreatedStreams) {
+          if (context.mounted) {
+            AutoRouter.of(context).push(StartDateSelectionScreenRoute(isBackLeading: false, isShowWeeksSelect: true));
+          }
+        } else {
+          if (context.mounted) {
+            AutoRouter.of(context).push(const WelcomeScreenRoute());
+          }
         }
       }
       // курс создан
       else {
         // print('SplashScreen - курс создан');
         DateTime startStream = activeStream.startAt!;
-        DateTime endStream = activeStream.startAt!
-            .add(Duration(days: (activeStream.weeks! * 7) - 1, hours: 23, minutes: 59, seconds: 59));
         bool streamNotStarted = startStream.isAfter(now);
         bool streamStarted = startStream.isBefore(now);
-        bool isAfterEndStream = endStream.isBefore(now);
-
-        int weeks = activeStream.weeks!;
-        Week? lastWeek = activeStream.weekBacklink.lastOrNull;
 
         // до старта
         if (streamNotStarted) {
@@ -106,8 +109,6 @@ class _SplashScreenState extends State<SplashScreen> {
         AutoRouter.of(context).navigate(const LoginEmptyRouter());
       }
     }
-
-    // await isar.close();
   }
 
   @override

@@ -12,6 +12,7 @@ import 'core/routes/app_router.dart';
 import 'core/services/controllers/service_locator.dart';
 import 'features/planning/presentation/bloc/active_course/active_stream_bloc.dart';
 import 'features/planning/presentation/bloc/choice_of_course/choice_of_course_bloc.dart';
+import 'features/planning/presentation/bloc/description_count/count_description_bloc.dart';
 import 'features/planning/presentation/bloc/planner_bloc.dart';
 
 void main() async {
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<DiaryBloc>(create: (context) => DiaryBloc()),
         BlocProvider<ChoiceOfCourseBloc>(create: (context) => ChoiceOfCourseBloc()),
         BlocProvider<ActiveStreamBloc>(create: (context) => ActiveStreamBloc()),
+        BlocProvider<CountDescriptionBloc>(create: (context) => CountDescriptionBloc()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
