@@ -11,14 +11,12 @@ class NPStream {
   DateTime? startAt;
   String? title;
   String? description;
-  String? targetMinimum;
-  String? targetExternalKey;
-  String? targetExternalValue;
-  String? targetInternalKey;
-  String? targetInternalValue;
 
   @Backlink(to: 'nPStream')
   final weekBacklink = IsarLinks<Week>();
+
+  @Backlink(to: 'nPStream')
+  final twoTargetBacklink = IsarLinks<TwoTarget>();
 }
 
 @collection
@@ -65,4 +63,17 @@ class DayResult {
   String? rejoice;
 
   final day = IsarLink<Day>();
+}
+
+@collection
+class TwoTarget {
+  Id? id;
+  String? title;
+  String? minimum;
+  String? targetOneTitle;
+  String? targetOneDescription;
+  String? targetTwoTitle;
+  String? targetTwoDescription;
+  
+  final nPStream = IsarLink<NPStream>();
 }

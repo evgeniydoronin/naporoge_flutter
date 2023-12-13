@@ -33,6 +33,8 @@ class Endpoints {
   static const String createWeek = '/create-week';
   static const String updateWeek = '/update-week';
   static const String updateWeekProgress = '/update-week-progress';
+  static const String createTwoTargets = '/create-two-targets';
+  static const String updateTwoTargets = '/update-two-targets';
   static const String createDayResult = '/create-day-result';
   static const String createDiaryNote = '/create-note';
   static const String updateDiaryNote = '/update-note';

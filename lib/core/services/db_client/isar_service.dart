@@ -16,7 +16,8 @@ class IsarService {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open([UserSchema, NPStreamSchema, WeekSchema, DaySchema, DayResultSchema, DiaryNoteSchema],
+      return await Isar.open(
+          [UserSchema, NPStreamSchema, WeekSchema, DaySchema, DayResultSchema, DiaryNoteSchema, TwoTargetSchema],
           directory: dir.path);
     }
 
@@ -34,5 +35,11 @@ class IsarService {
     final isar = await db;
     var user = await isar.users.where().findAll();
     return user; // get
+  }
+
+  Future<NPStream?> getCurrentStream() async {
+    final isar = await db;
+    final npStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
+    return npStream;
   }
 }

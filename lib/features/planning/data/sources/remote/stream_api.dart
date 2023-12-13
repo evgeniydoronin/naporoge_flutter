@@ -139,6 +139,30 @@ class StreamApi {
     }
   }
 
+  Future<Response> createTwoTargetsApi(Map data) async {
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.createTwoTargets,
+        data: data,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> updateTwoTargetsApi(Map data) async {
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.updateTwoTargets,
+        data: data,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> createDiaryNoteApi(Map noteData) async {
     // print('updateStreamApi: $streamData');
     try {

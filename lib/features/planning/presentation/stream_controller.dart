@@ -87,6 +87,14 @@ class StreamController {
     return result;
   }
 
+  Future createTwoTargets(data) async {
+    return await streamRepository.createTwoTargetsRequested(data);
+  }
+
+  Future updateTwoTargets(data) async {
+    return await streamRepository.updateTwoTargetsRequested(data);
+  }
+
 // Future<List<UserModel>> getUsers() async {
 //   final users = await userRepository.getUsersRequested();
 //   return users;

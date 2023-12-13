@@ -280,7 +280,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
         streamData["old_stream_id"] = previousStream.id;
       }
 
-      print('streamData: $streamData');
+      // print('streamData: $streamData');
 
       // create on server
       var newStream = await _streamController.createStream(streamData);

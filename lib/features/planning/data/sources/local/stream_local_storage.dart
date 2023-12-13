@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
@@ -352,5 +353,47 @@ class StreamLocalStorage {
       print('We deleted $weeks weeks');
       print('We deleted $days days');
     });
+  }
+
+  Future createTwoTargets(Map serverResponse) async {
+    final isar = await isarService.db;
+    final data = serverResponse['twoTargets'];
+    final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
+
+    final twoTargets = TwoTarget()
+      ..id = data['id']
+      ..title = data['title']
+      ..minimum = data['minimum']
+      ..targetOneTitle = data['target_one_title']
+      ..targetOneDescription = data['target_one_description']
+      ..targetTwoTitle = data['target_two_title']
+      ..targetTwoDescription = data['target_two_description']
+      ..nPStream.value = stream;
+
+    isar.writeTxnSync(() async {
+      isar.twoTargets.putSync(twoTargets);
+    });
+
+    return twoTargets;
+  }
+
+  Future updateTwoTargets(Map serverResponse) async {
+    final isar = await isarService.db;
+    final data = serverResponse['twoTargets'];
+
+    final twoTargets = await isar.twoTargets.get(data['id']);
+
+    twoTargets!.title = data['title'];
+    twoTargets.minimum = data['minimum'];
+    twoTargets.targetOneTitle = data['target_one_title'];
+    twoTargets.targetOneDescription = data['target_one_description'];
+    twoTargets.targetTwoTitle = data['target_two_title'];
+    twoTargets.targetTwoDescription = data['target_two_description'];
+
+    isar.writeTxnSync(() async {
+      isar.twoTargets.putSync(twoTargets!);
+    });
+
+    return twoTargets;
   }
 }

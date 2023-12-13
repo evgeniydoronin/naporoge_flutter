@@ -76,7 +76,7 @@ Future expandFirstStream(context) async {
     "weeks": 9,
   };
 
-  print('update streamData: $streamData');
+  // print('update streamData: $streamData');
 
   // expand on server
   var expandStream = await streamController.expandStream(streamData);

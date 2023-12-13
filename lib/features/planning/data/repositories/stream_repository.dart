@@ -92,7 +92,25 @@ class StreamRepository {
     try {
       final response = await streamApi.createDayResultApi(data);
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  Future createTwoTargetsRequested(Map data) async {
+    try {
+      final response = await streamApi.createTwoTargetsApi(data);
+      return response.data;
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateTwoTargetsRequested(Map data) async {
+    try {
+      final response = await streamApi.updateTwoTargetsApi(data);
+      return response.data;
+    } on DioException catch (e) {
       rethrow;
     }
   }
@@ -128,7 +146,7 @@ class StreamRepository {
     try {
       final response = await streamApi.deleteDuplicatesResultApi(data);
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       rethrow;
     }
   }

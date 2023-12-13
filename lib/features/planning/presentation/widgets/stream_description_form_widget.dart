@@ -128,7 +128,7 @@ class _StreamDescriptionFormState extends State<StreamDescriptionForm> {
                                         "description": descriptionEditingController.text,
                                       };
 
-                                      print('streamData: $streamData');
+                                      // print('streamData: $streamData');
 
                                       /// update on server
                                       /// update stream description

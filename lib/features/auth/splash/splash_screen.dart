@@ -4,19 +4,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import '../../../core/services/controllers/service_locator.dart';
 import '../../../core/utils/create_missed_weeks.dart';
-import '../../planning/data/sources/local/stream_local_storage.dart';
 import '../../planning/domain/entities/stream_entity.dart';
 import '../../../core/constants/app_theme.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../core/services/db_client/isar_service.dart';
-import '../../../core/utils/get_week_number.dart';
 import '../../planning/presentation/bloc/active_course/active_stream_bloc.dart';
 import '../login/domain/user_model.dart';
-import '../../planning/presentation/stream_controller.dart';
 
 @RoutePage()
 class SplashScreen extends StatefulWidget {
