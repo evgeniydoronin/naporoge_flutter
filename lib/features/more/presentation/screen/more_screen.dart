@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:naporoge/features/more/presentation/widgets/early_termination_stream_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_theme.dart';
@@ -357,39 +358,7 @@ class MoreScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 15),
-                      InkWell(
-                        onTap: () {},
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                                decoration: BoxDecoration(
-                                  color: AppColor.lightBGItem,
-                                  borderRadius: AppLayout.primaryRadius,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 5,
-                                      spreadRadius: 0,
-                                    )
-                                  ],
-                                ),
-                                child: InkWell(
-                                    onTap: () {
-                                      earlyTerminationStreamDialog(context);
-                                    },
-                                    child: Text(
-                                      'Досрочное завершение дела ',
-                                      style: TextStyle(fontSize: AppFont.large, color: AppColor.accentBOW),
-                                      textAlign: TextAlign.center,
-                                    )),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      const EarlyTerminationStreamWidget(),
                       const SizedBox(height: 45),
                       // Row(
                       //   children: [

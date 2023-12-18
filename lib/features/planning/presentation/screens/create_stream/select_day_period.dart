@@ -264,10 +264,6 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                             // print('createWeek: $createWeek');
                                             // print('updatedStream: $updatedStream');
 
-                                            print('++++++++++++++++++++');
-                                            print('++++++++++++++++++++');
-                                            print('++++++++++++++++++++');
-
                                             // update local
                                             if (updatedStream['stream']['id'] != null) {
                                               // print('newStream: $updatedStream');

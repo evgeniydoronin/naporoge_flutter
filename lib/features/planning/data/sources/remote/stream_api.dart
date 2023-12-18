@@ -22,6 +22,32 @@ class StreamApi {
     }
   }
 
+  Future<Response> deleteStreamApi(Map streamData) async {
+    // print('createStreamApi: $streamData');
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.deleteStream,
+        data: streamData,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> deactivateStreamApi(Map streamData) async {
+    // print('createStreamApi: $streamData');
+    try {
+      final Response response = await dioClient.post(
+        Endpoints.deactivateStream,
+        data: streamData,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> createNextStreamApi(Map streamData) async {
     // print('createStreamApi: $streamData');
     try {

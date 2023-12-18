@@ -41,6 +41,83 @@ class StreamLocalStorage {
     });
   }
 
+  Future<void> deleteStream(Map streamDataFromServer) async {
+    final isar = await isarService.db;
+
+    Map streamData = streamDataFromServer['stream'];
+
+    int streamId = streamData['id'];
+
+    // стрим
+    NPStream? stream = await isar.nPStreams.get(streamId);
+
+    // недели
+    List<Week> weeks = await isar.weeks.filter().streamIdEqualTo(streamId).findAll();
+    List<int> weekIds = [];
+    if (weeks.isNotEmpty) {
+      weekIds.addAll(weeks.map((e) => e.id!));
+    }
+
+    // дни
+    // Instance of 'Day'
+    List<int> daysIds = [];
+    if (weeks.isNotEmpty) {
+      List<Day> days = await isar.days.filter().anyOf(weeks, (day, week) => day.weekIdEqualTo(week.id)).findAll();
+      if (days.isNotEmpty) {
+        daysIds.addAll(days.map((e) => e.id!));
+      }
+    }
+
+    // результаты дней
+    // Instance of 'DayResult'
+    List<int> dayResultsIds = [];
+    if (daysIds.isNotEmpty) {
+      List<Day> daysIncludeResults = await isar.days
+          .filter()
+          .anyOf(daysIds, (day, dayId) => day.idEqualTo(dayId))
+          .and()
+          .completedAtIsNotNull()
+          .findAll();
+
+      if (daysIncludeResults.isNotEmpty) {
+        List<DayResult> dayResults = await isar.dayResults
+            .filter()
+            .anyOf(daysIncludeResults, (dayResult, day) => dayResult.dayIdEqualTo(day.id))
+            .findAll();
+
+        if (dayResults.isNotEmpty) {
+          dayResultsIds.addAll(dayResults.map((e) => e.id!));
+        }
+      }
+    }
+
+    print('stream!.id : ${stream!.id}');
+    print('weekIds: $weekIds');
+    print('daysIds: $daysIds');
+    print('dayResultsIds: $dayResultsIds');
+
+    // удаление
+    await isar.writeTxn(() async {
+      await isar.nPStreams.delete(stream.id!);
+      await isar.weeks.deleteAll(weekIds);
+      await isar.days.deleteAll(daysIds);
+      await isar.dayResults.deleteAll(dayResultsIds);
+    });
+  }
+
+  Future<void> deactivateStream(Map streamDataFromServer) async {
+    final isar = await isarService.db;
+
+    Map streamData = streamDataFromServer['stream'];
+    int streamId = streamData['id'];
+
+    await isar.writeTxn(() async {
+      final stream = await isar.nPStreams.get(streamId);
+      stream!.isActive = false;
+      await isar.nPStreams.put(stream);
+    });
+  }
+
   Future<void> createNextStream(Map streamDataFromServer) async {
     final isar = await isarService.db;
 

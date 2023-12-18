@@ -22,6 +22,16 @@ class StreamController {
     return stream;
   }
 
+  Future deleteStream(data) async {
+    final stream = await streamRepository.deleteStreamRequested(data);
+    return stream;
+  }
+
+  Future deactivateStream(data) async {
+    final stream = await streamRepository.deactivateStreamRequested(data);
+    return stream;
+  }
+
   Future createNextStream(data) async {
     final stream = await streamRepository.createNextStreamRequested(data);
     return stream;

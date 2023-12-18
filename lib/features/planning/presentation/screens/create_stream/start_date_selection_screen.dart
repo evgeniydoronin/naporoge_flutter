@@ -30,9 +30,11 @@ class StartDateSelectionScreen extends StatefulWidget {
 class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
   final isarService = IsarService();
   bool _isActivated = false;
+  late bool isBackLeading;
 
   @override
   void initState() {
+    isBackLeading = widget.isBackLeading;
     if (widget.isShowWeeksSelect) {
       getScreenStart();
     }
@@ -47,6 +49,10 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
       if (context.mounted) {
         await selectWeeks(context);
       }
+    } else {
+      setState(() {
+        isBackLeading = true;
+      });
     }
   }
 
@@ -64,7 +70,6 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
     //   });
     // }
     String buttonDate = 'Выбрать';
-    bool isBackLeading = widget.isBackLeading;
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {

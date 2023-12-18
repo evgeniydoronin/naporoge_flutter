@@ -25,6 +25,8 @@ class Endpoints {
 
   // Stream data
   static const String createStream = '/create-stream';
+  static const String deleteStream = '/delete-stream';
+  static const String deactivateStream = '/deactivate-stream';
   static const String createNextStream = '/create-next-stream';
   static const String updateStream = '/update-stream';
   static const String createWeek = '/create-week';

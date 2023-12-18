@@ -16,6 +16,24 @@ class StreamRepository {
     }
   }
 
+  Future deleteStreamRequested(Map data) async {
+    try {
+      final response = await streamApi.deleteStreamApi(data);
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future deactivateStreamRequested(Map data) async {
+    try {
+      final response = await streamApi.deactivateStreamApi(data);
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future createNextStreamRequested(Map data) async {
     try {
       final response = await streamApi.createNextStreamApi(data);

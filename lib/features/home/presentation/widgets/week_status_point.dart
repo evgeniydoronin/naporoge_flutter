@@ -41,9 +41,7 @@ class WeekStatusPoint extends StatelessWidget {
                 // не выполнен
                 else {
                   bool dayHasPassed = false;
-                  if (index + 1 < DateTime
-                      .now()
-                      .weekday) {
+                  if (index + 1 < DateTime.now().weekday) {
                     dayHasPassed = true;
                   }
                   daysStatus.add({'status': 'empty_not_completed', 'startAt': '', 'dayHasPassed': dayHasPassed});
@@ -98,10 +96,11 @@ class WeekStatusPoint extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              height: 98,
               padding: const EdgeInsets.only(top: 10, bottom: 10, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
               child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
                   crossAxisSpacing: 10,
@@ -269,8 +268,8 @@ class WeekStatusPoint extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   weekDay[gridIndex].toUpperCase(),
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                  style:
+                                      const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
                                 ),
                               ),
                             ),
@@ -299,13 +298,13 @@ class WeekStatusPoint extends StatelessWidget {
                             Container(
                               width: 34,
                               height: 33,
-                              decoration: BoxDecoration(
-                                  color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
+                              decoration:
+                                  BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
                               child: Center(
                                 child: Text(
                                   weekDay[gridIndex].toUpperCase(),
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                  style:
+                                      const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
                                 ),
                               ),
                             ),
