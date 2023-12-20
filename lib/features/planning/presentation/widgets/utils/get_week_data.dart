@@ -213,9 +213,9 @@ Future getWeekData(NPStream stream, String status) async {
               if (day.completedAt == null) {
                 // добавляем индекс заполненного периода
                 // если воскресенье - НЕ добавляем
-                // if (cellHint['cellId'][2] != 6) {
-                //   weekOpenedPeriod.add(cellHint['cellId'][0]);
-                // }
+                if (cellHint['cellId'][2] != 6) {
+                  weekOpenedPeriod.add(cellHint['cellId'][0]);
+                }
               }
             }
           }
@@ -276,6 +276,7 @@ Future getWeekData(NPStream stream, String status) async {
 
         /// пустая неделя
         else {
+          /// День выполнен
           if (day.completedAt != null) {
             // час завершения дела актуальный
             String completedAtHour = DateFormat('H').format(day.completedAt!);
@@ -296,6 +297,11 @@ Future getWeekData(NPStream stream, String status) async {
               }
             }
           }
+
+          // /// День не выполнен
+          // else {
+          //   print('day: ${day.dateAt}');
+          // }
         }
 
         /// формирование списка ячеек
@@ -400,7 +406,10 @@ Future getWeekData(NPStream stream, String status) async {
       Week week = stream.weekBacklink.elementAt(i);
       DateTime monday = week.monday!;
       DateTime sunday = week.monday!.add(const Duration(days: 6));
+
+      /// недели с подсказками
       bool isEmptyWeek = week.systemConfirmed ?? false;
+
       List cells = jsonDecode(week.cells!);
 
       /// будущая неделя
@@ -417,24 +426,19 @@ Future getWeekData(NPStream stream, String status) async {
       Week? lastWeekWithHint;
 
       /// ячейки подсказок
-      List? cellsLastWeekWithHint;
+      List cellsLastWeekWithHint = [];
 
       /// Формируем неделю с подсказками
       if (isEmptyWeek) {
         List<Week>? allConfirmedWeeks =
             await stream.weekBacklink.filter().idLessThan(week.id).userConfirmedEqualTo(true).findAll();
+
         lastWeekWithHint = allConfirmedWeeks.lastOrNull;
-        cellsLastWeekWithHint = jsonDecode(lastWeekWithHint!.cells!);
+        cellsLastWeekWithHint = lastWeekWithHint != null ? jsonDecode(lastWeekWithHint.cells!) : [];
       }
 
       /// формирование ячеек
       for (int cell = 0; cell < cells.length; cell++) {
-        // добавляем индекс заполненного периода
-        // если воскресенье - НЕ добавляем
-        if (cells[cell]['cellId'][2] != 6) {
-          weekOpenedPeriod.add(cells[cell]['cellId'][0]);
-        }
-
         // день получаем по cells[cell]['dayId']
         Day day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
 
@@ -447,7 +451,7 @@ Future getWeekData(NPStream stream, String status) async {
         }
 
         /// формируем подсказки
-        if (isHint && cellsLastWeekWithHint != null) {
+        if (isHint && cellsLastWeekWithHint.isNotEmpty) {
           for (Map cellHint in cellsLastWeekWithHint) {
             /// соответствие дню недели
             /// например, подсказка из предыдущего понедельника в текущий
@@ -455,6 +459,15 @@ Future getWeekData(NPStream stream, String status) async {
               Day? dayHint = await isar.days.get(cellHint['dayId']);
               hintCellStartAt = dayHint?.startAt;
               hintCellId = cellHint['cellId'];
+
+              // если день не выполнен
+              if (day.completedAt == null) {
+                // добавляем индекс заполненного периода
+                // если воскресенье - НЕ добавляем
+                if (cellHint['cellId'][2] != 6) {
+                  weekOpenedPeriod.add(cellHint['cellId'][0]);
+                }
+              }
             }
           }
         }
@@ -468,6 +481,10 @@ Future getWeekData(NPStream stream, String status) async {
         /// не пустая неделя
         if (!isEmptyWeek) {
           if (day.completedAt != null) {
+            /// добавляем индекс заполненного периода - воскресенье
+            if (cells[cell]['cellId'][2] == 6) {
+              weekOpenedPeriod.add(cells[cell]['cellId'][0]);
+            }
             // час старта дела по плану
             String startAtHour = DateFormat('H').format(day.startAt!);
             // час завершения дела актуальный
@@ -478,28 +495,39 @@ Future getWeekData(NPStream stream, String status) async {
               for (Map hour in periodHoursIndexList) {
                 // час завершения дела актуальный
                 if (hour.keys.first == completedAtHour) {
-                  // находим индекс дня ячейки
+                  /// находим индекс дня ячейки
                   int gridIndex = cells[cell]['cellId'].last;
-                  // Создаем новый список
+
+                  /// Создаем новый список
                   List newHourCellId = List.from(hour.values.first);
                   newHourCellId.add(gridIndex);
-
                   newCellId = newHourCellId;
 
-                  // добавляем индекс заполненного периода
+                  /// добавляем индекс заполненного периода
                   weekOpenedPeriod.add(newHourCellId[0]);
                 }
               }
             }
             // Если час выполнения совпадает
             else if (startAtHour == completedAtHour) {
+              weekOpenedPeriod.add(cells[cell]['cellId'][0]);
               completedOnTime = true;
+            }
+          }
+
+          /// пропущенный день
+          else {
+            /// добавляем индекс заполненного периода
+            /// если не воскресенье
+            if (cells[cell]['cellId'][2] != 6) {
+              weekOpenedPeriod.add(cells[cell]['cellId'][0]);
             }
           }
         }
 
         /// пустая неделя
         else {
+          /// День выполнен
           if (day.completedAt != null) {
             // час завершения дела актуальный
             String completedAtHour = DateFormat('H').format(day.completedAt!);
@@ -520,6 +548,11 @@ Future getWeekData(NPStream stream, String status) async {
               }
             }
           }
+
+          // /// День не выполнен
+          // else {
+          //   print('day: ${day.dateAt}');
+          // }
         }
 
         /// формирование списка ячеек

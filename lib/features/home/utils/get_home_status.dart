@@ -31,7 +31,6 @@ Future getHomeStatus() async {
   }
   // После завершения курса
   if (streamStatus['status'] == 'after') {
-    print('object');
     print('Home status - После завершения курса');
     // streamStatus['status'] = "after";
     topMessage['text'] = 'Итоги';

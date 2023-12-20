@@ -105,8 +105,6 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
         List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
         List<Widget> defaultMinutesText = List.generate(12, (index) => Text('${index * 5}'));
 
-        // TODO: RangeError (index): Invalid value: Valid value range is empty: 0
-        // TODO: Решить проблему
         int periodStart = periodRows[ids[0][0]].start;
         int rowIndex = ids[0][1];
         int hour = (periodStart + rowIndex).toInt();
@@ -286,64 +284,68 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                               }
                             }
 
-                            return GestureDetector(
-                              onTapDown: null,
-                              onTapUp: null,
-                              onTap: () async {
-                                // print(
-                                //     '$periodIndex, $rowIndex, $gridIndex');
-                                newCells.add([periodIndex, rowIndex, gridIndex]);
+                            return gridIndex != 6
+                                ? GestureDetector(
+                                    onTapDown: null,
+                                    onTapUp: null,
+                                    onTap: () async {
+                                      // print(
+                                      //     '$periodIndex, $rowIndex, $gridIndex');
+                                      newCells.add([periodIndex, rowIndex, gridIndex]);
 
-                                context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: newCells));
+                                      context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: newCells));
 
-                                _dialogBuilder(newCells);
-                                setState(() {});
-                              },
-                              onDoubleTap: () {
-                                newCells.add([periodIndex, rowIndex, gridIndex]);
-                                deleteFromList(newCells);
-                                setState(() {});
-                              },
-                              onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
-                                double cellWidth = (constraints.maxWidth / 7).floorToDouble();
-                                double widthWeekPeriodRow = constraints.maxWidth - 6; // 303.0, 6 - grid gap
-                                double xGlobalPosition =
-                                    details.globalPosition.dx - 70; // (20 : padding-right) + (50 : 04-05 hours period)
+                                      _dialogBuilder(newCells);
+                                      setState(() {});
+                                    },
+                                    onDoubleTap: () {
+                                      newCells.add([periodIndex, rowIndex, gridIndex]);
+                                      deleteFromList(newCells);
+                                      setState(() {});
+                                    },
+                                    onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
+                                      double cellWidth = (constraints.maxWidth / 7).floorToDouble();
+                                      double widthWeekPeriodRow = constraints.maxWidth - 6; // 303.0, 6 - grid gap
+                                      double xGlobalPosition = details.globalPosition.dx -
+                                          70; // (20 : padding-right) + (50 : 04-05 hours period)
 
-                                for (int i = 0; i < 6; i++) {
-                                  double min = cellWidth * i;
-                                  double max = min + cellWidth;
-                                  if (xGlobalPosition > min && xGlobalPosition <= max) {
-                                    // print('$periodIndex, $rowIndex, $i');
+                                      for (int i = 0; i < 6; i++) {
+                                        double min = cellWidth * i;
+                                        double max = min + cellWidth;
+                                        if (xGlobalPosition > min && xGlobalPosition <= max) {
+                                          // print('$periodIndex, $rowIndex, $i');
 
-                                    // newCells
-                                    //     .add([periodIndex, rowIndex, i]);
+                                          // newCells
+                                          //     .add([periodIndex, rowIndex, i]);
 
-                                    context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: [
-                                          [periodIndex, rowIndex, i]
-                                        ]));
-                                  }
-                                }
-                              },
-                              onLongPressEnd: (details) {
-                                var _newCells = state.selectedCellIDs;
-                                var _ids = _newCells.removeDuplicates();
+                                          context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: [
+                                                [periodIndex, rowIndex, i]
+                                              ]));
+                                        }
+                                      }
+                                    },
+                                    onLongPressEnd: (details) {
+                                      var _newCells = state.selectedCellIDs;
+                                      var _ids = _newCells.removeDuplicates();
 
-                                _dialogBuilder(_ids);
+                                      _dialogBuilder(_ids);
 
-                                context
-                                    .read<PlannerBloc>()
-                                    .add(SelectCell(selectedCellIDs: [_newCells.removeDuplicates()]));
-                                setState(() {});
-                              },
-                              child: EditableDayPeriodCell(
-                                periodIndex: periodIndex,
-                                gridIndex: gridIndex,
-                                rowIndex: rowIndex,
-                                dayData: dayData,
-                                constraints: constraints,
-                              ),
-                            );
+                                      context
+                                          .read<PlannerBloc>()
+                                          .add(SelectCell(selectedCellIDs: [_newCells.removeDuplicates()]));
+                                      setState(() {});
+                                    },
+                                    child: EditableDayPeriodCell(
+                                      periodIndex: periodIndex,
+                                      gridIndex: gridIndex,
+                                      rowIndex: rowIndex,
+                                      dayData: dayData,
+                                      constraints: constraints,
+                                    ),
+                                  )
+                                : Container(
+                                    color: AppColor.accent.withAlpha(50),
+                                  );
                           },
                         );
                       },

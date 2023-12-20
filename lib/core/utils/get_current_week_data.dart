@@ -61,7 +61,7 @@ Future<Map> getCurrentWeekData() async {
   currentWeekData['weeks'] = stream.weeks;
   currentWeekData['weeksIds'] = weekIds;
 
-  print('currentWeekData: $currentWeekData');
+  // print('currentWeekData: $currentWeekData');
 
   return currentWeekData;
 }

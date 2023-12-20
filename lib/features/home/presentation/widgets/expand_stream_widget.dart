@@ -81,7 +81,10 @@ Future countStreams() async {
   List streams = await isar.nPStreams.where().findAll();
 
   if (streams.length == 1 && stream!.weeks! == 3) {
-    isExpandStream = true;
+    final mayBeExpandDate = stream.startAt!.add(const Duration(days: 21));
+    if (DateTime.now().isBefore(mayBeExpandDate)) {
+      isExpandStream = true;
+    }
   }
   return isExpandStream;
 }

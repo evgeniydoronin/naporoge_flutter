@@ -18,7 +18,7 @@ class WeekStatusPoint extends StatelessWidget {
           List days = snapshot.data['days'];
 
           /// snapshot.data
-          /// {days: [Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day'], actualUserDay: 2023-10-31 00:00:00.000}
+          /// {days: [Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day', Instance of 'Day'], actualUserDay: 2023-12-20 00:00:00.000}
 
           // адаптация текущего дня до 3 ночи
           DateTime actualUserDay = snapshot.data['actualUserDay'];
@@ -28,8 +28,6 @@ class WeekStatusPoint extends StatelessWidget {
 
           if (days.isNotEmpty) {
             for (final (int index, Day day) in days.indexed) {
-              // print('actualUserDay: $actualUserDay');
-
               // пустая неделя
               if (day.startAt == null) {
                 // выполнен
@@ -85,12 +83,13 @@ class WeekStatusPoint extends StatelessWidget {
               }
             }
           }
-          // неделя пустая
-          else {
-            for (int i = 0; i < 7; i++) {
-              daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
-            }
-          }
+          // // неделя пустая
+          // else {
+          //   print(days.isNotEmpty);
+          //   for (int i = 0; i < 7; i++) {
+          //     daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
+          //   }
+          // }
 
           // print(daysStatus);
           return Padding(

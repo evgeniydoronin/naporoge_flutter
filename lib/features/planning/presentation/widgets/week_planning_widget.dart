@@ -107,15 +107,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
           if (snapshot.hasData) {
             Map pageData = snapshot.data;
             // print('pageData 333: $pageData');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][0]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][1]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][2]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][3]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][4]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][5]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][6]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][7]['monday']}');
-            // print('weeksOnPage: ${pageData['weeksOnPage'][8]}');
+            // print('weeksOnPage: ${pageData['weeksOnPage'][0]['cellsWeekData']}');
 
             _pageIndex = pageData['defaultPageIndex'];
             NPStream stream = pageData['stream'];
@@ -157,7 +149,7 @@ class _WeekPlanningWidgetState extends State<WeekPlanningWidget> {
                         // неделя прошла
                         if (week != null) {
                           if (now.isAfter(monday) || now.isAtSameMomentAs(monday)) {
-                            if (week.systemConfirmed != null) {
+                            if (week.systemConfirmed != null && week.systemConfirmed!) {
                               isPlannedWeek['title'] = 'План не составлен';
                               isPlannedWeek['color'] = AppColor.red;
                             }
@@ -722,6 +714,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
         else {
           if (eq(dayData['hintCellId'], [periodIndex, rowIndex, gridIndex])) {
             textCell = !isSunday ? DateFormat('HH:mm').format(dayData['hintCellStartAt']) : '';
+            fontColor = !isSunday ? AppColor.grey2 : Colors.transparent;
           }
         }
       }

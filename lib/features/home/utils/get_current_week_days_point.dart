@@ -5,7 +5,6 @@ import '../../planning/domain/entities/stream_entity.dart';
 import '../../../core/services/db_client/isar_service.dart';
 import '../../../core/utils/get_actual_student_day.dart';
 import '../../../core/utils/get_stream_status.dart';
-import '../../../core/utils/get_week_number.dart';
 
 Future getCurrentWeekDaysPoint() async {
   final isarService = IsarService();
@@ -53,9 +52,15 @@ Future getCurrentWeekDaysPoint() async {
   else if (streamStatus['status'] == 'process') {
     for (int i = 0; i < allWeeksIndexed.length; i++) {
       Week week = allWeeksIndexed[i].$2;
-      days = await week.dayBacklink.filter().findAll();
+
+      /// текущая неделя
+      if (currMonday.isAtSameMomentAs(week.monday!)) {
+        days = await week.dayBacklink.filter().sortByDateAt().thenByDateAt().findAll();
+      }
     }
   }
+
+  // print("'days': $days, 'actualUserDay': $actualUserDay");
 
   return {'days': days, 'actualUserDay': actualUserDay};
 }

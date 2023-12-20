@@ -23,7 +23,8 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
 
   @override
   void initState() {
-    videoPlayerController = VideoPlayerController.network('${AppRemoteAssets().videoAssets()}/1.mp4');
+    // videoPlayerController = VideoPlayerController.network('${AppRemoteAssets().videoAssets()}/1.mp4');
+    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse("${AppRemoteAssets().videoAssets()}/0.mp4"));
 
     videoPlayerController.initialize().then((_) {
       setState(() {});
@@ -97,7 +98,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 80),
+                      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 80),
                       child: Text(
                         'Посмотрите видео и получите первый ключ к навыку',
                         style: TextStyle(color: Colors.white, fontSize: AppFont.regular),
