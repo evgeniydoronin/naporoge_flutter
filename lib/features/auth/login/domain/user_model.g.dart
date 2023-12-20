@@ -17,9 +17,9 @@ const UserSchema = CollectionSchema(
   name: r'User',
   id: -7838171048429979076,
   properties: {
-    r'isActive': PropertySchema(
+    r'isLoggedIn': PropertySchema(
       id: 0,
-      name: r'isActive',
+      name: r'isLoggedIn',
       type: IsarType.bool,
     )
   },
@@ -52,7 +52,7 @@ void _userSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.isActive);
+  writer.writeBool(offsets[0], object.isLoggedIn);
 }
 
 User _userDeserialize(
@@ -63,7 +63,7 @@ User _userDeserialize(
 ) {
   final object = User();
   object.id = id;
-  object.isActive = reader.readBoolOrNull(offsets[0]);
+  object.isLoggedIn = reader.readBoolOrNull(offsets[0]);
   return object;
 }
 
@@ -237,26 +237,27 @@ extension UserQueryFilter on QueryBuilder<User, User, QFilterCondition> {
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> isActiveIsNull() {
+  QueryBuilder<User, User, QAfterFilterCondition> isLoggedInIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'isActive',
+        property: r'isLoggedIn',
       ));
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> isActiveIsNotNull() {
+  QueryBuilder<User, User, QAfterFilterCondition> isLoggedInIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'isActive',
+        property: r'isLoggedIn',
       ));
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> isActiveEqualTo(bool? value) {
+  QueryBuilder<User, User, QAfterFilterCondition> isLoggedInEqualTo(
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isActive',
+        property: r'isLoggedIn',
         value: value,
       ));
     });
@@ -268,15 +269,15 @@ extension UserQueryObject on QueryBuilder<User, User, QFilterCondition> {}
 extension UserQueryLinks on QueryBuilder<User, User, QFilterCondition> {}
 
 extension UserQuerySortBy on QueryBuilder<User, User, QSortBy> {
-  QueryBuilder<User, User, QAfterSortBy> sortByIsActive() {
+  QueryBuilder<User, User, QAfterSortBy> sortByIsLoggedIn() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isActive', Sort.asc);
+      return query.addSortBy(r'isLoggedIn', Sort.asc);
     });
   }
 
-  QueryBuilder<User, User, QAfterSortBy> sortByIsActiveDesc() {
+  QueryBuilder<User, User, QAfterSortBy> sortByIsLoggedInDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isActive', Sort.desc);
+      return query.addSortBy(r'isLoggedIn', Sort.desc);
     });
   }
 }
@@ -294,23 +295,23 @@ extension UserQuerySortThenBy on QueryBuilder<User, User, QSortThenBy> {
     });
   }
 
-  QueryBuilder<User, User, QAfterSortBy> thenByIsActive() {
+  QueryBuilder<User, User, QAfterSortBy> thenByIsLoggedIn() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isActive', Sort.asc);
+      return query.addSortBy(r'isLoggedIn', Sort.asc);
     });
   }
 
-  QueryBuilder<User, User, QAfterSortBy> thenByIsActiveDesc() {
+  QueryBuilder<User, User, QAfterSortBy> thenByIsLoggedInDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isActive', Sort.desc);
+      return query.addSortBy(r'isLoggedIn', Sort.desc);
     });
   }
 }
 
 extension UserQueryWhereDistinct on QueryBuilder<User, User, QDistinct> {
-  QueryBuilder<User, User, QDistinct> distinctByIsActive() {
+  QueryBuilder<User, User, QDistinct> distinctByIsLoggedIn() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isActive');
+      return query.addDistinctBy(r'isLoggedIn');
     });
   }
 }
@@ -322,9 +323,9 @@ extension UserQueryProperty on QueryBuilder<User, User, QQueryProperty> {
     });
   }
 
-  QueryBuilder<User, bool?, QQueryOperations> isActiveProperty() {
+  QueryBuilder<User, bool?, QQueryOperations> isLoggedInProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isActive');
+      return query.addPropertyName(r'isLoggedIn');
     });
   }
 }

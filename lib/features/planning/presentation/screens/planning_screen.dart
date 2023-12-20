@@ -234,6 +234,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
                                                   if (context.mounted) {
                                                     CircularLoading(context).stopLoading();
+                                                    CircularLoading(context).saveSuccess();
                                                   }
                                                 }
                                               },

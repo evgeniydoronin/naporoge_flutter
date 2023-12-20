@@ -68,12 +68,13 @@ class DayResult {
 @collection
 class TwoTarget {
   Id? id;
+  int? streamId;
   String? title;
   String? minimum;
   String? targetOneTitle;
   String? targetOneDescription;
   String? targetTwoTitle;
   String? targetTwoDescription;
-  
+
   final nPStream = IsarLink<NPStream>();
 }

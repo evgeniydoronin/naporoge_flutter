@@ -22,8 +22,9 @@ class Endpoints {
   static const String smsCode = '/code';
   static const String authCode = '/auth';
   static const String createStudent = '/create-student';
+  static const String getStudent = '/get-student';
 
-  // Stream data
+  /// Stream data
   static const String createStream = '/create-stream';
   static const String deleteStream = '/delete-stream';
   static const String deactivateStream = '/deactivate-stream';
@@ -40,6 +41,14 @@ class Endpoints {
   static const String updateDiaryNote = '/update-note';
   static const String deleteDiaryNote = '/delete-note';
   static const String allTheoryPosts = '/theories';
+
+  /// get streams data
+  static const String getStreams = '/get-streams';
+  static const String getWeeks = '/get-weeks';
+  static const String getDays = '/get-days';
+  static const String getDaysResults = '/get-days-results';
+  static const String getDiaryNotes = '/get-diary-notes';
+  static const String getTwoTargets = '/get-two-targets';
 
   //
   static const String deleteDuplicatesResult = '/delete-duplicates';

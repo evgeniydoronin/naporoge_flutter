@@ -140,6 +140,7 @@ class _StreamDescriptionFormState extends State<StreamDescriptionForm> {
 
                                         if (context.mounted) {
                                           CircularLoading(context).stopLoading();
+                                          CircularLoading(context).saveSuccess();
                                         }
                                       }
                                     }

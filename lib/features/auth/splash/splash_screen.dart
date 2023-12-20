@@ -31,14 +31,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigateToScreen() async {
     final isar = await isarService.db;
-    final userExists = await isar.users.count();
+    final user = await isar.users.where().findFirst();
     final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
     final createdStreams = await isar.nPStreams.where().findAll();
     bool isCreatedStreams = createdStreams.isNotEmpty ? true : false;
+    bool isActiveUser = user != null && user.isLoggedIn! ? true : false;
 
     DateTime now = DateTime.now();
-    // пользователь зарегистрирован
-    if (userExists != 0) {
+
+    print('user: $user');
+    print('isActiveUser: $isActiveUser');
+
+    /// пользователь зарегистрирован
+    /// и не выходил из приложения
+    if (isActiveUser) {
       print('SplashScreen - пользователь зарегистрирован');
       // курс не создан
       if (activeStream == null) {
@@ -98,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     }
     // нет пользователя
-    else if (userExists == 0) {
+    else {
       print('SplashScreen - нет пользователя');
       if (context.mounted) {
         AutoRouter.of(context).navigate(const LoginEmptyRouter());

@@ -27,9 +27,7 @@ class TodoItemScreen extends StatelessWidget {
           onPressed: () {
             context.router.pop();
           },
-          icon: RotatedBox(
-              quarterTurns: 2,
-              child: SvgPicture.asset('assets/icons/arrow.svg')),
+          icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
         ),
         title: Text(
           'Дело',
@@ -114,8 +112,7 @@ class _TodoItemsState extends State<TodoItems> {
 
     var slidableController = SlidableController;
 
-    Widget proxyDecorator(
-        Widget child, int index, Animation<double> animation) {
+    Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
       return AnimatedBuilder(
         animation: animation,
         builder: (BuildContext context, Widget? child) {
@@ -147,9 +144,9 @@ class _TodoItemsState extends State<TodoItems> {
               // The end action pane is the one at the right or the bottom side.
               endActionPane: ActionPane(
                 motion: const ScrollMotion(),
+                extentRatio: 0.2,
                 // A pane can dismiss the Slidable.
-                dismissible:
-                    DismissiblePane(onDismissed: () => onDismissed(index)),
+                // dismissible: DismissiblePane(onDismissed: () => onDismissed(index)),
                 children: [
                   CustomSlidableAction(
                     onPressed: (context) => onDismissed(index),
@@ -170,8 +167,7 @@ class _TodoItemsState extends State<TodoItems> {
                       height: 24,
                       width: 24,
                       child: Checkbox(
-                        fillColor:
-                            MaterialStateProperty.all<Color>(AppColor.accent),
+                        fillColor: MaterialStateProperty.all<Color>(AppColor.accent),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(3),
                         ),

@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:naporoge/features/diary/domain/entities/diary_note_entity.dart';
+import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../models/stream_model.dart';
 import '../sources/remote/stream_api.dart';
 
 class StreamRepository {
@@ -151,32 +153,69 @@ class StreamRepository {
     }
   }
 
-// Future<List<UserModel>> getUsersRequested() async {
-//   try {
-//     final response = await streamApi.getUsersApi();
-//     final users = (response.data['data'] as List)
-//         .map((e) => UserModel.fromJson(e))
-//         .toList();
-//     return users;
-//   } on DioError catch (e) {
-//     rethrow;
-//   }
-// }
-//
-// Future<NewUser> updateUserRequested(int id, String name, String job) async {
-//   try {
-//     final response = await streamApi.updateUserApi(id, name, job);
-//     return NewUser.fromJson(response.data);
-//   } on DioError catch (e) {
-//     rethrow;
-//   }
-// }
-//
-// Future<void> deleteNewUserRequested(int id) async {
-//   try {
-//     await streamApi.deleteUserApi(id);
-//   } on DioError catch (e) {
-//     rethrow;
-//   }
-// }
+  /// Get user streams
+  Future getNPStreamsRequested(int userId) async {
+    try {
+      final response = await streamApi.getNPStreamsApi(userId);
+
+      return (response.data['streams'] as List).map((e) => NPStreamModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get stream weeks
+  Future getWeeksRequested(List<NPStreamModel> streams) async {
+    try {
+      final response = await streamApi.getWeeksApi(streams);
+
+      return (response.data['weeks'] as List).map((e) => WeekModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get week days
+  Future getDaysRequested(List<WeekModel> weeks) async {
+    try {
+      final response = await streamApi.getDaysApi(weeks);
+
+      return (response.data['days'] as List).map((e) => DayModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get days results
+  Future getDaysResultsRequested(List<DayModel> days) async {
+    try {
+      final response = await streamApi.getDaysResultsApi(days);
+
+      return (response.data['daysResults'] as List).map((e) => DayResultsModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get diary notes
+  Future getDiaryNotesRequested(int userId) async {
+    try {
+      final response = await streamApi.getDiaryNotesApi(userId);
+
+      return (response.data['diaryNotes'] as List).map((e) => DiaryNoteModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get two targets
+  Future getTwoTargetsRequested(List<NPStreamModel> streams) async {
+    try {
+      final response = await streamApi.getTwoTargetsApi(streams);
+
+      return (response.data['twoTargets'] as List).map((e) => TwoTargetsModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
 }

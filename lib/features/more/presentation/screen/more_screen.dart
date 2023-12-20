@@ -360,23 +360,23 @@ class MoreScreen extends StatelessWidget {
                       ),
                       const EarlyTerminationStreamWidget(),
                       const SizedBox(height: 45),
-                      // Row(
-                      //   children: [
-                      //     Expanded(
-                      //       child: ElevatedButton(
-                      //         onPressed: () {
-                      //           context.router.push(SplashScreenRoute());
-                      //         },
-                      //         style: AppLayout.accentBTNStyle,
-                      //         child: Text(
-                      //           'Выйти',
-                      //           style: AppFont.regularSemibold,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      // const SizedBox(height: 15),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                context.router.push(const SplashScreenRoute());
+                              },
+                              style: AppLayout.accentBTNStyle,
+                              child: Text(
+                                'Выйти',
+                                style: AppFont.regularSemibold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
                     ],
                   ),
                 )

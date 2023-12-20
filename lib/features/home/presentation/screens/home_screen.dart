@@ -89,32 +89,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Flexible(
-                    //   flex: 4,
-                    //   fit: FlexFit.tight,
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       context.router.push(const TodoEmptyRouter());
-                    //     },
-                    //     style: AppLayout.primaryBTNStyle,
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       children: [
-                    //         SvgPicture.asset('assets/icons/todo_home_screen.svg'),
-                    //         const SizedBox(width: 10),
-                    //         Expanded(
-                    //           child: Text(
-                    //             'Перечень дел',
-                    //             style: AppFont.regularSemibold,
-                    //             overflow: TextOverflow.fade,
-                    //             softWrap: false,
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(width: 20),
+                    Flexible(
+                      flex: 4,
+                      fit: FlexFit.tight,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.router.push(const TodoEmptyRouter());
+                        },
+                        style: AppLayout.primaryBTNStyle,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset('assets/icons/todo_home_screen.svg'),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Перечень дел',
+                                style: AppFont.regularSemibold,
+                                overflow: TextOverflow.fade,
+                                softWrap: false,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
                     Flexible(
                       flex: 3,
                       child: ElevatedButton(
@@ -135,7 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Text(
                                   'Правила',
                                   style: AppFont.regularSemibold,
-                                  overflow: TextOverflow.ellipsis,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
                                 ),
                               ),
                             ),

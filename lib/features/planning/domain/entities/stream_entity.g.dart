@@ -4961,28 +4961,33 @@ const TwoTargetSchema = CollectionSchema(
       name: r'minimum',
       type: IsarType.string,
     ),
-    r'targetOneDescription': PropertySchema(
+    r'streamId': PropertySchema(
       id: 1,
+      name: r'streamId',
+      type: IsarType.long,
+    ),
+    r'targetOneDescription': PropertySchema(
+      id: 2,
       name: r'targetOneDescription',
       type: IsarType.string,
     ),
     r'targetOneTitle': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'targetOneTitle',
       type: IsarType.string,
     ),
     r'targetTwoDescription': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'targetTwoDescription',
       type: IsarType.string,
     ),
     r'targetTwoTitle': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'targetTwoTitle',
       type: IsarType.string,
     ),
     r'title': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'title',
       type: IsarType.string,
     )
@@ -5060,11 +5065,12 @@ void _twoTargetSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.minimum);
-  writer.writeString(offsets[1], object.targetOneDescription);
-  writer.writeString(offsets[2], object.targetOneTitle);
-  writer.writeString(offsets[3], object.targetTwoDescription);
-  writer.writeString(offsets[4], object.targetTwoTitle);
-  writer.writeString(offsets[5], object.title);
+  writer.writeLong(offsets[1], object.streamId);
+  writer.writeString(offsets[2], object.targetOneDescription);
+  writer.writeString(offsets[3], object.targetOneTitle);
+  writer.writeString(offsets[4], object.targetTwoDescription);
+  writer.writeString(offsets[5], object.targetTwoTitle);
+  writer.writeString(offsets[6], object.title);
 }
 
 TwoTarget _twoTargetDeserialize(
@@ -5076,11 +5082,12 @@ TwoTarget _twoTargetDeserialize(
   final object = TwoTarget();
   object.id = id;
   object.minimum = reader.readStringOrNull(offsets[0]);
-  object.targetOneDescription = reader.readStringOrNull(offsets[1]);
-  object.targetOneTitle = reader.readStringOrNull(offsets[2]);
-  object.targetTwoDescription = reader.readStringOrNull(offsets[3]);
-  object.targetTwoTitle = reader.readStringOrNull(offsets[4]);
-  object.title = reader.readStringOrNull(offsets[5]);
+  object.streamId = reader.readLongOrNull(offsets[1]);
+  object.targetOneDescription = reader.readStringOrNull(offsets[2]);
+  object.targetOneTitle = reader.readStringOrNull(offsets[3]);
+  object.targetTwoDescription = reader.readStringOrNull(offsets[4]);
+  object.targetTwoTitle = reader.readStringOrNull(offsets[5]);
+  object.title = reader.readStringOrNull(offsets[6]);
   return object;
 }
 
@@ -5094,7 +5101,7 @@ P _twoTargetDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
@@ -5102,6 +5109,8 @@ P _twoTargetDeserializeProp<P>(
     case 4:
       return (reader.readStringOrNull(offset)) as P;
     case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -5412,6 +5421,76 @@ extension TwoTargetQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'minimum',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterFilterCondition> streamIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'streamId',
+      ));
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterFilterCondition>
+      streamIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'streamId',
+      ));
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterFilterCondition> streamIdEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'streamId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterFilterCondition> streamIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'streamId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterFilterCondition> streamIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'streamId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterFilterCondition> streamIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'streamId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -6211,6 +6290,18 @@ extension TwoTargetQuerySortBy on QueryBuilder<TwoTarget, TwoTarget, QSortBy> {
     });
   }
 
+  QueryBuilder<TwoTarget, TwoTarget, QAfterSortBy> sortByStreamId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'streamId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterSortBy> sortByStreamIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'streamId', Sort.desc);
+    });
+  }
+
   QueryBuilder<TwoTarget, TwoTarget, QAfterSortBy>
       sortByTargetOneDescription() {
     return QueryBuilder.apply(this, (query) {
@@ -6302,6 +6393,18 @@ extension TwoTargetQuerySortThenBy
     });
   }
 
+  QueryBuilder<TwoTarget, TwoTarget, QAfterSortBy> thenByStreamId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'streamId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TwoTarget, TwoTarget, QAfterSortBy> thenByStreamIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'streamId', Sort.desc);
+    });
+  }
+
   QueryBuilder<TwoTarget, TwoTarget, QAfterSortBy>
       thenByTargetOneDescription() {
     return QueryBuilder.apply(this, (query) {
@@ -6376,6 +6479,12 @@ extension TwoTargetQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TwoTarget, TwoTarget, QDistinct> distinctByStreamId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'streamId');
+    });
+  }
+
   QueryBuilder<TwoTarget, TwoTarget, QDistinct> distinctByTargetOneDescription(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -6427,6 +6536,12 @@ extension TwoTargetQueryProperty
   QueryBuilder<TwoTarget, String?, QQueryOperations> minimumProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'minimum');
+    });
+  }
+
+  QueryBuilder<TwoTarget, int?, QQueryOperations> streamIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'streamId');
     });
   }
 

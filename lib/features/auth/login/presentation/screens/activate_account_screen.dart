@@ -1,22 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
-
 import '../../../../../core/services/db_client/isar_service.dart';
 import '../../../../../core/services/controllers/service_locator.dart';
-import '../../domain/user_model.dart';
 import '../auth_controller.dart';
 
 @RoutePage()
 class ActivateAccountScreen extends StatefulWidget {
   final String phone;
 
-  const ActivateAccountScreen({Key? key, required this.phone})
-      : super(key: key);
+  const ActivateAccountScreen({Key? key, required this.phone}) : super(key: key);
 
   @override
   State<ActivateAccountScreen> createState() => _ActivateAccountScreenState();
@@ -80,55 +75,35 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
                   // highlightPinBoxColor: Colors.redAccent,
                   // highlightColor: Colors.greenAccent,
                   onDone: (text) async {
-                    var isAuthCode = await _authController.confirmAuthCode(
-                        _authController.authCodeController.text);
+                    /// Проверка пользователя был ли он создан
+                    /// Если создан и вышел/удалил приложение
+                    /// то выводим попап окно с загрузкой данных предыдущих курсов
 
-                    // 65f322
+                    var isAuthCode = await _authController.confirmAuthCode(_authController.authCodeController.text);
 
+                    /// Авторизация студентов вуза
+                    /// студенты вуза
+                    /// проверяем код от вуза
                     if (isAuthCode['authCode'].isNotEmpty) {
                       print('create user');
                       // create user
-                      var user = await _authController.createStudent(
-                          widget.phone,
-                          _authController.authCodeController.text);
+                      var user =
+                          await _authController.createStudent(widget.phone, _authController.authCodeController.text);
 
                       isarService.saveUser(user['student']['id']);
 
                       if (context.mounted) {
-                        AutoRouter.of(context)
-                            .replace(const WelcomeScreenRoute());
+                        AutoRouter.of(context).replace(const WelcomeScreenRoute());
                       }
                     } else {
                       // print warning message
                       print('NULL isAuthCode');
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Неверный код активации'),
-                                duration: Duration(seconds: 2)));
+                            const SnackBar(content: Text('Неверный код активации'), duration: Duration(seconds: 2)));
                       }
                     }
-
-                    // var code = await _phone.getSmsCode(
-                    //     maskFormatter.getUnmaskedText());
-                    // var authResultsJSON = await _registrationStudent();
-                    // var setUserData = await _updateUser(authUserResults);
-
-                    // var authResults = await jsonDecode(authResultsJSON);
-                    // if (authResults['status'] == 'error') {
-                    //   showSnackBar(context, authResults['message']);
-                    // } else {
-                    //   // print('success'); // 2ccefd
-                    //   var userUpdateResults = _updateUser(authResultsJSON);
-                    //   // print(userUpdateResults);
-                    //   // Navigator.pushAndRemoveUntil(
-                    //   //     context,
-                    //   //     MaterialPageRoute(
-                    //   //         builder: (context) => OnboardingPage()),
-                    //   //         (r) => false);
-                    // }
                   },
-
                   defaultBorderColor: AppColor.grey2,
                   hasTextBorderColor: AppColor.accent,
                   pinBoxRadius: 5.0,
@@ -147,48 +122,6 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
       ),
     );
   }
-
-  // _registrationStudent() async {
-  //   try {
-  //     var formData = FormData.fromMap({
-  //       'formID': 'registration',
-  //       'user_id': uid,
-  //       'code': _textEditingController.text
-  //     });
-  //     var response = await Dio().post(
-  //         'https://admin.xn--80aealihac0a3ao2a.xn--p1ai/wp-content/plugins/naporoge/db.php',
-  //         data: formData);
-  //
-  //     return response.data;
-  //
-  //     // setState(() {
-  //     //   codeData = response.toString();
-  //     // });
-  //   } catch (e) {
-  //     debugPrint('_registrationStudent error: $e');
-  //   }
-  // }
-
-  // _updateUser(authUserResults) async {
-  //   Map<String, dynamic> data = jsonDecode(authUserResults);
-  //
-  //   // CollectionReference users =
-  //   // FirebaseFirestore.instance.collection('Students');
-  //   // final String uid = FirebaseAuth.instance.currentUser!.uid;
-  //
-  //   // // return users
-  //   // //     .doc(uid)
-  //   // //     .update({
-  //   // //       'time_zone': data['time_zone'],
-  //   // //       'verified_user': true,
-  //   // //     })
-  //   // //     .then((value) => print("User Updated"))
-  //   // //     .catchError((error) => print("Failed to update user: $error"));
-  //   // await users.doc(uid).update({
-  //   //   'time_zone': data['time_zone'],
-  //   //   'verified_user': true,
-  //   // });
-  // }
 
   void showSnackBar(BuildContext context, String text) {
     final snackBar = SnackBar(content: Text(text));

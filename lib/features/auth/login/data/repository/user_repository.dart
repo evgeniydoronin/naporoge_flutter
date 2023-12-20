@@ -30,7 +30,16 @@ class UserRepository {
     try {
       final response = await userApi.createStudentApi(phone, authCode);
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getStudentRequested(String phone) async {
+    try {
+      final response = await userApi.getStudentApi(phone);
+      return response.data;
+    } on DioException catch (e) {
       rethrow;
     }
   }

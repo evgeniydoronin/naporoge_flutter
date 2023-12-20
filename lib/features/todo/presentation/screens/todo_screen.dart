@@ -16,7 +16,9 @@ import '../widgets/todoItemForm.dart';
 
 List todos = [
   {
+    'user_id': 100,
     'id': 0,
+    'parent_id': null,
     'title': 'Прочесть книгу',
     'subTodos': [],
     'category': 0,
@@ -27,9 +29,9 @@ List todos = [
     'id': 1,
     'title': 'Прочесть книги, максимальное количество знаков 51 штука.',
     'subTodos': [
-      {'id': 21, 'title': 'Книга 1', 'order': 1, 'isChecked': false},
-      {'id': 22, 'title': 'Книга 2', 'order': 0, 'isChecked': false},
-      {'id': 23, 'title': 'Книга 3', 'order': 2, 'isChecked': true},
+      {'parent_id': 1, 'id': 21, 'title': 'Книга 1', 'order': 1, 'isChecked': false},
+      {'parent_id': 1, 'id': 22, 'title': 'Книга 2', 'order': 0, 'isChecked': false},
+      {'parent_id': 1, 'id': 23, 'title': 'Книга 3', 'order': 2, 'isChecked': true},
     ],
     'category': 0,
     'order': 1,
@@ -130,9 +132,7 @@ class TodoScreen extends StatelessWidget {
             onPressed: () {
               context.router.pop();
             },
-            icon: RotatedBox(
-                quarterTurns: 2,
-                child: SvgPicture.asset('assets/icons/arrow.svg')),
+            icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
           ),
           title: Text(
             'Перечень важных дел',
@@ -146,44 +146,6 @@ class TodoScreen extends StatelessWidget {
             BlocBuilder<TodoBloc, TodoState>(builder: (context, state) {
               return _todoTabs(context);
             }),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 20),
-            //   child: Row(
-            //     children: [
-            //       Expanded(
-            //         flex: 1,
-            //         child: ElevatedButton(
-            //           onPressed: () {},
-            //           style: AppLayout.accentBTNStyle,
-            //           child: Text(
-            //             'Самое важное',
-            //             style: AppFont.regularSemibold,
-            //           ),
-            //         ),
-            //       ),
-            //       const SizedBox(width: 15),
-            //       Expanded(
-            //         flex: 1,
-            //         child: ElevatedButton(
-            //           onPressed: () {},
-            //           style: ElevatedButton.styleFrom(
-            //               elevation: 0,
-            //               padding: const EdgeInsets.symmetric(
-            //                   horizontal: 20, vertical: 15),
-            //               backgroundColor: Colors.transparent,
-            //               foregroundColor: AppColor.deep,
-            //               side: BorderSide(width: 1, color: AppColor.deep),
-            //               shape: RoundedRectangleBorder(
-            //                   borderRadius: AppLayout.primaryRadius)),
-            //           child: Text(
-            //             'Тоже нужно',
-            //             style: AppFont.regularSemibold,
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             const SizedBox(height: 15),
             Expanded(child: TodoMainItems(todos: todos)),
             const SizedBox(height: 15),
@@ -204,19 +166,17 @@ class TodoScreen extends StatelessWidget {
             flex: 1,
             child: ElevatedButton(
               onPressed: () {
-                BlocProvider.of<TodoBloc>(context).add(ChangeTab());
+                BlocProvider.of<TodoBloc>(context).add(const ChangeTab());
               },
               style: BlocProvider.of<TodoBloc>(context).state.tabStatus
                   ? AppLayout.accentBTNStyle
                   : ElevatedButton.styleFrom(
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       backgroundColor: Colors.white,
                       foregroundColor: AppColor.deep,
                       side: BorderSide(width: 1, color: AppColor.deep),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: AppLayout.primaryRadius)),
+                      shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
               child: Text(
                 'Самое важное',
                 style: AppFont.regularSemibold,
@@ -228,19 +188,17 @@ class TodoScreen extends StatelessWidget {
             flex: 1,
             child: ElevatedButton(
               onPressed: () {
-                BlocProvider.of<TodoBloc>(context).add(ChangeTab());
+                BlocProvider.of<TodoBloc>(context).add(const ChangeTab());
               },
               style: BlocProvider.of<TodoBloc>(context).state.tabStatus == false
                   ? AppLayout.accentBTNStyle
                   : ElevatedButton.styleFrom(
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       backgroundColor: Colors.white,
                       foregroundColor: AppColor.deep,
                       side: BorderSide(width: 1, color: AppColor.deep),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: AppLayout.primaryRadius)),
+                      shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
               child: Text(
                 'Тоже нужно',
                 style: AppFont.regularSemibold,
@@ -305,7 +263,6 @@ class TodoMainItems extends StatefulWidget {
 }
 
 class _TodoMainItemsState extends State<TodoMainItems> {
-  // final List _items = List.generate(50, (index) => index);
   late List _items;
 
   @override
@@ -329,8 +286,7 @@ class _TodoMainItemsState extends State<TodoMainItems> {
     final Color evenItemColor = colorScheme.secondary.withOpacity(0.15);
     final Color draggableItemColor = colorScheme.secondary;
 
-    Widget proxyDecorator(
-        Widget child, int index, Animation<double> animation) {
+    Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
       return AnimatedBuilder(
         animation: animation,
         builder: (BuildContext context, Widget? child) {
@@ -355,9 +311,7 @@ class _TodoMainItemsState extends State<TodoMainItems> {
       // physics: const NeverScrollableScrollPhysics(),
       children: <Widget>[
         for (int index = 0; index < _items.length; index += 1)
-          _items[index]['subTodos'].isNotEmpty
-              ? todoItem(index, true)
-              : todoItem(index, false),
+          _items[index]['subTodos'].isNotEmpty ? todoItem(index, true) : todoItem(index, false),
       ],
       onReorder: (int oldIndex, int newIndex) {
         setState(() {
@@ -367,6 +321,7 @@ class _TodoMainItemsState extends State<TodoMainItems> {
           final item = _items.removeAt(oldIndex);
           _items.insert(newIndex, item);
         });
+        print('newIndex: $newIndex, oldIndex: $oldIndex');
       },
     );
   }
@@ -386,6 +341,8 @@ class _TodoMainItemsState extends State<TodoMainItems> {
           // A motion is a widget used to control how the pane animates.
           motion: const ScrollMotion(),
 
+          extentRatio: 0.2,
+
           // All actions are defined in the children parameter.
           children: [
             // A SlidableAction can have an icon and/or a label.
@@ -401,8 +358,9 @@ class _TodoMainItemsState extends State<TodoMainItems> {
         // The end action pane is the one at the right or the bottom side.
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
+          extentRatio: 0.2,
           // A pane can dismiss the Slidable.
-          dismissible: DismissiblePane(onDismissed: () => onDismissed(index)),
+          // dismissible: DismissiblePane(onDismissed: () => onDismissed(index)),
           children: [
             CustomSlidableAction(
               onPressed: (context) => onDismissed(index),
@@ -417,9 +375,11 @@ class _TodoMainItemsState extends State<TodoMainItems> {
         // component is not dragged.
         child: GestureDetector(
           onTap: () {
-            AutoRouter.of(context)
-                .push(TodoItemScreenRoute(todo: _items[index]));
+            AutoRouter.of(context).push(TodoItemScreenRoute(todo: _items[index]));
             print(_items[index]);
+          },
+          onLongPress: () {
+            print('edit todo');
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
@@ -437,23 +397,25 @@ class _TodoMainItemsState extends State<TodoMainItems> {
                             center: Text(
                               '35%',
                               style: TextStyle(
-                                  color: AppColor.accentBOW,
-                                  fontSize: AppFont.smaller,
-                                  fontWeight: FontWeight.w800),
+                                  color: AppColor.accentBOW, fontSize: AppFont.smaller, fontWeight: FontWeight.w800),
                             ),
                             progressColor: AppColor.accentBOW,
                             backgroundColor: AppColor.grey1,
                           ),
                         ),
                         const SizedBox(width: 20),
-                        Expanded(
-                            child: Text(_items[index]['title'].toString())),
+                        Expanded(child: Text(_items[index]['title'].toString())),
                       ],
                     )
                   : Text(_items[index]['title'].toString()),
               trailing: ReorderableDragStartListener(
                 index: index,
-                child: const Icon(Icons.dehaze),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.dehaze),
+                  ],
+                ),
               ),
             ),
           ),

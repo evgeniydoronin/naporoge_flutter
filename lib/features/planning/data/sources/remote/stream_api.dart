@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:naporoge/features/diary/domain/entities/diary_note_entity.dart';
 
@@ -215,35 +217,82 @@ class StreamApi {
     }
   }
 
-// Future<Response> getUsersApi() async {
-//   try {
-//     final Response response = await dioClient.get(Endpoints.users);
-//     return response;
-//   } catch (e) {
-//     rethrow;
-//   }
-// }
-//
-// Future<Response> updateUserApi(int id, String name, String job) async {
-//   try {
-//     final Response response = await dioClient.put(
-//       '${Endpoints.users}/$id',
-//       data: {
-//         'name': name,
-//         'job': job,
-//       },
-//     );
-//     return response;
-//   } catch (e) {
-//     rethrow;
-//   }
-// }
-//
-// Future<void> deleteUserApi(int id) async {
-//   try {
-//     await dioClient.delete('${Endpoints.users}/$id');
-//   } catch (e) {
-//     rethrow;
-//   }
-// }
+  Future<Response> getNPStreamsApi(int userId) async {
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getStreams,
+        queryParameters: {'user_id': userId},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getWeeksApi(List streams) async {
+    List streamsIds = streams.map((stream) => stream.id.toString()).toList();
+    // print('streamsIds: ${streamsIds}');
+    // print('streamsIds: ${jsonEncode(streamsIds)}');
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getWeeks,
+        queryParameters: {'streamsIds': jsonEncode(streamsIds)},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getDaysApi(List weeks) async {
+    List weeksIds = weeks.map((week) => week.id.toString()).toList();
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getDays,
+        queryParameters: {'weeksIds': jsonEncode(weeksIds)},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getDaysResultsApi(List days) async {
+    List daysIds = days.map((days) => days.id.toString()).toList();
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getDaysResults,
+        queryParameters: {'daysIds': jsonEncode(daysIds)},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getDiaryNotesApi(int userId) async {
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getDiaryNotes,
+        queryParameters: {'userId': userId},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getTwoTargetsApi(List streams) async {
+    List streamsIds = streams.map((stream) => stream.id.toString()).toList();
+    // print(streamsIds);
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getTwoTargets,
+        queryParameters: {'streamsIds': jsonEncode(streamsIds)},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

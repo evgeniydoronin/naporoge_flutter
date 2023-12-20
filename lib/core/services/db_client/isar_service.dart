@@ -26,7 +26,9 @@ class IsarService {
 
   Future<void> saveUser(int userID) async {
     final isar = await db;
-    final newUser = User()..id = userID;
+    final newUser = User()
+      ..id = userID
+      ..isLoggedIn = true;
 
     isar.writeTxnSync(() => isar.users.putSync(newUser));
   }

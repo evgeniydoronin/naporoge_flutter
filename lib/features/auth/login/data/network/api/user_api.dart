@@ -51,6 +51,18 @@ class UserApi {
     }
   }
 
+  Future<Response> getStudentApi(String phone) async {
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getStudent,
+        queryParameters: {'phone': phone},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 // Future<Response> getUsersApi() async {
 //   try {
 //     final Response response = await dioClient.get(Endpoints.users);

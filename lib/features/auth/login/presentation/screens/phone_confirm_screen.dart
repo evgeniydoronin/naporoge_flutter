@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
-
 import '../../../../../core/services/controllers/service_locator.dart';
+import '../../../../../core/utils/circular_loading.dart';
 import '../auth_controller.dart';
 
 @RoutePage()
@@ -90,11 +90,58 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                             print('_smsCode.smsCodeController');
                             print(_authController.smsCodeController.text);
 
+                            /// верификация по смс успешна
                             if (int.parse(_authController.smsCodeController.text) == widget.code) {
                               // confirmAuthCode
-                              print('code success');
-                              context.router.replace(ActivateAccountScreenRoute(phone: widget.phone));
-                            } else {
+
+                              /// Проверка
+                              /// Создавался ли пользователь с текущим номером телефона
+
+                              Map user = await _authController.getStudent(widget.phone);
+
+                              /// Пользователь создавался
+                              if (user['student'].isNotEmpty) {
+                                if (context.mounted) {
+                                  CircularLoading(context).startLoading();
+                                }
+                                // print('user id: ${user['student'][0]}');
+                                int userId = user['student'][0]['user_id'];
+
+                                /// 1. Очищаем локальную БД
+                                await _authController.clearLocalDB();
+
+                                /// 2. Получаем данные с сервера List
+                                final remoteDB = await _authController.getDBFromServer(userId);
+
+                                // print('remoteDB: $remoteDB');
+
+                                /// 3. Наполняем локальную БД
+                                await _authController.createLocalDB(remoteDB);
+
+                                /// 4. перенаправляем на главный экран
+                                if (context.mounted) {
+                                  CircularLoading(context).stopAutoRouterLoading();
+                                  context.router.replace(const DashboardScreenRoute());
+                                }
+                              }
+
+                              /// Пользователь не создавался
+                              else {
+                                /// ВАЖНО: сейчас делаю только для студентов вуза
+                                /// 1. Весрия ВУЗА
+                                /// перенаправляем на страницу активации вузовского кода
+                                if (context.mounted) {
+                                  context.router.replace(ActivateAccountScreenRoute(phone: widget.phone));
+                                }
+
+                                ///
+                                /// 2. Версия Коммерческая
+                                /// перенаправляем на создание первого дела
+                              }
+                            }
+
+                            /// неверный код смс
+                            else {
                               print('code error');
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Неверный код'), duration: Duration(seconds: 2)));

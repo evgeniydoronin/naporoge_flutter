@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/app_theme.dart';
+
 class CircularLoading {
   late BuildContext context;
 
@@ -48,6 +50,15 @@ class CircularLoading {
         ),
         backgroundColor: Colors.red,
         content: Text('handleError(error)'),
+      ),
+    );
+  }
+
+  Future<void> saveSuccess() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppColor.deep,
+        content: const Text('Успешно сохранено'),
       ),
     );
   }
