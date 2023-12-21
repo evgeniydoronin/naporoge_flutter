@@ -74,12 +74,13 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                         // print('weeksProgress index: $index');
                         // print('weeksProgress: ${weeksProgress[index]}');
                         DateTime now = DateTime.now();
-                        int currentWeek = getWeekNumber(now);
+                        // int currentWeek = getWeekNumber(now);
 
                         // add data to weekResult
                         List weekResult = [];
                         for (int i = 0; i < daysProgress.length; i++) {
                           String dayResult = '';
+                          Day day = daysProgress[i]['day'];
                           // есть результат дня
                           if (daysProgress[i]['dayResult'] != null) {
                             DayResult res = daysProgress[i]['dayResult'];
@@ -87,15 +88,9 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                           }
                           // нет результата
                           else {
-                            // неделя прошла
-                            if (currentWeek > week.weekNumber!) {
+                            /// день прошел
+                            if (day.dateAt!.isBefore(now.subtract(const Duration(days: 1)))) {
                               dayResult = 'пропуск';
-                            }
-                            // текущая неделя
-                            else if (currentWeek == week.weekNumber) {
-                              if (now.weekday > i + 1) {
-                                dayResult = 'пропуск';
-                              }
                             }
                           }
 

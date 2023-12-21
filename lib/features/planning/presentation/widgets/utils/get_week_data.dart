@@ -63,11 +63,13 @@ Future getWeekData(NPStream stream, String status) async {
     // планер открыт на первой неделе
     defaultPageIndex = 0;
 
+    bool isEmptyWeek = firstWeek.systemConfirmed ?? false;
+
     //////////////////////////////////////////
     // Формируем первую неделю с данными
     // Если первая неделя не пустая
     //////////////////////////////////////////
-    if (firstWeekCells.isNotEmpty) {
+    if (!isEmptyWeek) {
       // Дни недели по порядку
       final allWeekDays = await firstWeek.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
 
@@ -123,7 +125,8 @@ Future getWeekData(NPStream stream, String status) async {
         ]);
       }
     }
-    // Неделя пустая
+
+    /// Неделя пустая
     else {
       weeksOnPage.addAll([
         {
@@ -190,6 +193,7 @@ Future getWeekData(NPStream stream, String status) async {
       for (int cell = 0; cell < cells.length; cell++) {
         // день получаем по cells[cell]['dayId']
         Day day = week.dayBacklink.where((day) => day.id == cells[cell]['dayId']).first;
+        bool isSunday = day.dateAt!.weekday == 7 ? true : false;
 
         /// подсказка
         List? hintCellId;
@@ -230,17 +234,13 @@ Future getWeekData(NPStream stream, String status) async {
         /// не пустая неделя
         if (!isEmptyWeek) {
           if (day.completedAt != null) {
-            /// добавляем индекс заполненного периода - воскресенье
-            if (cells[cell]['cellId'][2] == 6) {
-              weekOpenedPeriod.add(cells[cell]['cellId'][0]);
-            }
             // час старта дела по плану
             String startAtHour = DateFormat('H').format(day.startAt!);
             // час завершения дела актуальный
             String completedAtHour = DateFormat('H').format(day.completedAt!);
 
-            // Час выполнения не совпадает
-            if (startAtHour != completedAtHour) {
+            /// Час выполнения не совпадает и не воскресенье
+            if (startAtHour != completedAtHour && !isSunday) {
               for (Map hour in periodHoursIndexList) {
                 // час завершения дела актуальный
                 if (hour.keys.first == completedAtHour) {
@@ -257,10 +257,32 @@ Future getWeekData(NPStream stream, String status) async {
                 }
               }
             }
-            // Если час выполнения совпадает
-            else if (startAtHour == completedAtHour) {
+
+            /// Если час выполнения совпадает и не воскресенье
+            else if (startAtHour == completedAtHour && !isSunday) {
               weekOpenedPeriod.add(cells[cell]['cellId'][0]);
               completedOnTime = true;
+            }
+
+            /// воскресенье
+            else if (isSunday) {
+              // актуальная ячейка
+              for (Map hour in periodHoursIndexList) {
+                // час завершения дела актуальный
+                if (hour.keys.first == completedAtHour) {
+                  /// находим индекс дня ячейки
+                  int gridIndex = cells[cell]['cellId'].last;
+
+                  /// Создаем новый список
+                  List newHourCellId = List.from(hour.values.first);
+                  newHourCellId.add(gridIndex);
+                  newCellId = newHourCellId;
+
+                  /// добавляем индекс заполненного периода
+                  weekOpenedPeriod.add(newHourCellId[0]);
+                }
+              }
+              completedOnTime = false;
             }
           }
 
@@ -346,37 +368,56 @@ Future getWeekData(NPStream stream, String status) async {
       if (nextWeek != null) {
         DateTime monday = nextWeek.monday!;
         DateTime sunday = nextWeek.monday!.add(const Duration(days: 6));
-        List nextWeekCells = jsonDecode(nextWeek.cells!);
 
-        /// формирование ячеек
-        for (int cell = 0; cell < nextWeekCells.length; cell++) {
-          // день получаем по cells[cell]['dayId']
-          Day day = nextWeek.dayBacklink.where((day) => day.id == nextWeekCells[cell]['dayId']).first;
+        /// будущая неделя создана пользователем
+        if (nextWeek.systemConfirmed == null) {
+          List nextWeekCells = jsonDecode(nextWeek.cells!);
 
-          /// формирование списка ячеек
-          nextCellsWeekData.addAll([
+          /// формирование ячеек
+          for (int cell = 0; cell < nextWeekCells.length; cell++) {
+            // день получаем по cells[cell]['dayId']
+            Day day = nextWeek.dayBacklink.where((day) => day.id == nextWeekCells[cell]['dayId']).first;
+
+            /// формирование списка ячеек
+            nextCellsWeekData.addAll([
+              {
+                'day_id': day.id,
+                'dateAt': day.dateAt,
+                'cellId': nextWeekCells[cell]['cellId'],
+                'start_at': DateFormat('HH:mm').format(day.startAt!),
+              }
+            ]);
+          }
+
+          /// формирование недель
+          weeksOnPage.addAll([
             {
-              'day_id': day.id,
-              'dateAt': day.dateAt,
-              'cellId': nextWeekCells[cell]['cellId'],
-              'start_at': DateFormat('HH:mm').format(day.startAt!),
+              'pageIndex': nextPageIndex,
+              'monday': monday,
+              'sunday': sunday,
+              'cellsWeekData': nextCellsWeekData,
+              'weekOpenedPeriod': [0, 1, 2],
+              'isEditable': true,
+              'weekId': nextWeek.id,
+              'week': nextWeek,
             }
           ]);
         }
 
-        /// формирование недель
-        weeksOnPage.addAll([
-          {
-            'pageIndex': nextPageIndex,
-            'monday': monday,
-            'sunday': sunday,
-            'cellsWeekData': nextCellsWeekData,
-            'weekOpenedPeriod': [0, 1, 2],
-            'isEditable': true,
-            'weekId': nextWeek.id,
-            'week': nextWeek,
-          }
-        ]);
+        /// 4я неделя при продлении
+        /// будущая неделя создана системой
+        else {
+          weeksOnPage.addAll([
+            {
+              'pageIndex': nextPageIndex,
+              'monday': monday,
+              'sunday': sunday,
+              'cellsWeekData': [],
+              'weekOpenedPeriod': [0, 1, 2],
+              'isEditable': true,
+            }
+          ]);
+        }
       }
 
       /// Будущая неделя не создана

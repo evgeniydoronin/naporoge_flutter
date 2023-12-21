@@ -2,10 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../../planning/presentation/bloc/planner_bloc.dart';
 
 @RoutePage()
 class WelcomeDescriptionScreen extends StatefulWidget {
@@ -65,7 +68,6 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
             icon: const Icon(Icons.info_outline_rounded),
             color: Colors.black,
             onPressed: () {
-              // _scaffoldKey.currentState!.openEndDrawer();
               context.router.push(const RuleOfAppScreenRoute());
             },
           ),
@@ -224,7 +226,10 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                 setState(() {
                   chewieController.pause();
                 });
-                context.router.push(StartDateSelectionScreenRoute(isBackLeading: true, isShowWeeksSelect: false));
+
+                /// reset stream start date
+                context.read<PlannerBloc>().add(const StreamStartDateChanged(''));
+                context.router.push(const StartDateSelectionScreenRoute());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.accent,

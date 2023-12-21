@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
         /// иначе на шаги создания дела
         if (isCreatedStreams) {
           if (context.mounted) {
-            AutoRouter.of(context).push(StartDateSelectionScreenRoute(isBackLeading: false, isShowWeeksSelect: true));
+            AutoRouter.of(context).push(const StartDateSelectionScreenRoute());
           }
         } else {
           if (context.mounted) {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:naporoge/features/planning/presentation/widgets/stream_description_form_widget.dart';
+import '../widgets/stream_description_form_widget.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/utils/circular_loading.dart';
@@ -82,15 +82,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     NPStream stream = snapshot.data;
-
-                    // // описание курса из БД по умолчанию
-                    // TextEditingController descriptionEditingController =
-                    //     TextEditingController(text: stream.description ?? '');
-                    //
-                    // // если были изменения описания курса - меняем данные
-                    // descriptionEditingController.text = state.courseDescription.isEmpty
-                    //     ? stream.description ?? ''
-                    //     : context.read<PlannerBloc>().state.courseDescription;
 
                     return ListView(
                       shrinkWrap: true,

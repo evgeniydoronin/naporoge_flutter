@@ -111,6 +111,7 @@ class _RejoiceBoxState extends State<RejoiceBox> {
   }
 }
 
+/// Удалось порадоваться
 Future getRejoiceBox() async {
   Map data = {'preview': false, 'required': false};
 
@@ -123,6 +124,7 @@ Future getRejoiceBox() async {
   // активируем сразу на втором курсе
   if (allStreams.length > 1) {
     data['preview'] = true;
+    data['required'] = true;
   }
   // если первый курс - выводим в субботу
   else {

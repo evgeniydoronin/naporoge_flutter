@@ -35,7 +35,8 @@ Future selectWeeks(context) async {
                         style: AppLayout.accentBTNStyle,
                         onPressed: () async {
                           // новое количество недель: _selectedWeek + 1
-                          print('selectWeeks Dialog selectedWeek: ${selectedWeek + 1}');
+                          /// сброс даты старта курса
+                          context.read<PlannerBloc>().add(const StreamStartDateChanged(''));
                           context.read<PlannerBloc>().add(StreamCourseWeeksChanged(selectedWeek + 1, true));
                           Navigator.pop(context, false);
                         },

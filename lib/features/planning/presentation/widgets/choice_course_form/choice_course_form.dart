@@ -217,6 +217,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
                             print('UPDATE STREAM');
                             if (context.mounted) {
                               var plannerBlocState = context.read<PlannerBloc>().state;
+                              print('plannerBlocState: $plannerBlocState');
 
                               /// update stream
                               await updateStream(plannerBlocState, currentStream!);
@@ -263,11 +264,23 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
     if (context.mounted) {
       CircularLoading(context).startLoading();
       var user = await isarService.getUser();
+      final isar = await isarService.db;
+      final streams = await isar.nPStreams.where().findAll();
+
+      /// количество недель курса
+      /// если в стейт не менялся,
+      /// то первый курс и по умолчанию 3 недели
+      int _weeks;
+      if (streams.isEmpty) {
+        _weeks = 3;
+      } else {
+        _weeks = state.courseWeeks;
+      }
 
       Map streamData = {
         "user_id": user.first.id,
         "start_at": state.startDate,
-        "weeks": state.courseWeeks,
+        "weeks": _weeks,
         "is_active": true,
         "course_id": state.courseId,
         "title": state.courseTitle,
@@ -291,8 +304,6 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
       if (newStream['stream']['id'] != null) {
         await streamLocalStorage.createStream(newStream);
       }
-
-      final isar = await isarService.db;
       final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
       if (context.mounted) {
@@ -309,11 +320,21 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
       CircularLoading(context).startLoading();
       var user = await isarService.getUser();
 
+      /// количество недель курса
+      /// если в стейт не менялся,
+      /// то количество недели получаем из БД
+      int _weeks = 0;
+      if (state.courseWeeks == 0) {
+        _weeks = stream.weeks!;
+      } else {
+        _weeks = state.courseWeeks;
+      }
+
       // обновляем первую неделю курса
       Map streamData = {
         "stream_id": stream.id,
         "start_at": state.startDate,
-        "weeks": state.courseWeeks,
+        "weeks": _weeks,
         "title": state.courseTitle,
         "course_id": state.courseId,
       };

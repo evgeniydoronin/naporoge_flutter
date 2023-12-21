@@ -1,11 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:isar/isar.dart';
+import 'package:naporoge/features/auth/login/domain/user_model.dart';
 import 'package:naporoge/features/more/presentation/widgets/early_termination_stream_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/services/db_client/isar_service.dart';
 import '../../../../core/utils/early_termination_stream_dialog.dart';
 import '../../../../core/utils/show_closeApp_dialog.dart';
 
@@ -364,8 +367,20 @@ class MoreScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () {
-                                context.router.push(const SplashScreenRoute());
+                              onPressed: () async {
+                                final isarService = IsarService();
+                                final isar = await isarService.db;
+                                final user = await isar.users.where().findFirst();
+
+                                /// Выход пользователя из приложения
+                                isar.writeTxnSync(() async {
+                                  user!.isLoggedIn = false;
+                                  isar.users.putSync(user);
+                                });
+
+                                if (context.mounted) {
+                                  context.router.push(const SplashScreenRoute());
+                                }
                               },
                               style: AppLayout.accentBTNStyle,
                               child: Text(

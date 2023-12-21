@@ -663,6 +663,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
     String textCell = '';
 
     if (dayData.isNotEmpty) {
+      // print('dayData: $dayData'); 12861
       Day day = dayData['day'];
       // print('dayID: ${day.id} - ${periodIndex}, ${rowIndex}, ${gridIndex}');
       DateTime dayDate = dayData['dateAt'];
@@ -697,6 +698,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
       //    'completed_at': day.completedAt != null ? DateFormat('HH:mm').format(day.completedAt!) : null,
       //    'completedOnTime': completedOnTime,
       /// }
+      ///
 
       /// День ПОДСКАЗКА
       if (dayHint != null) {
@@ -734,6 +736,7 @@ class _DayPeriodExistedCellState extends State<DayPeriodExistedCell> {
           /// completed_at: 12:45,
           /// completedOnTime: false,
           /// day: Instance of 'Day'}
+          ///
 
           /// НЕ ПОДСКАЗКА
           /// ДЕНЬ ВЫПОЛНЕН

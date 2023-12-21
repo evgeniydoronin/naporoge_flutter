@@ -258,13 +258,7 @@ class _NPCalendarState extends State<NPCalendar> {
     TextStyle style = const TextStyle(fontSize: 20);
 
     String startDateString = state.startDate;
-
-    /// TODO: настроить 3 недели по умолчанию
     int courseWeeks = state.courseWeeks;
-    // NPStream? activeNPStream = context.read<ActiveStreamBloc>().state.npStream;
-    // if (activeNPStream != null) {
-    //   courseWeeks = activeNPStream.weeks!;
-    // }
 
     DateTime startDate = DateTime.now();
 

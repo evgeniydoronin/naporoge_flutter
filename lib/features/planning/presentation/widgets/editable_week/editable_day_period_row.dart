@@ -313,11 +313,6 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                                         double min = cellWidth * i;
                                         double max = min + cellWidth;
                                         if (xGlobalPosition > min && xGlobalPosition <= max) {
-                                          // print('$periodIndex, $rowIndex, $i');
-
-                                          // newCells
-                                          //     .add([periodIndex, rowIndex, i]);
-
                                           context.read<PlannerBloc>().add(SelectCell(selectedCellIDs: [
                                                 [periodIndex, rowIndex, i]
                                               ]));
@@ -344,7 +339,7 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
                                     ),
                                   )
                                 : Container(
-                                    color: AppColor.accent.withAlpha(50),
+                                    color: const Color(0xFF00A2FF).withOpacity(0.3),
                                   );
                           },
                         );
@@ -386,8 +381,9 @@ class _EditableDayPeriodCellState extends State<EditableDayPeriodCell> {
     int rowIndex = widget.rowIndex;
     int gridIndex = widget.gridIndex;
 
-    DateTime now = DateTime.now();
-    Color cellColor = gridIndex == 6 ? const Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
+    /// воскресенье
+    bool isSunday = gridIndex == 6;
+    Color cellColor = isSunday ? const Color(0xFF00A2FF).withOpacity(0.3) : Colors.white;
 
     Color fontColor = AppColor.blk;
     Color badgeColor = AppColor.grey1.withOpacity(0);

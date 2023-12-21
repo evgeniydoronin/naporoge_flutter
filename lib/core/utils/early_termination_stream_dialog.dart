@@ -28,8 +28,7 @@ Future earlyTerminationStreamDialog(context) async {
                         // процесс создания дела
                         if (context.mounted) {
                           CircularLoading(context).stopLoading();
-                          context.router
-                              .replace(StartDateSelectionScreenRoute(isBackLeading: false, isShowWeeksSelect: true));
+                          context.router.replace(const StartDateSelectionScreenRoute());
                         }
                       },
                       style: AppLayout.accentBTNStyle,

@@ -185,14 +185,9 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     StartDateSelectionScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<StartDateSelectionScreenRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: StartDateSelectionScreen(
-          key: args.key,
-          isBackLeading: args.isBackLeading,
-          isShowWeeksSelect: args.isShowWeeksSelect,
-        ),
+        child: const StartDateSelectionScreen(),
       );
     },
     StatisticsScreenRoute.name: (routeData) {
@@ -726,46 +721,16 @@ class SplashScreenRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [StartDateSelectionScreen]
-class StartDateSelectionScreenRoute
-    extends PageRouteInfo<StartDateSelectionScreenRouteArgs> {
-  StartDateSelectionScreenRoute({
-    Key? key,
-    required bool isBackLeading,
-    required bool isShowWeeksSelect,
-    List<PageRouteInfo>? children,
-  }) : super(
+class StartDateSelectionScreenRoute extends PageRouteInfo<void> {
+  const StartDateSelectionScreenRoute({List<PageRouteInfo>? children})
+      : super(
           StartDateSelectionScreenRoute.name,
-          args: StartDateSelectionScreenRouteArgs(
-            key: key,
-            isBackLeading: isBackLeading,
-            isShowWeeksSelect: isShowWeeksSelect,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'StartDateSelectionScreenRoute';
 
-  static const PageInfo<StartDateSelectionScreenRouteArgs> page =
-      PageInfo<StartDateSelectionScreenRouteArgs>(name);
-}
-
-class StartDateSelectionScreenRouteArgs {
-  const StartDateSelectionScreenRouteArgs({
-    this.key,
-    required this.isBackLeading,
-    required this.isShowWeeksSelect,
-  });
-
-  final Key? key;
-
-  final bool isBackLeading;
-
-  final bool isShowWeeksSelect;
-
-  @override
-  String toString() {
-    return 'StartDateSelectionScreenRouteArgs{key: $key, isBackLeading: $isBackLeading, isShowWeeksSelect: $isShowWeeksSelect}';
-  }
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for

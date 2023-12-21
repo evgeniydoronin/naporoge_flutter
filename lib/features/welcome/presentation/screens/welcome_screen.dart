@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:naporoge/core/routes/app_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naporoge/features/planning/presentation/bloc/planner_bloc.dart';
+import '../../../../core/routes/app_router.dart';
 
 import '../../../../core/constants/app_theme.dart';
 
@@ -35,9 +37,7 @@ class WelcomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  SizedBox(
-                      height: 100,
-                      child: Image.asset('assets/icons/two_finger_icon.png')),
+                  SizedBox(height: 100, child: Image.asset('assets/icons/two_finger_icon.png')),
                   const SizedBox(
                     height: 15,
                   ),
@@ -89,15 +89,11 @@ class WelcomeScreen extends StatelessWidget {
                   elevation: 0,
                   backgroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 60),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: AppLayout.primaryRadius),
+                  shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
                 ),
                 child: Text(
                   'Продолжить',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.accentBOW),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: AppColor.accentBOW),
                 ),
               ),
             ),

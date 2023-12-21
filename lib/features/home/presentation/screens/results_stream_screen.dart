@@ -381,8 +381,7 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
                                                   onPressed: () async {
                                                     await selectWeeks(context);
                                                     if (context.mounted) {
-                                                      context.router.push(StartDateSelectionScreenRoute(
-                                                          isBackLeading: true, isShowWeeksSelect: false));
+                                                      context.router.push(const StartDateSelectionScreenRoute());
                                                     }
                                                   },
                                                   style: AppLayout.accentBTNStyle,

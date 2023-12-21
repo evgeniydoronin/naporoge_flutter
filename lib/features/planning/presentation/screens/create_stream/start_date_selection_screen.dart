@@ -17,10 +17,7 @@ import '../../widgets/stepper_widget.dart';
 
 @RoutePage()
 class StartDateSelectionScreen extends StatefulWidget {
-  const StartDateSelectionScreen({super.key, required this.isBackLeading, required this.isShowWeeksSelect});
-
-  final bool isBackLeading;
-  final bool isShowWeeksSelect;
+  const StartDateSelectionScreen({super.key});
 
   @override
   State<StartDateSelectionScreen> createState() => _StartDateSelectionScreenState();
@@ -28,15 +25,13 @@ class StartDateSelectionScreen extends StatefulWidget {
 
 class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
   final isarService = IsarService();
-  bool _isActivated = false;
-  late bool isBackLeading;
+  bool isActivatedBtnFirstStep = false;
+  bool isBackLeading = true;
+  String buttonDate = 'Выбрать';
 
   @override
   void initState() {
-    isBackLeading = widget.isBackLeading;
-    if (widget.isShowWeeksSelect) {
-      getScreenStart();
-    }
+    getScreenStart();
     super.initState();
   }
 
@@ -44,49 +39,61 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
   void getScreenStart() async {
     final isar = await isarService.db;
     final List streams = await isar.nPStreams.where().findAll();
-    if (streams.isNotEmpty && streams.length != 1) {
-      if (context.mounted) {
-        await selectWeeks(context);
+    // print('streams: $streams');
+    if (streams.isNotEmpty) {
+      /// первый курс есть
+      if (streams.length == 1) {
+        /// и деактивирован
+        if (!streams[0].isActive) {
+          print('первый курс есть и деактивирован');
+          if (context.mounted) {
+            setState(() {
+              // disable back button
+              isBackLeading = false;
+            });
+            await selectWeeks(context);
+          }
+        }
       }
-    } else {
-      setState(() {
-        isBackLeading = true;
-      });
+
+      /// другие курсы
+      else {
+        if (context.mounted) {
+          setState(() {
+            // disable back button
+            isBackLeading = false;
+          });
+          await selectWeeks(context);
+        }
+      }
+    }
+
+    /// первый курс не создан
+    else if (streams.isEmpty) {
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // print('widget.isShowWeeksSelect 22: ${widget.isShowWeeksSelect}');
-    // if (widget.isShowWeeksSelect) {
-    //   Future.delayed(Duration.zero, () async {
-    //     print('selectWeeks 11');
-    //     final isar = await isarService.db;
-    //
-    //     var streams = await isar.nPStreams.where().findAll();
-    //     await selectWeeks(context);
-    //     print('selectWeeks 22');
-    //   });
-    // }
-    String buttonDate = 'Выбрать';
+    int weeks = context.watch<PlannerBloc>().state.courseWeeks;
+    if (weeks == 0) {
+      context.read<PlannerBloc>().add(const StreamCourseWeeksChanged(3, false));
+    }
 
     return BlocConsumer<PlannerBloc, PlannerState>(
       listener: (context, state) {
-        print('state.startDate: ${state.startDate}');
-        _isActivated = true;
         if (state.startDate.isNotEmpty) {
           String startDateString = state.startDate;
+          int nextWeeksCount = weeks;
           DateTime startDate = DateTime.parse(startDateString);
-          DateTime endDate = startDate.add(const Duration(days: 20));
+          DateTime endDate = startDate.add(Duration(days: nextWeeksCount * 7 - 1));
           buttonDate = 'Выбрать ${DateFormat('dd.MM').format(startDate)} - ${DateFormat('dd.MM').format(endDate)}';
+          isActivatedBtnFirstStep = true;
         }
       },
       builder: (context, state) {
-        NPStream? npStream = context.watch<ActiveStreamBloc>().state.activeNpStream;
         int studentsStreams = context.watch<ActiveStreamBloc>().state.studentsStreams;
-
-        print('studentsStreams 33: $studentsStreams');
-        print('isBackLeading: $isBackLeading');
 
         return Scaffold(
           backgroundColor: AppColor.lightBG,
@@ -99,40 +106,23 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
             title: const Text('Выбор даты старта'),
             leading: isBackLeading
                 ? IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      // final isar = await isarService.db;
+                      // final List streams = await isar.nPStreams.where().findAll();
+
                       // первое дело
                       if (!context.read<PlannerBloc>().state.isNextStreamCreate) {
-                        print('object 11: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
                         context.router.navigate(const WelcomeDescriptionScreenRoute());
                       }
                       // следующее дело не создано
                       // возврат на Итоги
                       else if (studentsStreams == 0) {
-                        print('object 22: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
                         context.router.navigate(const ResultsStreamScreenRoute());
                       }
                     },
                     icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
                   )
                 : const SizedBox(),
-            // leading: studentsStreams <= 1
-            //     ? IconButton(
-            //         onPressed: () {
-            //           // первое дело
-            //           if (!context.read<PlannerBloc>().state.isNextStreamCreate) {
-            //             print('object 11: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
-            //             context.router.navigate(const WelcomeDescriptionScreenRoute());
-            //           }
-            //           // следующее дело не создано
-            //           // возврат на Итоги
-            //           else if (studentsStreams == 0) {
-            //             print('object 22: ${context.read<PlannerBloc>().state.isNextStreamCreate}');
-            //             context.router.navigate(const ResultsStreamScreenRoute());
-            //           }
-            //         },
-            //         icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
-            //       )
-            //     : const SizedBox(),
           ),
           body: Theme(
             data: Theme.of(context).copyWith(
@@ -198,7 +188,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
                     style: AppLayout.confirmBtnFullWidth,
-                    onPressed: _isActivated
+                    onPressed: isActivatedBtnFirstStep
                         ? () {
                             // закрываем все дела по умолчанию
                             context.read<ChoiceOfCourseBloc>().add(const CourseItemChanged(selectedIndex: -1));
