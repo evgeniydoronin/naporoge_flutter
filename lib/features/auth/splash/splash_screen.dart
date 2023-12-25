@@ -86,7 +86,7 @@ class _SplashScreenState extends State<SplashScreen> {
         }
         // во время прохождения
         else if (streamStarted) {
-          print('SplashScreen - после старта');
+          print('SplashScreen - во время прохождения');
 
           // текущая неделя
           int currentWeekNumber = getWeekNumber(DateTime.now());
@@ -125,6 +125,7 @@ class _SplashScreenState extends State<SplashScreen> {
               newWeekData['cells'] = [];
               newWeekData['monday'] = DateFormat('y-MM-dd').format(firstDay);
               newWeekData['weekOfYear'] = currentWeekNumber;
+              newWeekData['year'] = year;
 
               // create on server
               var createWeek = await _streamController.createWeek(newWeekData);
@@ -133,7 +134,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
               // create on local
               if (createWeek['week'] != null) {
-                createWeek['week']['weekYear'] = year;
+                // createWeek['week']['weekYear'] = year;
                 streamLocalStorage.createWeek(createWeek);
               }
             }
@@ -158,69 +159,72 @@ class _SplashScreenState extends State<SplashScreen> {
                 newWeekData['cells'] = [];
                 newWeekData['monday'] = DateFormat('y-MM-dd').format(firstDay);
                 newWeekData['weekOfYear'] = currentWeekNumber;
+                newWeekData['year'] = year;
+
+                print('newWeekData: $newWeekData');
 
                 // create on server
                 var createWeek = await _streamController.createWeek(newWeekData);
 
                 // create on local
                 if (createWeek['week'] != null) {
-                  createWeek['week']['weekYear'] = year;
+                  // createWeek['week']['weekYear'] = year;
                   streamLocalStorage.createWeek(createWeek);
                 }
               }
             }
           }
 
-          // найти текущую неделю
-          // если вторая или третья
-          // проверить на количество созданных
-          // если вторая, третья неделя имеет дубликаты
-          // отправить запрос на удаление дубликатов на сервер
-          // удалить дубликаты в локальной БД
-          // ID дубликатов недель
-          List weeksIdForDelete = [];
-          List daysIdForDelete = [];
-
-          if (week != null) {
-            // print('activeStream 1: ${activeStream.weekBacklink.length}');
-            if (currentWeekNumber == week.weekNumber) {
-              List allCurrentWeeks =
-                  await activeStream.weekBacklink.filter().weekNumberEqualTo(currentWeekNumber).findAll();
-              // print('currentWeekNumber: $currentWeekNumber');
-              Week neededWeek = allCurrentWeeks.first;
-
-              for (Week week in allCurrentWeeks) {
-                if (week != neededWeek) {
-                  weeksIdForDelete.add(week.id);
-
-                  List daysOfWeek = await week.dayBacklink.filter().findAll();
-
-                  for (Day day in daysOfWeek) {
-                    daysIdForDelete.add(day.id);
-                  }
-                }
-              }
-            }
-          }
-
-          // отправляем запрос на удаление дубликатов на сервер
-          // удаляем дубликаты в локальной БД
-          if (weeksIdForDelete.isNotEmpty) {
-            Map deleteDuplicates = {
-              'weeksIdForDelete': weeksIdForDelete,
-              'daysIdForDelete': daysIdForDelete,
-            };
-            // print('deleteDuplicates: $deleteDuplicates');
-            // delete duplicates on server
-            var resDeleteDuplicates = await _streamController.deleteDuplicatesResult(deleteDuplicates);
-
-            // если успешное удаление
-            if (resDeleteDuplicates['status'] == 'success') {
-              print(resDeleteDuplicates['data']);
-              // удаляем локальные дубли
-              await streamLocalStorage.deleteDuplicatesResult(resDeleteDuplicates['data']);
-            }
-          }
+          // // найти текущую неделю
+          // // если вторая или третья
+          // // проверить на количество созданных
+          // // если вторая, третья неделя имеет дубликаты
+          // // отправить запрос на удаление дубликатов на сервер
+          // // удалить дубликаты в локальной БД
+          // // ID дубликатов недель
+          // List weeksIdForDelete = [];
+          // List daysIdForDelete = [];
+          //
+          // if (week != null) {
+          //   // print('activeStream 1: ${activeStream.weekBacklink.length}');
+          //   if (currentWeekNumber == week.weekNumber) {
+          //     List allCurrentWeeks =
+          //         await activeStream.weekBacklink.filter().weekNumberEqualTo(currentWeekNumber).findAll();
+          //     // print('currentWeekNumber: $currentWeekNumber');
+          //     Week neededWeek = allCurrentWeeks.first;
+          //
+          //     for (Week week in allCurrentWeeks) {
+          //       if (week != neededWeek) {
+          //         weeksIdForDelete.add(week.id);
+          //
+          //         List daysOfWeek = await week.dayBacklink.filter().findAll();
+          //
+          //         for (Day day in daysOfWeek) {
+          //           daysIdForDelete.add(day.id);
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
+          //
+          // // отправляем запрос на удаление дубликатов на сервер
+          // // удаляем дубликаты в локальной БД
+          // if (weeksIdForDelete.isNotEmpty) {
+          //   Map deleteDuplicates = {
+          //     'weeksIdForDelete': weeksIdForDelete,
+          //     'daysIdForDelete': daysIdForDelete,
+          //   };
+          //   // print('deleteDuplicates: $deleteDuplicates');
+          //   // delete duplicates on server
+          //   var resDeleteDuplicates = await _streamController.deleteDuplicatesResult(deleteDuplicates);
+          //
+          //   // если успешное удаление
+          //   if (resDeleteDuplicates['status'] == 'success') {
+          //     print(resDeleteDuplicates['data']);
+          //     // удаляем локальные дубли
+          //     await streamLocalStorage.deleteDuplicatesResult(resDeleteDuplicates['data']);
+          //   }
+          // }
 
           if (context.mounted) {
             context.router.replace(const DashboardScreenRoute());

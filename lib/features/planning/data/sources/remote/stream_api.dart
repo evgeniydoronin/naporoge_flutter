@@ -88,7 +88,7 @@ class StreamApi {
   }
 
   Future<Response> createWeekApi(Map weekData) async {
-    // print('updateStreamApi: $streamData');
+    // print('createWeekApi: $weekData');
     try {
       final Response response = await dioClient.post(
         Endpoints.createWeek,

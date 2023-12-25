@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/utils/circular_loading.dart';
@@ -37,7 +38,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('Planning Screen');
+    // print('Planning Screen');
     bool isPlanningConfirmBtn = context.watch<PlannerBloc>().state.isPlanningConfirmBtn;
 
     String _description = '';
@@ -210,6 +211,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                     newWeekData['monday'] = state.editableWeekData['monday'].toString();
                                                     newWeekData['weekOfYear'] =
                                                         getWeekNumber(state.editableWeekData['monday']);
+                                                    newWeekData['year'] =
+                                                        DateFormat('y').format(state.editableWeekData['monday']);
 
                                                     var createWeek = await _streamController.createWeek(newWeekData);
 
@@ -217,8 +220,6 @@ class _PlanningScreenState extends State<PlanningScreen> {
 
                                                     // update local
                                                     if (createWeek['week'] != null) {
-                                                      createWeek['week']['weekYear'] =
-                                                          state.editableWeekData['weekYear'];
                                                       streamLocalStorage.createWeek(createWeek);
                                                     }
                                                   }
