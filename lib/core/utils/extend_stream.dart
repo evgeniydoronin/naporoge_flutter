@@ -73,7 +73,7 @@ Future expandFirstStream(context) async {
   // обновляем курс
   Map streamData = {
     "stream_id": activeStream!.id,
-    "weeks": 9,
+    "weeks": 4,
   };
 
   // print('update streamData: $streamData');

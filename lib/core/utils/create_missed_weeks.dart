@@ -17,56 +17,115 @@ Future createMissedWeeks() async {
   final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
   DateTime now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0, 0, 0);
 
+  /// недель на курсе
+  final int weeks = activeStream!.weeks!;
+
+  /// понедельник старта курса
+  DateTime streamStartAt = activeStream.startAt!;
+
+  /// понедельник последней недели курса
+  DateTime streamEndAt = streamStartAt.add(Duration(days: weeks * 7));
+
+  /// создано недель на курсе
+  List<Week> createdWeeks = await isar.weeks.where().findAll();
+
   /// определить сколько недель прошло
   /// максимальное количество пропущенных недель
-  int mayBeMissed = 9;
+  int mayBeMissed = weeks - createdWeeks.length;
   int missedWeeks = 0;
-  bool isFirstWeek = false;
 
-  /// найти последнюю созданную неделю
-  Week? lastCreatedWeek = activeStream?.weekBacklink.lastOrNull;
+  // /// первая созданная неделя
+  // Week? firstCreatedWeek = activeStream.weekBacklink.firstOrNull;
+  //
+  // /// последняя созданная неделя
+  // Week? lastCreatedWeek = activeStream.weekBacklink.lastOrNull;
 
-  /// первая неделя курса не создавалась
-  if (lastCreatedWeek == null) {
-    missedWeeks = 1;
-    isFirstWeek = true;
-  }
-
-  /// понедельник последней недели
+  /// понедельник последней созданной недели
   /// если недели не создавались
   /// берем понедельник из курса
-  final lastMonday = lastCreatedWeek != null ? lastCreatedWeek.monday : activeStream!.startAt;
+  DateTime? neededMonday;
 
-  /// определить понедельник текущей
+  /// понедельник текущей недели
   DateTime mondayOfTheWeek = findFirstDateOfTheWeek(now);
 
-  for (int i = 0; i < mayBeMissed; i++) {
-    int humanIndex = i + 1;
-    DateTime nextMonday = lastMonday!.add(Duration(days: 7 * humanIndex));
-    if (nextMonday.isAtSameMomentAs(mondayOfTheWeek)) {
-      missedWeeks = humanIndex;
+  /// недели не создавались
+  if (createdWeeks.isEmpty) {
+    // print('недели не создавались');
+
+    /// понедельник с которого требуется создать недели
+    neededMonday = streamStartAt;
+
+    /// если после завершения курса
+    /// меняем текущий понедельник на последний понедельник недели курса
+    if (now.isAfter(streamEndAt) || now.isAtSameMomentAs(streamEndAt)) {
+      mondayOfTheWeek = streamEndAt.subtract(const Duration(days: 7));
+    }
+
+    /// разница понедельника текущей недели
+    /// и понедельник для создания в неделях
+    missedWeeks = ((mondayOfTheWeek.difference(streamStartAt).inDays + 1) / 7).ceil();
+  }
+
+  /// недели создавались
+  else {
+    // print('недели создавались');
+    DateTime lastCreatedWeekMonday = createdWeeks.last.monday!;
+
+    /// пропускаем создание на текущей созданной неделе
+    if (lastCreatedWeekMonday.isAtSameMomentAs(mondayOfTheWeek)) {
+      return;
+    }
+
+    /// создаем новые недели если текущая пустая
+    else {
+      // print('создаем новые недели если текущая пустая');
+
+      /// после завершения курса
+      if (mondayOfTheWeek.isAfter(streamEndAt) || mondayOfTheWeek.isAtSameMomentAs(streamEndAt)) {
+        // print('после завершения курса');
+
+        /// понедельник с которого требуется создать недели
+        neededMonday = lastCreatedWeekMonday.add(const Duration(days: 7));
+
+        missedWeeks = mayBeMissed;
+      }
+
+      /// до завершения курса
+      else {
+        /// понедельник с которого требуется создать недели
+        neededMonday = lastCreatedWeekMonday.add(const Duration(days: 7));
+
+        /// разница понедельника текущей недели
+        /// и понедельник для создания в неделях
+        missedWeeks = ((mondayOfTheWeek.difference(lastCreatedWeekMonday).inDays) / 7).ceil();
+      }
     }
   }
 
+  // print('missedWeeks: $missedWeeks');
+
   /// количество созданных недель не больше значения по умолчанию
   /// не создаем недели после завершения курса
-  if (activeStream!.weekBacklink.length < activeStream.weeks!) {
+  if (activeStream.weekBacklink.length < activeStream.weeks!) {
     /// если есть пропущенные недели
     /// создаем их
+
     if (missedWeeks > 0) {
       for (int i = 0; i < missedWeeks; i++) {
-        int humanIndex = i + 1;
-        DateTime? monday = isFirstWeek ? lastMonday : lastMonday!.add(Duration(days: 7 * humanIndex));
+        // int humanIndex = i + 1;
+        DateTime? monday = neededMonday!.add(Duration(days: 7 * i));
         int currentWeekNumber = getWeekNumber(monday);
+
         Map newWeekData = {
           'streamId': activeStream.id,
           'cells': [],
-          'monday': DateFormat('y-MM-dd').format(monday!),
+          'monday': DateFormat('y-MM-dd').format(monday),
           'weekOfYear': currentWeekNumber,
           'year': monday.year,
         };
 
-        // print('newWeekData - $i : $newWeekData');
+        // print('newWeekData: $newWeekData');
+
         /// create on server
         var createWeek = await streamController.createWeek(newWeekData);
 

@@ -85,19 +85,10 @@ Future getWeeksProcess() async {
       DateTime monday = week.monday!;
 
       if (monday.isBefore(DateTime.now())) {
-        // все дни недели
-        List weekDays = await week.dayBacklink.filter().findAll();
-        final weekDay = await week.dayBacklink.filter().completedAtIsNotNull().startAtIsNotNull().findFirst();
-
-        // не пустая неделя
-        // есть время старта
-        // сортируем дни по порядку
-        if (weekDay != null) {
-          weekDays = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
-        }
+        // все дни недели по порядку
+        List weekDays = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
 
         List daysProgress = [];
-        List days = [];
 
         for (Day day in weekDays) {
           DayResult? dayResult = await isar.dayResults.filter().dayIdEqualTo(day.id).resultIsNotNull().findFirst();

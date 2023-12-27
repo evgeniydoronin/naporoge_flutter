@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../../../../core/routes/app_router.dart';
 import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/services/controllers/service_locator.dart';
@@ -203,7 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           print("maskFormatter.getUnmaskedText(): ${maskFormatter.getUnmaskedText()}");
                                           // для теста модератора
                                           if (maskFormatter.getUnmaskedText() == "0000000099" ||
-                                              maskFormatter.getUnmaskedText() == "0000000999") {
+                                              maskFormatter.getUnmaskedText() == "0000000999" ||
+                                              maskFormatter.getUnmaskedText() == "0000000998") {
                                             if (context.mounted) {
                                               // print('0099');
                                               context.router.push(

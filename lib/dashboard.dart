@@ -4,12 +4,62 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'features/planning/presentation/bloc/planner_bloc.dart';
 import 'core/constants/app_theme.dart';
-
 import 'core/routes/app_router.dart';
 
 @RoutePage()
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  late final AppLifecycleListener _appLifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the AppLifecycleListener class and pass callbacks
+    _appLifecycleListener = AppLifecycleListener(
+      onStateChange: _onStateChanged,
+    );
+  }
+
+  @override
+  void dispose() {
+    // Do not forget to dispose the listener
+    _appLifecycleListener.dispose();
+
+    super.dispose();
+  }
+
+  // Listen to the app lifecycle state changes
+  void _onStateChanged(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.detached:
+        _onDetached();
+      case AppLifecycleState.resumed:
+        _onResumed();
+      case AppLifecycleState.inactive:
+        _onInactive();
+      case AppLifecycleState.hidden:
+        _onHidden();
+      case AppLifecycleState.paused:
+        _onPaused();
+    }
+  }
+
+  void _onDetached() => print('detached');
+
+  void _onResumed() => context.router.replace(const SplashScreenRoute());
+
+  void _onInactive() => context.router.replace(const SplashScreenRoute());
+
+  void _onHidden() => print('hidden');
+
+  void _onPaused() => print('paused');
 
   @override
   Widget build(BuildContext context) {

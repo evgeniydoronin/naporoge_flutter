@@ -1,18 +1,14 @@
 import 'dart:ui';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:naporoge/features/todo/presentation/screens/todo_item_screen.dart';
 import '../../../../core/routes/app_router.dart';
 import '../bloc/todo_bloc.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-
 import '../../../../core/constants/app_theme.dart';
-import '../widgets/todoItemForm.dart';
+import '../widgets/todo_item_form.dart';
 
 List todos = [
   {
@@ -27,7 +23,7 @@ List todos = [
   },
   {
     'id': 1,
-    'title': 'Прочесть книги, максимальное количество знаков 51 штука.',
+    'title': 'Прочесть книги, максимальное количество знаков 51шт',
     'subTodos': [
       {'parent_id': 1, 'id': 21, 'title': 'Книга 1', 'order': 1, 'isChecked': false},
       {'parent_id': 1, 'id': 22, 'title': 'Книга 2', 'order': 0, 'isChecked': false},
@@ -380,6 +376,7 @@ class _TodoMainItemsState extends State<TodoMainItems> {
           },
           onLongPress: () {
             print('edit todo');
+            todoBottomSheet(context, _items[index], 0);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),

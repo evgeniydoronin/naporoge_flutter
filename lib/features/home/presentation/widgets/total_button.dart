@@ -32,11 +32,12 @@ class TotalButton extends StatelessWidget {
           } else {
             bottomButton = ElevatedButton(
               onPressed: () async {
-                context.router.push(const DayResultsSaveScreenRoute());
+                context.router.navigate(const DayResultsSaveScreenRoute());
                 // сброс данных стейта предыдущих значений
                 context.read<DayResultBloc>().add(const DesiresChanged(''));
                 context.read<DayResultBloc>().add(const ReluctanceChanged(''));
-                print('state345: ${context.read<DayResultBloc>().state}');
+                context.read<DayResultBloc>().add(const RejoiceChanged(''));
+                print('state345: ${context.read<DayResultBloc>().state.rejoice}');
                 // context.read<DayResultBloc>().add()
               },
               style: AppLayout.accentBowBTNStyle,

@@ -31,7 +31,7 @@ class ExpandStreamWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Продлить Дело на 6 недель?',
+                            'Продлить Дело на 1 неделю?',
                             style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(height: 5),

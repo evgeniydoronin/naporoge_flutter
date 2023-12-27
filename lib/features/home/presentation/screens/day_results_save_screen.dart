@@ -362,7 +362,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
 
                                     if (context.mounted) {
                                       CircularLoading(context).stopLoading();
-                                      context.router.replace(const HomesEmptyRouter());
+                                      context.router.replace(const DashboardScreenRoute());
                                     }
                                   }
                                 }

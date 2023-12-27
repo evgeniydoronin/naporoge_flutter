@@ -81,6 +81,8 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                         for (int i = 0; i < daysProgress.length; i++) {
                           String dayResult = '';
                           Day day = daysProgress[i]['day'];
+
+                          // print('day: ${day.dateAt}');
                           // есть результат дня
                           if (daysProgress[i]['dayResult'] != null) {
                             DayResult res = daysProgress[i]['dayResult'];

@@ -8,9 +8,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
+import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/services/db_client/isar_service.dart';
 import '../../../../core/utils/early_termination_stream_dialog.dart';
 import '../../../../core/utils/show_closeApp_dialog.dart';
+import '../../../auth/login/presentation/auth_controller.dart';
 
 final Uri _knizhka = Uri.parse('http://naporoge.ru/knizhka');
 final Uri _vk = Uri.parse('https://vk.com/razvitievoly');
@@ -56,6 +58,7 @@ class MoreScreen extends StatelessWidget {
         backgroundColor: AppColor.lightBG,
         appBar: AppBar(
           backgroundColor: AppColor.lightBG,
+          automaticallyImplyLeading: false,
           elevation: 0,
           centerTitle: true,
           title: Text(
@@ -368,15 +371,20 @@ class MoreScreen extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () async {
-                                final isarService = IsarService();
-                                final isar = await isarService.db;
-                                final user = await isar.users.where().findFirst();
+                                // final isarService = IsarService();
+                                // final isar = await isarService.db;
+                                // final user = await isar.users.where().findFirst();
+                                //
+                                // /// Выход пользователя из приложения
+                                // isar.writeTxnSync(() async {
+                                //   user!.isLoggedIn = false;
+                                //   isar.users.putSync(user);
+                                // });
 
-                                /// Выход пользователя из приложения
-                                isar.writeTxnSync(() async {
-                                  user!.isLoggedIn = false;
-                                  isar.users.putSync(user);
-                                });
+                                final authController = getIt<AuthController>();
+
+                                /// 1. Очищаем локальную БД
+                                await authController.clearLocalDB();
 
                                 if (context.mounted) {
                                   context.router.push(const SplashScreenRoute());

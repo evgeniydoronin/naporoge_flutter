@@ -18,13 +18,13 @@ class Endpoints {
   // connectTimeout
   static const Duration connectionTimeout = Duration(seconds: 60);
 
-  // User data
+  // User link
   static const String smsCode = '/code';
   static const String authCode = '/auth';
   static const String createStudent = '/create-student';
   static const String getStudent = '/get-student';
 
-  /// Stream data
+  /// Stream link
   static const String createStream = '/create-stream';
   static const String deleteStream = '/delete-stream';
   static const String deactivateStream = '/deactivate-stream';
@@ -41,6 +41,9 @@ class Endpoints {
   static const String updateDiaryNote = '/update-note';
   static const String deleteDiaryNote = '/delete-note';
   static const String allTheoryPosts = '/theories';
+
+  /// Todo
+  static const String createTodo = '/todos';
 
   /// get streams data
   static const String getStreams = '/get-streams';

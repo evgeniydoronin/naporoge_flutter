@@ -106,6 +106,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                                 }
                                 // print('user id: ${user['student'][0]}');
                                 int userId = user['student'][0]['user_id'];
+                                print('userId: $userId');
 
                                 /// 1. Очищаем локальную БД
                                 await _authController.clearLocalDB();
@@ -118,10 +119,10 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                                 /// 3. Наполняем локальную БД
                                 await _authController.createLocalDB(remoteDB);
 
-                                /// 4. перенаправляем на главный экран
+                                /// 4. перенаправляем Splash screen
                                 if (context.mounted) {
                                   CircularLoading(context).stopAutoRouterLoading();
-                                  context.router.replace(const DashboardScreenRoute());
+                                  context.router.replace(const SplashScreenRoute());
                                 }
                               }
 

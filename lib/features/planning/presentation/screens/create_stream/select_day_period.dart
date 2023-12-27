@@ -26,6 +26,7 @@ class SelectDayPeriod extends StatefulWidget {
 }
 
 class _SelectDayPeriodState extends State<SelectDayPeriod> {
+  late final AppLifecycleListener _appLifecycleListener;
   final _streamController = getIt<StreamController>();
   late final Future _getStream;
   FocusNode courseDescriptionFocusNode = FocusNode();
@@ -33,14 +34,46 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
   @override
   void initState() {
     _getStream = getActiveStream();
+    // Initialize the AppLifecycleListener class and pass callbacks
+    _appLifecycleListener = AppLifecycleListener(
+      onStateChange: _onStateChanged,
+    );
     super.initState();
   }
 
   @override
   void dispose() {
     courseDescriptionFocusNode.dispose();
+    // Do not forget to dispose the listener
+    _appLifecycleListener.dispose();
     super.dispose();
   }
+
+  // Listen to the app lifecycle state changes
+  void _onStateChanged(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.detached:
+        _onDetached();
+      case AppLifecycleState.resumed:
+        _onResumed();
+      case AppLifecycleState.inactive:
+        _onInactive();
+      case AppLifecycleState.hidden:
+        _onHidden();
+      case AppLifecycleState.paused:
+        _onPaused();
+    }
+  }
+
+  void _onDetached() => print('detached');
+
+  void _onResumed() => context.router.replace(const SplashScreenRoute());
+
+  void _onInactive() => context.router.replace(const SplashScreenRoute());
+
+  void _onHidden() => print('hidden');
+
+  void _onPaused() => print('paused');
 
   Future getActiveStream() async {
     final storage = StreamLocalStorage();
