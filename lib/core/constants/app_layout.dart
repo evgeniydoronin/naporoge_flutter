@@ -23,6 +23,14 @@ class AppLayout {
       backgroundColor: AppColor.accent,
       shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius));
 
+  static ButtonStyle confirmBtnFullWidth = ElevatedButton.styleFrom(
+    shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
+    backgroundColor: AppColor.accent,
+    foregroundColor: Colors.white,
+    minimumSize: const Size(double.infinity, 60),
+    textStyle: const TextStyle(fontSize: 18),
+  );
+
   static BoxDecoration boxDecorationShadowBGBorderNone = BoxDecoration(
     borderRadius: AppLayout.primaryRadius,
     boxShadow: [

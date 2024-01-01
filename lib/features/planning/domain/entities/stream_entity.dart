@@ -26,6 +26,7 @@ class Week {
   Id? id;
   int? streamId;
   int? weekNumber;
+  int? weekYear;
   bool? systemConfirmed;
   bool? userConfirmed;
   String? progress;

@@ -198,8 +198,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
+                    style: AppLayout.confirmBtnFullWidth,
                     onPressed: _isActivated
                         ? () {
                             // закрываем все дела по умолчанию
@@ -211,7 +210,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                       padding: const EdgeInsets.all(15.0),
                       child: Text(
                         buttonDate,
-                        style: const TextStyle(fontSize: 18),
+                        // style: const TextStyle(fontSize: 18),
                       ),
                     ),
                   ),

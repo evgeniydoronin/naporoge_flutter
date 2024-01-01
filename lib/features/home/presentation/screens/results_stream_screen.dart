@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:isar/isar.dart';
+import 'package:naporoge/features/home/presentation/widgets/expand_stream_widget.dart';
 import 'package:naporoge/features/planning/presentation/bloc/planner_bloc.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/db_client/isar_service.dart';
+import '../../../../core/utils/extend_stream.dart';
 import '../../../../core/utils/select_next_stream_weeks.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
 
@@ -41,7 +43,7 @@ Future<Map> getTotalResultsStream() async {
     daysIdCompleted.addAll(daysInWeek);
   }
 
-  print('daysIdCompleted: $daysIdCompleted');
+  // print('daysIdCompleted: $daysIdCompleted');
 
   ///////////////////////////////
   // Результат выполнения дня
@@ -352,46 +354,11 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
                         Column(
                           children: [
                             IntrinsicHeight(
-                              child: Row(
+                              child: Column(
                                 children: [
-                                  // Expanded(
-                                  //   child: Container(
-                                  //     padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                                  //     decoration: AppLayout.boxDecorationOpacityShadowBG,
-                                  //     child: Column(
-                                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                                  //       children: [
-                                  //         Text(
-                                  //           'Продлить Дело на 6 недель?',
-                                  //           style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
-                                  //         ),
-                                  //         const SizedBox(height: 5),
-                                  //         Text(
-                                  //           'Закрепите полезные привычки',
-                                  //           style: TextStyle(fontSize: AppFont.smaller, fontWeight: FontWeight.normal),
-                                  //         ),
-                                  //         const SizedBox(height: 20),
-                                  //         Row(
-                                  //           children: [
-                                  //             Expanded(
-                                  //               child: ElevatedButton(
-                                  //                 onPressed: () {},
-                                  //                 style: AppLayout.accentBTNStyle,
-                                  //                 child: Text(
-                                  //                   'Продлить',
-                                  //                   style: AppFont.regularSemibold,
-                                  //                   overflow: TextOverflow.ellipsis,
-                                  //                 ),
-                                  //               ),
-                                  //             ),
-                                  //           ],
-                                  //         ),
-                                  //       ],
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                  // const SizedBox(width: 20),
-                                  Expanded(
+                                  const ExpandStreamWidget(),
+                                  Flexible(
+                                    flex: 1,
                                     child: Container(
                                       padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                                       decoration: AppLayout.boxDecorationOpacityShadowBG,

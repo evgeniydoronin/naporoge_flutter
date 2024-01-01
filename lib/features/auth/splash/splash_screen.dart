@@ -90,6 +90,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
           // текущая неделя
           int currentWeekNumber = getWeekNumber(DateTime.now());
+          // меняем год на следующий,
+          // если на стыке года
+          int year = DateTime.now().year;
+          // if (currentWeekNumber == 1) {
+          //   year++;
+          // }
 
           Week? week = activeStream.weekBacklink.where((week) => week.weekNumber == currentWeekNumber).firstOrNull;
 
@@ -127,6 +133,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
               // create on local
               if (createWeek['week'] != null) {
+                createWeek['week']['weekYear'] = year;
                 streamLocalStorage.createWeek(createWeek);
               }
             }
@@ -157,6 +164,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
                 // create on local
                 if (createWeek['week'] != null) {
+                  createWeek['week']['weekYear'] = year;
                   streamLocalStorage.createWeek(createWeek);
                 }
               }

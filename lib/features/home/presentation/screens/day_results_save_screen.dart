@@ -351,7 +351,6 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
 
                                     // save on local
                                     await streamLocalStorage.saveDayResult(newDayResult);
-                                    // print(newDayResult);
 
                                     if (context.mounted) {
                                       CircularLoading(context).stopLoading();

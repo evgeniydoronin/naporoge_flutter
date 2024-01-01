@@ -29,6 +29,7 @@ class Endpoints {
   static const String deactivateStream = '/deactivate-stream';
   static const String createNextStream = '/create-next-stream';
   static const String updateStream = '/update-stream';
+  static const String expandStream = '/expand-stream';
   static const String createWeek = '/create-week';
   static const String updateWeek = '/update-week';
   static const String updateWeekProgress = '/update-week-progress';

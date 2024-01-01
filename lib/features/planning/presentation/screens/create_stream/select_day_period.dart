@@ -246,19 +246,27 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                                   : stream.description,
                                             };
 
-                                            Map weekData = {
-                                              "streamId": stream.id,
-                                              "cells": state.finalCellIDs,
-                                              "monday": stream.startAt.toString(),
-                                              "weekOfYear": getWeekNumber(stream.startAt),
-                                            };
-
                                             // print('weekData: ${jsonEncode(weekData)}');
 
                                             // update on server
                                             // update stream
                                             var updatedStream = await _streamController.updateStream(streamData);
+
                                             // create week
+                                            int year = DateTime.now().year;
+                                            int wNum = getWeekNumber(stream.startAt);
+
+                                            // меняем номер недели на 1,
+                                            // если на стыке года
+                                            if (wNum == 1) {
+                                              year++;
+                                            }
+                                            Map weekData = {
+                                              "streamId": stream.id,
+                                              "cells": state.finalCellIDs,
+                                              "monday": stream.startAt.toString(),
+                                              "weekOfYear": wNum,
+                                            };
                                             var createWeek = await _streamController.createWeek(weekData);
                                             // //
                                             // print('createWeek: $createWeek');
@@ -267,8 +275,10 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                             // update local
                                             if (updatedStream['stream']['id'] != null) {
                                               // print('newStream: $updatedStream');
-                                              print('context.router.replaceRoute(const DashboardScreenRoute())');
+
                                               streamLocalStorage.updateStream(updatedStream);
+                                              createWeek['week']['weekYear'] = year;
+
                                               streamLocalStorage.createWeek(createWeek);
                                               if (context.mounted) {
                                                 CircularLoading(context).stopLoading();
@@ -278,7 +288,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                           }
                                         }
                                       },
-                                      style: AppLayout.accentBTNStyle,
+                                      style: AppLayout.confirmBtnFullWidth,
                                       child: Text(
                                         'План мне подходит',
                                         style: AppFont.largeSemibold,

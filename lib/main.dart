@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'core/constants/app_theme.dart';
 import 'features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
 import 'features/diary/presentation/bloc/diary_bloc.dart';
 import 'features/home/presentation/bloc/save_day_result/day_result_bloc.dart';
@@ -40,7 +41,14 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
+          useMaterial3: false,
           primarySwatch: Colors.blue,
+          dialogTheme: DialogTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
+            titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColor.blk),
+          ),
         ),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

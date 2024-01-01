@@ -52,6 +52,15 @@ class StreamRepository {
     }
   }
 
+  Future expandStreamRequested(Map data) async {
+    try {
+      final response = await streamApi.expandStreamApi(data);
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future createWeekRequested(Map data) async {
     try {
       final response = await streamApi.createWeekApi(data);

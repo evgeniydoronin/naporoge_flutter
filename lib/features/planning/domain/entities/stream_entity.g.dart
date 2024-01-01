@@ -2313,6 +2313,11 @@ const WeekSchema = CollectionSchema(
       id: 5,
       name: r'weekNumber',
       type: IsarType.long,
+    ),
+    r'weekYear': PropertySchema(
+      id: 6,
+      name: r'weekYear',
+      type: IsarType.long,
     )
   },
   estimateSize: _weekEstimateSize,
@@ -2376,6 +2381,7 @@ void _weekSerialize(
   writer.writeBool(offsets[3], object.systemConfirmed);
   writer.writeBool(offsets[4], object.userConfirmed);
   writer.writeLong(offsets[5], object.weekNumber);
+  writer.writeLong(offsets[6], object.weekYear);
 }
 
 Week _weekDeserialize(
@@ -2392,6 +2398,7 @@ Week _weekDeserialize(
   object.systemConfirmed = reader.readBoolOrNull(offsets[3]);
   object.userConfirmed = reader.readBoolOrNull(offsets[4]);
   object.weekNumber = reader.readLongOrNull(offsets[5]);
+  object.weekYear = reader.readLongOrNull(offsets[6]);
   return object;
 }
 
@@ -2413,6 +2420,8 @@ P _weekDeserializeProp<P>(
     case 4:
       return (reader.readBoolOrNull(offset)) as P;
     case 5:
+      return (reader.readLongOrNull(offset)) as P;
+    case 6:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3055,6 +3064,74 @@ extension WeekQueryFilter on QueryBuilder<Week, Week, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> weekYearIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'weekYear',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> weekYearIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'weekYear',
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> weekYearEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weekYear',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> weekYearGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weekYear',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> weekYearLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weekYear',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterFilterCondition> weekYearBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weekYear',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension WeekQueryObject on QueryBuilder<Week, Week, QFilterCondition> {}
@@ -3202,6 +3279,18 @@ extension WeekQuerySortBy on QueryBuilder<Week, Week, QSortBy> {
       return query.addSortBy(r'weekNumber', Sort.desc);
     });
   }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortByWeekYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekYear', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> sortByWeekYearDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekYear', Sort.desc);
+    });
+  }
 }
 
 extension WeekQuerySortThenBy on QueryBuilder<Week, Week, QSortThenBy> {
@@ -3288,6 +3377,18 @@ extension WeekQuerySortThenBy on QueryBuilder<Week, Week, QSortThenBy> {
       return query.addSortBy(r'weekNumber', Sort.desc);
     });
   }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenByWeekYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekYear', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Week, Week, QAfterSortBy> thenByWeekYearDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekYear', Sort.desc);
+    });
+  }
 }
 
 extension WeekQueryWhereDistinct on QueryBuilder<Week, Week, QDistinct> {
@@ -3326,6 +3427,12 @@ extension WeekQueryWhereDistinct on QueryBuilder<Week, Week, QDistinct> {
   QueryBuilder<Week, Week, QDistinct> distinctByWeekNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'weekNumber');
+    });
+  }
+
+  QueryBuilder<Week, Week, QDistinct> distinctByWeekYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weekYear');
     });
   }
 }
@@ -3370,6 +3477,12 @@ extension WeekQueryProperty on QueryBuilder<Week, Week, QQueryProperty> {
   QueryBuilder<Week, int?, QQueryOperations> weekNumberProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'weekNumber');
+    });
+  }
+
+  QueryBuilder<Week, int?, QQueryOperations> weekYearProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weekYear');
     });
   }
 }

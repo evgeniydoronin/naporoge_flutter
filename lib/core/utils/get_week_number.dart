@@ -6,5 +6,5 @@ int getWeekNumber(date) {
   }
 
   final firstJan = DateTime(date.year, 1, 1);
-  return weeksBetween(firstJan, date);
+  return weeksBetween(firstJan, date) == 0 ? 1 : weeksBetween(firstJan, date);
 }

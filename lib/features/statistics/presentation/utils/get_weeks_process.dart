@@ -24,37 +24,9 @@ Future getWeeksProcess() async {
 
   // текущая неделя и все предыдущие
   for (Week week in stream!.weekBacklink) {
-    // прошедшие недели
-    if (week.weekNumber! <= currentWeekNumber) {
-      // все дни недели
-      List weekDays = await week.dayBacklink.filter().findAll();
-      final weekDay = await week.dayBacklink.filter().completedAtIsNotNull().startAtIsNotNull().findFirst();
-
-      // не пустая неделя
-      // есть время старта
-      // сортируем дни по порядку
-      if (weekDay != null) {
-        weekDays = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
-      }
-
-      List daysProgress = [];
-      List days = [];
-
-      for (Day day in weekDays) {
-        DayResult? dayResult = await isar.dayResults.filter().dayIdEqualTo(day.id).resultIsNotNull().findFirst();
-        daysProgress.addAll([
-          {'day': day, 'dayResult': dayResult}
-        ]);
-        // print('dayResult: $dayResult, day: ${day.startAt}');
-      }
-
-      weeksData.addAll([
-        {'week': week, 'daysProgress': daysProgress, 'weekResultsSave': true}
-      ]);
-    }
     // будущая неделя
     // если открывается экран Статистики до старта курса
-    else {
+    if (streamStatus['status'] == 'before') {
       // все дни недели
       List weekDays = await week.dayBacklink.filter().findAll();
       final weekDay = await week.dayBacklink.filter().completedAtIsNotNull().startAtIsNotNull().findFirst();
@@ -79,6 +51,34 @@ Future getWeeksProcess() async {
 
       weeksData.addAll([
         {'week': week, 'daysProgress': daysProgress, 'weekResultsSave': false}
+      ]);
+    }
+    // прошедшие недели
+    else {
+      // все дни недели
+      List weekDays = await week.dayBacklink.filter().findAll();
+      final weekDay = await week.dayBacklink.filter().completedAtIsNotNull().startAtIsNotNull().findFirst();
+
+      // не пустая неделя
+      // есть время старта
+      // сортируем дни по порядку
+      if (weekDay != null) {
+        weekDays = await week.dayBacklink.filter().sortByStartAt().thenByStartAt().findAll();
+      }
+
+      List daysProgress = [];
+      List days = [];
+
+      for (Day day in weekDays) {
+        DayResult? dayResult = await isar.dayResults.filter().dayIdEqualTo(day.id).resultIsNotNull().findFirst();
+        daysProgress.addAll([
+          {'day': day, 'dayResult': dayResult}
+        ]);
+        // print('dayResult: $dayResult, day: ${day.startAt}');
+      }
+
+      weeksData.addAll([
+        {'week': week, 'daysProgress': daysProgress, 'weekResultsSave': true}
       ]);
     }
   }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 
+import '../../../../../core/services/db_client/isar_service.dart';
 import '../../../../../core/utils/get_actual_student_day.dart';
 import '../../../../../core/utils/get_week_number.dart';
 import '../../../domain/entities/stream_entity.dart';
@@ -156,42 +157,45 @@ Future getWeekData(NPStream stream, String status) async {
         // DateTime firstDay = DateTime(now.year, now.month, now.day - daysOfWeek);
         // DateTime lastDay = firstDay.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
-        Week? lastWeek;
-
         // находим последнюю неделю с созданными днями
         // первую неделю i == 0 не проверяем
-        getLastWeekWithDayData(int index) {
-          Week? lastWeek;
-          int i = 0;
-          int weeks = stream.weekBacklink.length;
+        // getLastWeekWithDayData(int index) {
+        //   Week? lastWeek;
+        //   int i = 0;
+        //   int weeks = stream.weekBacklink.length;
+        //
+        //   // print('weeks 55: $weeks');
+        //   // print('streamFirstWeek 55: $streamFirstWeek');
+        //
+        //   while (i < weeks) {
+        //     int index = weeks - 1;
+        //     Week? _lastWeek = stream.weekBacklink.elementAt(index);
+        //
+        //     // последняя неделя создана пользователем
+        //     if (_lastWeek.userConfirmed != null) {
+        //       if (_lastWeek.userConfirmed!) {
+        //         // текущая пустая неделя не раньше
+        //         // искомой с подсказками
+        //         if (week.id! > _lastWeek.id!) {
+        //           lastWeek = _lastWeek;
+        //           // возвращаем созданную пользователем неделю
+        //           return _lastWeek;
+        //         }
+        //       }
+        //     }
+        //
+        //     weeks--;
+        //   }
+        //
+        //   return lastWeek;
+        // }
 
-          while (i < weeks) {
-            int index = weeks - 1;
-            Week? _lastWeek = stream.weekBacklink.elementAt(index);
+        // // первую неделю i == 0 не проверяем
+        // lastWeek = getLastWeekWithDayData(i);
 
-            // последняя неделя создана пользователем
-            if (_lastWeek.userConfirmed != null) {
-              if (_lastWeek.userConfirmed!) {
-                // текущая пустая неделя не раньше
-                // искомой с подсказками
-                if (week.id! > _lastWeek.id!) {
-                  lastWeek = _lastWeek;
-                  // возвращаем созданную пользователем неделю
-                  return _lastWeek;
-                }
-              }
-            }
-
-            weeks--;
-          }
-
-          return lastWeek;
-        }
-
-        // первую неделю i == 0 не проверяем
-        lastWeek = getLastWeekWithDayData(i);
-
-        print('lastWeek: ${lastWeek?.id}');
+        Week? lastWeek;
+        List<Week>? confirmedWeeks = await stream.weekBacklink.filter().userConfirmedEqualTo(true).findAll();
+        lastWeek = confirmedWeeks.lastOrNull;
 
         //////////////////////////////////////
         // Подсказки из предыдущей недели

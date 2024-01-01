@@ -175,7 +175,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
                   },
                 ),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
+                  style: AppLayout.confirmBtnFullWidth,
                   onPressed: isActivated
                       ? () async {
                           // print('state 22: $state');

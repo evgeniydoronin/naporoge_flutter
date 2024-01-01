@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/utils/circular_loading.dart';
+import '../../../../core/utils/get_week_number.dart';
 import '../../../../core/utils/show_closeApp_dialog.dart';
 import '../stream_controller.dart';
 import '../widgets/week_planning_widget.dart';
@@ -207,14 +208,17 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                     newWeekData['streamId'] = stream.id;
                                                     newWeekData['cells'] = selectedCells;
                                                     newWeekData['monday'] = state.editableWeekData['monday'].toString();
-                                                    newWeekData['weekOfYear'] = state.editableWeekData['weekOfYear'];
+                                                    newWeekData['weekOfYear'] =
+                                                        getWeekNumber(state.editableWeekData['monday']);
 
                                                     var createWeek = await _streamController.createWeek(newWeekData);
 
-                                                    // print('createWeek: $createWeek');
+                                                    print('createWeek: $createWeek');
 
                                                     // update local
                                                     if (createWeek['week'] != null) {
+                                                      createWeek['week']['weekYear'] =
+                                                          state.editableWeekData['weekYear'];
                                                       streamLocalStorage.createWeek(createWeek);
                                                     }
                                                   }

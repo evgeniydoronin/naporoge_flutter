@@ -30,13 +30,21 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
   final PageController pageController = PageController(initialPage: 0);
   final _streamController = getIt<StreamController>();
 
-  final List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
+  late int weeks;
 
-  // List<FocusNode> focusList = [FocusNode(), FocusNode(), FocusNode()];
-  List<TextEditingController> progress = [TextEditingController(), TextEditingController(), TextEditingController()];
+  @override
+  void initState() {
+    weeks = 3;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
+    // List<TextEditingController> progress = [TextEditingController(), TextEditingController(), TextEditingController()];
+    List<GlobalKey<FormState>> formKeys = List.generate(weeks, (index) => GlobalKey<FormState>());
+    List<TextEditingController> progress = List.generate(weeks, (index) => TextEditingController());
+
     return FutureBuilder(
       future: getWeeksProcess(),
       builder: (context, snapshot) {
@@ -55,6 +63,7 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                       onPageChanged: (int page) async {
                         setState(() {
                           activePage = page;
+                          weeks = weeksProgress.length;
                         });
                         // FocusScope.of(context).requestFocus(focusList[page]);
                       },
@@ -64,6 +73,8 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                         List daysProgress = weekData['daysProgress'];
                         // progress[index] = TextEditingController(text: week.progress);
 
+                        print('weeksProgress index: $index');
+                        print('weeksProgress: ${weeksProgress[index]}');
                         DateTime now = DateTime.now();
                         int currentWeek = getWeekNumber(now);
 
