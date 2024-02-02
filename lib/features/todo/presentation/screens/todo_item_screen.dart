@@ -2,80 +2,100 @@ import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../../core/services/controllers/service_locator.dart';
+import '../../../../core/services/db_client/isar_service.dart';
+import '../../../../core/utils/circular_loading.dart';
+import '../../../../core/utils/show_closeApp_dialog.dart';
+import '../../data/models/todo_model.dart';
+import '../../domain/entities/todo_entity.dart';
 
 import '../../../../core/constants/app_theme.dart';
+import '../bloc/sub_todos/sub_todo_bloc.dart';
+import '../bloc/todos/todo_bloc.dart';
+import '../todo_controller.dart';
 import '../widgets/todo_item_form.dart';
 
 @RoutePage()
 class TodoItemScreen extends StatelessWidget {
-  const TodoItemScreen({super.key, @pathParam required this.todo});
+  const TodoItemScreen({super.key, required this.todo});
 
-  final dynamic todo;
+  final TodoEntity todo;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.lightBG,
-      appBar: AppBar(
-        backgroundColor: AppColor.lightBG,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            context.router.pop();
-          },
-          icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
-        ),
-        title: Text(
-          'Дело',
-          style: AppFont.scaffoldTitleDark,
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 15),
-              GestureDetector(
-                onTap: () {
-                  todoBottomSheet(context, todo, null);
-                },
-                child: Text(
-                  todo['title'],
-                  style: TextStyle(fontSize: AppFont.regular),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TodoItems(parentTodo: todo),
-              const SizedBox(height: 10),
-              TextButton(
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                  onPressed: () {
-                    todoBottomSheet(context, null, todo);
-                  },
-                  child: Row(
-                    children: const [
-                      Icon(Icons.add),
-                      SizedBox(width: 5),
-                      Text('Добавить подзадачу'),
-                    ],
-                  )),
-            ],
+    return BlocBuilder<TodoBloc, TodoState>(
+      builder: (context, state) {
+        int parentId = 0;
+        String? _title;
+        if (state is TodosLoaded) {
+          parentId = state.activeCategory;
+          _title = state.todos.where((el) => el.id == todo.id).first.title;
+        }
+        return Scaffold(
+          backgroundColor: AppColor.lightBG,
+          appBar: AppBar(
+            backgroundColor: AppColor.lightBG,
+            elevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: () {
+                /// обновление стейта категории
+                context.read<TodoBloc>().add(FilterTodos(parentId));
+                context.router.pop();
+              },
+              icon: RotatedBox(quarterTurns: 2, child: SvgPicture.asset('assets/icons/arrow.svg')),
+            ),
+            title: Text(
+              'Дело',
+              style: AppFont.scaffoldTitleDark,
+            ),
           ),
-        ),
-      ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    todoBottomSheet(context, todo, null);
+                  },
+                  child: Text(
+                    '${_title}, id: ${todo.id}',
+                    style: TextStyle(fontSize: AppFont.regular),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Expanded(child: TodoItems(parentTodo: todo)),
+                TextButton(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: () {
+                      todoBottomSheet(context, null, todo.id);
+                    },
+                    child: const Row(
+                      children: [
+                        Icon(Icons.add),
+                        SizedBox(width: 5),
+                        Text('Добавить подзадачу'),
+                      ],
+                    )),
+                const SizedBox(height: 25),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
 class TodoItems extends StatefulWidget {
-  final Map parentTodo;
+  final TodoEntity parentTodo;
 
   const TodoItems({Key? key, required this.parentTodo}) : super(key: key);
 
@@ -84,28 +104,10 @@ class TodoItems extends StatefulWidget {
 }
 
 class _TodoItemsState extends State<TodoItems> {
-  // final List _items = List.generate(50, (index) => index);
-  late Map parentTodo;
-  late List items;
-
-  @override
-  void initState() {
-    parentTodo = widget.parentTodo;
-    items = widget.parentTodo['subTodos'];
-
-    // sort by order
-    items.sort((a, b) {
-      int indexA = (a['order'] ?? 0);
-      int indexB = (b['order'] ?? 0);
-
-      return (indexA > indexB) ? 1 : 0;
-    });
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    int catId = int.parse(context.read<TodoBloc>().state.props.last.toString());
+
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color oddItemColor = colorScheme.secondary.withOpacity(0.05);
     final Color evenItemColor = colorScheme.secondary.withOpacity(0.15);
@@ -130,98 +132,128 @@ class _TodoItemsState extends State<TodoItems> {
       );
     }
 
-    return ReorderableListView(
-      proxyDecorator: proxyDecorator,
-      shrinkWrap: true,
-      buildDefaultDragHandles: false,
-      children: <Widget>[
-        for (int index = 0; index < items.length; index += 1)
-          Container(
-            key: ValueKey(items[index]),
-            child: Slidable(
-              // Specify a key if the Slidable is dismissible.
-              key: ValueKey(items[index]),
+    return BlocBuilder<SubTodoBloc, SubTodoState>(
+      builder: (context, state) {
+        if (state is SubTodosLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is SubTodosLoaded) {
+          // Фильтрация подзадач по parentId
+          final subtasks = state.todos.where((todo) => todo.parentId == widget.parentTodo.id).toList();
 
-              // The end action pane is the one at the right or the bottom side.
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                extentRatio: 0.2,
-                // A pane can dismiss the Slidable.
-                // dismissible: DismissiblePane(onDismissed: () => onDismissed(index)),
-                children: [
-                  CustomSlidableAction(
-                    onPressed: (context) => onDismissed(index),
-                    backgroundColor: AppColor.accentBOW,
-                    foregroundColor: Colors.white,
-                    child: SvgPicture.asset('assets/icons/trash.svg'),
-                  ),
-                ],
-              ),
+          return ReorderableListView(
+            proxyDecorator: proxyDecorator,
+            shrinkWrap: true,
+            // buildDefaultDragHandles: false,
+            onReorder: (int oldIndex, int newIndex) {
+              if (newIndex > oldIndex) {
+                newIndex -= 1;
+              }
+              context.read<SubTodoBloc>().add(UpdateSubTodoOrder(oldIndex, newIndex, widget.parentTodo.id!));
+            },
+            children: List.generate(subtasks.length, (index) {
+              final todo = subtasks[index];
 
-              // The child of the Slidable is what the user sees when the
-              // component is not dragged.
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Row(
-                  children: [
-                    SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: Checkbox(
-                        fillColor: MaterialStateProperty.all<Color>(AppColor.accent),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        value: items[index]['isChecked'],
-                        onChanged: (bool? value) {
-                          setState(() {
-                            items[index]['isChecked'] = value! ? true : false;
-                          });
+              return Container(
+                key: ValueKey(todo.id),
+                margin: const EdgeInsets.only(left: 0, right: 0, bottom: 5),
+                child: Slidable(
+                  // Specify a key if the Slidable is dismissible.
+                  key: ValueKey(todo.id),
+
+                  // The end action pane is the one at the right or the bottom side.
+                  endActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    extentRatio: 0.2,
+                    // A pane can dismiss the Slidable.
+                    // dismissible: DismissiblePane(onDismissed: () => onDismissed(index)),
+                    children: [
+                      CustomSlidableAction(
+                        onPressed: (context) async {
+                          CircularLoading(context).deleteTodo(todo, subtasks, index, catId);
+
+                          // /// обновление стейта подкатегории
+                          // setState(() {
+                          //   //refresh UI after deleting element from list
+                          // });
                         },
+                        backgroundColor: AppColor.accentBOW,
+                        foregroundColor: Colors.white,
+                        child: SvgPicture.asset('assets/icons/trash.svg'),
                       ),
+                    ],
+                  ),
+
+                  // The child of the Slidable is what the user sees when the
+                  // component is not dragged.
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Checkbox(
+                            value: todo.isChecked,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+                            onChanged: (bool? value) async {
+                              final isarService = IsarService();
+                              final isar = await isarService.db;
+                              final todoController = getIt<TodoController>();
+
+                              TodoModel remoteTodo = TodoModel();
+                              TodoEntity localTodo = TodoEntity();
+
+                              remoteTodo.id = todo.id;
+                              remoteTodo.isChecked = value;
+
+                              /// Update on server
+                              TodoModel updatedTodoModel = await todoController.updateTodoOnServer(remoteTodo);
+
+                              /// Update on local
+                              localTodo.id = updatedTodoModel.id;
+                              localTodo.isChecked = updatedTodoModel.isChecked;
+
+                              await todoController.updateTodoOnLocal(localTodo);
+
+                              if (context.mounted) {
+                                context.read<SubTodoBloc>().add(SubLoadTodos(todo.parentId!));
+                              }
+                            },
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          fit: FlexFit.tight,
+                          child: BlocBuilder<SubTodoBloc, SubTodoState>(
+                            builder: (context, state) {
+                              return GestureDetector(
+                                  onTap: () {
+                                    // context.read<SubTodoBloc>().add(GetSubTodosByParent(parentId: todo.id!));
+                                  },
+                                  onLongPress: () {
+                                    print('edit todo');
+                                    todoBottomSheet(context, todo, null);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 15, left: 10),
+                                    child: Text('${todo.title!}, id: ${todo.id}', textAlign: TextAlign.start),
+                                  ));
+                            },
+                          ),
+                        ),
+                        const Icon(Icons.drag_handle),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () {
-                        todoBottomSheet(context, items[index], null);
-                      },
-                      child: Text(
-                        items[index]['title'],
-                        style: TextStyle(fontSize: AppFont.small),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                trailing: ReorderableDragStartListener(
-                  index: index,
-                  child: const Icon(Icons.dehaze),
-                ),
-              ),
-              // child: ListTile(title: Text(items[index]['title'].toString())),
-            ),
-          ),
-      ],
-      onReorder: (int oldIndex, int newIndex) {
-        setState(() {
-          if (oldIndex < newIndex) {
-            newIndex -= 1;
-          }
-          final item = items.removeAt(oldIndex);
-          items.insert(newIndex, item);
-        });
+              );
+            }),
+          );
+        }
+        return Container(); // Пустой контейнер для остальных состояний
       },
     );
-  }
-
-  void itemChange(bool val, int index) {
-    // setState(() {
-    //   subTodos[index].isChecked = val;
-    // });
-  }
-
-  onDismissed(index) {
-    items.removeAt(index);
-    setState(() {});
   }
 }
 

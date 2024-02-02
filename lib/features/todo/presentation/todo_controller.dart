@@ -16,8 +16,35 @@ class TodoController {
     return await todoRemoteRepository.createTodoRequested(todo);
   }
 
+  /// Update on server
+  Future updateTodoOnServer(TodoModel todo) async {
+    TodoModel response = await todoRemoteRepository.updateTodoRequested(todo);
+    return response;
+  }
+
+  /// Delete on server
+  Future deleteTodoOnServer(TodoModel todo) async {
+    Map response = await todoRemoteRepository.deleteTodoRequested(todo);
+    return response;
+  }
+
   /// Create on local
-  Future createTodoOnLocal(Todo todo) async {
+  Future createTodoOnLocal(TodoEntity todo) async {
     return await todoLocalRepository.createTodoRequested(todo);
+  }
+
+  /// Update on local
+  Future updateTodoOnLocal(TodoEntity todo) async {
+    return await todoLocalRepository.updateTodoRequested(todo);
+  }
+
+  /// Delete on local
+  Future deleteTodoOnLocal(Map todos) async {
+    return await todoLocalRepository.deleteTodoRequested(todos);
+  }
+
+  /// Get todos by catID
+  Future getTodosFromLocal(int catId) async {
+    return await todoLocalRepository.getTodosRequested(catId);
   }
 }

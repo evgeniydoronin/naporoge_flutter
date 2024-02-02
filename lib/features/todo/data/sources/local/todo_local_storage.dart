@@ -1,40 +1,71 @@
+import 'package:isar/isar.dart';
+
 import '../../../../../core/services/db_client/isar_service.dart';
 import '../../../domain/entities/todo_entity.dart';
 
 class TodoLocal {
   final isarService = IsarService();
 
-  Future<void> createTodoLocal(Todo todo) async {
+  /// Create
+  Future<void> createTodoLocal(TodoEntity todo) async {
     final isar = await isarService.db;
 
-    // TODO: продолжить тут
-    print('isar: $isar');
+    final todoLocal = TodoEntity()
+      ..id = todo.id
+      ..title = todo.title
+      ..category = todo.category
+      ..order = todo.order
+      ..isChecked = todo.isChecked
+      ..parentId = todo.parentId;
 
-    // Map streamData = todoDataFromServer['stream'];
-    //
-    // // деактивируем предыдущий курс, если есть
-    // NPStream? previousStream;
-    // int? previousStreamId = todoDataFromServer['old_stream'];
-    // if (previousStreamId != null) {
-    //   previousStream = await isar.nPStreams.get(previousStreamId);
-    //   previousStream?.isActive = false;
-    // }
-    //
-    // final newStream = NPStream()
-    //   ..id = streamData['id']
-    //   ..courseId = streamData['course_id']
-    //   ..isActive = streamData['is_active']
-    //   ..title = streamData['title']
-    //   ..weeks = streamData['weeks']
-    //   ..description = streamData['description']
-    //   ..startAt = DateTime.parse(streamData['start_at']);
-    //
-    // isar.writeTxnSync(() async {
-    //   // деактивируем предыдущий курс
-    //   if (previousStream != null) {
-    //     isar.nPStreams.putSync(previousStream);
-    //   }
-    //   isar.nPStreams.putSync(newStream);
-    // });
+    isar.writeTxnSync(() async {
+      isar.todoEntitys.putSync(todoLocal);
+    });
+  }
+
+  /// Read
+  Future<List<TodoEntity>> getTodosLocal(int catId) async {
+    final isar = await isarService.db;
+    List<TodoEntity>? todos = await isar.todoEntitys.filter().categoryEqualTo(catId).findAll();
+    print('catId: $catId');
+    print('todos: $todos');
+
+    return todos;
+  }
+
+  /// Update
+  Future updateTodoLocal(TodoEntity todo) async {
+    final isar = await isarService.db;
+
+    final _todo = await isar.todoEntitys.get(todo.id!);
+
+    await isar.writeTxn(() async {
+      if (todo.title != null) {
+        _todo!.title = todo.title;
+      }
+      if (todo.category != null) {
+        _todo!.category = todo.category;
+      }
+      if (todo.isChecked != null) {
+        _todo!.isChecked = todo.isChecked;
+      }
+      await isar.todoEntitys.put(_todo!);
+    });
+  }
+
+  /// Delete
+  Future<void> deleteTodoLocal(Map todos) async {
+    final isar = await isarService.db;
+    final todo = await isar.todoEntitys.get(todos["todo"]["id"]);
+    List rawSubTodos = todos["subTodos"];
+
+    List<int>? subTodos = rawSubTodos.map((e) => e['id']).cast<int>().toList();
+
+    await isar.writeTxn(() async {
+      await isar.todoEntitys.delete(todo!.id!);
+      if (subTodos.isNotEmpty) {
+        await isar.todoEntitys.deleteAll(subTodos);
+      }
+    });
   }
 }

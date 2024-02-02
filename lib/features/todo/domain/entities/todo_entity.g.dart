@@ -9,13 +9,13 @@ part of 'todo_entity.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetTodoCollection on Isar {
-  IsarCollection<Todo> get todos => this.collection();
+extension GetTodoEntityCollection on Isar {
+  IsarCollection<TodoEntity> get todoEntitys => this.collection();
 }
 
-const TodoSchema = CollectionSchema(
-  name: r'Todo',
-  id: -505491818817781703,
+const TodoEntitySchema = CollectionSchema(
+  name: r'TodoEntity',
+  id: -5831862288383718631,
   properties: {
     r'category': PropertySchema(
       id: 0,
@@ -41,29 +41,24 @@ const TodoSchema = CollectionSchema(
       id: 4,
       name: r'title',
       type: IsarType.string,
-    ),
-    r'userId': PropertySchema(
-      id: 5,
-      name: r'userId',
-      type: IsarType.long,
     )
   },
-  estimateSize: _todoEstimateSize,
-  serialize: _todoSerialize,
-  deserialize: _todoDeserialize,
-  deserializeProp: _todoDeserializeProp,
+  estimateSize: _todoEntityEstimateSize,
+  serialize: _todoEntitySerialize,
+  deserialize: _todoEntityDeserialize,
+  deserializeProp: _todoEntityDeserializeProp,
   idName: r'id',
   indexes: {},
   links: {},
   embeddedSchemas: {},
-  getId: _todoGetId,
-  getLinks: _todoGetLinks,
-  attach: _todoAttach,
+  getId: _todoEntityGetId,
+  getLinks: _todoEntityGetLinks,
+  attach: _todoEntityAttach,
   version: '3.1.0+1',
 );
 
-int _todoEstimateSize(
-  Todo object,
+int _todoEntityEstimateSize(
+  TodoEntity object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -77,8 +72,8 @@ int _todoEstimateSize(
   return bytesCount;
 }
 
-void _todoSerialize(
-  Todo object,
+void _todoEntitySerialize(
+  TodoEntity object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -88,27 +83,25 @@ void _todoSerialize(
   writer.writeLong(offsets[2], object.order);
   writer.writeLong(offsets[3], object.parentId);
   writer.writeString(offsets[4], object.title);
-  writer.writeLong(offsets[5], object.userId);
 }
 
-Todo _todoDeserialize(
+TodoEntity _todoEntityDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Todo();
+  final object = TodoEntity();
   object.category = reader.readLongOrNull(offsets[0]);
   object.id = id;
   object.isChecked = reader.readBoolOrNull(offsets[1]);
   object.order = reader.readLongOrNull(offsets[2]);
   object.parentId = reader.readLongOrNull(offsets[3]);
   object.title = reader.readStringOrNull(offsets[4]);
-  object.userId = reader.readLongOrNull(offsets[5]);
   return object;
 }
 
-P _todoDeserializeProp<P>(
+P _todoEntityDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -125,35 +118,35 @@ P _todoDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 4:
       return (reader.readStringOrNull(offset)) as P;
-    case 5:
-      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-Id _todoGetId(Todo object) {
+Id _todoEntityGetId(TodoEntity object) {
   return object.id ?? Isar.autoIncrement;
 }
 
-List<IsarLinkBase<dynamic>> _todoGetLinks(Todo object) {
+List<IsarLinkBase<dynamic>> _todoEntityGetLinks(TodoEntity object) {
   return [];
 }
 
-void _todoAttach(IsarCollection<dynamic> col, Id id, Todo object) {
+void _todoEntityAttach(IsarCollection<dynamic> col, Id id, TodoEntity object) {
   object.id = id;
 }
 
-extension TodoQueryWhereSort on QueryBuilder<Todo, Todo, QWhere> {
-  QueryBuilder<Todo, Todo, QAfterWhere> anyId() {
+extension TodoEntityQueryWhereSort
+    on QueryBuilder<TodoEntity, TodoEntity, QWhere> {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
-  QueryBuilder<Todo, Todo, QAfterWhereClause> idEqualTo(Id id) {
+extension TodoEntityQueryWhere
+    on QueryBuilder<TodoEntity, TodoEntity, QWhereClause> {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -162,7 +155,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterWhereClause> idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -184,7 +177,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<TodoEntity, TodoEntity, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -193,7 +186,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<TodoEntity, TodoEntity, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -202,7 +195,7 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterWhereClause> idBetween(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -219,8 +212,9 @@ extension TodoQueryWhere on QueryBuilder<Todo, Todo, QWhereClause> {
   }
 }
 
-extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> categoryIsNull() {
+extension TodoEntityQueryFilter
+    on QueryBuilder<TodoEntity, TodoEntity, QFilterCondition> {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> categoryIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'category',
@@ -228,7 +222,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> categoryIsNotNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition>
+      categoryIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'category',
@@ -236,7 +231,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> categoryEqualTo(int? value) {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> categoryEqualTo(
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'category',
@@ -245,7 +241,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> categoryGreaterThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition>
+      categoryGreaterThan(
     int? value, {
     bool include = false,
   }) {
@@ -258,7 +255,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> categoryLessThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> categoryLessThan(
     int? value, {
     bool include = false,
   }) {
@@ -271,7 +268,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> categoryBetween(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> categoryBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -288,7 +285,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> idIsNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> idIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'id',
@@ -296,7 +293,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> idIsNotNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> idIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'id',
@@ -304,7 +301,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> idEqualTo(Id? value) {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> idEqualTo(
+      Id? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -313,7 +311,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> idGreaterThan(
     Id? value, {
     bool include = false,
   }) {
@@ -326,7 +324,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> idLessThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> idLessThan(
     Id? value, {
     bool include = false,
   }) {
@@ -339,7 +337,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> idBetween(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> idBetween(
     Id? lower,
     Id? upper, {
     bool includeLower = true,
@@ -356,7 +354,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> isCheckedIsNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition>
+      isCheckedIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'isChecked',
@@ -364,7 +363,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> isCheckedIsNotNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition>
+      isCheckedIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'isChecked',
@@ -372,7 +372,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> isCheckedEqualTo(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> isCheckedEqualTo(
       bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -382,7 +382,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> orderIsNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> orderIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'order',
@@ -390,7 +390,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> orderIsNotNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> orderIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'order',
@@ -398,7 +398,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> orderEqualTo(int? value) {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> orderEqualTo(
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'order',
@@ -407,7 +408,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> orderGreaterThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> orderGreaterThan(
     int? value, {
     bool include = false,
   }) {
@@ -420,7 +421,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> orderLessThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> orderLessThan(
     int? value, {
     bool include = false,
   }) {
@@ -433,7 +434,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> orderBetween(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> orderBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -450,7 +451,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> parentIdIsNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> parentIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'parentId',
@@ -458,7 +459,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> parentIdIsNotNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition>
+      parentIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'parentId',
@@ -466,7 +468,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> parentIdEqualTo(int? value) {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> parentIdEqualTo(
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'parentId',
@@ -475,7 +478,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> parentIdGreaterThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition>
+      parentIdGreaterThan(
     int? value, {
     bool include = false,
   }) {
@@ -488,7 +492,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> parentIdLessThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> parentIdLessThan(
     int? value, {
     bool include = false,
   }) {
@@ -501,7 +505,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> parentIdBetween(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> parentIdBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -518,7 +522,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleIsNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'title',
@@ -526,7 +530,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleIsNotNull() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'title',
@@ -534,7 +538,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleEqualTo(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -547,7 +551,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleGreaterThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -562,7 +566,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleLessThan(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -577,7 +581,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleBetween(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -596,7 +600,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleStartsWith(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -609,7 +613,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleEndsWith(
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -622,7 +626,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleContains(String value,
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleContains(
+      String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -633,7 +638,8 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleMatches(String pattern,
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleMatches(
+      String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -644,7 +650,7 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleIsEmpty() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition> titleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'title',
@@ -653,327 +659,230 @@ extension TodoQueryFilter on QueryBuilder<Todo, Todo, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> titleIsNotEmpty() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterFilterCondition>
+      titleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'title',
         value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> userIdIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'userId',
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> userIdIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'userId',
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> userIdEqualTo(int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'userId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> userIdGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'userId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> userIdLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'userId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterFilterCondition> userIdBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'userId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
       ));
     });
   }
 }
 
-extension TodoQueryObject on QueryBuilder<Todo, Todo, QFilterCondition> {}
+extension TodoEntityQueryObject
+    on QueryBuilder<TodoEntity, TodoEntity, QFilterCondition> {}
 
-extension TodoQueryLinks on QueryBuilder<Todo, Todo, QFilterCondition> {}
+extension TodoEntityQueryLinks
+    on QueryBuilder<TodoEntity, TodoEntity, QFilterCondition> {}
 
-extension TodoQuerySortBy on QueryBuilder<Todo, Todo, QSortBy> {
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByCategory() {
+extension TodoEntityQuerySortBy
+    on QueryBuilder<TodoEntity, TodoEntity, QSortBy> {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByCategory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByCategoryDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByCategoryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByIsChecked() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByIsChecked() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isChecked', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByIsCheckedDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByIsCheckedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isChecked', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByOrder() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByOrder() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'order', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByOrderDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByOrderDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'order', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByParentId() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByParentId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentId', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByParentIdDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByParentIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentId', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByTitle() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByTitleDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> sortByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
-
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByUserId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterSortBy> sortByUserIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.desc);
-    });
-  }
 }
 
-extension TodoQuerySortThenBy on QueryBuilder<Todo, Todo, QSortThenBy> {
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByCategory() {
+extension TodoEntityQuerySortThenBy
+    on QueryBuilder<TodoEntity, TodoEntity, QSortThenBy> {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByCategory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByCategoryDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByCategoryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenById() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByIsChecked() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByIsChecked() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isChecked', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByIsCheckedDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByIsCheckedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isChecked', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByOrder() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByOrder() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'order', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByOrderDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByOrderDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'order', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByParentId() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByParentId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentId', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByParentIdDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByParentIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentId', Sort.desc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByTitle() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByTitleDesc() {
+  QueryBuilder<TodoEntity, TodoEntity, QAfterSortBy> thenByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
-
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByUserId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Todo, Todo, QAfterSortBy> thenByUserIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'userId', Sort.desc);
-    });
-  }
 }
 
-extension TodoQueryWhereDistinct on QueryBuilder<Todo, Todo, QDistinct> {
-  QueryBuilder<Todo, Todo, QDistinct> distinctByCategory() {
+extension TodoEntityQueryWhereDistinct
+    on QueryBuilder<TodoEntity, TodoEntity, QDistinct> {
+  QueryBuilder<TodoEntity, TodoEntity, QDistinct> distinctByCategory() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'category');
     });
   }
 
-  QueryBuilder<Todo, Todo, QDistinct> distinctByIsChecked() {
+  QueryBuilder<TodoEntity, TodoEntity, QDistinct> distinctByIsChecked() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isChecked');
     });
   }
 
-  QueryBuilder<Todo, Todo, QDistinct> distinctByOrder() {
+  QueryBuilder<TodoEntity, TodoEntity, QDistinct> distinctByOrder() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'order');
     });
   }
 
-  QueryBuilder<Todo, Todo, QDistinct> distinctByParentId() {
+  QueryBuilder<TodoEntity, TodoEntity, QDistinct> distinctByParentId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'parentId');
     });
   }
 
-  QueryBuilder<Todo, Todo, QDistinct> distinctByTitle(
+  QueryBuilder<TodoEntity, TodoEntity, QDistinct> distinctByTitle(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
     });
   }
-
-  QueryBuilder<Todo, Todo, QDistinct> distinctByUserId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'userId');
-    });
-  }
 }
 
-extension TodoQueryProperty on QueryBuilder<Todo, Todo, QQueryProperty> {
-  QueryBuilder<Todo, int, QQueryOperations> idProperty() {
+extension TodoEntityQueryProperty
+    on QueryBuilder<TodoEntity, TodoEntity, QQueryProperty> {
+  QueryBuilder<TodoEntity, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<Todo, int?, QQueryOperations> categoryProperty() {
+  QueryBuilder<TodoEntity, int?, QQueryOperations> categoryProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'category');
     });
   }
 
-  QueryBuilder<Todo, bool?, QQueryOperations> isCheckedProperty() {
+  QueryBuilder<TodoEntity, bool?, QQueryOperations> isCheckedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isChecked');
     });
   }
 
-  QueryBuilder<Todo, int?, QQueryOperations> orderProperty() {
+  QueryBuilder<TodoEntity, int?, QQueryOperations> orderProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'order');
     });
   }
 
-  QueryBuilder<Todo, int?, QQueryOperations> parentIdProperty() {
+  QueryBuilder<TodoEntity, int?, QQueryOperations> parentIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'parentId');
     });
   }
 
-  QueryBuilder<Todo, String?, QQueryOperations> titleProperty() {
+  QueryBuilder<TodoEntity, String?, QQueryOperations> titleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'title');
-    });
-  }
-
-  QueryBuilder<Todo, int?, QQueryOperations> userIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'userId');
     });
   }
 }

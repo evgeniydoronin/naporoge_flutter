@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:naporoge/features/todo/domain/entities/todo_entity.dart';
 import '../../../features/diary/domain/entities/diary_note_entity.dart';
 import '../../../features/planning/domain/entities/stream_entity.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,9 +17,16 @@ class IsarService {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
-      return await Isar.open(
-          [UserSchema, NPStreamSchema, WeekSchema, DaySchema, DayResultSchema, DiaryNoteSchema, TwoTargetSchema],
-          directory: dir.path);
+      return await Isar.open([
+        UserSchema,
+        NPStreamSchema,
+        WeekSchema,
+        DaySchema,
+        DayResultSchema,
+        DiaryNoteSchema,
+        TwoTargetSchema,
+        TodoEntitySchema
+      ], directory: dir.path);
     }
 
     return Future.value(Isar.getInstance());

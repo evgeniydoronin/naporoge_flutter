@@ -1,11 +1,7 @@
 import 'package:dio/dio.dart';
-
 import 'package:get_it/get_it.dart';
-import 'package:isar/isar.dart';
-import 'package:naporoge/core/services/db_client/isar_service.dart';
-import 'package:naporoge/features/todo/data/sources/local/todo_local_storage.dart';
-import 'package:naporoge/features/todo/domain/repositories/todo_local_repository.dart';
-
+import '../../../features/todo/data/sources/local/todo_local_storage.dart';
+import '../../../features/todo/domain/repositories/todo_local_repository.dart';
 import '../../../features/todo/data/repositories/todo_remote_repository.dart';
 import '../../../features/todo/data/sources/remote/todo_api.dart';
 import '../../../features/todo/presentation/todo_controller.dart';

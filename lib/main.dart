@@ -15,6 +15,8 @@ import 'features/planning/presentation/bloc/active_course/active_stream_bloc.dar
 import 'features/planning/presentation/bloc/choice_of_course/choice_of_course_bloc.dart';
 import 'features/planning/presentation/bloc/description_count/count_description_bloc.dart';
 import 'features/planning/presentation/bloc/planner_bloc.dart';
+import 'features/todo/presentation/bloc/sub_todos/sub_todo_bloc.dart';
+import 'features/todo/presentation/bloc/todos/todo_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,10 +42,12 @@ class MyApp extends StatelessWidget {
         BlocProvider<ChoiceOfCourseBloc>(create: (context) => ChoiceOfCourseBloc()),
         BlocProvider<ActiveStreamBloc>(create: (context) => ActiveStreamBloc()),
         BlocProvider<CountDescriptionBloc>(create: (context) => CountDescriptionBloc()),
+        BlocProvider<TodoBloc>(create: (context) => TodoBloc()..add(FilterTodos(1))),
+        BlocProvider<SubTodoBloc>(create: (context) => SubTodoBloc()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Воля',
         theme: ThemeData(
           useMaterial3: false,
           primarySwatch: Colors.blue,

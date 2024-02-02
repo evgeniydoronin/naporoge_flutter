@@ -18,13 +18,13 @@ class Endpoints {
   // connectTimeout
   static const Duration connectionTimeout = Duration(seconds: 60);
 
-  // User link
+  // User
   static const String smsCode = '/code';
   static const String authCode = '/auth';
   static const String createStudent = '/create-student';
   static const String getStudent = '/get-student';
 
-  /// Stream link
+  /// Stream
   static const String createStream = '/create-stream';
   static const String deleteStream = '/delete-stream';
   static const String deactivateStream = '/deactivate-stream';
@@ -44,6 +44,9 @@ class Endpoints {
 
   /// Todo
   static const String createTodo = '/todos';
+  static const String updateTodo = '/update-todo';
+  static const String deleteTodo = '/delete-todo';
+  static const String getTodos = '/get-todos';
 
   /// get streams data
   static const String getStreams = '/get-streams';

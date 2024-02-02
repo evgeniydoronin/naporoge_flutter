@@ -3,9 +3,8 @@ import 'package:isar/isar.dart';
 part 'todo_entity.g.dart';
 
 @collection
-class Todo {
+class TodoEntity {
   Id? id;
-  int? userId;
   int? parentId;
   String? title;
   int? category;

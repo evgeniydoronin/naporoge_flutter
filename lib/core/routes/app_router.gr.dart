@@ -238,9 +238,7 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     TodoItemScreenRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final args = routeData.argsAs<TodoItemScreenRouteArgs>(
-          orElse: () => TodoItemScreenRouteArgs(todo: pathParams.get('todo')));
+      final args = routeData.argsAs<TodoItemScreenRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: TodoItemScreen(
@@ -866,7 +864,7 @@ class TodoEmptyRouter extends PageRouteInfo<void> {
 class TodoItemScreenRoute extends PageRouteInfo<TodoItemScreenRouteArgs> {
   TodoItemScreenRoute({
     Key? key,
-    required dynamic todo,
+    required TodoEntity todo,
     List<PageRouteInfo>? children,
   }) : super(
           TodoItemScreenRoute.name,
@@ -874,7 +872,6 @@ class TodoItemScreenRoute extends PageRouteInfo<TodoItemScreenRouteArgs> {
             key: key,
             todo: todo,
           ),
-          rawPathParams: {'todo': todo},
           initialChildren: children,
         );
 
@@ -892,7 +889,7 @@ class TodoItemScreenRouteArgs {
 
   final Key? key;
 
-  final dynamic todo;
+  final TodoEntity todo;
 
   @override
   String toString() {
