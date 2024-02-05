@@ -25,6 +25,22 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    ArchiveItemScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ArchiveItemScreenRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ArchiveItemScreen(
+          key: args.key,
+          stream: args.stream,
+        ),
+      );
+    },
+    ArchivesScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ArchivesScreen(),
+      );
+    },
     ChoiceOfCaseScreenRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -311,6 +327,58 @@ class ActivateAccountScreenRouteArgs {
   String toString() {
     return 'ActivateAccountScreenRouteArgs{key: $key, phone: $phone}';
   }
+}
+
+/// generated route for
+/// [ArchiveItemScreen]
+class ArchiveItemScreenRoute extends PageRouteInfo<ArchiveItemScreenRouteArgs> {
+  ArchiveItemScreenRoute({
+    Key? key,
+    required NPStream stream,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ArchiveItemScreenRoute.name,
+          args: ArchiveItemScreenRouteArgs(
+            key: key,
+            stream: stream,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ArchiveItemScreenRoute';
+
+  static const PageInfo<ArchiveItemScreenRouteArgs> page =
+      PageInfo<ArchiveItemScreenRouteArgs>(name);
+}
+
+class ArchiveItemScreenRouteArgs {
+  const ArchiveItemScreenRouteArgs({
+    this.key,
+    required this.stream,
+  });
+
+  final Key? key;
+
+  final NPStream stream;
+
+  @override
+  String toString() {
+    return 'ArchiveItemScreenRouteArgs{key: $key, stream: $stream}';
+  }
+}
+
+/// generated route for
+/// [ArchivesScreen]
+class ArchivesScreenRoute extends PageRouteInfo<void> {
+  const ArchivesScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          ArchivesScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ArchivesScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/constants/app_theme.dart';
-
 final Uri _npRV = Uri.parse('http://xn--80aealihac0a3ao2a.xn--p1ai');
 final Uri _npRU = Uri.parse('http://naporoge.ru');
 final Uri _npRF = Uri.parse('https://xn--80agg3agafj.xn--p1ai');

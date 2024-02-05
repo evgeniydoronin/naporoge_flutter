@@ -11,12 +11,15 @@ import '../../features/diary/presentation/screens/diary_screen.dart';
 import '../../features/home/presentation/screens/day_results_save_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/home/presentation/screens/results_stream_screen.dart';
+import '../../features/more/presentation/screen/archives/archive_item_screen.dart';
+import '../../features/more/presentation/screen/archives/archives_screen.dart';
 import '../../features/more/presentation/screen/experience_of_others_screen.dart';
 import '../../features/more/presentation/screen/more_screen.dart';
 import '../../features/more/presentation/screen/our_mission.dart';
 import '../../features/more/presentation/screen/theories/theory_post_screen.dart';
 import '../../features/more/presentation/screen/theories/theories_screen.dart';
 import '../../features/more/presentation/screen/two_targets_screen.dart';
+import '../../features/planning/domain/entities/stream_entity.dart';
 import '../../features/planning/presentation/screens/create_stream/choice_of_course.dart';
 import '../../features/planning/presentation/screens/info_helper/explanations_for_the_planning.dart';
 import '../../features/planning/presentation/screens/info_helper/explanations_for_the_stream.dart';
@@ -75,6 +78,8 @@ class AppRouter extends _$AppRouter {
         CustomRoute(page: ExplanationsForThePlanningRoute.page, path: '/planning-rules'),
         CustomRoute(page: ExplanationsForTheStreamRoute.page, path: '/stream-rules'),
         CustomRoute(page: OurMissionScreenRoute.page, path: '/our-mission'),
+        CustomRoute(page: ArchivesScreenRoute.page, path: '/archives'),
+        CustomRoute(page: ArchiveItemScreenRoute.page, path: '/archive-item'),
         CustomRoute(page: ExperienceOfOthersScreenRoute.page, path: '/experience-other'),
         CustomRoute(page: WelcomeScreenRoute.page, path: '/welcome'),
         CustomRoute(

@@ -1,16 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:isar/isar.dart';
-import 'package:naporoge/features/auth/login/domain/user_model.dart';
-import 'package:naporoge/features/more/presentation/widgets/early_termination_stream_widget.dart';
+import '../widgets/early_termination_stream_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/services/controllers/service_locator.dart';
-import '../../../../core/services/db_client/isar_service.dart';
-import '../../../../core/utils/early_termination_stream_dialog.dart';
 import '../../../../core/utils/show_closeApp_dialog.dart';
 import '../../../auth/login/presentation/auth_controller.dart';
 
@@ -277,45 +273,47 @@ class MoreScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // const SizedBox(height: 15),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 20),
-            //   child: InkWell(
-            //     onTap: () {},
-            //     child: Row(
-            //       children: [
-            //         Expanded(
-            //           child: Container(
-            //             padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-            //             decoration: AppLayout.boxDecorationShadowBG,
-            //             child: Row(
-            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //               children: [
-            //                 const Expanded(
-            //                   child: Text(
-            //                     'Архив дел',
-            //                     style: TextStyle(fontSize: 16),
-            //                   ),
-            //                 ),
-            //                 Container(
-            //                   width: 25,
-            //                   height: 25,
-            //                   decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
-            //                   child: Center(
-            //                     child: SvgPicture.asset(
-            //                       'assets/icons/arrow.svg',
-            //                       colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: InkWell(
+                onTap: () {
+                  context.router.push(const ArchivesScreenRoute());
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                        decoration: AppLayout.boxDecorationShadowBG,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                'Архив дел',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icons/arrow.svg',
+                                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 15),
             Stack(
               children: [
