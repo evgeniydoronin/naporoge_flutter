@@ -62,5 +62,5 @@ Future getCurrentWeekDaysPoint() async {
 
   // print("'days': $days, 'actualUserDay': $actualUserDay");
 
-  return {'days': days, 'actualUserDay': actualUserDay};
+  return {'days': days, 'actualUserDay': actualUserDay, 'streamStatus': streamStatus};
 }

@@ -89,8 +89,8 @@ class _SplashScreenState extends State<SplashScreen> {
             }
           }
         }
-        // во время прохождения
-        else if (streamStarted) {
+        // во время прохождения и после
+        else {
           // print('SplashScreen - во время прохождения');
 
           /// создаем пропущенные недели

@@ -55,7 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _onResumed() => context.router.replace(const SplashScreenRoute());
 
-  void _onInactive() => context.router.replace(const SplashScreenRoute());
+  void _onInactive() => print('inactive');
 
   void _onHidden() => print('hidden');
 

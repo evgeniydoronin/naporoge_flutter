@@ -4,13 +4,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/services/controllers/service_locator.dart';
 import '../../../../core/services/db_client/isar_service.dart';
 import '../../../../core/utils/circular_loading.dart';
-import '../../../../core/utils/show_closeApp_dialog.dart';
 import '../../data/models/todo_model.dart';
 import '../../domain/entities/todo_entity.dart';
 
@@ -63,10 +61,10 @@ class TodoItemScreen extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    todoBottomSheet(context, todo, null);
+                    modalTodoForm(context, todo, null);
                   },
                   child: Text(
-                    '${_title}, id: ${todo.id}',
+                    _title!,
                     style: TextStyle(fontSize: AppFont.regular),
                   ),
                 ),
@@ -75,7 +73,7 @@ class TodoItemScreen extends StatelessWidget {
                 TextButton(
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     onPressed: () {
-                      todoBottomSheet(context, null, todo.id);
+                      modalTodoForm(context, null, todo.id);
                     },
                     child: const Row(
                       children: [
@@ -232,12 +230,11 @@ class _TodoItemsState extends State<TodoItems> {
                                     // context.read<SubTodoBloc>().add(GetSubTodosByParent(parentId: todo.id!));
                                   },
                                   onLongPress: () {
-                                    print('edit todo');
-                                    todoBottomSheet(context, todo, null);
+                                    modalTodoForm(context, todo, null);
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 15, left: 10),
-                                    child: Text('${todo.title!}, id: ${todo.id}', textAlign: TextAlign.start),
+                                    child: Text(todo.title!, textAlign: TextAlign.start),
                                   ));
                             },
                           ),

@@ -33,6 +33,8 @@ class _ArchiveTotalBoxState extends State<ArchiveTotalBox> {
           if (snapshot.hasData) {
             Map streamResults = snapshot.data;
 
+            Map message = streamResults['message'];
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -42,46 +44,58 @@ class _ArchiveTotalBoxState extends State<ArchiveTotalBox> {
                   style: AppFont.scaffoldTitleDark,
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Отлично',
-                      style: TextStyle(fontSize: AppFont.regular),
-                    ),
-                    Text(
-                      '${streamResults['high']}',
-                      style: TextStyle(fontSize: AppFont.regular),
-                    ),
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(bottom: 13),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColor.grey1))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Отлично',
+                        style: TextStyle(fontSize: AppFont.regular),
+                      ),
+                      Text(
+                        '${streamResults['high']}',
+                        style: TextStyle(fontSize: AppFont.regular),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Хорошо',
-                      style: TextStyle(fontSize: AppFont.regular),
-                    ),
-                    Text(
-                      '${streamResults['middle']}',
-                      style: TextStyle(fontSize: AppFont.regular),
-                    ),
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(bottom: 13),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColor.grey1))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Хорошо',
+                        style: TextStyle(fontSize: AppFont.regular),
+                      ),
+                      Text(
+                        '${streamResults['middle']}',
+                        style: TextStyle(fontSize: AppFont.regular),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Слабо',
-                      style: TextStyle(fontSize: AppFont.regular),
-                    ),
-                    Text(
-                      '${streamResults['low']}',
-                      style: TextStyle(fontSize: AppFont.regular),
-                    ),
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(bottom: 13),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColor.grey1))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Слабо',
+                        style: TextStyle(fontSize: AppFont.regular),
+                      ),
+                      Text(
+                        '${streamResults['low']}',
+                        style: TextStyle(fontSize: AppFont.regular),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 15),
                 Row(
@@ -97,6 +111,19 @@ class _ArchiveTotalBoxState extends State<ArchiveTotalBox> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 25),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: message['title'],
+                    style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: message['description'],
+                          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16)),
+                    ],
+                  ),
+                )
               ],
             );
           } else {
@@ -170,7 +197,7 @@ Future<Map> getArchiveTotalResultsStream(NPStream stream) async {
   ///////////////////////////////
   // сообщение
   ///////////////////////////////
-  TextSpan? message;
+  Map message = {};
   List margePoint = [low, middle.length, high.length];
   int point = margePoint.reduce((a, b) => a > b ? a : b);
   int? maxPointIndex;
@@ -187,40 +214,19 @@ Future<Map> getArchiveTotalResultsStream(NPStream stream) async {
 
   // слабо
   if (maxPointIndex == 0) {
-    message = const TextSpan(
-      text: 'Слабо. \n',
-      style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-      children: <TextSpan>[
-        TextSpan(
-            text:
-                'Продолжайте тренировать волю. Делайте дело «во что бы то ни стало». Не забывайте радоваться успехам. Возникнут трудности – присоединяйтесь в чат',
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
-      ],
-    );
+    message['title'] = 'Слабо. \n';
+    message['description'] =
+        'Продолжайте тренировать волю. Делайте дело «во что бы то ни стало». Не забывайте радоваться успехам. Возникнут трудности – присоединяйтесь в чат';
   }
   // хорошо
   else if (maxPointIndex == 1) {
-    message = const TextSpan(
-      text: 'Хорошо. \n',
-      style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-      children: <TextSpan>[
-        TextSpan(
-            text: 'Рекомендуем продолжать саморазвитие. У вас хорошие способности',
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
-      ],
-    );
+    message['title'] = 'Хорошо. \n';
+    message['description'] = 'Рекомендуем продолжать саморазвитие. У вас хорошие способности';
   }
   // отлично
   else if (maxPointIndex == 2) {
-    message = const TextSpan(
-      text: 'Отлично. \n',
-      style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-      children: <TextSpan>[
-        TextSpan(
-            text: 'Поздравляем! Рекомендуем продолжать саморазвитие. Реальный шанс сильно продвинуться',
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
-      ],
-    );
+    message['title'] = 'Отлично. \n';
+    message['description'] = 'Поздравляем! Рекомендуем продолжать саморазвитие. Реальный шанс сильно продвинуться';
   }
 
   ///////////////////////////////

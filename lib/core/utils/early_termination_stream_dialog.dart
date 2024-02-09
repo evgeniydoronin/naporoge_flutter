@@ -10,7 +10,10 @@ Future earlyTerminationStreamDialog(context) async {
       context: context,
       builder: (context) => AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
-            title: const Text('Досрочное завершение'),
+            title: const Text(
+              'Досрочное завершение',
+              textAlign: TextAlign.center,
+            ),
             content: const Text(
                 'Если завершить дело сейчас, то вернуться к нему будет невозможно. Вы уверены, что хотите завершить?'),
             actionsPadding: const EdgeInsets.only(bottom: 20, right: 20, left: 20),

@@ -73,7 +73,7 @@ class PersonalDataScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               const Text(
-                'The "Развитие воли и самоорганизации. Вуз" app stores and processes personal data that you have provided to us, to provide my Service. It’s your responsibility to keep your phone and access to the app secure. We therefore recommend that you do not jailbreak or root your phone, which is the process of removing software restrictions and limitations imposed by the official operating system of your device. It could make your phone vulnerable to malware/viruses/malicious programs, compromise your phone\'s security features and it could mean that the "Развитие воли и самоорганизации" app won\'t work properly or at all.',
+                'The "Развитие воли и самоорганизации." app stores and processes personal data that you have provided to us, to provide my Service. It’s your responsibility to keep your phone and access to the app secure. We therefore recommend that you do not jailbreak or root your phone, which is the process of removing software restrictions and limitations imposed by the official operating system of your device. It could make your phone vulnerable to malware/viruses/malicious programs, compromise your phone\'s security features and it could mean that the "Развитие воли и самоорганизации" app won\'t work properly or at all.',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
               ),
               const SizedBox(height: 15),

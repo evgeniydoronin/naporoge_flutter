@@ -39,7 +39,7 @@ class TodoLocal {
 
     final _todo = await isar.todoEntitys.get(todo.id!);
 
-    await isar.writeTxn(() async {
+    isar.writeTxnSync(() async {
       if (todo.title != null) {
         _todo!.title = todo.title;
       }
@@ -49,7 +49,7 @@ class TodoLocal {
       if (todo.isChecked != null) {
         _todo!.isChecked = todo.isChecked;
       }
-      await isar.todoEntitys.put(_todo!);
+      isar.todoEntitys.putSync(_todo!);
     });
   }
 

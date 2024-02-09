@@ -480,9 +480,11 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
       itemBuilder: (context, rowIndex) {
         String hourStart = (periodRows[periodIndex].start + rowIndex).toString();
         String hourFinished = '';
-        if (int.parse(hourStart) < 9) {
+        if (int.parse(hourStart) <= 9) {
           hourStart = '0$hourStart';
-          hourFinished = '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
+          hourFinished = int.parse(hourStart) == 9
+              ? (periodRows[periodIndex].start + rowIndex + 1).toString()
+              : '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
         } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
           hourFinished = (periodRows[periodIndex].start + rowIndex + 1).toString();
         } else if (int.parse(hourStart) == 23) {

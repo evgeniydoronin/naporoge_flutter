@@ -60,7 +60,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         }
       });
       final subtasks = await isar.todoEntitys.filter().parentIdIsNotNull().findAll();
-      
+
       emit(TodosLoaded(todos: todos, subtasks: subtasks, activeCategory: currentState.activeCategory));
     }
   }

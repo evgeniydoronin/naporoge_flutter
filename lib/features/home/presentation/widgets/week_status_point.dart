@@ -22,22 +22,54 @@ class WeekStatusPoint extends StatelessWidget {
 
           // адаптация текущего дня до 3 ночи
           DateTime actualUserDay = snapshot.data['actualUserDay'];
+          Map streamStatus = snapshot.data['streamStatus'];
 
           // список дней и статуса
           List daysStatus = [];
+
+          // print('actualUserDay: $actualUserDay');
+          // print('streamStatus: ${streamStatus['status']}');
 
           if (days.isNotEmpty) {
             for (final (int index, Day day) in days.indexed) {
               // пустая неделя
               if (day.startAt == null) {
-                // выполнен
-                if (day.completedAt != null) {
-                  // print('пустая неделя выполнен: ${day.completedAt}');
-                  // print('пустая неделя день выполнен');
-                  daysStatus.add({'status': 'empty_completed', 'startAt': ''});
+                DateTime _dayDateAt = DateTime.parse(DateFormat('y-MM-dd').format(day.dateAt!));
+                DateTime dayDateAt = DateTime(_dayDateAt.year, _dayDateAt.month, _dayDateAt.day);
+
+                // текущий день
+                if (dayDateAt.isAtSameMomentAs(actualUserDay)) {
+                  // выполнен
+                  if (day.completedAt != null) {
+                    // print('пустая неделя выполнен: ${day.completedAt}');
+                    // print('пустая неделя день выполнен');
+                    daysStatus.add({'status': 'empty_completed', 'startAt': ''});
+                  }
+                  // не выполнен
+                  else {
+                    bool dayHasPassed = false;
+                    if (index + 1 < DateTime.now().weekday) {
+                      dayHasPassed = true;
+                    }
+                    daysStatus.add({'status': 'empty_not_completed', 'startAt': '', 'dayHasPassed': dayHasPassed});
+                  }
                 }
-                // не выполнен
-                else {
+                // день прошел
+                else if (dayDateAt.isBefore(actualUserDay)) {
+                  // выполнен
+                  if (day.completedAt != null) {
+                    // print('пустая неделя выполнен: ${day.completedAt}');
+                    // print('пустая неделя день выполнен');
+                    daysStatus.add({'status': 'empty_completed', 'startAt': ''});
+                  }
+                  // не выполнен
+                  else {
+                    bool dayHasPassed = true;
+                    daysStatus.add({'status': 'empty_not_completed', 'startAt': '', 'dayHasPassed': dayHasPassed});
+                  }
+                }
+                // запланированный день
+                else if (dayDateAt.isAfter(actualUserDay)) {
                   bool dayHasPassed = false;
                   if (index + 1 < DateTime.now().weekday) {
                     dayHasPassed = true;
@@ -83,13 +115,6 @@ class WeekStatusPoint extends StatelessWidget {
               }
             }
           }
-          // // неделя пустая
-          // else {
-          //   print(days.isNotEmpty);
-          //   for (int i = 0; i < 7; i++) {
-          //     daysStatus.add({'status': 'empty_not_completed', 'startAt': ''});
-          //   }
-          // }
 
           // print(daysStatus);
           return Padding(

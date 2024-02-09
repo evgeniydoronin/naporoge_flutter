@@ -153,79 +153,103 @@ Future editNote(context, noteData) async {
   final streamLocalStorage = StreamLocalStorage();
   final isarService = IsarService();
   DiaryNote note = noteData;
+  final _formKey = GlobalKey<FormState>();
   TextEditingController noteController = TextEditingController(text: note.diaryNote);
 
   return await showDialog(
     context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: const Text('Редактирование'),
-      content: SizedBox(
-        height: 150,
-        child: CupertinoTheme(
-          data: const CupertinoThemeData(
-            textTheme: CupertinoTextThemeData(
-              dateTimePickerTextStyle: TextStyle(fontSize: 26),
+    builder: (BuildContext context) => Form(
+      key: _formKey,
+      child: AlertDialog(
+        title: const Text('Редактирование'),
+        content: SizedBox(
+          height: 150,
+          child: CupertinoTheme(
+            data: const CupertinoThemeData(
+              textTheme: CupertinoTextThemeData(
+                dateTimePickerTextStyle: TextStyle(fontSize: 26),
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 230,
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Заполните обязательное поле!';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.grey1,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    controller: noteController,
+                    maxLines: 5,
+                  ),
+                ),
+              ],
             ),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 230,
-                child: TextField(
-                  controller: noteController,
-                  maxLines: 5,
-                ),
-              ),
-            ],
-          ),
         ),
-      ),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(13))),
-      contentPadding: EdgeInsets.zero,
-      insetPadding: EdgeInsets.zero,
-      actions: <Widget>[
-        TextButton(
-          style: TextButton.styleFrom(
-            textStyle: Theme.of(context).textTheme.labelLarge,
-          ),
-          child: Text(
-            'Отменить',
-            style: TextStyle(color: AppColor.grey2),
-          ),
-          onPressed: () async {
-            Navigator.pop(context);
-          },
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            textStyle: Theme.of(context).textTheme.labelLarge,
-          ),
-          child: const Text('Сохранить'),
-          onPressed: () async {
-            CircularLoading(context).startLoading();
-            final isar = await isarService.db;
-            await Future.delayed(const Duration(milliseconds: 200));
-            Map newNoteData = {'id': note.id, 'note': noteController.text};
-
-            // update note on server
-            var updatedNoteResults = await _streamController.updateDiaryNote(newNoteData);
-
-            // {note: {id: 40, user_id: 80, note: 12234, created_at: 2023-09-08 11:59:26, updated_at: 2023-09-08 11:59:26}}
-            print('updatedNoteResults: $updatedNoteResults');
-
-            // save on local
-            DiaryNote updatedNote = await streamLocalStorage.updateDiaryNote(updatedNoteResults);
-            print('updatedNote: $updatedNote');
-
-            if (context.mounted) {
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(13))),
+        contentPadding: EdgeInsets.zero,
+        insetPadding: EdgeInsets.zero,
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: Text(
+              'Отменить',
+              style: TextStyle(color: AppColor.grey2),
+            ),
+            onPressed: () async {
               Navigator.pop(context);
-              CircularLoading(context).stopAutoRouterLoading();
-            }
-          },
-        ),
-      ],
+            },
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('Сохранить'),
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                CircularLoading(context).startLoading();
+                final isar = await isarService.db;
+                await Future.delayed(const Duration(milliseconds: 200));
+                Map newNoteData = {'id': note.id, 'note': noteController.text};
+
+                // update note on server
+                var updatedNoteResults = await _streamController.updateDiaryNote(newNoteData);
+
+                // {note: {id: 40, user_id: 80, note: 12234, created_at: 2023-09-08 11:59:26, updated_at: 2023-09-08 11:59:26}}
+                print('updatedNoteResults: $updatedNoteResults');
+
+                // save on local
+                DiaryNote updatedNote = await streamLocalStorage.updateDiaryNote(updatedNoteResults);
+                print('updatedNote: $updatedNote');
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  CircularLoading(context).stopAutoRouterLoading();
+                }
+              }
+            },
+          ),
+        ],
+      ),
     ),
   );
 }

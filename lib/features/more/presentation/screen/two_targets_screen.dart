@@ -1,9 +1,8 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:isar/isar.dart';
-import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import '../../../planning/domain/entities/stream_entity.dart';
 
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/services/controllers/service_locator.dart';
@@ -277,13 +276,16 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
 
                                       final isarService = IsarService();
                                       final isar = await isarService.db;
+                                      final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
                                       final twoTargets = await isar.twoTargets.where().findFirst();
                                       final streamController = getIt<StreamController>();
                                       final storageController = StreamLocalStorage();
 
                                       Map twoTargetData = {
-                                        'stream_id': npStream.id,
+                                        'stream_id': stream?.id,
                                       };
+
+                                      twoTargetData['id'] = twoTargets?.id;
 
                                       /// заголовок
                                       twoTargetData['title'] = titleEditingController.text;
@@ -305,34 +307,45 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                       twoTargetData['target_two_description'] =
                                           targetTwoDescriptionEditingController.text;
 
-                                      /// create
-                                      if (twoTargets == null) {
-                                        // create on server
-                                        final createdTwoTargets =
-                                            await streamController.createTwoTargets(twoTargetData);
+                                      print('twoTargetData: $twoTargetData');
 
-                                        // save on local
-                                        await storageController.createTwoTargets(createdTwoTargets);
-                                      }
+                                      final editTwoTargets = await streamController.createTwoTargets(twoTargetData);
+                                      print('editTwoTargets: $editTwoTargets');
 
-                                      /// update
-                                      else {
-                                        print('update');
-                                        twoTargetData['id'] = twoTargets.id;
-                                        // update on server
-                                        final updateTwoTargets = await streamController.updateTwoTargets(twoTargetData);
+                                      // save on local
+                                      await storageController.editTwoTargets(editTwoTargets);
 
-                                        // print('updateTwoTargets: $updateTwoTargets');
-                                        // update on local
-                                        await storageController.updateTwoTargets(updateTwoTargets);
-                                      }
+                                      // /// create
+                                      // if (twoTargets == null) {
+                                      //   // create on server
+                                      //
+                                      // }
+                                      //
+                                      // /// update
+                                      // else {
+                                      //   print('update');
+                                      //   twoTargetData['id'] = twoTargets.id;
+                                      //   twoTargetData['stream_id'] = stream?.id;
+                                      //   print('twoTargetData: $twoTargetData');
+                                      //   // update on server
+                                      //   final updateTwoTargets = await streamController.updateTwoTargets(twoTargetData);
+                                      //
+                                      //   print('updateTwoTargets: $updateTwoTargets');
+                                      //   // update on local
+                                      //   await storageController.updateTwoTargets(updateTwoTargets);
+                                      // }
 
                                       if (context.mounted) {
                                         CircularLoading(context).stopLoading();
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Успешно сохранено'),
+                                          ),
+                                        );
                                       }
                                     }
                                   },
-                                  style: AppLayout.accentBTNStyle,
+                                  style: AppLayout.accentBowBTNStyle,
                                   child: Text(
                                     'Сохранить',
                                     style: AppFont.regularSemibold,

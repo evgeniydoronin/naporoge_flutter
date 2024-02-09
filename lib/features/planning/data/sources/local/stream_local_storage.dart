@@ -355,40 +355,39 @@ class StreamLocalStorage {
     });
   }
 
-  Future createTwoTargets(Map serverResponse) async {
+  Future editTwoTargets(Map serverResponse) async {
     final isar = await isarService.db;
     final data = serverResponse['twoTargets'];
     final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
-    final twoTargets = TwoTarget()
-      ..id = data['id']
-      ..title = data['title']
-      ..minimum = data['minimum']
-      ..targetOneTitle = data['target_one_title']
-      ..targetOneDescription = data['target_one_description']
-      ..targetTwoTitle = data['target_two_title']
-      ..targetTwoDescription = data['target_two_description']
-      ..nPStream.value = stream;
+    TwoTarget? twoTargets = await isar.twoTargets.get(data['id']);
 
-    isar.writeTxnSync(() async {
-      isar.twoTargets.putSync(twoTargets);
-    });
+    /// create
+    if (twoTargets == null) {
+      print('create twoTargets');
+      twoTargets = TwoTarget()
+        ..id = data['id']
+        ..title = data['title']
+        ..minimum = data['minimum']
+        ..targetOneTitle = data['target_one_title']
+        ..targetOneDescription = data['target_one_description']
+        ..targetTwoTitle = data['target_two_title']
+        ..targetTwoDescription = data['target_two_description']
+        ..nPStream.value = stream;
+    }
 
-    return twoTargets;
-  }
+    /// update
+    else {
+      print('update twoTargets');
 
-  Future updateTwoTargets(Map serverResponse) async {
-    final isar = await isarService.db;
-    final data = serverResponse['twoTargets'];
-
-    final twoTargets = await isar.twoTargets.get(data['id']);
-
-    twoTargets!.title = data['title'];
-    twoTargets.minimum = data['minimum'];
-    twoTargets.targetOneTitle = data['target_one_title'];
-    twoTargets.targetOneDescription = data['target_one_description'];
-    twoTargets.targetTwoTitle = data['target_two_title'];
-    twoTargets.targetTwoDescription = data['target_two_description'];
+      twoTargets.title = data['title'];
+      twoTargets.minimum = data['minimum'];
+      twoTargets.targetOneTitle = data['target_one_title'];
+      twoTargets.targetOneDescription = data['target_one_description'];
+      twoTargets.targetTwoTitle = data['target_two_title'];
+      twoTargets.targetTwoDescription = data['target_two_description'];
+      twoTargets.nPStream.value = stream;
+    }
 
     isar.writeTxnSync(() async {
       isar.twoTargets.putSync(twoTargets!);

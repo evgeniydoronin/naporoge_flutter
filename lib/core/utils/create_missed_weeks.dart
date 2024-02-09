@@ -27,7 +27,7 @@ Future createMissedWeeks() async {
   DateTime streamEndAt = streamStartAt.add(Duration(days: weeks * 7));
 
   /// создано недель на курсе
-  List<Week> createdWeeks = await isar.weeks.where().findAll();
+  List<Week> createdWeeks = await isar.weeks.filter().streamIdEqualTo(activeStream.id).findAll();
 
   /// определить сколько недель прошло
   /// максимальное количество пропущенных недель

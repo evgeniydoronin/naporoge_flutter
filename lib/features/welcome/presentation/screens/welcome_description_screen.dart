@@ -219,7 +219,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
               ],
             ),
             const SizedBox(
-              height: 40,
+              height: 45,
             ),
             ElevatedButton(
               onPressed: () async {
@@ -242,7 +242,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
               ),
             ),
             const SizedBox(
-              height: 30,
+              height: 50,
             ),
           ],
         ),

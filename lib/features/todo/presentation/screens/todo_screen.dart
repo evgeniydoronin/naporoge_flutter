@@ -164,13 +164,17 @@ class _TodosBoxState extends State<TodosBox> {
 
           return ReorderableListView(
             proxyDecorator: proxyDecorator,
-            shrinkWrap: true,
+            // shrinkWrap: true,
             // buildDefaultDragHandles: false,
             onReorder: (int oldIndex, int newIndex) {
               if (newIndex > oldIndex) {
                 newIndex -= 1;
               }
               context.read<TodoBloc>().add(UpdateTodoOrder(oldIndex, newIndex));
+            },
+            onReorderEnd: (val) {
+              print('val: $val');
+              // context.read<TodoBloc>().add(UpdateTodoOrder(oldIndex, newIndex));
             },
             children: List.generate(state.todos.length, (index) {
               final todo = state.todos[index];
@@ -315,13 +319,11 @@ class _TodosBoxState extends State<TodosBox> {
                                   },
                                   onLongPress: () {
                                     print('edit todo');
-                                    todoBottomSheet(context, todo, null);
+                                    modalTodoForm(context, todo, null);
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 15, left: 10),
-                                    child: Text(
-                                        '${todo.title!}, id: ${todo.id}, sub: ${subtasks != null ? subtasks.length : '0'}',
-                                        textAlign: TextAlign.start),
+                                    child: Text(todo.title!, textAlign: TextAlign.start),
                                   ));
                             },
                           ),
@@ -367,8 +369,8 @@ class _TodoItemFormState extends State<TodoItemForm> {
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                todoBottomSheet(context, null, null);
+              onPressed: () async {
+                await modalTodoForm(context, null, null);
               },
               style: AppLayout.accentBTNStyle,
               child: Text(
