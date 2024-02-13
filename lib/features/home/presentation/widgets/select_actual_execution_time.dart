@@ -99,6 +99,8 @@ class _SelectActualExecutionTimeState extends State<SelectActualExecutionTime> {
               children: [
                 BlocBuilder<DayResultBloc, DayResultState>(
                   builder: (context, state) {
+                    print('state.completedAt 1: ${state.completedAt}');
+                    print('state.completedAt 2: ${context.watch<DayResultBloc>().state.completedAt}');
                     String _hour = currentHour!;
                     String _minute = currentMinute.toString();
                     return TextFormField(
@@ -264,14 +266,14 @@ class _SelectActualExecutionTimeState extends State<SelectActualExecutionTime> {
                         return null;
                       },
                       controller: TextEditingController(
-                          text: state.completedAt != null
+                          text: state.completedAt != null && state.completedAt!.isNotEmpty
                               ? DateFormat('HH:mm').format(DateTime.parse(state.completedAt.toString()))
                               : null),
                       style: TextStyle(fontSize: AppFont.small),
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: AppColor.grey1,
-                        hintText: state.completedAt != null
+                        hintText: state.completedAt != null && state.completedAt!.isNotEmpty
                             ? DateFormat('HH:mm').format(DateTime.parse(state.completedAt.toString()))
                             : 'Выбрать время начала',
                         contentPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),

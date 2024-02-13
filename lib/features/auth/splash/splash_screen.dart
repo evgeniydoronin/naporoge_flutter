@@ -39,7 +39,9 @@ class _SplashScreenState extends State<SplashScreen> {
     DateTime now = DateTime.now();
 
     print('user: $user');
-    print('isActiveUser: $isActiveUser');
+    // print('user ID: ${user?.id}');
+    // print('isActiveUser: $isActiveUser');
+    // print('activeStream: ${activeStream!.id}');
 
     /// пользователь зарегистрирован
     /// и не выходил из приложения

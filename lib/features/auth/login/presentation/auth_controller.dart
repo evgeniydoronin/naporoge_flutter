@@ -4,6 +4,8 @@ import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:naporoge/features/planning/data/models/stream_model.dart';
+import 'package:naporoge/features/todo/domain/entities/todo_entity.dart';
+import '../../../todo/data/models/todo_model.dart';
 import '../domain/user_model.dart';
 import '../../../diary/domain/entities/diary_note_entity.dart';
 import '../../../planning/domain/entities/stream_entity.dart';
@@ -69,6 +71,7 @@ class AuthController {
     final daysResults = await streamRepository.getDaysResultsRequested(days);
     final diaryNotes = await streamRepository.getDiaryNotesRequested(userId);
     final twoTargets = await streamRepository.getTwoTargetsRequested(streams);
+    final todos = await streamRepository.getTodosRequested(userId);
 
     ///
     data['userId'] = userId;
@@ -78,6 +81,7 @@ class AuthController {
     data['daysResults'] = daysResults;
     data['diaryNotes'] = diaryNotes;
     data['twoTargets'] = twoTargets;
+    data['todos'] = todos;
 
     ///
     return data;
@@ -110,6 +114,9 @@ class AuthController {
 
     /// Two Targets
     await insertTwoTargets(data['twoTargets']);
+
+    /// Todos
+    await insertTodos(data['todos']);
 
     await isar.writeTxn(() async {
       /// Add user
@@ -309,6 +316,38 @@ Future insertTwoTargets(data) async {
   isar.writeTxnSync(() async {
     if (twoTargets.isNotEmpty) {
       isar.twoTargets.putAllSync(twoTargets);
+    }
+  });
+}
+
+/// Insert todos
+Future insertTodos(data) async {
+  final isarService = IsarService();
+  final isar = await isarService.db;
+
+  print('data backup todos: $data');
+
+  List<TodoModel>? todosData = data;
+  List<TodoEntity> todos = [];
+
+  if (todosData != null) {
+    for (TodoModel item in todosData) {
+      final todo = TodoEntity()
+        ..id = item.id
+        ..parentId = item.parentId
+        ..title = item.title
+        ..category = item.category
+        ..order = item.order
+        ..isChecked = item.isChecked!;
+
+      todos.add(todo);
+    }
+  }
+
+  await isar.writeTxn(() async {
+    /// insert todos
+    if (todos.isNotEmpty) {
+      await isar.todoEntitys.putAll(todos);
     }
   });
 }

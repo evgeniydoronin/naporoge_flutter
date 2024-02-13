@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:naporoge/features/diary/domain/entities/diary_note_entity.dart';
 import 'package:naporoge/features/planning/domain/entities/stream_entity.dart';
+import 'package:naporoge/features/todo/data/models/todo_model.dart';
 import '../models/stream_model.dart';
 import '../sources/remote/stream_api.dart';
 
@@ -159,6 +160,17 @@ class StreamRepository {
       final response = await streamApi.getNPStreamsApi(userId);
 
       return (response.data['streams'] as List).map((e) => NPStreamModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get todos
+  Future getTodosRequested(int userId) async {
+    try {
+      final response = await streamApi.getTodosApi(userId);
+
+      return (response.data['todos'] as List).map((e) => TodoModel.fromJson(e)).toList();
     } on DioException catch (e) {
       rethrow;
     }

@@ -17,6 +17,12 @@ Future modalTodoForm(context, TodoEntity? todo, int? parentId) async {
   /// Сохраняем контекст первого BottomSheet
   BuildContext? modalTodoFormContext;
 
+  final _formKey = GlobalKey<FormState>();
+
+  TextEditingController todoEditingController =
+      todo != null ? TextEditingController(text: todo.title) : TextEditingController();
+  todoEditingController.selection = TextSelection.fromPosition(TextPosition(offset: todoEditingController.text.length));
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -25,13 +31,6 @@ Future modalTodoForm(context, TodoEntity? todo, int? parentId) async {
     builder: (context) {
       // Сохраняем контекст для последующего закрытия первого BottomSheet
       modalTodoFormContext = context;
-
-      final _formKey = GlobalKey<FormState>();
-
-      TextEditingController todoEditingController =
-          todo != null ? TextEditingController(text: todo.title) : TextEditingController();
-      todoEditingController.selection =
-          TextSelection.fromPosition(TextPosition(offset: todoEditingController.text.length));
 
       return Form(
         key: _formKey,
@@ -203,7 +202,7 @@ Future updateTodo(todo, todoEditingController, categoryId, parentId, context) as
     localTodo.title = createdTodoModel.title;
     localTodo.category = createdTodoModel.category;
     localTodo.order = createdTodoModel.order;
-    localTodo.isChecked = createdTodoModel.isChecked;
+    localTodo.isChecked = false;
 
     await todoController.createTodoOnLocal(localTodo);
   }
@@ -226,7 +225,7 @@ Future updateTodo(todo, todoEditingController, categoryId, parentId, context) as
     localTodo.title = updatedTodoModel.title;
     localTodo.category = updatedTodoModel.category;
     localTodo.order = updatedTodoModel.order;
-    localTodo.isChecked = updatedTodoModel.isChecked;
+    localTodo.isChecked = updatedTodoModel.isChecked!;
 
     await todoController.updateTodoOnLocal(localTodo);
   }

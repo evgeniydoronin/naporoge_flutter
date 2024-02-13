@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:isar/isar.dart';
 import '../../../../core/utils/circular_loading.dart';
 import '../../data/models/todo_model.dart';
 import '../../domain/entities/todo_entity.dart';
@@ -48,6 +47,15 @@ class _TodoScreenState extends State<TodoScreen> {
           'Перечень важных дел',
           style: AppFont.scaffoldTitleDark,
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline_rounded),
+            color: AppColor.accent,
+            onPressed: () {
+              context.router.push(const TodoInfoScreenRoute());
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,14 +175,16 @@ class _TodosBoxState extends State<TodosBox> {
             // shrinkWrap: true,
             // buildDefaultDragHandles: false,
             onReorder: (int oldIndex, int newIndex) {
-              if (newIndex > oldIndex) {
-                newIndex -= 1;
-              }
+              // Немедленное обновление состояния списка для отображения изменений в UI
+              setState(() {
+                if (newIndex > oldIndex) {
+                  newIndex -= 1;
+                }
+                final item = state.todos.removeAt(oldIndex);
+                state.todos.insert(newIndex, item);
+              });
+
               context.read<TodoBloc>().add(UpdateTodoOrder(oldIndex, newIndex));
-            },
-            onReorderEnd: (val) {
-              print('val: $val');
-              // context.read<TodoBloc>().add(UpdateTodoOrder(oldIndex, newIndex));
             },
             children: List.generate(state.todos.length, (index) {
               final todo = state.todos[index];
@@ -222,7 +232,7 @@ class _TodosBoxState extends State<TodosBox> {
 
                           remoteTodo.id = todo.id;
                           remoteTodo.category = todo.category == 1 ? 2 : 1;
-                          remoteTodo.isChecked = todo.isChecked;
+                          remoteTodo.isChecked = todo.isChecked!;
 
                           /// Update on server
                           TodoModel updatedTodoModel = await todoController.updateTodoOnServer(remoteTodo);
@@ -256,22 +266,6 @@ class _TodosBoxState extends State<TodosBox> {
                       CustomSlidableAction(
                         onPressed: (context) async {
                           CircularLoading(context).deleteTodo(todo, state.todos, index, catId);
-
-                          // final todoController = getIt<TodoController>();
-                          //
-                          // TodoModel remoteTodo = TodoModel();
-                          // TodoEntity localTodo = TodoEntity();
-                          //
-                          // remoteTodo.id = todo.id;
-                          //
-                          // /// Delete on server
-                          // Map deleteTodoModelMap = await todoController.deleteTodoOnServer(remoteTodo);
-                          //
-                          // /// Delete on local
-                          // await todoController.deleteTodoOnLocal(deleteTodoModelMap);
-                          //
-                          // //delete action for this button
-                          // state.todos.removeAt(index); //go through the loop and match content to delete from list
                         },
                         backgroundColor: AppColor.accentBOW,
                         foregroundColor: Colors.white,
@@ -384,225 +378,5 @@ class _TodoItemFormState extends State<TodoItemForm> {
     );
   }
 }
-
-// class TodoMainItems extends StatefulWidget {
-//   const TodoMainItems({Key? key}) : super(key: key);
-//
-//   @override
-//   State<TodoMainItems> createState() => _TodoMainItemsState();
-// }
-
-// class _TodoMainItemsState extends State<TodoMainItems> {
-//   @override
-//   Widget build(BuildContext context) {
-//     // print('object232323: $todos');
-//
-//     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-//     final Color oddItemColor = colorScheme.secondary.withOpacity(0.05);
-//     final Color evenItemColor = colorScheme.secondary.withOpacity(0.15);
-//     final Color draggableItemColor = colorScheme.secondary;
-//
-//     Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
-//       return AnimatedBuilder(
-//         animation: animation,
-//         builder: (BuildContext context, Widget? child) {
-//           final double animValue = Curves.easeInOut.transform(animation.value);
-//           final double elevation = lerpDouble(0, 6, animValue)!;
-//           return Material(
-//             // elevation: elevation,
-//             color: Colors.transparent,
-//             // shadowColor: draggableItemColor,
-//             child: child,
-//           );
-//         },
-//         child: child,
-//       );
-//     }
-//
-//     return ReorderableListView(
-//       proxyDecorator: proxyDecorator,
-//       shrinkWrap: true,
-//       buildDefaultDragHandles: false,
-//       // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-//       // physics: const NeverScrollableScrollPhysics(),
-//       children: <Widget>[
-//         for (int index = 0; index < todos.length; index += 1)
-//           // _items[index]['subTodos'].isNotEmpty ? todoItem(index, true) : todoItem(index, false),
-//           todoItem(index),
-//       ],
-//       onReorder: (int oldIndex, int newIndex) {
-//         setState(() {
-//           if (oldIndex < newIndex) {
-//             newIndex -= 1;
-//           }
-//           final item = todos.removeAt(oldIndex);
-//           todos.insert(newIndex, item);
-//         });
-//         print('newIndex: $newIndex, oldIndex: $oldIndex');
-//       },
-//     );
-//   }
-//
-//   Widget todoItem(int index) {
-//     return Container(
-//       key: ValueKey(todos[index]),
-//       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-//       decoration: AppLayout.boxDecorationShadowBG,
-//       clipBehavior: Clip.hardEdge,
-//       child: Slidable(
-//         // Specify a key if the Slidable is dismissible.
-//         key: ValueKey(todos[index]),
-//
-//         // The start action pane is the one at the left or the top side.
-//         startActionPane: ActionPane(
-//           // A motion is a widget used to control how the pane animates.
-//           motion: const ScrollMotion(),
-//
-//           extentRatio: 0.2,
-//
-//           // All actions are defined in the children parameter.
-//           children: [
-//             // A SlidableAction can have an icon and/or a label.
-//             CustomSlidableAction(
-//               onPressed: doNothing,
-//               backgroundColor: AppColor.deep,
-//               foregroundColor: Colors.white,
-//               child: SvgPicture.asset('assets/icons/transferTodo.svg'),
-//             ),
-//           ],
-//         ),
-//
-//         // The end action pane is the one at the right or the bottom side.
-//         endActionPane: ActionPane(
-//           motion: const ScrollMotion(),
-//           extentRatio: 0.2,
-//           // A pane can dismiss the Slidable.
-//           // dismissible: DismissiblePane(onDismissed: () => onDismissed(index)),
-//           children: [
-//             CustomSlidableAction(
-//               onPressed: (context) => onDismissed(index),
-//               backgroundColor: AppColor.accentBOW,
-//               foregroundColor: Colors.white,
-//               child: SvgPicture.asset('assets/icons/trash.svg'),
-//             ),
-//           ],
-//         ),
-//
-//         // The child of the Slidable is what the user sees when the
-//         // component is not dragged.
-//         child: GestureDetector(
-//           onTap: () {
-//             AutoRouter.of(context).push(TodoItemScreenRoute(todo: todos[index]));
-//             print(todos[index]);
-//           },
-//           onLongPress: () {
-//             print('edit todo');
-//             todoBottomSheet(context, todos[index], 0);
-//           },
-//           child: Padding(
-//             padding: const EdgeInsets.symmetric(vertical: 5),
-//             child: FutureBuilder(
-//                 future: childChecking(todos[index]),
-//                 builder: (context, snapshot) {
-//                   if (snapshot.hasData) {
-//                     List<TodoEntity> children = snapshot.data;
-//                     return ListTile(
-//                       title: children.isNotEmpty
-//                           ? Row(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               crossAxisAlignment: CrossAxisAlignment.center,
-//                               children: [
-//                                 SizedBox(
-//                                   width: 40,
-//                                   child: CircularPercentIndicator(
-//                                     radius: 25,
-//                                     percent: 0.35,
-//                                     center: Text(
-//                                       '35%',
-//                                       style: TextStyle(
-//                                           color: AppColor.accentBOW,
-//                                           fontSize: AppFont.smaller,
-//                                           fontWeight: FontWeight.w800),
-//                                     ),
-//                                     progressColor: AppColor.accentBOW,
-//                                     backgroundColor: AppColor.grey1,
-//                                   ),
-//                                 ),
-//                                 const SizedBox(width: 20),
-//                                 Expanded(child: Text(todos[index].title!)),
-//                               ],
-//                             )
-//                           : Text(todos[index].title!),
-//                       trailing: ReorderableDragStartListener(
-//                         index: index,
-//                         child: const Column(
-//                           mainAxisAlignment: MainAxisAlignment.center,
-//                           children: [
-//                             Icon(Icons.dehaze),
-//                           ],
-//                         ),
-//                       ),
-//                     );
-//                   } else {
-//                     return const Center(child: CircularProgressIndicator());
-//                   }
-//                 }),
-//             // child: ListTile(
-//             //   title: Text(todos[index].title!),
-//             // ),
-//             // child: ListTile(
-//             //   title: isSubTodos
-//             //       ? Row(
-//             //           mainAxisAlignment: MainAxisAlignment.center,
-//             //           crossAxisAlignment: CrossAxisAlignment.center,
-//             //           children: [
-//             //             SizedBox(
-//             //               width: 40,
-//             //               child: CircularPercentIndicator(
-//             //                 radius: 25,
-//             //                 percent: 0.35,
-//             //                 center: Text(
-//             //                   '35%',
-//             //                   style: TextStyle(
-//             //                       color: AppColor.accentBOW, fontSize: AppFont.smaller, fontWeight: FontWeight.w800),
-//             //                 ),
-//             //                 progressColor: AppColor.accentBOW,
-//             //                 backgroundColor: AppColor.grey1,
-//             //               ),
-//             //             ),
-//             //             const SizedBox(width: 20),
-//             //             Expanded(child: Text(todos[index]['title'].toString())),
-//             //           ],
-//             //         )
-//             //       : Text(todos[index]['title'].toString()),
-//             //   trailing: ReorderableDragStartListener(
-//             //     index: index,
-//             //     child: const Column(
-//             //       mainAxisAlignment: MainAxisAlignment.center,
-//             //       children: [
-//             //         Icon(Icons.dehaze),
-//             //       ],
-//             //     ),
-//             //   ),
-//             // ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   void onDismissed(index) {
-//     todos.removeAt(index);
-//     setState(() {});
-//     print(index);
-//     print(todos);
-//   }
-//
-//   void itemChange(bool val, int index) {
-//     // setState(() {
-//     //   todos[index].isCheck = val;
-//     // });
-//   }
-// }
 
 void doNothing(BuildContext context) {}

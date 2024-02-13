@@ -46,10 +46,9 @@ class TodoLocal {
       if (todo.category != null) {
         _todo!.category = todo.category;
       }
-      if (todo.isChecked != null) {
-        _todo!.isChecked = todo.isChecked;
-      }
-      isar.todoEntitys.putSync(_todo!);
+      _todo!.isChecked = todo.isChecked;
+
+      isar.todoEntitys.putSync(_todo);
     });
   }
 

@@ -229,6 +229,18 @@ class StreamApi {
     }
   }
 
+  Future<Response> getTodosApi(int userId) async {
+    try {
+      final Response response = await dioClient.get(
+        Endpoints.getTodos,
+        queryParameters: {'user_id': userId},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> getWeeksApi(List streams) async {
     List streamsIds = streams.map((stream) => stream.id.toString()).toList();
     // print('streamsIds: ${streamsIds}');

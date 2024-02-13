@@ -4,16 +4,16 @@ sealed class DayResultEvent extends Equatable {
   const DayResultEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 final class CompletedTimeChanged extends DayResultEvent {
   const CompletedTimeChanged(this.completedAt);
 
-  final String completedAt;
+  final String? completedAt;
 
   @override
-  List<Object> get props => [completedAt];
+  List<Object?> get props => [completedAt];
 }
 
 final class ExecutionScopeChanged extends DayResultEvent {
@@ -22,7 +22,7 @@ final class ExecutionScopeChanged extends DayResultEvent {
   final int executionScope;
 
   @override
-  List<Object> get props => [executionScope];
+  List<Object?> get props => [executionScope];
 }
 
 final class ResultOfTheDayChanged extends DayResultEvent {
@@ -31,7 +31,7 @@ final class ResultOfTheDayChanged extends DayResultEvent {
   final String result;
 
   @override
-  List<Object> get props => [result];
+  List<Object?> get props => [result];
 }
 
 final class DesiresChanged extends DayResultEvent {
@@ -40,7 +40,7 @@ final class DesiresChanged extends DayResultEvent {
   final String desires;
 
   @override
-  List<Object> get props => [desires];
+  List<Object?> get props => [desires];
 }
 
 final class ReluctanceChanged extends DayResultEvent {
@@ -49,7 +49,7 @@ final class ReluctanceChanged extends DayResultEvent {
   final String reluctance;
 
   @override
-  List<Object> get props => [reluctance];
+  List<Object?> get props => [reluctance];
 }
 
 final class InterferenceChanged extends DayResultEvent {
@@ -58,7 +58,7 @@ final class InterferenceChanged extends DayResultEvent {
   final String interference;
 
   @override
-  List<Object> get props => [interference];
+  List<Object?> get props => [interference];
 }
 
 final class RejoiceChanged extends DayResultEvent {
@@ -67,7 +67,7 @@ final class RejoiceChanged extends DayResultEvent {
   final String rejoice;
 
   @override
-  List<Object> get props => [rejoice];
+  List<Object?> get props => [rejoice];
 }
 
 final class UntilMinuteCanChanged extends DayResultEvent {
@@ -76,5 +76,5 @@ final class UntilMinuteCanChanged extends DayResultEvent {
   final List<String> untilMinuteCan;
 
   @override
-  List<Object> get props => [untilMinuteCan];
+  List<Object?> get props => [untilMinuteCan];
 }

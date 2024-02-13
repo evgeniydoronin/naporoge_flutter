@@ -484,7 +484,7 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
           hourStart = '0$hourStart';
           hourFinished = int.parse(hourStart) == 9
               ? (periodRows[periodIndex].start + rowIndex + 1).toString()
-              : '0${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
+              : '01${(periodRows[periodIndex].start + rowIndex + 1).toString()}';
         } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
           hourFinished = (periodRows[periodIndex].start + rowIndex + 1).toString();
         } else if (int.parse(hourStart) == 23) {

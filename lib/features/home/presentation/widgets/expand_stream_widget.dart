@@ -21,49 +21,42 @@ class ExpandStreamWidget extends StatelessWidget {
 
             return Flexible(
               flex: 1,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                      decoration: AppLayout.boxDecorationOpacityShadowBG,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Продлить Дело на 1 неделю?',
-                            style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Закрепите полезные привычки',
-                            style: TextStyle(fontSize: AppFont.smaller, fontWeight: FontWeight.normal),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    print('продлить');
-                                    await extendStreamDialog(context);
-                                  },
-                                  style: AppLayout.accentBTNStyle,
-                                  child: Text(
-                                    'Продлить',
-                                    style: AppFont.regularSemibold,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+              child: Container(
+                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                decoration: AppLayout.boxDecorationOpacityShadowBG,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Продлить Дело на 1 неделю?',
+                      style: TextStyle(fontSize: AppFont.large, fontWeight: FontWeight.w500),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 5),
+                    Text(
+                      'Закрепите полезные привычки',
+                      style: TextStyle(fontSize: AppFont.smaller, fontWeight: FontWeight.normal),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              print('продлить');
+                              await extendStreamDialog(context);
+                            },
+                            style: AppLayout.accentBTNStyle,
+                            child: Text(
+                              'Продлить',
+                              style: AppFont.regularSemibold,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           } else {

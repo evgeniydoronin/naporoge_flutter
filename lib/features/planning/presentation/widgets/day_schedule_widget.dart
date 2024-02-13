@@ -393,10 +393,12 @@ class _DayPeriodRowState extends State<DayPeriodRow> {
           itemBuilder: (BuildContext context, int rowIndex) {
             String hourStart = (period[periodIndex].start + rowIndex).toString();
             String hourFinished = '';
-            if (int.parse(hourStart) < 9) {
+            if (int.parse(hourStart) <= 9) {
               hourStart = '0$hourStart';
-              hourFinished = '0${(period[periodIndex].start + rowIndex + 1).toString()}';
-            } else if (int.parse(hourStart) >= 9 && int.parse(hourStart) < 23) {
+              hourFinished = int.parse(hourStart) == 9
+                  ? (period[periodIndex].start + rowIndex + 1).toString()
+                  : '0${(period[periodIndex].start + rowIndex + 1).toString()}';
+            } else if (int.parse(hourStart) >= 10 && int.parse(hourStart) < 23) {
               hourFinished = (period[periodIndex].start + rowIndex + 1).toString();
             } else if (int.parse(hourStart) == 23) {
               hourFinished = '00';

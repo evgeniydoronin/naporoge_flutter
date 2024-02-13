@@ -50,8 +50,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       final currentState = state as TodosLoaded;
       final todos = List<TodoEntity>.from(currentState.todos);
-      final todo = todos.removeAt(event.oldIndex);
-      todos.insert(event.newIndex, todo);
+      // final todo = todos.removeAt(event.oldIndex);
+      // todos.insert(event.newIndex, todo);
       // Обновление порядка в Isar
       await isar.writeTxn(() async {
         for (var i = 0; i < todos.length; i++) {
@@ -59,9 +59,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           await isar.todoEntitys.put(todos[i]);
         }
       });
-      final subtasks = await isar.todoEntitys.filter().parentIdIsNotNull().findAll();
+      // final subtasks = await isar.todoEntitys.filter().parentIdIsNotNull().findAll();
 
-      emit(TodosLoaded(todos: todos, subtasks: subtasks, activeCategory: currentState.activeCategory));
+      // emit(TodosLoaded(todos: todos, subtasks: subtasks, activeCategory: currentState.activeCategory));
     }
   }
 }

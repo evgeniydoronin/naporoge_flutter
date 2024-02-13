@@ -253,6 +253,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: TodoEmptyRouterPage(),
       );
     },
+    TodoInfoScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const TodoInfoScreen(),
+      );
+    },
     TodoItemScreenRoute.name: (routeData) {
       final args = routeData.argsAs<TodoItemScreenRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -923,6 +929,20 @@ class TodoEmptyRouter extends PageRouteInfo<void> {
         );
 
   static const String name = 'TodoEmptyRouter';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [TodoInfoScreen]
+class TodoInfoScreenRoute extends PageRouteInfo<void> {
+  const TodoInfoScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          TodoInfoScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TodoInfoScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -203,14 +203,17 @@ class _TodoItemsState extends State<TodoItems> {
                               TodoEntity localTodo = TodoEntity();
 
                               remoteTodo.id = todo.id;
-                              remoteTodo.isChecked = value;
+                              remoteTodo.isChecked = value!;
+
+                              print('Checkbox remoteTodo.id: ${todo.id}');
+                              print('Checkbox remoteTodo.isChecked: $value');
 
                               /// Update on server
                               TodoModel updatedTodoModel = await todoController.updateTodoOnServer(remoteTodo);
 
                               /// Update on local
                               localTodo.id = updatedTodoModel.id;
-                              localTodo.isChecked = updatedTodoModel.isChecked;
+                              localTodo.isChecked = updatedTodoModel.isChecked!;
 
                               await todoController.updateTodoOnLocal(localTodo);
 

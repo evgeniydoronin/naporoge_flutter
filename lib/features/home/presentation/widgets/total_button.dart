@@ -37,6 +37,8 @@ class TotalButton extends StatelessWidget {
                 context.read<DayResultBloc>().add(const DesiresChanged(''));
                 context.read<DayResultBloc>().add(const ReluctanceChanged(''));
                 context.read<DayResultBloc>().add(const RejoiceChanged(''));
+                context.read<DayResultBloc>().add(const CompletedTimeChanged(''));
+                context.read<DayResultBloc>().add(const ExecutionScopeChanged(0));
                 print('state345: ${context.read<DayResultBloc>().state.rejoice}');
                 // context.read<DayResultBloc>().add()
               },

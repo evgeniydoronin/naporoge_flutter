@@ -24,6 +24,16 @@ Future<Map> getTotalResultsStream() async {
   final isar = await isarService.db;
   final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
+  ///
+  List streams = await isar.nPStreams.where().findAll();
+  bool isExpandStream = false;
+  if (streams.length == 1 && stream!.weeks! == 3) {
+    final mayBeExpandDate = stream.startAt!.add(const Duration(days: 21));
+    if (DateTime.now().isBefore(mayBeExpandDate)) {
+      isExpandStream = true;
+    }
+  }
+
   int weeks = stream!.weeks!;
   int days = 6 * weeks;
 
@@ -157,6 +167,9 @@ Future<Map> getTotalResultsStream() async {
   total['high'] = high.length;
   total['executionScope'] = executionScope.length;
   total['weekNotPlanned'] = weekNotPlannedList.length;
+
+  //
+  total['isExpandStream'] = isExpandStream;
 
   return total;
 }
@@ -350,9 +363,12 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
                         Column(
                           children: [
                             IntrinsicHeight(
-                              child: Column(
+                              child: Row(
                                 children: [
                                   const ExpandStreamWidget(),
+                                  streamResults['isExpandStream']
+                                      ? const SizedBox(width: 20)
+                                      : const SizedBox(width: 0),
                                   Flexible(
                                     flex: 1,
                                     child: Container(

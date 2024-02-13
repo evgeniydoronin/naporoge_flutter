@@ -32,6 +32,7 @@ import '../../features/rules/presentation/screens/rules_screen.dart';
 import '../../features/statistics/presentation/screen/statistics_screen.dart';
 import '../../dashboard.dart';
 import '../../features/todo/domain/entities/todo_entity.dart';
+import '../../features/todo/presentation/screens/todo_info_screen.dart';
 import '../../features/todo/presentation/screens/todo_item_screen.dart';
 import '../../features/todo/presentation/screens/todo_screen.dart';
 import '../../features/welcome/presentation/screens/welcome_description_screen.dart';
@@ -166,6 +167,10 @@ class AppRouter extends _$AppRouter {
             CustomRoute(
               page: TodoItemScreenRoute.page,
               path: 'todo/:todo/details',
+            ),
+            CustomRoute(
+              page: TodoInfoScreenRoute.page,
+              path: 'todo/info',
             ),
           ],
         ),
