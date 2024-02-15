@@ -93,7 +93,7 @@ class _NPCalendarState extends State<NPCalendar> {
     firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
     firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
     offsetStartMonth = firstDayOfMonth.weekday - 1;
-    dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+    dayInMonth = getDaysInMonth(_currentDay);
 
     super.initState();
   }
@@ -228,12 +228,8 @@ class _NPCalendarState extends State<NPCalendar> {
       firstDayOfMonth = DateTime(_currentDay.year, _currentDay.month, 1);
       firstDayOfNextMonth = DateTime(_currentDay.year, _currentDay.month + 1);
       offsetStartMonth = firstDayOfMonth.weekday - 1;
-      dayInMonth = (firstDayOfMonth.difference(firstDayOfNextMonth).inDays).abs();
+      dayInMonth = getDaysInMonth(_currentDay);
     });
-
-    int daysInMonth = getDaysInMonth(_currentDay);
-    print('_currentDay 2: $_currentDay');
-    print('daysInMonth 555: $daysInMonth');
   }
 
   Widget cellBuilder(cellIndex, offsetStartMonth) {
@@ -328,7 +324,7 @@ int getDaysInMonth(DateTime date) {
       (date.month < 12) ? DateTime(date.year, date.month + 1, 1) : DateTime(date.year + 1, 1, 1);
 
   // Вычитаем один день, чтобы получить последний день текущего месяца
-  DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+  DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(const Duration(seconds: 1));
 
   // Возвращаем день последней даты, который является количеством дней в месяце
   return lastDayOfMonth.day;
