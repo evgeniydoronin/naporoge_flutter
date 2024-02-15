@@ -315,9 +315,15 @@ class _TodosBoxState extends State<TodosBox> {
                                     print('edit todo');
                                     modalTodoForm(context, todo, null);
                                   },
-                                  child: Padding(
+                                  child: Container(
+                                    height: 40,
+                                    color: Colors.transparent,
                                     padding: const EdgeInsets.only(right: 15, left: 10),
-                                    child: Text(todo.title!, textAlign: TextAlign.start),
+                                    child: Row(
+                                      children: [
+                                        Text(todo.title!, textAlign: TextAlign.start),
+                                      ],
+                                    ),
                                   ));
                             },
                           ),

@@ -136,20 +136,23 @@ class _TodoItemsState extends State<TodoItems> {
           return const Center(child: CircularProgressIndicator());
         } else if (state is SubTodosLoaded) {
           // Фильтрация подзадач по parentId
-          final subtasks = state.todos.where((todo) => todo.parentId == widget.parentTodo.id).toList();
-
           return ReorderableListView(
             proxyDecorator: proxyDecorator,
-            shrinkWrap: true,
+            // shrinkWrap: true,
             // buildDefaultDragHandles: false,
             onReorder: (int oldIndex, int newIndex) {
-              if (newIndex > oldIndex) {
-                newIndex -= 1;
-              }
+              setState(() {
+                if (newIndex > oldIndex) {
+                  newIndex -= 1;
+                }
+
+                final todo = state.todos.removeAt(oldIndex);
+                state.todos.insert(newIndex, todo);
+              });
               context.read<SubTodoBloc>().add(UpdateSubTodoOrder(oldIndex, newIndex, widget.parentTodo.id!));
             },
-            children: List.generate(subtasks.length, (index) {
-              final todo = subtasks[index];
+            children: List.generate(state.todos.length, (index) {
+              final todo = state.todos[index];
 
               return Container(
                 key: ValueKey(todo.id),
@@ -167,7 +170,7 @@ class _TodoItemsState extends State<TodoItems> {
                     children: [
                       CustomSlidableAction(
                         onPressed: (context) async {
-                          CircularLoading(context).deleteTodo(todo, subtasks, index, catId);
+                          CircularLoading(context).deleteTodo(todo, state.todos, index, catId);
 
                           // /// обновление стейта подкатегории
                           // setState(() {

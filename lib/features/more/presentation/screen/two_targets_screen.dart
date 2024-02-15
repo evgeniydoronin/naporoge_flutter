@@ -61,12 +61,10 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
         ),
       ),
       body: FutureBuilder(
-        future: getCurrentStream(),
+        future: getTwoTargets(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final npStream = snapshot.data;
-
-            TwoTarget? target = npStream!.twoTargetBacklink.firstOrNull;
+            TwoTarget? target = snapshot.data != 0 ? snapshot.data : null;
 
             titleEditingController = TextEditingController(text: target?.title);
             minimumEditingController = TextEditingController(text: target?.minimum);
@@ -277,7 +275,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                       final isarService = IsarService();
                                       final isar = await isarService.db;
                                       final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
-                                      final twoTargets = await isar.twoTargets.where().findFirst();
+                                      TwoTarget? twoTargets = await isar.twoTargets.where().findFirst();
                                       final streamController = getIt<StreamController>();
                                       final storageController = StreamLocalStorage();
 
@@ -309,11 +307,28 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
 
                                       print('twoTargetData: $twoTargetData');
 
-                                      final editTwoTargets = await streamController.createTwoTargets(twoTargetData);
-                                      print('editTwoTargets: $editTwoTargets');
+                                      /// create
+                                      if (twoTargets == null) {
+                                        print('create two targets');
+                                        final twoTargetsServerData =
+                                            await streamController.createTwoTargets(twoTargetData);
+                                        print('twoTargetsServerData: $twoTargetsServerData');
+                                        await storageController.createTwoTargets(twoTargetsServerData);
+                                      }
 
-                                      // save on local
-                                      await storageController.editTwoTargets(editTwoTargets);
+                                      /// update
+                                      else {
+                                        print('update two targets');
+                                        final twoTargetsServerData =
+                                            await streamController.createTwoTargets(twoTargetData);
+                                        print('twoTargetsServerData: $twoTargetsServerData');
+                                        await storageController.updateTwoTargets(twoTargetsServerData);
+                                      }
+
+                                      // print('editTwoTargets: $editTwoTargets');
+                                      //
+                                      // // save on local
+                                      // await storageController.editTwoTargets(editTwoTargets);
 
                                       // /// create
                                       // if (twoTargets == null) {

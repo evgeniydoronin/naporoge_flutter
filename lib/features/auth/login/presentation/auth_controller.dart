@@ -58,6 +58,7 @@ class AuthController {
       await isar.dayResults.clear();
       await isar.diaryNotes.clear();
       await isar.twoTargets.clear();
+      await isar.todoEntitys.clear();
     });
   }
 
@@ -113,7 +114,9 @@ class AuthController {
     await insertDiaryNotes(data['diaryNotes']);
 
     /// Two Targets
-    await insertTwoTargets(data['twoTargets']);
+    if (data['twoTargets'].isNotEmpty) {
+      await insertTwoTargets(data['twoTargets']);
+    }
 
     /// Todos
     await insertTodos(data['todos']);
@@ -291,41 +294,33 @@ Future insertTwoTargets(data) async {
   final isarService = IsarService();
   final isar = await isarService.db;
 
-  List<TwoTarget> twoTargets = [];
-  if (data != null) {
-    for (int i = 0; i < data.length; i++) {
-      final TwoTargetsModel twoTargetData = data[i];
-      final stream = await isar.nPStreams.get(twoTargetData.streamId!);
+  Map? twoTargetData = data != null ? data[0] : null;
 
-      final twoTarget = TwoTarget()
-        ..id = twoTargetData.id
-        ..streamId = twoTargetData.streamId
-        ..title = twoTargetData.title
-        ..minimum = twoTargetData.minimum
-        ..targetOneTitle = twoTargetData.targetOneTitle
-        ..targetOneDescription = twoTargetData.targetOneDescription
-        ..targetTwoTitle = twoTargetData.targetTwoTitle
-        ..targetTwoDescription = twoTargetData.targetTwoDescription
-        ..nPStream.value = stream;
+  if (twoTargetData != null) {
+    final stream = await isar.nPStreams.get(twoTargetData['stream_id']);
 
-      twoTargets.add(twoTarget);
-    }
+    TwoTarget twoTarget = TwoTarget()
+      ..id = twoTargetData['id']
+      ..streamId = twoTargetData['stream_id']
+      ..title = twoTargetData['title']
+      ..minimum = twoTargetData['minimum']
+      ..targetOneTitle = twoTargetData['target_one_title']
+      ..targetOneDescription = twoTargetData['target_one_description']
+      ..targetTwoTitle = twoTargetData['target_two_title']
+      ..targetTwoDescription = twoTargetData['target_two_description']
+      ..nPStream.value = stream;
+
+    /// Add two targets
+    isar.writeTxnSync(() async {
+      isar.twoTargets.putSync(twoTarget);
+    });
   }
-
-  /// Add two targets
-  isar.writeTxnSync(() async {
-    if (twoTargets.isNotEmpty) {
-      isar.twoTargets.putAllSync(twoTargets);
-    }
-  });
 }
 
 /// Insert todos
 Future insertTodos(data) async {
   final isarService = IsarService();
   final isar = await isarService.db;
-
-  print('data backup todos: $data');
 
   List<TodoModel>? todosData = data;
   List<TodoEntity> todos = [];

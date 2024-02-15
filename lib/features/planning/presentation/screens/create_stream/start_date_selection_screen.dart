@@ -39,33 +39,67 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
   void getScreenStart() async {
     final isar = await isarService.db;
     final List streams = await isar.nPStreams.where().findAll();
-    // print('streams: $streams');
+    final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
+
+    print('streams: $streams');
     if (streams.isNotEmpty) {
-      /// первый курс есть
-      if (streams.length == 1) {
-        /// и деактивирован
-        if (!streams[0].isActive) {
-          print('первый курс есть и деактивирован');
+      /// есть активный курс
+      if (activeStream != null) {
+        print('activeStream != null');
+
+        /// следующий курс
+        if (DateTime.now().isBefore(activeStream.startAt!)) {
+          setState(() {
+            isBackLeading = false;
+          });
           if (context.mounted) {
-            setState(() {
-              // disable back button
-              isBackLeading = false;
-            });
             await selectWeeks(context);
           }
         }
-      }
-
-      /// другие курсы
-      else {
+      } else {
+        print('activeStream == null');
+        setState(() {
+          isBackLeading = false;
+        });
         if (context.mounted) {
-          setState(() {
-            // disable back button
-            isBackLeading = false;
-          });
           await selectWeeks(context);
         }
       }
+      // /// первый неактивный курс
+      // if (streams.length == 1 && activeStream != null) {
+      //   print('первый неактивный курс');
+      //   if (context.mounted) {
+      //     // disable back button
+      //     setState(() {
+      //       isBackLeading = false;
+      //     });
+      //   }
+      // }
+      ///
+      // if (streams.length == 1) {
+      //   /// и деактивирован
+      //   if (!streams[0].isActive) {
+      //     print('первый курс есть и деактивирован');
+      //     if (context.mounted) {
+      //       setState(() {
+      //         // disable back button
+      //         isBackLeading = false;
+      //       });
+      //       await selectWeeks(context);
+      //     }
+      //   }
+      // }
+      //
+      // /// другие курсы
+      // else {
+      //   if (context.mounted) {
+      //     setState(() {
+      //       // disable back button
+      //       isBackLeading = true;
+      //     });
+      //     // await selectWeeks(context);
+      //   }
+      // }
     }
 
     /// первый курс не создан

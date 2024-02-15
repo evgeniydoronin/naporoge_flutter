@@ -87,8 +87,6 @@ Future<Map> getTotalResultsStream() async {
   // слабо, все дни курса минус выполненные на хорошо и отлично
   int low = days - middle.length - high.length;
 
-  print('low: $low');
-
   ///////////////////////////////
   // сообщение
   ///////////////////////////////

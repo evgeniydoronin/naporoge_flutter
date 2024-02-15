@@ -296,7 +296,6 @@ class StreamApi {
 
   Future<Response> getTwoTargetsApi(List streams) async {
     List streamsIds = streams.map((stream) => stream.id.toString()).toList();
-    // print(streamsIds);
     try {
       final Response response = await dioClient.get(
         Endpoints.getTwoTargets,

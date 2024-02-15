@@ -92,10 +92,8 @@ class StreamLocalStorage {
       }
     }
 
-    // print('stream!.id : ${stream!.id}');
-    // print('weekIds: $weekIds');
-    // print('daysIds: $daysIds');
-    // print('dayResultsIds: $dayResultsIds');
+    // two targets
+    TwoTarget? twoTarget = await isar.twoTargets.filter().nPStream((q) => q.idEqualTo(streamId)).findFirst();
 
     // удаление
     await isar.writeTxn(() async {
@@ -103,6 +101,9 @@ class StreamLocalStorage {
       await isar.weeks.deleteAll(weekIds);
       await isar.days.deleteAll(daysIds);
       await isar.dayResults.deleteAll(dayResultsIds);
+      if (twoTarget != null) {
+        await isar.twoTargets.delete(twoTarget.id!);
+      }
     });
   }
 
@@ -355,42 +356,50 @@ class StreamLocalStorage {
     });
   }
 
-  Future editTwoTargets(Map serverResponse) async {
+  Future createTwoTargets(Map serverResponse) async {
     final isar = await isarService.db;
     final data = serverResponse['twoTargets'];
     final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
 
-    TwoTarget? twoTargets = await isar.twoTargets.get(data['id']);
-
     /// create
-    if (twoTargets == null) {
-      print('create twoTargets');
-      twoTargets = TwoTarget()
-        ..id = data['id']
-        ..title = data['title']
-        ..minimum = data['minimum']
-        ..targetOneTitle = data['target_one_title']
-        ..targetOneDescription = data['target_one_description']
-        ..targetTwoTitle = data['target_two_title']
-        ..targetTwoDescription = data['target_two_description']
-        ..nPStream.value = stream;
-    }
-
-    /// update
-    else {
-      print('update twoTargets');
-
-      twoTargets.title = data['title'];
-      twoTargets.minimum = data['minimum'];
-      twoTargets.targetOneTitle = data['target_one_title'];
-      twoTargets.targetOneDescription = data['target_one_description'];
-      twoTargets.targetTwoTitle = data['target_two_title'];
-      twoTargets.targetTwoDescription = data['target_two_description'];
-      twoTargets.nPStream.value = stream;
-    }
+    print('create twoTargets');
+    final twoTargets = TwoTarget()
+      ..id = data['id']
+      ..title = data['title']
+      ..minimum = data['minimum']
+      ..targetOneTitle = data['target_one_title']
+      ..targetOneDescription = data['target_one_description']
+      ..targetTwoTitle = data['target_two_title']
+      ..targetTwoDescription = data['target_two_description']
+      ..nPStream.value = stream;
 
     isar.writeTxnSync(() async {
       isar.twoTargets.putSync(twoTargets!);
+    });
+
+    return twoTargets;
+  }
+
+  Future updateTwoTargets(Map serverResponse) async {
+    final isar = await isarService.db;
+    final data = serverResponse['twoTargets'];
+    final stream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
+
+    final twoTargets = await isar.twoTargets.get(data['id']);
+
+    /// update
+    print('update twoTargets');
+
+    twoTargets!.title = data['title'];
+    twoTargets.minimum = data['minimum'];
+    twoTargets.targetOneTitle = data['target_one_title'];
+    twoTargets.targetOneDescription = data['target_one_description'];
+    twoTargets.targetTwoTitle = data['target_two_title'];
+    twoTargets.targetTwoDescription = data['target_two_description'];
+    twoTargets.nPStream.value = stream;
+
+    isar.writeTxnSync(() async {
+      isar.twoTargets.putSync(twoTargets);
     });
 
     return twoTargets;

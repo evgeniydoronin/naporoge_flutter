@@ -25,10 +25,13 @@ class SubTodoBloc extends Bloc<SubTodoEvent, SubTodoState> {
   }
 
   void _onSubLoadTodos(SubLoadTodos event, Emitter<SubTodoState> emit) async {
+    final currentState = state as SubTodosLoaded;
+
     // Использование данных
     final isarService = IsarService();
     final isar = await isarService.db;
-    final todos = await isar.todoEntitys.where(sort: Sort.asc).findAll();
+    final todos =
+        await isar.todoEntitys.where(sort: Sort.asc).filter().parentIdEqualTo(currentState.activeCategory).findAll();
     todos.sort(_orderComparator);
 
     emit(SubTodosLoaded(todos: todos, subtasks: null, activeCategory: event.category));
@@ -38,7 +41,7 @@ class SubTodoBloc extends Bloc<SubTodoEvent, SubTodoState> {
     // Использование данных
     final isarService = IsarService();
     final isar = await isarService.db;
-    final todos = await isar.todoEntitys.where().findAll();
+    final todos = await isar.todoEntitys.filter().parentIdEqualTo(event.parentId).findAll();
     todos.sort(_orderComparator);
 
     emit(SubTodosLoaded(todos: todos, subtasks: null, activeCategory: event.parentId));
@@ -61,8 +64,8 @@ class SubTodoBloc extends Bloc<SubTodoEvent, SubTodoState> {
 
       final currentState = state as SubTodosLoaded;
       final todos = List<TodoEntity>.from(currentState.todos.where((todo) => todo.parentId == event.parentId));
-      final todo = todos.removeAt(event.oldIndex);
-      todos.insert(event.newIndex, todo);
+      // final todo = todos.removeAt(event.oldIndex);
+      // todos.insert(event.newIndex, todo);
       // Обновление порядка в Isar
       await isar.writeTxn(() async {
         for (var i = 0; i < todos.length; i++) {
@@ -70,7 +73,7 @@ class SubTodoBloc extends Bloc<SubTodoEvent, SubTodoState> {
           await isar.todoEntitys.put(todos[i]);
         }
       });
-      emit(SubTodosLoaded(todos: todos, subtasks: null, activeCategory: currentState.activeCategory));
+      // emit(SubTodosLoaded(todos: todos, subtasks: null, activeCategory: currentState.activeCategory));
     }
   }
 }

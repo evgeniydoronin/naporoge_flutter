@@ -99,8 +99,6 @@ class _SelectActualExecutionTimeState extends State<SelectActualExecutionTime> {
               children: [
                 BlocBuilder<DayResultBloc, DayResultState>(
                   builder: (context, state) {
-                    print('state.completedAt 1: ${state.completedAt}');
-                    print('state.completedAt 2: ${context.watch<DayResultBloc>().state.completedAt}');
                     String _hour = currentHour!;
                     String _minute = currentMinute.toString();
                     return TextFormField(

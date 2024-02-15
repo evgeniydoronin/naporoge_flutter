@@ -224,8 +224,7 @@ class StreamRepository {
   Future getTwoTargetsRequested(List<NPStreamModel> streams) async {
     try {
       final response = await streamApi.getTwoTargetsApi(streams);
-
-      return (response.data['twoTargets'] as List).map((e) => TwoTargetsModel.fromJson(e)).toList();
+      return response.data['twoTargets'];
     } on DioException catch (e) {
       rethrow;
     }
