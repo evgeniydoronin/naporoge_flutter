@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:naporoge/features/home/presentation/widgets/random_message_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/utils/show_closeApp_dialog.dart';
+import '../../../../main.dart';
 import '../widgets/header_messages.dart';
 import '../widgets/total_button.dart';
 import '../widgets/video_box.dart';
@@ -48,37 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(top: 15, bottom: 25, left: 18, right: 45),
-                  decoration: BoxDecoration(
-                      color: AppColor.lightBGItem,
-                      border: AppLayout.primaryBorder,
-                      borderRadius: AppLayout.primaryRadius,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 5,
-                          spreadRadius: 0,
-                        )
-                      ],
-                      image: const DecorationImage(
-                          alignment: Alignment.bottomRight, image: AssetImage('assets/images/4.png'))),
-                  child: RichText(
-                    text: const TextSpan(
-                      text: 'Пропущенное дело',
-                      style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w800),
-                      children: [
-                        TextSpan(
-                          text: ' можно выполнить в выходной день.',
-                          style: TextStyle(fontWeight: FontWeight.w400),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    await scheduleNotification();
+                  },
+                  child: Text('qwqwq')),
+              const RandomMessageWidget(),
               const SizedBox(height: 10),
               const WeekStatusPoint(),
               const SizedBox(height: 10),
