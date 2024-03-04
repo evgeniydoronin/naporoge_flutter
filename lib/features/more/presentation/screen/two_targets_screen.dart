@@ -286,7 +286,8 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                       twoTargetData['id'] = twoTargets?.id;
 
                                       /// заголовок
-                                      twoTargetData['title'] = titleEditingController.text;
+                                      twoTargetData['title'] =
+                                          titleEditingController.text.isNotEmpty ? titleEditingController.text : null;
 
                                       /// минимум
                                       twoTargetData['minimum'] = minimumEditingController.text;
@@ -305,7 +306,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                       twoTargetData['target_two_description'] =
                                           targetTwoDescriptionEditingController.text;
 
-                                      print('twoTargetData: $twoTargetData');
+                                      print('twoTargetData 1: $twoTargetData');
 
                                       /// create
                                       if (twoTargets == null) {
@@ -319,6 +320,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                       /// update
                                       else {
                                         print('update two targets');
+                                        print('twoTargetData 2: $twoTargetData');
                                         final twoTargetsServerData =
                                             await streamController.createTwoTargets(twoTargetData);
                                         print('twoTargetsServerData: $twoTargetsServerData');

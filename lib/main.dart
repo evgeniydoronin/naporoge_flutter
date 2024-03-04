@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_theme.dart';
+import 'core/utils/push_notify.dart';
 import 'features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
 import 'features/diary/presentation/bloc/diary_bloc.dart';
 import 'features/home/presentation/bloc/save_day_result/day_result_bloc.dart';
@@ -27,16 +27,12 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  //
-  // tz.initializeTimeZones();
-  // tz.setLocalLocation(tz.getLocation('Europe/Madrid'));
-  //
-  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  //
-  // // Инициализация плагина для уведомлений
-  // var initializationSettingsAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
-  // var initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-  // await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  tz.initializeTimeZones();
+
+  await LocalNotifications.init();
+
+  await getPushNotify();
 
   await setup();
 
@@ -93,28 +89,4 @@ class MyHttpOverrides extends HttpOverrides {
     return super.createHttpClient(context)
       ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
-}
-
-Future<void> scheduleNotification() async {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  var androidDetails = AndroidNotificationDetails(
-    'channel_id',
-    'channel_name',
-    importance: Importance.high,
-    priority: Priority.high,
-  );
-  var platformDetails = NotificationDetails(android: androidDetails);
-
-  await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'Тестовое уведомление',
-    'Это наше запланированное уведомление.',
-    // Запланируйте уведомление на определенное время
-    tz.TZDateTime.now(tz.local).add(Duration(seconds: 10)),
-    platformDetails,
-    androidAllowWhileIdle: true,
-    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    matchDateTimeComponents: DateTimeComponents.time,
-  );
 }

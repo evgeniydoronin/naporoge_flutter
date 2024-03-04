@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:naporoge/features/home/presentation/widgets/random_message_widget.dart';
+import '../../../../core/utils/push_notify.dart';
+import '../widgets/random_message_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
 import '../../../../core/utils/show_closeApp_dialog.dart';
-import '../../../../main.dart';
 import '../widgets/header_messages.dart';
 import '../widgets/total_button.dart';
 import '../widgets/video_box.dart';
@@ -50,11 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    await scheduleNotification();
-                  },
-                  child: Text('qwqwq')),
               const RandomMessageWidget(),
               const SizedBox(height: 10),
               const WeekStatusPoint(),
