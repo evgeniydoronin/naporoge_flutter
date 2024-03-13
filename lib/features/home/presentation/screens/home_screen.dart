@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/utils/push_notify.dart';
 import '../widgets/random_message_widget.dart';
 import '../../../../core/constants/app_theme.dart';
 import '../../../../core/routes/app_router.dart';
@@ -17,14 +16,9 @@ import '../widgets/week_status_point.dart';
 class HomesEmptyRouterPage extends AutoRouter {}
 
 @RoutePage()
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -41,11 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
           body: ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding, vertical: 15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text(DateFormat('dd-MM-y', 'ru_RU').format(DateTime.now()))),
+                    Expanded(child: Text(DateFormat('dd MMMM, EEEE', 'ru_RU').format(DateTime.now()))),
                     const HeaderMessageWidget(),
                   ],
                 ),
@@ -55,9 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
               const WeekStatusPoint(),
               const SizedBox(height: 10),
               const CourseProgress(),
-              const SizedBox(height: 25),
+              const SizedBox(height: 22),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -68,7 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           context.router.push(const TodoEmptyRouter());
                         },
-                        style: AppLayout.primaryBTNStyle,
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+                          backgroundColor: AppColor.primary,
+                          shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -93,7 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           // context.router.push(SplashScreenRoute());
                         },
-                        style: AppLayout.primaryBTNStyle,
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+                          backgroundColor: AppColor.primary,
+                          shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -119,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 22),
               const VideoBox(),
               const SizedBox(height: 25),
               const TotalButton(),

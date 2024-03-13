@@ -145,6 +145,7 @@ class _WeeksProgressBoxState extends State<WeeksProgressBox> {
                               autovalidateMode: AutovalidateMode.onUserInteraction,
                               key: formKeys[index],
                               child: TextFormField(
+                                textCapitalization: TextCapitalization.sentences,
                                 controller: progress[index],
                                 // focusNode: focusList[index],
                                 // autofocus: true,

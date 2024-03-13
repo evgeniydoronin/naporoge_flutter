@@ -15,7 +15,7 @@ class CourseProgress extends StatelessWidget {
             Map data = snapshot.data;
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
               child: Container(
                 padding: const EdgeInsets.only(top: 10, bottom: 10, left: 18, right: 45),
                 decoration: AppLayout.boxDecorationShadowBG,
@@ -26,9 +26,9 @@ class CourseProgress extends StatelessWidget {
                         color: data['colored'] != null ? AppColor.primary : AppColor.grey1,
                         shape: BoxShape.circle,
                       ),
-                      width: 50,
+                      width: 55,
                       child: CircularPercentIndicator(
-                        radius: 30,
+                        radius: 32,
                         percent: data['percent'] / 100,
                         center: Text(
                           '${data['percent']}%',
@@ -39,6 +39,7 @@ class CourseProgress extends StatelessWidget {
                         ),
                         progressColor: AppColor.accentBOW,
                         animation: true,
+                        backgroundColor: AppColor.grey1,
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -50,6 +51,7 @@ class CourseProgress extends StatelessWidget {
                             data['title'] ?? '',
                             style: AppFont.largeExtraBold,
                           ),
+                          const SizedBox(height: 5),
                           Text(
                             data['description'] ?? '',
                             style: AppFont.smallNormal,

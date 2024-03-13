@@ -46,7 +46,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
         return Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
             child: Column(
               children: [
                 ListView.builder(
@@ -134,6 +134,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
                                     ),
                                     const SizedBox(height: 30),
                                     TextFormField(
+                                      textCapitalization: TextCapitalization.sentences,
                                       controller: _textEditingControllers[index],
                                       onChanged: (title) {
                                         context
@@ -293,7 +294,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
         streamData["old_stream_id"] = previousStream.id;
       }
 
-      // print('streamData: $streamData');
+      print('streamData: $streamData');
 
       // create on server
       var newStream = await _streamController.createStream(streamData);

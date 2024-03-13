@@ -68,7 +68,7 @@ class MoreScreen extends StatelessWidget {
               children: [
                 const Positioned(top: -35, left: -120, child: Image(image: AssetImage('assets/images/12.png'))),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 60),
+                  padding: EdgeInsets.only(left: AppLayout.contentPadding, right: AppLayout.contentPadding, top: 60),
                   child: Column(
                     children: [
                       IntrinsicHeight(
@@ -190,7 +190,7 @@ class MoreScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
               child: InkWell(
                 onTap: () {
                   context.router.push(const TwoTargetScreenRoute());
@@ -231,41 +231,38 @@ class MoreScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  context.router.push(const OurMissionScreenRoute());
+                },
                 child: Row(
                   children: [
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                         decoration: AppLayout.boxDecorationShadowBG,
-                        child: GestureDetector(
-                          onTap: () {
-                            context.router.push(const OurMissionScreenRoute());
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Expanded(
-                                child: Text(
-                                  'Наша миссия',
-                                  style: TextStyle(fontSize: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                'Наша миссия',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icons/arrow.svg',
+                                  colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
                                 ),
                               ),
-                              Container(
-                                width: 25,
-                                height: 25,
-                                decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/icons/arrow.svg',
-                                    colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -275,7 +272,7 @@ class MoreScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
               child: InkWell(
                 onTap: () {
                   context.router.push(const ArchivesScreenRoute());
@@ -319,43 +316,40 @@ class MoreScreen extends StatelessWidget {
               children: [
                 // const Positioned(top: -55, right: -180, child: Image(image: AssetImage('assets/images/13.png'))),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                   child: Column(
                     children: [
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          context.router.push(const RuleOfAppScreenRoute());
+                        },
                         child: Row(
                           children: [
                             Expanded(
                               child: Container(
                                 padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
                                 decoration: AppLayout.boxDecorationShadowBG,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    context.router.push(const RuleOfAppScreenRoute());
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Expanded(
-                                        child: Text(
-                                          'Правила работы',
-                                          style: TextStyle(fontSize: 16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Expanded(
+                                      child: Text(
+                                        'Правила работы',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 25,
+                                      height: 25,
+                                      decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icons/arrow.svg',
+                                          colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
                                         ),
                                       ),
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            'assets/icons/arrow.svg',
-                                            colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -404,7 +398,7 @@ class MoreScreen extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
               child: Text(
                 'Присоединяйтесь к проекту, следите за новостями, общайтесь с единомышленниками',
                 style: TextStyle(
@@ -506,7 +500,7 @@ class MoreScreen extends StatelessWidget {
             // ),
             // const SizedBox(height: 25),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
               child: Column(
                 children: [
                   GestureDetector(

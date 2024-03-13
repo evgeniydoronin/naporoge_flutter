@@ -68,7 +68,7 @@ class _DiaryDayResultsWidgetState extends State<DiaryDayResultsWidget> {
                 }
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                   child: Container(
                     decoration: AppLayout.boxDecorationShadowBG,
                     child: Theme(

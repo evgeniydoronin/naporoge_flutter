@@ -60,9 +60,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
             ),
             actions: [
               IconButton(
+                padding: const EdgeInsets.only(right: 9),
                 icon: Icon(
                   Icons.info_outline_rounded,
-                  color: AppColor.primary,
+                  color: AppColor.accent,
                 ),
                 color: Colors.black,
                 onPressed: () {
@@ -80,7 +81,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
               ),
               const SizedBox(height: 25),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                 child: Container(
                   // padding:
                   //     const EdgeInsets.only(top: 7, bottom: 7, left: 18, right: 18),
@@ -123,12 +124,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
               const SizedBox(height: 15),
               const DiaryNoteWidget(),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                 child: Container(
                   decoration: AppLayout.boxDecorationShadowBGBorderNone,
                   child: Form(
                     key: formKey,
                     child: TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       controller: noteController,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -159,7 +161,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
               ),
               const SizedBox(height: 25),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                 child: isSaving
                     ? ElevatedButton(
                         onPressed: () async {

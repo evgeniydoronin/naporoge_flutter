@@ -108,6 +108,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                             ),
                             const SizedBox(height: 5),
                             TextFormField(
+                              textCapitalization: TextCapitalization.sentences,
                               onChanged: (val) {
                                 context.read<DayResultBloc>().add(ResultOfTheDayChanged(val));
                               },
@@ -173,6 +174,7 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                             ),
                             const SizedBox(height: 5),
                             TextField(
+                              textCapitalization: TextCapitalization.sentences,
                               style: TextStyle(fontSize: AppFont.small),
                               decoration: InputDecoration(
                                 filled: true,
@@ -349,7 +351,8 @@ class _DayResultsSaveScreenState extends State<DayResultsSaveScreen> {
                                         CircularLoading(context).stopLoading();
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
-                                            content: Text('Установите верное время'),
+                                            content: Text(
+                                                'Время на телефоне не соответствует реальному. Включите автоматическое определение времени'),
                                             duration: Duration(seconds: 2),
                                           ),
                                         );

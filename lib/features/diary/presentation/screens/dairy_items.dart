@@ -111,7 +111,7 @@ class _DiaryItemsScreenState extends State<DiaryItemsScreen> {
                     // component is not dragged.
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColor.grey1))),
@@ -177,6 +177,7 @@ Future editNote(context, noteData) async {
                 SizedBox(
                   width: 230,
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Заполните обязательное поле!';

@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/constants/app_theme.dart';
+
 @RoutePage()
 class ExperienceOfOthersScreen extends StatelessWidget {
   const ExperienceOfOthersScreen({super.key});
@@ -12,7 +14,7 @@ class ExperienceOfOthersScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.lightBG,
         title: const Text(
           'Опыт других',
           overflow: TextOverflow.ellipsis,
@@ -27,7 +29,7 @@ class ExperienceOfOthersScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-          decoration: const BoxDecoration(color: Colors.white),
+          decoration: BoxDecoration(color: AppColor.lightBGItem),
           width: MediaQuery.of(context).size.width,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

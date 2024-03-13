@@ -44,7 +44,7 @@ class RuleOfAppScreen extends StatelessWidget {
                 icon: 'assets/icons/1228.png'),
             RuleItem(
                 title: 'Выполняйте условия работы',
-                description: '''Для получения хорошего результата:
+                description: '''Для получения  результата необходимы:
 • постановка задачи;
 • планирование;
 • учет результатов''',
@@ -101,12 +101,7 @@ class RuleItem extends StatelessWidget {
   final String description;
   final String icon;
 
-  const RuleItem(
-      {Key? key,
-      required this.title,
-      required this.description,
-      required this.icon})
-      : super(key: key);
+  const RuleItem({Key? key, required this.title, required this.description, required this.icon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -121,9 +116,7 @@ class RuleItem extends StatelessWidget {
           Container(
             height: 85,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            decoration: BoxDecoration(
-                borderRadius: AppLayout.primaryRadius,
-                color: AppColor.accentBOW),
+            decoration: BoxDecoration(borderRadius: AppLayout.primaryRadius, color: AppColor.accentBOW),
             // color: Colors.yellow,
             child: Row(
               children: [
@@ -133,10 +126,7 @@ class RuleItem extends StatelessWidget {
                     child: Text(
                       title,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500),
+                      style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
                     )),
                 Image.asset(icon)
               ],
@@ -145,8 +135,7 @@ class RuleItem extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-                borderRadius: AppLayout.primaryRadius, color: Colors.white),
+            decoration: BoxDecoration(borderRadius: AppLayout.primaryRadius, color: Colors.white),
             child: Text(description),
           ),
         ],

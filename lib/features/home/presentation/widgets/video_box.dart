@@ -17,7 +17,7 @@ class VideoBox extends StatefulWidget {
 class _VideoBoxState extends State<VideoBox> {
   @override
   Widget build(BuildContext context) {
-    final PageController pageController = PageController(viewportFraction: 0.85);
+    final PageController pageController = PageController(viewportFraction: 0.8);
 
     return FutureBuilder(
         future: getHomeVideos(),
@@ -26,36 +26,23 @@ class _VideoBoxState extends State<VideoBox> {
             List previewVideoIndex = snapshot.data;
 
             return SizedBox(
-              height: 200,
+              height: 220,
               child: PageView.builder(
                 controller: pageController,
                 itemCount: 4,
                 padEnds: false,
-                onPageChanged: (index) {
-                  print('videoIndex: $index');
-                  // setState(() {
-                  //   chewieController.pause();
-                  //   isPlay = false;
-                  // });
-                },
                 itemBuilder: (context, pageIndex) {
-                  // открываем видео для просмотра
+                  Widget pageContent;
+
                   if (previewVideoIndex[pageIndex] == 1) {
-                    return VideoPlay(pageIndex: pageIndex);
-                  }
-                  // заблокированное видео
-                  return Container(
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    child: ClipRRect(
+                    pageContent = VideoPlay(pageIndex: pageIndex);
+                  } else {
+                    pageContent = ClipRRect(
                       borderRadius: AppLayout.primaryRadius,
                       clipBehavior: Clip.hardEdge,
                       child: Stack(
                         children: [
-                          Positioned(
-                            top: 0,
-                            bottom: 0,
-                            right: 0,
-                            left: 0,
+                          Positioned.fill(
                             child: Container(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
@@ -65,20 +52,12 @@ class _VideoBoxState extends State<VideoBox> {
                               ),
                             ),
                           ),
-                          Positioned(
-                            top: 0,
-                            bottom: 0,
-                            right: 0,
-                            left: 0,
+                          Positioned.fill(
                             child: Container(
                               color: Colors.black.withOpacity(0.6),
                             ),
                           ),
-                          Positioned(
-                            top: 0,
-                            bottom: 0,
-                            right: 0,
-                            left: 0,
+                          Positioned.fill(
                             child: IconButton(
                               onPressed: () {},
                               icon: SvgPicture.asset('assets/icons/lock_video.svg'),
@@ -86,8 +65,13 @@ class _VideoBoxState extends State<VideoBox> {
                           ),
                         ],
                       ),
-                    ),
-                  );
+                    );
+                  }
+
+                  return Container(
+                      margin: EdgeInsets.only(
+                          left: AppLayout.contentPadding, right: pageIndex == 3 ? AppLayout.contentPadding : 0),
+                      child: pageContent);
                 },
               ),
             );
@@ -148,39 +132,36 @@ class _VideoPlayState extends State<VideoPlay> {
 
     // print(Uri.parse("${AppRemoteAssets().videoAssets()}/${widget.pageIndex}.mp4"));
 
-    return Container(
-      margin: const EdgeInsets.only(left: 20, right: 20),
-      child: ClipRRect(
-        borderRadius: AppLayout.primaryRadius,
-        clipBehavior: Clip.hardEdge,
-        child: isPlay
-            ? Chewie(controller: chewieController)
-            : GestureDetector(
-                onTap: () {
-                  setState(() {
-                    chewieController = ChewieController(
-                      aspectRatio: 16 / 9,
-                      autoPlay: true,
-                      showOptions: false,
-                      videoPlayerController: VideoPlayerController.networkUrl(
-                          Uri.parse("${AppRemoteAssets().videoAssets()}/${widget.pageIndex}.mp4")),
-                      deviceOrientationsAfterFullScreen: [
-                        DeviceOrientation.portraitUp,
-                      ],
-                    );
-                    isPlay = true;
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/placeholder_$pageIndex.png"),
-                      fit: BoxFit.cover,
-                    ),
+    return ClipRRect(
+      borderRadius: AppLayout.primaryRadius,
+      clipBehavior: Clip.hardEdge,
+      child: isPlay
+          ? Chewie(controller: chewieController)
+          : GestureDetector(
+              onTap: () {
+                setState(() {
+                  chewieController = ChewieController(
+                    aspectRatio: 16 / 9,
+                    autoPlay: true,
+                    showOptions: false,
+                    videoPlayerController: VideoPlayerController.networkUrl(
+                        Uri.parse("${AppRemoteAssets().videoAssets()}/${widget.pageIndex}.mp4")),
+                    deviceOrientationsAfterFullScreen: [
+                      DeviceOrientation.portraitUp,
+                    ],
+                  );
+                  isPlay = true;
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/placeholder_$pageIndex.png"),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-      ),
+            ),
     );
   }
 }

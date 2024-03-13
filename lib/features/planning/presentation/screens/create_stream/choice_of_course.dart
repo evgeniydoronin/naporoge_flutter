@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../bloc/active_course/active_stream_bloc.dart';
 import '../../bloc/planner_bloc.dart';
 import '../../widgets/choice_course_form/choice_course_form.dart';
 import '../../../../../core/constants/app_theme.dart';
@@ -38,8 +37,9 @@ class ChoiceOfCaseScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
+              padding: const EdgeInsets.only(right: 9),
               icon: const Icon(Icons.info_outline_rounded),
-              color: Colors.black,
+              color: AppColor.accent,
               onPressed: () {
                 context.router.push(const ExplanationsForTheStreamRoute());
               },

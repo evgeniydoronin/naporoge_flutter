@@ -34,49 +34,51 @@ class StatisticsScreen extends StatelessWidget {
               style: AppFont.scaffoldTitleDark,
             ),
           ),
-          body: ListView(
-            children: [
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: BoxDecoration(
-                    color: AppColor.lightBGItem,
-                    borderRadius: AppLayout.primaryRadius,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                    decoration: BoxDecoration(
+                      color: AppColor.lightBGItem,
+                      borderRadius: AppLayout.primaryRadius,
+                    ),
+                    child: const StreamTitle(),
                   ),
-                  child: const StreamTitle(),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: const WeeksProgressBox(),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                    decoration: AppLayout.boxDecorationShadowBG,
+                    child: const WeeksProgressBox(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: const StreamChartBox(),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                    decoration: AppLayout.boxDecorationShadowBG,
+                    child: const StreamChartBox(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                  decoration: AppLayout.boxDecorationShadowBG,
-                  child: const CountWeekDaysBox(),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                    decoration: AppLayout.boxDecorationShadowBG,
+                    child: const CountWeekDaysBox(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 25),
-            ],
+                const SizedBox(height: 25),
+              ],
+            ),
           ),
         ),
       ),

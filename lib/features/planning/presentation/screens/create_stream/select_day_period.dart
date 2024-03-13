@@ -26,7 +26,7 @@ class SelectDayPeriod extends StatefulWidget {
 }
 
 class _SelectDayPeriodState extends State<SelectDayPeriod> {
-  late final AppLifecycleListener _appLifecycleListener;
+  // late final AppLifecycleListener _appLifecycleListener;
   final _streamController = getIt<StreamController>();
   late final Future _getStream;
   FocusNode courseDescriptionFocusNode = FocusNode();
@@ -35,9 +35,9 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
   void initState() {
     _getStream = getActiveStream();
     // Initialize the AppLifecycleListener class and pass callbacks
-    _appLifecycleListener = AppLifecycleListener(
-      onStateChange: _onStateChanged,
-    );
+    // _appLifecycleListener = AppLifecycleListener(
+    //   onStateChange: _onStateChanged,
+    // );
     super.initState();
   }
 
@@ -45,35 +45,36 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
   void dispose() {
     courseDescriptionFocusNode.dispose();
     // Do not forget to dispose the listener
-    _appLifecycleListener.dispose();
+    // _appLifecycleListener.dispose();
     super.dispose();
   }
 
-  // Listen to the app lifecycle state changes
-  void _onStateChanged(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.detached:
-        _onDetached();
-      case AppLifecycleState.resumed:
-        _onResumed();
-      case AppLifecycleState.inactive:
-        _onInactive();
-      case AppLifecycleState.hidden:
-        _onHidden();
-      case AppLifecycleState.paused:
-        _onPaused();
-    }
-  }
-
-  void _onDetached() => print('detached');
-
-  void _onResumed() => context.router.replace(const SplashScreenRoute());
-
-  void _onInactive() => context.router.replace(const SplashScreenRoute());
-
-  void _onHidden() => print('hidden');
-
-  void _onPaused() => print('paused');
+  //
+  // // Listen to the app lifecycle state changes
+  // void _onStateChanged(AppLifecycleState state) {
+  //   switch (state) {
+  //     case AppLifecycleState.detached:
+  //       _onDetached();
+  //     case AppLifecycleState.resumed:
+  //       _onResumed();
+  //     case AppLifecycleState.inactive:
+  //       _onInactive();
+  //     case AppLifecycleState.hidden:
+  //       _onHidden();
+  //     case AppLifecycleState.paused:
+  //       _onPaused();
+  //   }
+  // }
+  //
+  // void _onDetached() => print('detached');
+  //
+  // void _onResumed() => context.router.replace(const SplashScreenRoute());
+  //
+  // void _onInactive() => context.router.replace(const SplashScreenRoute());
+  //
+  // void _onHidden() => print('hidden');
+  //
+  // void _onPaused() => print('paused');
 
   Future getActiveStream() async {
     final storage = StreamLocalStorage();
@@ -121,7 +122,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.info_outline_rounded),
-                  color: Colors.black,
+                  color: AppColor.accent,
                   onPressed: () {
                     // _scaffoldKey.currentState!.openEndDrawer();
                     context.router.push(const ExplanationsForThePlanningRoute());
@@ -149,7 +150,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                             const StepperIcons(step: 2),
                             const SizedBox(height: 20),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: AppColor.accentBOW,
@@ -183,7 +184,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                             ),
                             const SizedBox(height: 15),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                               child: Container(
                                 width: double.maxFinite,
                                 padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
@@ -198,13 +199,14 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                             ),
                             const SizedBox(height: 15),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('Моя задача:'),
                                   const SizedBox(height: 5),
                                   TextFormField(
+                                    textCapitalization: TextCapitalization.sentences,
                                     validator: (value) {
                                       if (value == null || value.trim().isEmpty) {
                                         courseDescriptionFocusNode.requestFocus();
@@ -241,7 +243,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                             ),
                             const SizedBox(height: 15),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                               child: Container(
                                   padding: const EdgeInsets.only(bottom: 15),
                                   decoration: AppLayout.boxDecorationShadowBG,
@@ -251,7 +253,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                             ),
                             const SizedBox(height: 25),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -262,7 +264,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
                                           if (state.finalCellIDs.length < 7) {
                                             if (context.mounted) {
                                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                  content: Text('Нужно выбрать 6 дней!'),
+                                                  content: Text('Запланируйте 6 дней'),
                                                   duration: Duration(seconds: 2)));
                                             }
                                           }

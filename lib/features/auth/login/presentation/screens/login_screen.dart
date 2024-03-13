@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Приложение разработано для обучающихся по Программе «Развитие воли и самоорганизации». Код активации выдается учебным заведением',
+                          'Приложение разработано для обучающихся по Программе «Развитие воли и самоорганизации». Код активации выдается учебным заведением или на сайте организатора курса развитиеволи.рф',
                           style: TextStyle(color: AppColor.grey2, fontSize: AppFont.small),
                         ),
                         const SizedBox(height: 20),
@@ -202,6 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           // для теста модератора
                                           if (maskFormatter.getUnmaskedText() == "0000000099" ||
                                               maskFormatter.getUnmaskedText() == "0000000999" ||
+                                              maskFormatter.getUnmaskedText() == "0000000888" ||
                                               maskFormatter.getUnmaskedText() == "0000000998") {
                                             if (context.mounted) {
                                               // print('0099');

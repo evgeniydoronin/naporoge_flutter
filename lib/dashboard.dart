@@ -2,6 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'core/services/db_client/isar_service.dart';
+import 'core/utils/get_next_week_data.dart';
+import 'core/utils/get_stream_status.dart';
 import 'features/planning/presentation/bloc/planner_bloc.dart';
 import 'core/constants/app_theme.dart';
 import 'core/routes/app_router.dart';
@@ -16,6 +20,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late final AppLifecycleListener _appLifecycleListener;
+  DateTime? lastExitTime;
 
   @override
   void initState() {
@@ -25,6 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _appLifecycleListener = AppLifecycleListener(
       onStateChange: _onStateChanged,
     );
+    _showDialogOnFirstLaunch();
   }
 
   @override
@@ -40,26 +46,147 @@ class _DashboardScreenState extends State<DashboardScreen> {
     switch (state) {
       case AppLifecycleState.detached:
         _onDetached();
+        break;
       case AppLifecycleState.resumed:
         _onResumed();
+        break;
       case AppLifecycleState.inactive:
         _onInactive();
+        break;
       case AppLifecycleState.hidden:
         _onHidden();
+        break;
       case AppLifecycleState.paused:
         _onPaused();
+        break;
     }
   }
 
   void _onDetached() => print('detached');
 
-  void _onResumed() => context.router.replace(const SplashScreenRoute());
+  // void _onResumed() => context.router.replace(const SplashScreenRoute());
+  /// проверяем повторное открытие приложение
+  void _onResumed() async {
+    final prefs = await SharedPreferences.getInstance();
+    final _pausedLastExitTime = prefs.getInt('pausedLastExitTime');
+    final _inactiveLastExitTime = prefs.getInt('inactiveLastExitTime');
 
-  void _onInactive() => print('inactive');
+    if (_pausedLastExitTime != null) {
+      final pausedLastExitTime = DateTime.fromMillisecondsSinceEpoch(_pausedLastExitTime);
+      final currentTime = DateTime.now();
+      final difference = currentTime.difference(pausedLastExitTime);
+      final minutesPassed = difference.inMinutes;
 
-  void _onHidden() => print('hidden');
+      /// если прошло больше 5 минут - обновляем стейты
+      if (minutesPassed > 30) {
+        if (mounted) {
+          context.router.replace(const SplashScreenRoute());
+        }
+      }
+      print('Приложение было свернуто');
+      print('Прошло $minutesPassed минут(ы) с момента последнего захода');
+      await prefs.remove('pausedLastExitTime');
+    } else if (_inactiveLastExitTime != null && _pausedLastExitTime == null) {
+      final lastExitTime = DateTime.fromMillisecondsSinceEpoch(_inactiveLastExitTime);
+      final currentTime = DateTime.now();
+      final difference = currentTime.difference(lastExitTime);
+      final minutesPassed = difference.inMinutes;
 
-  void _onPaused() => print('paused');
+      /// если прошло больше 10 минут - обновляем стейты
+      if (minutesPassed > 30) {
+        if (mounted) {
+          context.router.replace(const SplashScreenRoute());
+        }
+      }
+      print('Шторка была опущена');
+      print('Прошло $minutesPassed минут(ы) с момента последнего захода');
+    }
+    print('resumed');
+  }
+
+  void _onInactive() async {
+    // сохраняем текущее время
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('inactiveLastExitTime', DateTime.now().millisecondsSinceEpoch);
+    print('inactive inactiveLastExitTime: ${prefs.getInt('inactiveLastExitTime')}');
+    print('inactive pausedLastExitTime: ${prefs.getInt('pausedLastExitTime')}');
+    print('inactive');
+  }
+
+  void _onHidden() async {
+    print('hidden');
+  }
+
+  void _onPaused() async {
+    // Приложение свернуто, сохраняем текущее время
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('pausedLastExitTime', DateTime.now().millisecondsSinceEpoch);
+    print('paused pausedLastExitTime: ${prefs.getInt('pausedLastExitTime')}');
+    print('paused inactiveLastExitTime: ${prefs.getInt('inactiveLastExitTime')}');
+  }
+
+  /// диалоговое окно для составления плана на следующую неделю
+  Future<void> _showDialogOnFirstLaunch() async {
+    DateTime now = DateTime.now();
+
+    Map streamStatus = await getStreamStatus();
+    print('streamStatus: $streamStatus');
+
+    if (streamStatus['status'] != 'before' && streamStatus['status'] != 'after') {
+      /// есть ли следующая неделя для создания
+      final nextWeekData = await getNextWeekData();
+
+      /// проверка в субботу или воскресенье
+      if (now.weekday == 6 || now.weekday == 7) {
+        if (!nextWeekData['isExistNextWeek'] && mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
+              title: const Text(
+                'Пришло время составить план на следующую неделю',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+              ),
+              actionsPadding: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
+              actions: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          context.router.navigate(const PlanningScreenRoute());
+                        },
+                        style: AppLayout.accentBTNStyle,
+                        child: const Text(
+                          'Перейти в план',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(
+                        'Напомнить позже',
+                        style: TextStyle(color: AppColor.grey3),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +218,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             tabsRouter.setActiveIndex(val);
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: AppColor.bottomNavBG,
+          backgroundColor: AppColor.lightBGItem,
           elevation: 0,
           fixedColor: const Color(0xff6F6AA6),
           selectedFontSize: 12,

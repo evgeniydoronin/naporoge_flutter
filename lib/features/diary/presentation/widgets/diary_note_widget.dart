@@ -45,7 +45,7 @@ class _DiaryNoteWidgetState extends State<DiaryNoteWidget> {
               String createAt = DateFormat('dd.MM.yyyy / HH:mm').format(note.createAt!);
 
               return Padding(
-                padding: const EdgeInsets.only(right: 20, left: 20, bottom: 15),
+                padding: EdgeInsets.only(right: AppLayout.contentPadding, left: AppLayout.contentPadding, bottom: 15),
                 child: Container(
                   decoration: AppLayout.boxDecorationShadowBG,
                   child: Theme(

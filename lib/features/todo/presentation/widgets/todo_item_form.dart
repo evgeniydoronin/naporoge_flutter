@@ -1,8 +1,6 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isar/isar.dart';
-import '../../../../core/utils/circular_loading.dart';
 import '../../../auth/login/domain/user_model.dart';
 import '../../../../core/services/db_client/isar_service.dart';
 import '../../data/models/todo_model.dart';
@@ -46,6 +44,7 @@ Future modalTodoForm(context, TodoEntity? todo, int? parentId) async {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         controller: todoEditingController,
                         autofocus: true,
                         maxLines: null,

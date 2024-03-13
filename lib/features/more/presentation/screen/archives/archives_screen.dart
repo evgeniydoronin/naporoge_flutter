@@ -49,54 +49,71 @@ class _ArchivesScreenState extends State<ArchivesScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<NPStream> streams = snapshot.data;
-                return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: List.generate(
-                      streams.length,
-                      (index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                        child: InkWell(
-                          onTap: () {
-                            context.router.push(ArchiveItemScreenRoute(stream: streams[index]));
-                          },
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
-                                  decoration: AppLayout.boxDecorationShadowBG,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          '${streams[index].title}',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            'assets/icons/arrow.svg',
-                                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                if (streams.isNotEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Column(
+                      children: List.generate(
+                        streams.length,
+                        (index) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          child: InkWell(
+                            onTap: () {
+                              context.router.push(ArchiveItemScreenRoute(stream: streams[index]));
+                            },
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
+                                    decoration: AppLayout.boxDecorationShadowBG,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            '${streams[index].title}',
+                                            style: const TextStyle(fontSize: 16),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          decoration: BoxDecoration(color: AppColor.accent, shape: BoxShape.circle),
+                                          child: Center(
+                                            child: SvgPicture.asset(
+                                              'assets/icons/arrow.svg',
+                                              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
+                  );
+                }
+                return const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 17, vertical: 40),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Привет! Это архив дел.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          'Здесь будут храниться все дела, чтобы Вы могли вспомнить все свои результаты и успехи',
+                          style: TextStyle(fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ));
               } else {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -109,6 +126,8 @@ class _ArchivesScreenState extends State<ArchivesScreen> {
 Future<List<NPStream>> getStreams() async {
   final isarService = IsarService();
   final isar = await isarService.db;
+
+  return [];
 
   return await isar.nPStreams.filter().isActiveEqualTo(false).findAll();
 }

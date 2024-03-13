@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -321,7 +322,7 @@ class _TodosBoxState extends State<TodosBox> {
                                     padding: const EdgeInsets.only(right: 15, left: 10),
                                     child: Row(
                                       children: [
-                                        Text(todo.title!, textAlign: TextAlign.start),
+                                        Expanded(child: Text(todo.title!, textAlign: TextAlign.start)),
                                       ],
                                     ),
                                   ));

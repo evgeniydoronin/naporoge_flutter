@@ -51,7 +51,7 @@ class TotalButton extends StatelessWidget {
           }
           return button['isActive']
               ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                   child: bottomButton,
                 )
               : const SizedBox();

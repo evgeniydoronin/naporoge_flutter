@@ -255,10 +255,10 @@ Future getHomeStatus() async {
       // print('текущая неделя НЕ последняя');
       // пустая неделя
       if (isEmpty) {
-        print('пустая неделя');
+        // print('пустая неделя');
         // проверки в воскресенье
         if (actualStudentDay.weekday == 7) {
-          print('воскресенье пустая неделя');
+          // print('воскресенье пустая неделя');
           // завершенные дни текущей недели
           List daysCompleted = await isar.days.filter().weekIdEqualTo(week.id).completedAtIsNotNull().findAll();
           // завершенные дни текущей недели не пустые

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -118,7 +119,7 @@ class WeekStatusPoint extends StatelessWidget {
 
           // print(daysStatus);
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
             child: Container(
               padding: const EdgeInsets.only(top: 10, bottom: 10, left: 18, right: 18),
               decoration: AppLayout.boxDecorationShadowBG,
@@ -128,7 +129,7 @@ class WeekStatusPoint extends StatelessWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 1 / 1.9,
+                  childAspectRatio: 1 / 1.69,
                 ),
                 itemCount: 7,
                 itemBuilder: (context, gridIndex) {
@@ -137,41 +138,40 @@ class WeekStatusPoint extends StatelessWidget {
                     // Будущий день
                     if (daysStatus[gridIndex]['status'] == 'future') {
                       _container = Container(
-                        // height: 110,
-                        decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
+                        width: 34,
+                        decoration: BoxDecoration(
+                          color: AppColor.grey1,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Container(
-                              width: 34,
-                              height: 33,
-                              decoration:
-                                  BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
-                              child: Center(
-                                child: Text(
-                                  weekDay[gridIndex].toUpperCase(),
-                                  style:
-                                      const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                            Flexible(
+                              flex: 1,
+                              fit: FlexFit.tight,
+                              child: Container(
+                                width: 34,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColor.primary,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    weekDay[gridIndex].toUpperCase(),
+                                    style:
+                                        const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ),
                             ),
-                            Container(
-                              height: 30,
-                              // width: 34,
-                              decoration: const BoxDecoration(
-                                // color: AppColor.primary,
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(34),
-                                  bottomRight: Radius.circular(34),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  gridIndex == 6 ? '-' : daysStatus[gridIndex]['startAt'],
-                                  style: const TextStyle(fontSize: 10),
-                                ),
+                            const SizedBox(height: 5),
+                            Center(
+                              child: Text(
+                                gridIndex == 6 ? '-' : daysStatus[gridIndex]['startAt'],
+                                style: const TextStyle(fontSize: 10),
                               ),
                             ),
+                            const SizedBox(height: 10),
                           ],
                         ),
                       );
@@ -246,40 +246,40 @@ class WeekStatusPoint extends StatelessWidget {
                     // Текущий день
                     else if (daysStatus[gridIndex]['status'] == 'opened') {
                       _container = Container(
-                        // height: 110,
-                        decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
+                        width: 34,
+                        decoration: BoxDecoration(
+                          color: AppColor.grey1,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Container(
-                              width: 34,
-                              height: 33,
-                              decoration:
-                                  BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
-                              child: Center(
-                                child: Text(
-                                  weekDay[gridIndex].toUpperCase(),
-                                  style:
-                                      const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                            Flexible(
+                              flex: 1,
+                              fit: FlexFit.tight,
+                              child: Container(
+                                width: 34,
+                                decoration: BoxDecoration(
+                                  color: AppColor.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    weekDay[gridIndex].toUpperCase(),
+                                    style:
+                                        const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ),
                             ),
-                            Container(
-                              height: 30,
-                              decoration: const BoxDecoration(
-                                // color: AppColor.primary,
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(34),
-                                  bottomRight: Radius.circular(34),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  gridIndex == 6 ? '-' : daysStatus[gridIndex]['startAt'],
-                                  style: const TextStyle(fontSize: 10),
-                                ),
+                            const SizedBox(height: 5),
+                            Center(
+                              child: Text(
+                                gridIndex == 6 ? '-' : daysStatus[gridIndex]['startAt'],
+                                style: const TextStyle(fontSize: 10),
                               ),
                             ),
+                            const SizedBox(height: 10),
                           ],
                         ),
                       );
@@ -322,14 +322,12 @@ class WeekStatusPoint extends StatelessWidget {
                       // не прошел день
                       else {
                         _container = Container(
-                          height: 110,
                           decoration: BoxDecoration(color: AppColor.grey1, borderRadius: BorderRadius.circular(34)),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
                                 width: 34,
-                                height: 33,
+                                height: 34,
                                 decoration:
                                     BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(34)),
                                 child: Center(
@@ -340,21 +338,11 @@ class WeekStatusPoint extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Container(
-                                height: 28,
-                                width: 34,
-                                decoration: const BoxDecoration(
-                                  // color: AppColor.primary,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(34),
-                                    bottomRight: Radius.circular(34),
-                                  ),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    '-',
-                                    style: TextStyle(fontSize: 10),
-                                  ),
+                              const SizedBox(height: 5),
+                              const Center(
+                                child: Text(
+                                  '-',
+                                  style: TextStyle(fontSize: 10),
                                 ),
                               ),
                             ],

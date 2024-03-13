@@ -27,11 +27,11 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
       appBar: AppBar(
         elevation: 0,
         foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.lightBGItem,
         title: const Text(''),
       ),
       body: Container(
-        color: Colors.white,
+        color: AppColor.lightBGItem,
         padding: const EdgeInsets.only(left: 30.0, right: 30.0),
         height: MediaQuery.of(context).size.height,
         child: ListView(
@@ -50,7 +50,7 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
               height: 10,
             ),
             Text(
-              'Код активации выдается учебным заведением',
+              'Код активации выдается учебным заведением или на сайте организатора развитиеволи.рф',
               style: TextStyle(
                 fontSize: 14,
                 color: AppColor.grey2,

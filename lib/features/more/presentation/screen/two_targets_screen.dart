@@ -94,6 +94,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   controller: titleEditingController,
                                   style: TextStyle(fontSize: AppFont.small),
                                   decoration: InputDecoration(
@@ -133,6 +134,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   controller: minimumEditingController,
                                   style: TextStyle(fontSize: AppFont.small),
                                   decoration: InputDecoration(
@@ -172,6 +174,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   controller: targetOneTitleEditingController,
                                   style: TextStyle(fontSize: AppFont.small),
                                   decoration: InputDecoration(
@@ -188,6 +191,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   controller: targetOneDescriptionEditingController,
                                   style: TextStyle(fontSize: AppFont.small),
                                   decoration: InputDecoration(
@@ -227,6 +231,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   controller: targetTwoTitleEditingController,
                                   style: TextStyle(fontSize: AppFont.small),
                                   decoration: InputDecoration(
@@ -243,6 +248,7 @@ class _TwoTargetScreenState extends State<TwoTargetScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 TextFormField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   controller: targetTwoDescriptionEditingController,
                                   style: TextStyle(fontSize: AppFont.small),
                                   decoration: InputDecoration(

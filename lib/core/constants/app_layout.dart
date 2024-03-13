@@ -5,11 +5,14 @@ class AppLayout {
   static BorderRadius smallRadius = const BorderRadius.all(Radius.circular(8));
   static BorderRadius primaryRadius = const BorderRadius.all(Radius.circular(15));
 
+  static double contentPadding = 17.0;
+
   static ButtonStyle primaryBTNStyle = ElevatedButton.styleFrom(
-      elevation: 0,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      backgroundColor: AppColor.primary,
-      shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius));
+    elevation: 0,
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+    backgroundColor: AppColor.primary,
+    shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
+  );
 
   static ButtonStyle accentBowBTNStyle = ElevatedButton.styleFrom(
       elevation: 0,

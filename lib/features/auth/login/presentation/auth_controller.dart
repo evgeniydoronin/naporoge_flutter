@@ -114,7 +114,7 @@ class AuthController {
     await insertDiaryNotes(data['diaryNotes']);
 
     /// Two Targets
-    if (data['twoTargets'].isNotEmpty) {
+    if (data['twoTargets'] != null) {
       await insertTwoTargets(data['twoTargets']);
     }
 
@@ -294,7 +294,10 @@ Future insertTwoTargets(data) async {
   final isarService = IsarService();
   final isar = await isarService.db;
 
-  Map? twoTargetData = data != null ? data[0] : null;
+  // print('data 333: $data');
+  // print('data 333: ${data.isEmpty}');
+
+  Map? twoTargetData = data.isNotEmpty ? data[0] : null;
 
   if (twoTargetData != null) {
     final stream = await isar.nPStreams.get(twoTargetData['stream_id']);

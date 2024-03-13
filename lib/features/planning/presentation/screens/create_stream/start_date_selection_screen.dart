@@ -47,16 +47,26 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
       if (activeStream != null) {
         print('activeStream != null');
 
-        /// следующий курс
-        if (DateTime.now().isBefore(activeStream.startAt!)) {
+        /// первый курс
+        if (streams.length == 1) {
           setState(() {
             isBackLeading = false;
           });
-          if (context.mounted) {
+        }
+
+        /// следующий курс
+        else if (DateTime.now().isBefore(activeStream.startAt!)) {
+          setState(() {
+            isBackLeading = false;
+          });
+          if (mounted) {
             await selectWeeks(context);
           }
         }
-      } else {
+      }
+
+      /// курса нет
+      else {
         print('activeStream == null');
         setState(() {
           isBackLeading = false;
@@ -168,7 +178,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                 const StepperIcons(step: 0),
                 const SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColor.accentBOW,
@@ -201,7 +211,8 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                   height: 5,
                 ),
                 Container(
-                  margin: const EdgeInsets.all(20),
+                  margin:
+                      EdgeInsets.symmetric(horizontal: AppLayout.contentPadding, vertical: AppLayout.contentPadding),
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -219,7 +230,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
                 ),
                 const SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                   child: ElevatedButton(
                     style: AppLayout.confirmBtnFullWidth,
                     onPressed: isActivatedBtnFirstStep

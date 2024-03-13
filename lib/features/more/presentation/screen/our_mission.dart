@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:naporoge/core/constants/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final Uri _npRV = Uri.parse('http://xn--80aealihac0a3ao2a.xn--p1ai');
@@ -35,7 +36,7 @@ class OurMissionScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.lightBGItem,
         title: const Text(
           'Наша миссия',
           overflow: TextOverflow.ellipsis,
@@ -50,7 +51,7 @@ class OurMissionScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-          decoration: const BoxDecoration(color: Colors.white),
+          decoration: BoxDecoration(color: AppColor.lightBGItem),
           width: MediaQuery.of(context).size.width,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

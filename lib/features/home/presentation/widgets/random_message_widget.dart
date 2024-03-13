@@ -147,7 +147,7 @@ class _RandomMessageWidgetState extends State<RandomMessageWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
       child: Container(
         padding: const EdgeInsets.only(top: 15, bottom: 25, left: 18, right: 45),
         decoration: BoxDecoration(

@@ -69,8 +69,9 @@ class _PlanningScreenState extends State<PlanningScreen> {
                 ),
                 actions: [
                   IconButton(
+                    padding: const EdgeInsets.only(right: 9),
                     icon: const Icon(Icons.info_outline_rounded),
-                    color: Colors.black,
+                    color: AppColor.accent,
                     onPressed: () {
                       // _scaffoldKey.currentState!.openEndDrawer();
                       context.router.push(const ExplanationsForThePlanningRoute());
@@ -89,7 +90,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                       children: [
                         const SizedBox(height: 15),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                           child: Container(
                             width: double.maxFinite,
                             padding: const EdgeInsets.only(top: 15, bottom: 15, left: 18, right: 18),
@@ -109,7 +110,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                                 child: Container(
                                     padding: const EdgeInsets.only(bottom: 5),
                                     decoration: AppLayout.boxDecorationShadowBG,
@@ -117,7 +118,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                               ),
                               const SizedBox(height: 25),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -129,7 +130,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                                 if (state.finalCellIDs.length < 7) {
                                                   ScaffoldMessenger.of(context).showSnackBar(
                                                     const SnackBar(
-                                                      content: Text('Нужно выбрать 6 дней'),
+                                                      content: Text('Запланируйте 6 дней'),
                                                     ),
                                                   );
                                                   return;

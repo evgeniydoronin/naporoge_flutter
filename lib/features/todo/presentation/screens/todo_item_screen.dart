@@ -79,7 +79,7 @@ class TodoItemScreen extends StatelessWidget {
                       children: [
                         Icon(Icons.add),
                         SizedBox(width: 5),
-                        Text('Добавить подзадачу'),
+                        Text('Добавить задачу'),
                       ],
                     )),
                 const SizedBox(height: 25),

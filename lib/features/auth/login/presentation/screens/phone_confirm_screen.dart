@@ -32,7 +32,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
       appBar: AppBar(
         elevation: 0,
         foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.lightBG,
         title: const Text('Вход'),
       ),
       body: LayoutBuilder(
@@ -42,7 +42,7 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
               constraints: BoxConstraints(minHeight: constraint.maxHeight),
               child: IntrinsicHeight(
                 child: Container(
-                  decoration: const BoxDecoration(color: Colors.white),
+                  decoration: BoxDecoration(color: AppColor.lightBGItem),
                   padding: const EdgeInsets.all(30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

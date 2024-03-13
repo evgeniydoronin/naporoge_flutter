@@ -95,9 +95,8 @@ Future getPushNotify() async {
     DateTime startStream = activeStream.startAt!;
     DateTime now = DateTime.now();
 
-    /// вывод пушей только если не прошло назначенное время
-    /// 2024-02-26 00:00:00.000
-    // DateTime notifyTest = DateTime(now.year, now.month, now.day, now.hour, 08);
+    DateTime notifyTest = DateTime(now.year, now.month, now.day, now.hour, now.add(const Duration(minutes: 1)).minute);
+
     DateTime notifyStartStream = DateTime(startStream.year, startStream.month, startStream.day, 18, 45);
     DateTime notifyMorningTuesday =
         DateTime(startStream.year, startStream.month, startStream.add(const Duration(days: 1)).day, 5, 0);
@@ -106,45 +105,91 @@ Future getPushNotify() async {
     DateTime notifyMorningSecondWeek =
         DateTime(startStream.year, startStream.month, startStream.add(const Duration(days: 12)).day, 9, 0);
 
-    // /// notifyStartStream
     // print('notifyTest: $notifyTest');
     //
+    // /// notifyTest
     // if (now.isBefore(notifyTest.add(const Duration(seconds: 1)))) {
-    //   print('notifyTest 2');
     //   LocalNotifications().showNotification(
-    //       title: 'Воля 2',
-    //       body: 'TEST Курс начался, желаем успехов! ${notifyTest.toLocal()}',
-    //       scheduledNotificationDateTime: notifyTest);
+    //     id: 10,
+    //     title: 'Воля',
+    //     body: 'Курс начался, желаем успехов!',
+    //     scheduledNotificationDateTime: tz.TZDateTime(
+    //       tz.local,
+    //       notifyTest.year,
+    //       notifyTest.month,
+    //       notifyTest.day,
+    //       notifyTest.hour,
+    //       notifyTest.minute,
+    //     ),
+    //   );
     // }
 
     /// notifyStartStream
     if (now.isBefore(notifyStartStream.add(const Duration(seconds: 1)))) {
       LocalNotifications().showNotification(
-          title: 'Воля', body: 'Курс начался, желаем успехов!', scheduledNotificationDateTime: notifyStartStream);
+        id: 1,
+        title: 'Воля',
+        body: 'Курс начался, желаем успехов!',
+        scheduledNotificationDateTime: tz.TZDateTime(
+          tz.local,
+          notifyStartStream.year,
+          notifyStartStream.month,
+          notifyStartStream.day,
+          notifyStartStream.hour,
+          notifyStartStream.minute,
+        ),
+      );
     }
 
     /// notifyMorningTuesday
     if (now.isBefore(notifyMorningTuesday.add(const Duration(seconds: 1)))) {
       LocalNotifications().showNotification(
-          title: 'Воля',
-          body: 'Старайтесь отмечать результаты как можно точнее',
-          scheduledNotificationDateTime: notifyMorningTuesday);
+        id: 2,
+        title: 'Воля',
+        body: 'Старайтесь отмечать результаты как можно точнее',
+        scheduledNotificationDateTime: tz.TZDateTime(
+          tz.local,
+          notifyMorningTuesday.year,
+          notifyMorningTuesday.month,
+          notifyMorningTuesday.day,
+          notifyMorningTuesday.hour,
+          notifyMorningTuesday.minute,
+        ),
+      );
     }
 
     /// notifyMorningFirstWeek
     if (now.isBefore(notifyMorningFirstWeek.add(const Duration(seconds: 1)))) {
       LocalNotifications().showNotification(
-          title: 'Воля',
-          body: 'Появилось 2 новых видео! Что делать, когда не хочу делать дело? Почему откладываются дела?',
-          scheduledNotificationDateTime: notifyMorningFirstWeek);
+        id: 3,
+        title: 'Воля',
+        body: 'Появилось 2 новых видео! Что делать, когда не хочу делать дело? Почему откладываются дела?',
+        scheduledNotificationDateTime: tz.TZDateTime(
+          tz.local,
+          notifyMorningFirstWeek.year,
+          notifyMorningFirstWeek.month,
+          notifyMorningFirstWeek.day,
+          notifyMorningFirstWeek.hour,
+          notifyMorningFirstWeek.minute,
+        ),
+      );
     }
 
-    /// notifyMorningSecondWeek
+    /// notifyMorningFirstWeek
     if (now.isBefore(notifyMorningSecondWeek.add(const Duration(seconds: 1)))) {
       LocalNotifications().showNotification(
-          title: 'Воля',
-          body: 'Появилось новое видео: Верное завершение дел',
-          scheduledNotificationDateTime: notifyMorningSecondWeek);
+        id: 4,
+        title: 'Воля',
+        body: 'Появилось новое видео: Верное завершение дел',
+        scheduledNotificationDateTime: tz.TZDateTime(
+          tz.local,
+          notifyMorningSecondWeek.year,
+          notifyMorningSecondWeek.month,
+          notifyMorningSecondWeek.day,
+          notifyMorningSecondWeek.hour,
+          notifyMorningSecondWeek.minute,
+        ),
+      );
     }
   }
 }

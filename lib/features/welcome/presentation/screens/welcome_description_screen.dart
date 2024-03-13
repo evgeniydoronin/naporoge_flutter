@@ -56,7 +56,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.lightBG,
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text(
@@ -65,8 +65,9 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
         ),
         actions: [
           IconButton(
+            padding: const EdgeInsets.only(right: 7),
             icon: const Icon(Icons.info_outline_rounded),
-            color: Colors.black,
+            color: AppColor.accent,
             onPressed: () {
               context.router.push(const RuleOfAppScreenRoute());
             },
@@ -74,8 +75,8 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
         ],
       ),
       body: Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-        decoration: const BoxDecoration(color: Colors.white),
+        padding: EdgeInsets.symmetric(horizontal: AppLayout.contentPadding),
+        decoration: BoxDecoration(color: AppColor.lightBGItem),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: ListView(
@@ -113,13 +114,8 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
             const SizedBox(
               height: 15,
             ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 260,
-              decoration: BoxDecoration(
-                borderRadius: AppLayout.primaryRadius,
-                // color: Colors.yellowAccent,
-              ),
+            SizedBox(
+              height: 280,
               child: isPlay
                   ? Chewie(controller: chewieController)
                   : FittedBox(
@@ -219,7 +215,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
               ],
             ),
             const SizedBox(
-              height: 45,
+              height: 25,
             ),
             ElevatedButton(
               onPressed: () async {
@@ -240,9 +236,6 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                 'Продолжить',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-            ),
-            const SizedBox(
-              height: 50,
             ),
           ],
         ),

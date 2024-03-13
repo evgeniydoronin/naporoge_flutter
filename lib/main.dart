@@ -18,6 +18,7 @@ import 'features/planning/presentation/bloc/planner_bloc.dart';
 import 'features/todo/presentation/bloc/sub_todos/sub_todo_bloc.dart';
 import 'features/todo/presentation/bloc/todos/todo_bloc.dart';
 
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -29,6 +30,8 @@ void main() async {
   ]);
 
   tz.initializeTimeZones();
+  final String userTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(userTimeZone));
 
   await LocalNotifications.init();
 
