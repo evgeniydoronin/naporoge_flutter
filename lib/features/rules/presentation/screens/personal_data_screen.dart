@@ -52,7 +52,7 @@ class PersonalDataScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-          decoration: BoxDecoration(color: AppColor.lightBGItem),
+          decoration: BoxDecoration(color: AppColor.lightBG),
           width: MediaQuery.of(context).size.width,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

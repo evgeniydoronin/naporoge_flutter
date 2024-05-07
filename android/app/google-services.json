@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "666249880557",
+    "project_id": "dev-naporoge",
+    "storage_bucket": "dev-naporoge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666249880557:android:100b519a3fdf00a25b7de4",
+        "android_client_info": {
+          "package_name": "ru.naporoge.umadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmju8--0KfZ8BpWQUhGYqHu1MyOtlMDP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

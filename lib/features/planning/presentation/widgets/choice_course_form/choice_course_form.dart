@@ -109,7 +109,7 @@ class _ChoiceCourseFormWidgetState extends State<ChoiceCourseFormWidget> {
                                     if (npStream != null) {
                                       print('npStream: $npStream');
                                       if (_courses[index].courseId == npStream.courseId) {
-                                        _textEditingControllers[index].text = npStream.title;
+                                        // _textEditingControllers[index].text = npStream.title;
 
                                         context.read<ChoiceOfCourseBloc>().add(
                                               CourseItemChanged(

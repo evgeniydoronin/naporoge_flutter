@@ -1,14 +1,14 @@
 class Endpoints {
   Endpoints._();
 
-  // base url
-  // static const String baseUrl = "https://np-new.evgeniydoronin.com/api";
+  /// DEV
+  static const String host = 'https://naporoge-vuz-app.flutteria.dev';
 
-  // static const String site = "https://umadmin.naporoge.ru";
-  static const String site = "https://naporoge-vuz-app.flutteria.dev";
+  // PROD
+  // static const String host = 'https://umadmin.naporoge.ru';
 
-  static const String baseUrl = "$site/api";
-  static const String fileUrl = "$site/storage";
+  static const String baseUrl = "$host/api";
+  static const String fileUrl = "$host/storage";
 
   // static const String baseUrl = "https://umadmin.naporoge.ru/api";
 
@@ -23,6 +23,7 @@ class Endpoints {
   static const String authCode = '/auth';
   static const String createStudent = '/create-student';
   static const String getStudent = '/get-student';
+  static const String updateToken = '/update-token';
 
   /// Stream
   static const String createStream = '/create-stream';
@@ -55,6 +56,7 @@ class Endpoints {
   static const String getDaysResults = '/get-days-results';
   static const String getDiaryNotes = '/get-diary-notes';
   static const String getTwoTargets = '/get-two-targets';
+  static const String getPushNotifications = '/get-push-notifications';
 
   //
   static const String deleteDuplicatesResult = '/delete-duplicates';

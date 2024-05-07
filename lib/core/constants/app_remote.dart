@@ -1,10 +1,12 @@
 part of 'app_theme.dart';
 
 class AppRemoteAssets {
-  // static const String host = 'https://np-app.evgeniydoronin.com';
+  /// DEV
   static const String host = 'https://naporoge-vuz-app.flutteria.dev';
 
+  // PROD
   // static const String host = 'https://umadmin.naporoge.ru';
+
   static const String videoFolder = '/storage/videos';
   static const String imagesFolder = '/storage/images';
 

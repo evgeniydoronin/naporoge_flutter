@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:media_store_plus/media_store_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../../core/constants/endpoints.dart';
@@ -48,8 +50,8 @@ class _TheoryPostScreenState extends State<TheoryPostScreen> {
       pdfUrlArray = pdfUrl.split("/");
       fileName = pdfUrlArray.last;
     }
-    print('pdfUrl: $pdfUrl');
-    print('fileName: $fileName');
+    // print('pdfUrl: $pdfUrl');
+    // print('fileName: $fileName');
 
     return Scaffold(
       backgroundColor: AppColor.lightBG,
@@ -68,24 +70,39 @@ class _TheoryPostScreenState extends State<TheoryPostScreen> {
               ? IconButton(
                   icon: SvgPicture.asset('assets/icons/download_pdf.svg'),
                   onPressed: () async {
-                    _permissionReady = await _checkPermission();
+                    print("Downloading");
 
-                    if (_permissionReady) {
-                      await _prepareSaveDir();
-                      print("Downloading");
-                      try {
-                        await Dio().download(pdfUrl, "$_localPath/$fileName");
-                        print("Download Completed.");
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Файл $fileName успешно сохранен'),
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        print("Невозможно скачать файл.\n\n$e");
+                    String pathFile = await downloadFile(pdfUrl, fileName);
+
+                    if (Platform.isAndroid) {
+                      // platform = TargetPlatform.android;
+                      final mediaStorePlugin = MediaStore();
+
+                      List<Permission> permissions = [
+                        Permission.storage,
+                      ];
+
+                      if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
+                        permissions.add(Permission.photos);
+                        permissions.add(Permission.audio);
+                        permissions.add(Permission.videos);
                       }
+
+                      await permissions.request();
+
+                      print('permissions: $permissions');
+
+                      NativeMethods.saveFileToDownloads(pathFile, fileName);
+                    } else {
+                      await downloadAndSavePdf(pdfUrl);
+                    }
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Файл $fileName успешно сохранен'),
+                        ),
+                      );
                     }
                   },
                 )
@@ -142,40 +159,60 @@ class _TheoryPostScreenState extends State<TheoryPostScreen> {
     );
   }
 
-  Future<bool> _checkPermission() async {
-    if (platform == TargetPlatform.android) {
-      final status = await Permission.storage.status;
-      if (status != PermissionStatus.granted) {
-        final result = await Permission.storage.request();
-        if (result == PermissionStatus.granted) {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    } else {
-      return true;
-    }
-    return false;
+  Future<String> downloadFile(String url, String fileName) async {
+    Dio dio = Dio();
+    var dir = await getTemporaryDirectory(); // Используйте временную директорию
+    String filePath = '${dir.path}/$fileName';
+    await dio.download(url, filePath);
+    return filePath; // Возвращает путь к скачанному файлу
   }
 
-  Future<void> _prepareSaveDir() async {
-    _localPath = (await _findLocalPath())!;
+  Future<void> downloadAndSavePdf(String url) async {
+    final dio = Dio();
+    final fileName = url.split('/').last;
 
-    print(_localPath);
-    final savedDir = Directory(_localPath);
-    bool hasExisted = await savedDir.exists();
-    if (!hasExisted) {
-      savedDir.create();
+    try {
+      final response = await dio.get(url, options: Options(responseType: ResponseType.bytes));
+      final bytes = response.data;
+
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/$fileName';
+      final file = File(filePath);
+      await file.writeAsBytes(bytes);
+
+      final result = await saveFileToPublicDirectoryIOS(file);
+      print('File downloaded and saved to: $result');
+    } catch (e) {
+      print('Error downloading file: $e');
     }
   }
 
-  Future<String?> _findLocalPath() async {
-    if (platform == TargetPlatform.android) {
-      return "/sdcard/download/";
-    } else {
-      var directory = await getApplicationDocumentsDirectory();
-      return '${directory.path}${Platform.pathSeparator}Download';
+  Future<String?> saveFileToPublicDirectoryIOS(File file) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final newFile = await file.copy('${directory.path}/${file.path.split('/').last}');
+      return newFile.path;
+    } catch (e) {
+      print('Error saving file to public directory on iOS: $e');
+      return null;
+    }
+  }
+}
+
+class NativeMethods {
+  // Соответствует имени канала на стороне Kotlin
+  static const MethodChannel _channel = MethodChannel('ru.naporoge.umadmin/save');
+
+  // Метод для вызова saveFileToDownloads из Dart
+  static Future<void> saveFileToDownloads(String filePath, String fileName) async {
+    try {
+      final Map<String, dynamic> arguments = {
+        'filePath': filePath,
+        'fileName': fileName,
+      };
+      await _channel.invokeMethod('saveFileToDownloads', arguments);
+    } on PlatformException catch (e) {
+      print("Ошибка при вызове нативного кода: '${e.message}'.");
     }
   }
 }

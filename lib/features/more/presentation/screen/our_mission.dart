@@ -33,10 +33,11 @@ class OurMissionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.lightBG,
       appBar: AppBar(
         elevation: 0,
         foregroundColor: Colors.black,
-        backgroundColor: AppColor.lightBGItem,
+        backgroundColor: AppColor.lightBG,
         title: const Text(
           'Наша миссия',
           overflow: TextOverflow.ellipsis,
@@ -51,7 +52,7 @@ class OurMissionScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-          decoration: BoxDecoration(color: AppColor.lightBGItem),
+          decoration: BoxDecoration(color: AppColor.lightBG),
           width: MediaQuery.of(context).size.width,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

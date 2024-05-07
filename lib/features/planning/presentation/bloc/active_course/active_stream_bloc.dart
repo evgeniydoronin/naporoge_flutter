@@ -23,6 +23,8 @@ class ActiveStreamBloc extends Bloc<ActiveStreamEvent, ActiveStreamState> {
     final streamLocalStorage = StreamLocalStorage();
     final isar = await isarService.db;
     final List<NPStream> studentsStreams = await isar.nPStreams.where().findAll();
+
+    print('bloc ActiveStreamState: $studentsStreams');
     NPStream? activeNpStream = await streamLocalStorage.getActiveStream();
 
     emit(state.copyWith(

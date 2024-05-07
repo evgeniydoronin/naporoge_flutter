@@ -393,7 +393,7 @@ class _ResultsStreamScreenState extends State<ResultsStreamScreen> {
                                                   // onPressed: () => context.router
                                                   //     .navigate(const NextStreamStartDateSelectionScreenRoute()),
                                                   onPressed: () async {
-                                                    await selectWeeks(context);
+                                                    // await selectWeeks(context);
                                                     if (context.mounted) {
                                                       context.router.push(const StartDateSelectionScreenRoute());
                                                     }

@@ -45,6 +45,10 @@ class AuthController {
     return student;
   }
 
+  Future updateUserToken() async {
+    await userRepository.updateUserTokenRequested();
+  }
+
   /// Clear local DB
   Future clearLocalDB() async {
     final isarService = IsarService();
@@ -73,6 +77,7 @@ class AuthController {
     final diaryNotes = await streamRepository.getDiaryNotesRequested(userId);
     final twoTargets = await streamRepository.getTwoTargetsRequested(streams);
     final todos = await streamRepository.getTodosRequested(userId);
+    // final pushNotification = await streamRepository.getTodosRequested(userId);
 
     ///
     data['userId'] = userId;

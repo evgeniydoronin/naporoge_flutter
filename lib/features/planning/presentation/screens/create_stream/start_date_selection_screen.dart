@@ -40,6 +40,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
     final isar = await isarService.db;
     final List streams = await isar.nPStreams.where().findAll();
     final NPStream? activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findFirst();
+    final DateTime now = DateTime.now();
 
     print('streams: $streams');
     if (streams.isNotEmpty) {
@@ -47,22 +48,38 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
       if (activeStream != null) {
         print('activeStream != null');
 
-        /// первый курс
-        if (streams.length == 1) {
+        /// и курс еще не стартовал
+        if (now.isBefore(activeStream.startAt!)) {
+          /// скрываем кнопку НАЗАД
           setState(() {
             isBackLeading = false;
+          });
+        } else {
+          setState(() {
+            isBackLeading = true;
           });
         }
 
-        /// следующий курс
-        else if (DateTime.now().isBefore(activeStream.startAt!)) {
-          setState(() {
-            isBackLeading = false;
-          });
-          if (mounted) {
-            await selectWeeks(context);
-          }
+        if (mounted) {
+          await selectWeeks(context);
         }
+
+        // /// первый курс
+        // if (streams.length == 1) {
+        //   setState(() {
+        //     isBackLeading = false;
+        //   });
+        // }
+        //
+        // /// следующий курс
+        // else if (DateTime.now().isBefore(activeStream.startAt!)) {
+        //   setState(() {
+        //     isBackLeading = false;
+        //   });
+        //   if (mounted) {
+        //     await selectWeeks(context);
+        //   }
+        // }
       }
 
       /// курса нет
@@ -71,7 +88,7 @@ class _StartDateSelectionScreenState extends State<StartDateSelectionScreen> {
         setState(() {
           isBackLeading = false;
         });
-        if (context.mounted) {
+        if (mounted) {
           await selectWeeks(context);
         }
       }

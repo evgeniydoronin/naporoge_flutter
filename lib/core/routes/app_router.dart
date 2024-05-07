@@ -26,6 +26,7 @@ import '../../features/planning/presentation/screens/info_helper/explanations_fo
 import '../../features/planning/presentation/screens/planning_screen.dart';
 import '../../features/planning/presentation/screens/create_stream/select_day_period.dart';
 import '../../features/planning/presentation/screens/create_stream/start_date_selection_screen.dart';
+import '../../features/rules/presentation/screens/instruction_screen.dart';
 import '../../features/rules/presentation/screens/personal_data_screen.dart';
 import '../../features/rules/presentation/screens/privacy_policy_screen.dart';
 import '../../features/rules/presentation/screens/rules_screen.dart';
@@ -76,6 +77,7 @@ class AppRouter extends _$AppRouter {
 
         CustomRoute(page: DiaryRulesScreenRoute.page, path: '/diary-rules'),
         CustomRoute(page: RuleOfAppScreenRoute.page, path: '/rules'),
+        CustomRoute(page: InstructionAppScreenRoute.page, path: '/instructions'),
         CustomRoute(page: ExplanationsForThePlanningRoute.page, path: '/planning-rules'),
         CustomRoute(page: ExplanationsForTheStreamRoute.page, path: '/stream-rules'),
         CustomRoute(page: OurMissionScreenRoute.page, path: '/our-mission'),

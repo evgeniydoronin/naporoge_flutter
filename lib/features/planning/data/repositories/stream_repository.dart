@@ -176,6 +176,17 @@ class StreamRepository {
     }
   }
 
+  /// Get todos
+  Future getPushNotificationRequested() async {
+    try {
+      final response = await streamApi.getPushNotificationsApi();
+
+      return (response.data['todos'] as List).map((e) => TodoModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
   /// Get stream weeks
   Future getWeeksRequested(List<NPStreamModel> streams) async {
     try {

@@ -93,12 +93,12 @@ class _SplashScreenState extends State<SplashScreen> {
         }
         // во время прохождения и после
         else {
-          // print('SplashScreen - во время прохождения');
+          print('SplashScreen - во время прохождения');
 
           /// создаем пропущенные недели
           await createMissedWeeks();
 
-          if (context.mounted) {
+          if (mounted) {
             context.router.replace(const DashboardScreenRoute());
           }
         }

@@ -49,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.lightBG,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -201,6 +202,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           print("maskFormatter.getUnmaskedText(): ${maskFormatter.getUnmaskedText()}");
                                           // для теста модератора
                                           if (maskFormatter.getUnmaskedText() == "0000000099" ||
+                                              maskFormatter.getUnmaskedText() == "1111111111" ||
+                                              maskFormatter.getUnmaskedText() == "2222222222" ||
                                               maskFormatter.getUnmaskedText() == "0000000999" ||
                                               maskFormatter.getUnmaskedText() == "0000000888" ||
                                               maskFormatter.getUnmaskedText() == "0000000998") {

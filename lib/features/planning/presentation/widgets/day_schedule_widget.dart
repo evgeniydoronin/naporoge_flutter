@@ -122,7 +122,7 @@ class DayScheduleWidget extends StatelessWidget {
         DateTime endDate = startDate.add(Duration(days: (weeks * 7) - 1));
         String startDateInfo = '${DateFormat('dd.MM.y').format(startDate)} - ${DateFormat('dd.MM.y').format(endDate)}';
 
-        print('state: $state');
+        // print('state: $state');
         print('weeks: $weeks');
         print('startDateString: $startDateString');
 

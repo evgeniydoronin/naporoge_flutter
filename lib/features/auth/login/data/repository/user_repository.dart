@@ -44,6 +44,14 @@ class UserRepository {
     }
   }
 
+  Future updateUserTokenRequested() async {
+    try {
+      await userApi.updateUserTokenApi();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
 // Future<List<UserModel>> getUsersRequested() async {
 //   try {
 //     final response = await userApi.getUsersApi();

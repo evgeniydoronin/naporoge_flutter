@@ -54,6 +54,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: AppColor.lightBG,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColor.lightBG,
@@ -103,7 +104,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 80),
                       child: Text(
-                        'Посмотрите видео и получите первый ключ к навыку',
+                        'Посмотрите видео и узнайте, как правильно начать курс',
                         style: TextStyle(color: Colors.white, fontSize: AppFont.regular),
                       ),
                     ),
@@ -124,7 +125,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                         borderRadius: AppLayout.primaryRadius,
                         child: Stack(
                           children: [
-                            Image.asset('assets/images/placeholder_0.png'),
+                            Image.asset('assets/images/placeholder_how_to.png'),
                             Positioned(
                               top: 0,
                               bottom: 0,
@@ -147,7 +148,7 @@ class _WelcomeDescriptionScreenState extends State<WelcomeDescriptionScreen> {
                                       autoPlay: true,
                                       showOptions: false,
                                       videoPlayerController: VideoPlayerController.networkUrl(
-                                          Uri.parse("${AppRemoteAssets().videoAssets()}/0.mp4")),
+                                          Uri.parse("${AppRemoteAssets().videoAssets()}/how_to_course.mp4")),
                                       deviceOrientationsAfterFullScreen: [
                                         DeviceOrientation.portraitUp,
                                       ],

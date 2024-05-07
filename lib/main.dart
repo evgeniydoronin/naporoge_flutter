@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_theme.dart';
-import 'core/utils/push_notify.dart';
+import 'core/services/notification_service.dart';
 import 'features/home/presentation/bloc/home_screen/home_screen_bloc.dart';
 import 'features/diary/presentation/bloc/diary_bloc.dart';
 import 'features/home/presentation/bloc/save_day_result/day_result_bloc.dart';
@@ -17,10 +18,7 @@ import 'features/planning/presentation/bloc/description_count/count_description_
 import 'features/planning/presentation/bloc/planner_bloc.dart';
 import 'features/todo/presentation/bloc/sub_todos/sub_todo_bloc.dart';
 import 'features/todo/presentation/bloc/todos/todo_bloc.dart';
-
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,13 +27,10 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  tz.initializeTimeZones();
-  final String userTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(userTimeZone));
+  /// Firebase Message
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await LocalNotifications.init();
-
-  await getPushNotify();
+  NotificationService service = NotificationService();
 
   await setup();
 

@@ -49,6 +49,8 @@ class _ArchivesScreenState extends State<ArchivesScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<NPStream> streams = snapshot.data;
+
+                print('stream archives : $streams');
                 if (streams.isNotEmpty) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 10),
@@ -126,8 +128,6 @@ class _ArchivesScreenState extends State<ArchivesScreen> {
 Future<List<NPStream>> getStreams() async {
   final isarService = IsarService();
   final isar = await isarService.db;
-
-  return [];
 
   return await isar.nPStreams.filter().isActiveEqualTo(false).findAll();
 }

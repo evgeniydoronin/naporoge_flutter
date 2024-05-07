@@ -267,6 +267,8 @@ class StreamLocalStorage {
 
     final activeStream = await isar.nPStreams.filter().isActiveEqualTo(true).findAll();
 
+    print('activeStream: $activeStream');
+
     return activeStream.isNotEmpty ? activeStream.first : null; // get
   }
 

@@ -5,6 +5,7 @@ import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 import '../../../../../core/services/db_client/isar_service.dart';
 import '../../../../../core/services/controllers/service_locator.dart';
+import '../../../../../core/services/push_notifications/push_notifications.dart';
 import '../auth_controller.dart';
 
 @RoutePage()
@@ -24,10 +25,11 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.lightBG,
       appBar: AppBar(
         elevation: 0,
         foregroundColor: Colors.black,
-        backgroundColor: AppColor.lightBGItem,
+        backgroundColor: AppColor.lightBG,
         title: const Text(''),
       ),
       body: Container(

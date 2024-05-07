@@ -15,10 +15,11 @@ class VideoBox extends StatefulWidget {
 }
 
 class _VideoBoxState extends State<VideoBox> {
+  PageController pageController = PageController(viewportFraction: 0.85);
+  int _currentPage = 0;
+
   @override
   Widget build(BuildContext context) {
-    final PageController pageController = PageController(viewportFraction: 0.8);
-
     return FutureBuilder(
         future: getHomeVideos(),
         builder: (context, snapshot) {
@@ -26,10 +27,10 @@ class _VideoBoxState extends State<VideoBox> {
             List previewVideoIndex = snapshot.data;
 
             return SizedBox(
-              height: 220,
+              height: 215,
               child: PageView.builder(
                 controller: pageController,
-                itemCount: 4,
+                itemCount: previewVideoIndex.length,
                 padEnds: false,
                 itemBuilder: (context, pageIndex) {
                   Widget pageContent;
@@ -69,9 +70,18 @@ class _VideoBoxState extends State<VideoBox> {
                   }
 
                   return Container(
-                      margin: EdgeInsets.only(
-                          left: AppLayout.contentPadding, right: pageIndex == 3 ? AppLayout.contentPadding : 0),
-                      child: pageContent);
+                    margin: EdgeInsets.only(
+                      left: AppLayout.contentPadding,
+                      right: 0,
+                    ),
+                    child: pageContent,
+                  );
+                },
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                  print("_currentPage: $_currentPage");
                 },
               ),
             );
@@ -130,7 +140,10 @@ class _VideoPlayState extends State<VideoPlay> {
   Widget build(BuildContext context) {
     int pageIndex = widget.pageIndex;
 
-    // print(Uri.parse("${AppRemoteAssets().videoAssets()}/${widget.pageIndex}.mp4"));
+    DateTime videoVersions = DateTime.now();
+
+    print(Uri.parse(
+        "${AppRemoteAssets().videoAssets()}/${widget.pageIndex}.mp4?${videoVersions.millisecondsSinceEpoch}"));
 
     return ClipRRect(
       borderRadius: AppLayout.primaryRadius,
@@ -144,8 +157,8 @@ class _VideoPlayState extends State<VideoPlay> {
                     aspectRatio: 16 / 9,
                     autoPlay: true,
                     showOptions: false,
-                    videoPlayerController: VideoPlayerController.networkUrl(
-                        Uri.parse("${AppRemoteAssets().videoAssets()}/${widget.pageIndex}.mp4")),
+                    videoPlayerController: VideoPlayerController.networkUrl(Uri.parse(
+                        "${AppRemoteAssets().videoAssets()}/${widget.pageIndex}.mp4?${videoVersions.millisecondsSinceEpoch}")),
                     deviceOrientationsAfterFullScreen: [
                       DeviceOrientation.portraitUp,
                     ],

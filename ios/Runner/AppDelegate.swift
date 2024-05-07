@@ -2,6 +2,7 @@ import UIKit
 import Flutter
 // This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
 import flutter_local_notifications
+import FirebaseCore
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,6 +10,7 @@ import flutter_local_notifications
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    FirebaseApp.configure()
     GeneratedPluginRegistrant.register(with: self)
 
     // This is required to make any communication available in the action isolate.

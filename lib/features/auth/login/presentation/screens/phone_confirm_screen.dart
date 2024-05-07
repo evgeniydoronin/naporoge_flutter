@@ -119,6 +119,12 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                                 /// 3. Наполняем локальную БД
                                 await _authController.createLocalDB(remoteDB);
 
+                                /// 3.5 Активируем пуши
+                                // await getPushNotify();
+
+                                /// Update Firebase Token
+                                await _authController.updateUserToken();
+
                                 /// 4. перенаправляем Splash screen
                                 if (context.mounted) {
                                   CircularLoading(context).stopAutoRouterLoading();

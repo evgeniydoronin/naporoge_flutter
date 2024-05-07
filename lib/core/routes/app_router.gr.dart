@@ -123,6 +123,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: HomesEmptyRouterPage(),
       );
     },
+    InstructionAppScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const InstructionAppScreen(),
+      );
+    },
     LoginEmptyRouter.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -589,6 +595,20 @@ class HomesEmptyRouter extends PageRouteInfo<void> {
         );
 
   static const String name = 'HomesEmptyRouter';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [InstructionAppScreen]
+class InstructionAppScreenRoute extends PageRouteInfo<void> {
+  const InstructionAppScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          InstructionAppScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'InstructionAppScreenRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

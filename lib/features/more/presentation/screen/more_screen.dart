@@ -12,7 +12,7 @@ import '../../../auth/login/presentation/auth_controller.dart';
 
 final Uri _knizhka = Uri.parse('http://naporoge.ru/knizhka');
 final Uri _vk = Uri.parse('https://vk.com/razvitievoly');
-final Uri _tg = Uri.parse('https://t.me/np42vn');
+final Uri _tg = Uri.parse('https://t.me/razvitievoly');
 final Uri _web = Uri.parse('https://www.xn--80aealihac0a3ao2a.xn--p1ai');
 
 Future<void> _launchKnizhka() async {
@@ -321,7 +321,7 @@ class MoreScreen extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          context.router.push(const RuleOfAppScreenRoute());
+                          context.router.push(const InstructionAppScreenRoute());
                         },
                         child: Row(
                           children: [
@@ -334,7 +334,7 @@ class MoreScreen extends StatelessWidget {
                                   children: [
                                     const Expanded(
                                       child: Text(
-                                        'Правила работы',
+                                        'Инструкция по применению',
                                         style: TextStyle(fontSize: 16),
                                       ),
                                     ),
@@ -440,7 +440,7 @@ class MoreScreen extends StatelessWidget {
                 GestureDetector(
                   onTap: _launchTg,
                   child: Container(
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppColor.lightBGItem,

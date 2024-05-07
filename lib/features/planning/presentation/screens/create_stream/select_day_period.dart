@@ -121,6 +121,7 @@ class _SelectDayPeriodState extends State<SelectDayPeriod> {
               ),
               actions: [
                 IconButton(
+                  padding: const EdgeInsets.only(right: 9),
                   icon: const Icon(Icons.info_outline_rounded),
                   color: AppColor.accent,
                   onPressed: () {
