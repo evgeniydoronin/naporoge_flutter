@@ -48,7 +48,7 @@ Future modalTodoForm(context, TodoEntity? todo, int? parentId) async {
                         controller: todoEditingController,
                         autofocus: true,
                         maxLines: null,
-                        maxLength: 51,
+                        maxLength: 1000,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Заполните обязательное поле!';

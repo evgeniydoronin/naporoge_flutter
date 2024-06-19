@@ -47,7 +47,7 @@ class UserRepository {
   Future updateUserTokenRequested() async {
     try {
       await userApi.updateUserTokenApi();
-    } on DioException catch (e) {
+    } on DioException {
       rethrow;
     }
   }

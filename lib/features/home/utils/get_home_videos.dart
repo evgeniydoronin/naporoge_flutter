@@ -42,6 +42,7 @@ Future getHomeVideos() async {
     previewVideoIndex[1] = 1;
     previewVideoIndex[2] = 1;
     previewVideoIndex[3] = 1;
+    previewVideoIndex[4] = 1;
   }
 
   return previewVideoIndex;

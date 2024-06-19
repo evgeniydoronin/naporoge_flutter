@@ -10,7 +10,7 @@ import '../auth_controller.dart';
 @RoutePage()
 class LoginPhoneConfirmScreen extends StatefulWidget {
   final String phone;
-  final int code;
+  final String code;
 
   const LoginPhoneConfirmScreen({Key? key, required this.phone, required this.code}) : super(key: key);
 
@@ -89,15 +89,18 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
                           onDone: (text) async {
                             print('_smsCode.smsCodeController');
                             print(_authController.smsCodeController.text);
+                            print('widget.code: ${widget.code}');
 
                             /// верификация по смс успешна
-                            if (int.parse(_authController.smsCodeController.text) == widget.code) {
+                            if (_authController.smsCodeController.text == widget.code) {
                               // confirmAuthCode
 
                               /// Проверка
                               /// Создавался ли пользователь с текущим номером телефона
+                              //
 
                               Map user = await _authController.getStudent(widget.phone);
+                              print('user 22: $user');
 
                               /// Пользователь создавался
                               if (user['student'].isNotEmpty) {
@@ -116,8 +119,11 @@ class _LoginPhoneConfirmScreenState extends State<LoginPhoneConfirmScreen> {
 
                                 // print('remoteDB: $remoteDB');
 
+                                print('user 11: $user');
+
                                 /// 3. Наполняем локальную БД
                                 await _authController.createLocalDB(remoteDB);
+                                print('user 22: $user');
 
                                 /// 3.5 Активируем пуши
                                 // await getPushNotify();

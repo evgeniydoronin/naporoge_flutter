@@ -20,6 +20,12 @@ class AppLayout {
       backgroundColor: AppColor.accentBOW,
       shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius));
 
+  static ButtonStyle shadowBTNStyle = ElevatedButton.styleFrom(
+      elevation: 0,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius));
+
   static ButtonStyle accentBTNStyle = ElevatedButton.styleFrom(
       elevation: 0,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),

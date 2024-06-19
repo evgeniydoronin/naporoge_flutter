@@ -59,8 +59,8 @@ android {
         versionName flutterVersionName
         multiDexEnabled true
 
-        versionCode 1011
-        versionName "1.0.11"
+        versionCode 1016
+        versionName "21.05.24"
     }
 
     signingConfigs {
@@ -93,133 +93,9 @@ flutter {
 }
 
 dependencies {
+    implementation "androidx.core:core-splashscreen:1.0.0"
     implementation 'androidx.window:window:1.0.0'
     implementation 'androidx.window:window-java:1.0.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
-
-
-//plugins {
-//    id "com.android.application"
-//    id "kotlin-android"
-//    id "dev.flutter.flutter-gradle-plugin"
-//}
-//
-//def localProperties = new Properties()
-//def localPropertiesFile = rootProject.file('local.properties')
-//if (localPropertiesFile.exists()) {
-//    localPropertiesFile.withReader('UTF-8') { reader ->
-//        localProperties.load(reader)
-//    }
-//}
-//
-////def flutterRoot = localProperties.getProperty('flutter.sdk')
-////if (flutterRoot == null) {
-////    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-////}
-//
-//def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-//if (flutterVersionCode == null) {
-//    flutterVersionCode = '8'
-//}
-//
-//def flutterVersionName = localProperties.getProperty('flutter.versionName')
-//if (flutterVersionName == null) {
-//    flutterVersionName = '1.0'
-//}
-//
-////apply plugin: 'com.android.application'
-////apply plugin: 'kotlin-android'
-////apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-//
-////plugins {
-////    id "com.android.application"
-////    id "kotlin-android"
-////    id "dev.flutter.flutter-gradle-plugin"
-////}
-//
-//
-//def keystoreProperties = new Properties()
-//def keystorePropertiesFile = rootProject.file('key.properties')
-//if (keystorePropertiesFile.exists()) {
-//    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-//}
-//
-//android {
-//    compileSdkVersion 33
-//    ndkVersion flutter.ndkVersion
-//
-//    compileOptions {
-//        // Flag to enable support for the new language APIs
-//        coreLibraryDesugaringEnabled true
-//        // Sets Java compatibility to Java 8
-//        sourceCompatibility JavaVersion.VERSION_1_8
-//        targetCompatibility JavaVersion.VERSION_1_8
-//    }
-//
-//    kotlinOptions {
-//        jvmTarget = '1.8'
-//    }
-//
-//    sourceSets {
-//        main.java.srcDirs += 'src/main/kotlin'
-//    }
-//
-//    defaultConfig {
-//        // Required when setting minSdkVersion to 20 or lower
-//        multiDexEnabled true
-//        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-//        applicationId "ru.naporoge.umadmin"
-//        // You can update the following values to match your application needs.
-//        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-//        minSdkVersion flutter.minSdkVersion
-//        targetSdkVersion flutter.targetSdkVersion
-//        versionCode flutterVersionCode.toInteger()
-//        versionName flutterVersionName
-//    }
-//
-//    signingConfigs {
-//        release {
-//            keyAlias keystoreProperties['keyAlias']
-//            keyPassword keystoreProperties['keyPassword']
-//            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-//            storePassword keystoreProperties['storePassword']
-//        }
-//    }
-//    buildTypes {
-//        release {
-//            signingConfig signingConfigs.release
-//            // Enables code shrinking, obfuscation, and optimization for only
-//            // your project's release build type. Make sure to use a build
-//            // variant with `debuggable false`.
-//            minifyEnabled true
-//
-//            // Enables resource shrinking, which is performed by the
-//            // Android Gradle plugin.
-//            shrinkResources true
-//
-//            // Includes the default ProGuard rules files that are packaged with
-//            // the Android Gradle plugin. To learn more, go to the section about
-//            // R8 configuration files.
-//            proguardFiles getDefaultProguardFile(
-//                    'proguard-android-optimize.txt'),
-//                    'proguard-rules.pro'
-//        }
-//        debug {
-//            minifyEnabled true
-//
-//            // TODO: Add your own signing config for the release build.
-//            // Signing with the debug keys for now, so `flutter run --release` works.
-//            signingConfig signingConfigs.debug
-//        }
-//    }
-//
-//}
-//
-//flutter {
-//    source '../..'
-//}
-//
-//dependencies {
-//    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
-//}

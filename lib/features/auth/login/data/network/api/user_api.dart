@@ -59,6 +59,7 @@ class UserApi {
           'timeZoneName': timeZoneName,
         },
       );
+      print('createStudentApi: ${response.data}');
       return response;
     } catch (e) {
       rethrow;

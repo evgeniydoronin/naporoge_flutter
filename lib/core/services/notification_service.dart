@@ -78,8 +78,8 @@ class NotificationService {
 
     await _localNotifications.show(
       DateTime.now().millisecondsSinceEpoch.remainder(100000), // Уникальный ID для каждого уведомления
-      message.notification?.title ?? 'Default Title',
-      message.notification?.body ?? 'Default Body',
+      message.notification?.title ?? 'Воля',
+      message.notification?.body ?? '...',
       details,
     );
   }

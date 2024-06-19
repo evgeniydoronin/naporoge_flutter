@@ -2,10 +2,10 @@ class Endpoints {
   Endpoints._();
 
   /// DEV
-  static const String host = 'https://naporoge-vuz-app.flutteria.dev';
+  // static const String host = 'https://naporoge-vuz-app.flutteria.dev';
 
   // PROD
-  // static const String host = 'https://umadmin.naporoge.ru';
+  static const String host = 'https://umadmin.naporoge.ru';
 
   static const String baseUrl = "$host/api";
   static const String fileUrl = "$host/storage";

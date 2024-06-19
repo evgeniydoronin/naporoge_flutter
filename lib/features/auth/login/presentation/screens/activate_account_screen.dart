@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_theme.dart';
 import '../../../../../core/routes/app_router.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
@@ -7,6 +8,14 @@ import '../../../../../core/services/db_client/isar_service.dart';
 import '../../../../../core/services/controllers/service_locator.dart';
 import '../../../../../core/services/push_notifications/push_notifications.dart';
 import '../auth_controller.dart';
+
+final Uri _tg = Uri.parse('https://t.me/razvitievoly');
+
+Future<void> _launchTg() async {
+  if (!await launchUrl(_tg)) {
+    throw Exception('Could not launch $_tg');
+  }
+}
 
 @RoutePage()
 class ActivateAccountScreen extends StatefulWidget {
@@ -48,22 +57,15 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Text(
               'Код активации выдается учебным заведением или на сайте организатора развитиеволи.рф',
               style: TextStyle(
                 fontSize: 14,
-                color: AppColor.grey2,
+                color: AppColor.grey3,
               ),
             ),
-            const SizedBox(
-              height: 30,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 60),
             Row(
               children: [
                 PinCodeTextField(
@@ -116,9 +118,35 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 40,
+            const SizedBox(height: 60),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Свяжитесь с нами, если у Вас нет кода активации',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColor.grey3,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _launchTg,
+              style: ElevatedButton.styleFrom(
+                  elevation: 4,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  backgroundColor: Colors.white,
+                  shadowColor: Colors.black.withOpacity(0.46),
+                  shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius)),
+              child: Text(
+                'Написать в телеграм',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColor.accent),
+              ),
+            ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

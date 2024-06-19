@@ -25,6 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isActiveBtn = false;
   bool isChecked = false;
 
+  // статус для кнопки отправки
+  bool _isButtonDisabled = true;
+
   final _formKey = GlobalKey<FormState>();
 
   Timer? _timer;
@@ -193,26 +196,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             minimumSize: const Size(double.infinity, 60),
                             shape: RoundedRectangleBorder(borderRadius: AppLayout.primaryRadius),
                           ),
-                          onPressed: errorScreen.isEmpty
+                          onPressed: errorScreen.isEmpty && _isButtonDisabled
                               ? _isTimerStart
                                   ? null
                                   : () async {
                                       if (_formKey.currentState!.validate()) {
                                         if (isChecked) {
                                           print("maskFormatter.getUnmaskedText(): ${maskFormatter.getUnmaskedText()}");
+                                          setState(() {
+                                            _isButtonDisabled = false;
+                                          });
                                           // для теста модератора
                                           if (maskFormatter.getUnmaskedText() == "0000000099" ||
                                               maskFormatter.getUnmaskedText() == "1111111111" ||
                                               maskFormatter.getUnmaskedText() == "2222222222" ||
+                                              maskFormatter.getUnmaskedText() == "0000000777" ||
                                               maskFormatter.getUnmaskedText() == "0000000999" ||
                                               maskFormatter.getUnmaskedText() == "0000000888" ||
+                                              maskFormatter.getUnmaskedText() == "9524840127" ||
                                               maskFormatter.getUnmaskedText() == "0000000998") {
                                             if (context.mounted) {
                                               // print('0099');
                                               context.router.push(
                                                 LoginPhoneConfirmScreenRoute(
                                                   phone: maskFormatter.getUnmaskedText(),
-                                                  code: 0099,
+                                                  code: '0099',
                                                 ),
                                               );
                                             }
@@ -220,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           // пользовательский сценарий
                                           else {
                                             var code = await _phone.getSmsCode(maskFormatter.getUnmaskedText());
-                                            print(code);
+                                            print('code 555: $code');
 
                                             if (context.mounted) {
                                               context.router.push(
@@ -271,6 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
         () {
           if (_start < 1) {
             timer.cancel();
+            _isButtonDisabled = true;
             _isTimerStart = false;
           } else {
             _isTimerStart = true;

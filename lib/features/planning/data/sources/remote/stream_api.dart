@@ -134,7 +134,6 @@ class StreamApi {
         Endpoints.createDayResult,
         data: dayResultData,
       );
-      // print(response);
       return response;
     } catch (e) {
       rethrow;

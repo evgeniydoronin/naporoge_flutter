@@ -634,7 +634,7 @@ class LoginPhoneConfirmScreenRoute
   LoginPhoneConfirmScreenRoute({
     Key? key,
     required String phone,
-    required int code,
+    required String code,
     List<PageRouteInfo>? children,
   }) : super(
           LoginPhoneConfirmScreenRoute.name,
@@ -663,7 +663,7 @@ class LoginPhoneConfirmScreenRouteArgs {
 
   final String phone;
 
-  final int code;
+  final String code;
 
   @override
   String toString() {
