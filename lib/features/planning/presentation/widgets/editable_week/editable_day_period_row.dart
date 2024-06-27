@@ -103,7 +103,12 @@ class _EditableDayPeriodRowState extends State<EditableDayPeriodRow> {
       context: context,
       builder: (BuildContext ctx) {
         List<int> defaultMinutes = List.generate(12, (index) => (index * 5));
-        List<Widget> defaultMinutesText = List.generate(12, (index) => Text('${index * 5}'));
+        List<Widget> defaultMinutesText = List.generate(
+            12,
+            (index) => Text(
+                  '${index * 5}',
+                  style: const TextStyle(color: Colors.black),
+                ));
 
         int periodStart = periodRows[ids[0][0]].start;
         int rowIndex = ids[0][1];

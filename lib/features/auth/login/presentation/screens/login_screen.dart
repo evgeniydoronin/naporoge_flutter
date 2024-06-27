@@ -234,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               context.router.push(
                                                 LoginPhoneConfirmScreenRoute(
                                                   phone: maskFormatter.getUnmaskedText(),
-                                                  code: code['code'],
+                                                  code: code['code'].toString(),
                                                 ),
                                               );
                                             }
